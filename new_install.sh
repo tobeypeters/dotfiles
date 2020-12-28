@@ -10,6 +10,7 @@ sudo apt install -y meson
 sudo apt install -y ninja-build
 sudo apt install -y yarn
 sudo apt install -y clang
+sudo apt install -y python3-tk
 
 #sudo apt install -y cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev python3
 #sudo apt install -y python3-pip
