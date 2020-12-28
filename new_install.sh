@@ -28,6 +28,7 @@ sudo apt install -y python3-tk
 
 sudo apt install -y ckb-next
 sudo apt install -y xdo
+sudo apt install -y xdotool
 sudo apt install -y neovim
 sudo apt install -y sonata
 sudo apt install -y mpd
