@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+#   The MIT License(MIT)
+#   Copyright(c), Tobey Peters, https://github.com/tobeypeters
+#	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+#	and associated documentation files (the "Software"), to deal in the Software without restriction,
+#	including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#	and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+#	subject to the following conditions:
+#	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+#	LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+#	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+#	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#   Example:
+#               generic_popup.py --location "+0+18" --width 20 --className "whatever_className" --items "Item 1" "sep" "Item 2" --commands "command1" "nop" "command2" --menu_colors "#242424" "#FFFFFF" "#FCB827"
+#
+#   Note:
+#               Location <"+x+y"> : "+0+18"
+#               Items and commands are stored in lists.  But, think of it as a dictionary:
+#
+#               { 'Item1' : 'command1', 'Item2' : 'command2' }
+#
+#               "sep" = Generate a menu Seperator
+#               command "nop" = Don't execute a command for the associated item
+
+import subprocess
+import argparse
+
+from tkinter import *
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--className', help='Override the popup classname.')
+parser.add_argument('--location', help='Location to display the popup.')
+parser.add_argument('--width', type=int, help='Override the width of the popup.')
+parser.add_argument('--items', nargs='*', help='Menu Items to display.')
+parser.add_argument('--commands', nargs='*', help='Commands to execute.')
+parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
+
+args = parser.parse_args()
+
+def onclose(evt):
+    my_w.destroy()
+
+def onselect(evt):
+    command = args.commands[my_listbox.curselection()[0]]
+
+    if not command == 'nop':
+        subprocess.Popen(command, shell=True)
+        onclose('')
+
+sc = len(args.items)
+
+w = 0
+if args.width:
+    w = args.width
+else:
+    for i in range(sc):
+        w = max(w, len(args.items[i]))
+
+sep = ''
+for i in range(w):
+    sep += '-'
+
+my_w = Tk(className='tp_popup_menu' if not args.className else args.className)
+
+listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, \
+'relief' : FLAT, 'height' : sc }
+
+if args.menu_colors:
+    mc = args.menu_colors
+    my_w.configure(bg=mc[0])
+
+    listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
+        'highlightcolor' : mc[0], 'selectbackground' : mc[2] })
+
+my_listbox = Listbox(**listbox_params)
+my_listbox.bind('<ButtonRelease-1>', onselect)
+my_listbox.bind('<Return>', onselect)
+my_listbox.bind('<Escape>', onclose)
+my_listbox.bind("<FocusOut>", onclose)
+my_listbox.pack()
+
+for i in range(sc):
+    my_listbox.insert(END, f" {args.items[i] if args.items[i] != 'sep' else sep}" )
+
+my_w.update()
+
+l = '+2+20' if not args.location else args.location
+my_w.geometry(f'{my_listbox.winfo_width()}x{my_listbox.winfo_height()}{l}')
+
+my_listbox.focus()
+my_listbox.select_set(0)
+
+my_w.mainloop()
