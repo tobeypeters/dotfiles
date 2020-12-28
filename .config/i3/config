@@ -204,6 +204,7 @@ for_window [class="kinfocenter"] floating enable
 for_window [class="konsole"] floating enable
 for_window [class="ksysguard"] floating enable
 for_window [class="Lightdm-settings"] floating enable
+for_window [class="Lxappearance"] floating enable
 for_window [class="Lxtask"] floating enable
 for_window [class="Microsoft-edge-dev"] floating enable
 for_window [class="MintUpdate.py"] floating enable
