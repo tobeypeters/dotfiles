@@ -27,7 +27,7 @@ items = [ "About This Computer...", "sep", "System Preferences...", \
     "App Store...", "sep", "System Monitor...  Ctrl +  + Del", \
     "sep", "Restart", "Shutdown", "Log Out" ]
 
-commands = [ "kinfocenter", "nop", "systemsettings5", "feren-store", \
+commands = [ "gnome-control-center info-overview", "nop", "gnome-control-center", "snap-store", \
     "nop", "ksysguard", "nop", "systemctl reboot", "systemctl poweroff", "i3-msg exit" ]
 
 itms = ''
