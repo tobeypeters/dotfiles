@@ -195,6 +195,7 @@ for_window [class="Gnome-calendar"] floating enabled
 for_window [class="Gnome-calculator"] floating enabled
 for_window [class="Gnome-control-center"] floating enabled
 for_window [class="Gnome-text-editor"] floating enabled
+for_window [class="Gnome-tweaks"] floating enabled
 for_window [class="GParted"] floating enable
 for_window [class="Gufw.py"] floating enable
 for_window [class="Io.elementary.photos"] floating enable
