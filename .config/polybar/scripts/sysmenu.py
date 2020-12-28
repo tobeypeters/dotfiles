@@ -24,7 +24,7 @@ parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the 
 args = parser.parse_args()
 
 items = [ "About This Computer...", "sep", "System Preferences...", \
-    "App Store...", "sep", "System Monitor...  Ctrl +  + Del", \
+    "App Store...", "sep", "System Monitor...  Ctrl +  + Del", \
     "sep", "Restart", "Shutdown", "Log Out" ]
 
 commands = [ "gnome-control-center info-overview", "nop", "gnome-control-center", "snap-store", \
