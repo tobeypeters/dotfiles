@@ -25,6 +25,7 @@ sudo apt install -y clang
 
 #sudo apt install -y git
 
+sudo apt install -y xdo
 sudo apt install -y neovim
 sudo apt install -y sonata
 sudo apt install -y mpd
