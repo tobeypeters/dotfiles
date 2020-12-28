@@ -1,0 +1,16 @@
+mkdir ~/dotfiles
+cd ~/dotfiles
+
+git init --bare $HOME/dotfiles
+
+# Put this alias in your .bashrc
+alias config='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
+
+bash
+
+config config --local status.showUntrackedFiles no
+
+git config --global user.email "tobeypeters@hotmail.com"
+git config --global user.name "tobeypeters"
+
+git remote add origin https://github.com/tobeypeters/dotfiles.git
