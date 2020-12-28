@@ -50,6 +50,7 @@ sudo apt install -y htop
 
 #cd ~/Downloads/
 #git clone https://github.com/tobeypeters/.dotfiles.git
+#git clone https://github.com/Ultimate-Hosts-Blacklist/Ultimate.Hosts.Blacklist.git
 
 sudo apt install -y pavucontrol
 sudo apt install -y rofi
