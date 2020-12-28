@@ -37,6 +37,8 @@ sudo apt install -y htop
 
 #pip3 install i3ipc
 
+sudo apt install -y lightdm
+
 # alacritty start
 #cd ~/Downloads/
 #git clone https://github.com/alacritty/alacritty.git
