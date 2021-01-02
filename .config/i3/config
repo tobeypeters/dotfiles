@@ -173,7 +173,7 @@ bindsym Ctrl+$mod+Delete exec ksysguard
 set $editor code
 
 # Open the i3 config file
-bindsym $mod+c exec $editor ~/.config/i3/config &
+bindsym $mod+c exec $editor ~/.config/i3/config &floating enable
 # Open the polybar - i3 config file
 bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini &
 
@@ -186,16 +186,16 @@ for_window [class="Cycle_switcher"] floating enable
 for_window [class="feh"] floating enable
 for_window [class="Feren-store.py"] floating enable
 for_window [class="ffplay"] floating enable
-for_window [class="Firefox"] floating enablefor_window [class="Firefox"] floating enable
-for_window [class="Gdebi-gtk"] floating enabled
-for_window [class="Gedit"] floating enabled
+for_window [class="Firefox"] floating enable
+for_window [class="Gdebi-gtk"] floating enable
+for_window [class="Gedit"] floating enable
 for_window [class="ghostwriter"] floating enable
 for_window [class="Gimp"] floating enable
-for_window [class="Gnome-calendar"] floating enabled
-for_window [class="Gnome-calculator"] floating enabled
-for_window [class="Gnome-control-center"] floating enabled
-for_window [class="Gnome-text-editor"] floating enabled
-for_window [class="Gnome-tweaks"] floating enabled
+for_window [class="Gnome-calendar"] floating enable
+for_window [class="Gnome-calculator"] floating enable
+for_window [class="Gnome-control-center"] floating enable
+for_window [class="Gnome-text-editor"] floating enable
+for_window [class="Gnome-tweaks"] floating enable
 for_window [class="GParted"] floating enable
 for_window [class="Gufw.py"] floating enable
 for_window [class="Io.elementary.photos"] floating enable
@@ -220,11 +220,11 @@ for_window [class="Sonata"] floating enable
 for_window [class="Steam"] floating enable
 for_window [class="steam"] floating enable
 for_window [class="strawberry"] floating enable
-for_window [class="systemsettings"] floating enablebindsym $mod+Ctrl+Tab nop window selector
+for_window [class="systemsettings"] floating enable
 for_window [class="Tk"] floating enable
 for_window [class="Tp_popup_menu"] floating enable
-for_window [class="VirtualBox Manager"] floating enabled
-for_window [class="VirtualBox Machine"] floating enabled
+for_window [class="VirtualBox Manager"] floating enable
+for_window [class="VirtualBox Machine"] floating enable
 for_window [class="vlc"] floating enable
 for_window [class="x-terminal-emulator"] floating enable
 for_window [class="XTerm"] floating enable
