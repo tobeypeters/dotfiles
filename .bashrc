@@ -127,12 +127,13 @@ if [ ${EUID:-$(id -u) } -ne 0 ]; then
     COLOR1=${COLOR2}
     
     # cat /etc/os-release
+
     hostnamectl
 else
     COLOR1=${COLOR1}    
 fi
 
-export PS1="\n ${COLOR1}\u${NC}${COLOR2}\h:${NC}\W ${COLOR2}]${NC} "
+export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h:${NC}\W ${COLOR2}]${NC} "
 # --------------------------- PROMPT END
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
