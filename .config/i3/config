@@ -186,6 +186,7 @@ for_window [class="Cycle_switcher"] floating enable
 for_window [class="feh"] floating enable
 for_window [class="Feren-store.py"] floating enable
 for_window [class="ffplay"] floating enable
+for_window [class="File-roller"] floating enable
 for_window [class="Firefox"] floating enable
 for_window [class="Gdebi-gtk"] floating enable
 for_window [class="Gedit"] floating enable
