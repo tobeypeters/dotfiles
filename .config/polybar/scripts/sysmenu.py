@@ -28,7 +28,7 @@ items = [ "About This Computer...", "sep", "System Preferences...", \
     "sep", "Restart", "Shutdown", "Log Out" ]
 
 commands = [ "gnome-control-center info-overview", "nop", "gnome-control-center", "snap-store", \
-    "nop", "ksysguard", "nop", "systemctl reboot", "systemctl poweroff", "i3-msg exit" ]
+    "nop", "gnome-system-monitor", "nop", "systemctl reboot", "systemctl poweroff", "i3-msg exit" ]
 
 itms = ''
 cmds = ''
