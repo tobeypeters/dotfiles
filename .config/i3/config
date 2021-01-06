@@ -166,8 +166,8 @@ bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' 
 # Spawn Nemo file manager
 bindsym $mod+n exec nemo
 
-# bindsym Ctrl+$mod+Delete exec ksysguard
-bindsym Ctrl+$mod+Delete exec ksysguard
+# bindsym Ctrl+$mod+Delete exec gnome-system-monitor
+bindsym Ctrl+$mod+Delete exec gnome-system-monitor
 
 # set $editor i3-sensible-terminal -e micro
 set $editor code
@@ -191,11 +191,7 @@ for_window [class="Gdebi-gtk"] floating enable
 for_window [class="Gedit"] floating enable
 for_window [class="ghostwriter"] floating enable
 for_window [class="Gimp"] floating enable
-for_window [class="Gnome-calendar"] floating enable
-for_window [class="Gnome-calculator"] floating enable
-for_window [class="Gnome-control-center"] floating enable
-for_window [class="Gnome-text-editor"] floating enable
-for_window [class="Gnome-tweaks"] floating enable
+for_window [class="^Gnome*"] floating enable
 for_window [class="GParted"] floating enable
 for_window [class="Gufw.py"] floating enable
 for_window [class="Io.elementary.photos"] floating enable
@@ -223,16 +219,15 @@ for_window [class="strawberry"] floating enable
 for_window [class="systemsettings"] floating enable
 for_window [class="Tk"] floating enable
 for_window [class="Tp_popup_menu"] floating enable
-for_window [class="VirtualBox Manager"] floating enable
-for_window [class="VirtualBox Machine"] floating enable
+for_window [class="^VirtualBox*"] floating enable
 for_window [class="vlc"] floating enable
 for_window [class="x-terminal-emulator"] floating enable
 for_window [class="XTerm"] floating enable
 
 # resize specific windows
 for_window [class="Alacritty"] resize set 900 500
+for_window [class="Gnome-system-monitor"] resize set 900 500
 for_window [class="konsole"] resize set 900 500
-for_window [class="Lxtask"] resize set 900 500
 for_window [class="x-terminal-emulator"] resize set 900 500
 for_window [class="XTerm"] resize set 900 500
 
