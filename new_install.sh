@@ -32,6 +32,7 @@ sudo apt install -y xdotool
 sudo apt install -y neovim
 sudo apt install -y sonata
 sudo apt install -y mpd
+sudo apt install -y mpc
 sudo apt install -y feh
 sudo apt install -y htop
 
