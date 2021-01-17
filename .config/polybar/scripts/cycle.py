@@ -163,7 +163,7 @@ def switchWindow(a, e):
                     # Marks will only show, if you have a title bar.
                     call(['i3-msg', 'mark Swap_Window'])
 
-def containerFocused():
+def containerFocused() -> bool:
     # Make sure a app window "con" is focused and not the desktop "workspace".
     return i3.get_tree().find_focused().type == 'con'
 
