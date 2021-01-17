@@ -16,14 +16,14 @@
 
 #   Count the number of app upgrades are available.
 
-import subprocess
+from subprocess import Popen, PIPE
 
 def colorizeText(formatStr: str, formatColors: []) -> str:
     return '' if len(formatStr) < 3 else \
         f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
         
 def pexec(command: str) -> str:
-    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     output, errors = p.communicate()
     return output.decode(encoding="utf-8", errors="ignore")
 
