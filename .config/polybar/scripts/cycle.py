@@ -161,7 +161,6 @@ def switchWindow(a, e):
                     swapID[0] = focusedID[0]
 
                     # Marks will only show, if you have a title bar.
-                    # I don't.  My windows have a 1px border.
                     call(['i3-msg', 'mark Swap_Window'])
 
 def containerFocused():
