@@ -38,10 +38,11 @@
 # Add this to your i3 config : for_window [class="Cycle_switcher"] floating enable
 
 import i3ipc
-import argparse
-import os
 
-parser = argparse.ArgumentParser()
+from argparse import ArgumentParser
+from os import path
+
+parser = ArgumentParser()
 parser.add_argument('--application', action='store_true', help='Displays ONLY the foreground windows Application name.')
 parser.add_argument('--title', action='store_true', help='Displays ONLY the foreground windows Title.')
 parser.add_argument('--len_title', nargs=1, type=int, help='Max length of the title, you want to display.')
@@ -62,13 +63,13 @@ def read_configuration() -> ([], []):
     #
     #           <classname> - Listed under one of the above mentioned sections.
     #                         Don't wrap it in quotes or anything.
-    config_file = f'{os.path.dirname(os.path.realpath(__file__))}/window_info.conf'
+    config_file = f'{path.dirname(path.realpath(__file__))}/window_info.conf'
 
     bi = []
     be = []
 
-    if os.path.isfile(config_file):
-        with open (config_file, 'r') as cfgFile:
+    if path.isfile(config_file):
+        with open(config_file, 'r') as cfgFile:
             buffer = cfgFile.read().splitlines()
 
         bEx = bIg = False
