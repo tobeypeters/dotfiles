@@ -26,12 +26,11 @@
 #               "sep" = Generate a menu Seperator
 #               command "nop" = Don't execute a command for the associated item
 
-import subprocess
-import argparse
-
+from argparse import ArgumentParser
+from subprocess import Popen
 from tkinter import *
 
-parser = argparse.ArgumentParser()
+parser = ArgumentParser()
 parser.add_argument('--className', help='Override the popup classname.')
 parser.add_argument('--location', help='Location to display the popup.')
 parser.add_argument('--width', type=int, help='Override the width of the popup.')
@@ -48,7 +47,7 @@ def onselect(evt):
     command = args.commands[my_listbox.curselection()[0]]
 
     if not command == 'nop':
-        subprocess.Popen(command, shell=True)
+        Popen(command, shell=True)
         onclose('')
 
 sc = len(args.items)
