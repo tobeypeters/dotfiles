@@ -20,19 +20,6 @@ colors:
   #
   # Colors which should be used to draw the terminal cursor.
   #
-  # Allowed values are CellForeground and CellBackground, which reference the
-  # affected cell, or hexadecimal colors like #ff00ff.
-  #cursor:
-  #  text: CellBackground
-  #  cursor: CellForeground
-
-  # Selection colors
-  #
-  # Colors which should be used to draw the selection area.
-  #selection:
-  #  text: CellBackground
-  #  background: CellForeground
-
   # Normal colors
   normal:
     black:   '#000000'
@@ -94,3 +81,16 @@ colors:
     #   - _ Underline
     #   - | Beam
     #shape: Block
+
+# Allowed values are CellForeground and CellBackground, which reference the
+  # affected cell, or hexadecimal colors like #ff00ff.
+  #cursor:
+  #  text: CellBackground
+  #  cursor: CellForeground
+
+  # Selection colors
+  #
+  # Colors which should be used to draw the selection area.
+  selection:
+    text: '#000000'
+    background: '#00ffff'
