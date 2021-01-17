@@ -174,14 +174,6 @@ def closeFocusWindow(a, e):
             focusedID[0] = e.container.window
         
             if not swapID[0] == 0:
-                # Make sure it's a valid container
-                #focused_window = i3.get_tree().find_focused()
-
-                #if not focused_window.parent == None:
-                    #call(['i3-msg', f'swap container with id {swapID[0]}'])
-                
-                # call(['i3-msg', 'unmark Swap_Window'])
-                    #call(['notify-send', 'swapped window'])
                 call([ 'i3-msg', f'swap container with id {swapID[0]}; unmark Swap_Window; [id={swapID[0]}] focus']) # focus it using i3-msg
                 swapID[0] = 0
 
