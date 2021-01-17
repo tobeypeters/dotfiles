@@ -39,6 +39,8 @@
 
 import i3ipc
 
+import sys
+
 from argparse import ArgumentParser
 from os import path
 
