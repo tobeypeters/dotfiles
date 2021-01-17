@@ -166,13 +166,13 @@ def closeFocusWindow(a, e):
         else:
             focusedID[0] = e.container.window
         
-            #if not swapID[0] == 0:
-            #    focused_window = i3.get_tree().find_focused()
+            if not swapID[0] == 0:
+                focused_window = i3.get_tree().find_focused()
 
-            #    if focused_window.type == 'con':
-            #        call(['i3-msg', f'swap container with id {swapID[0]}'])
+                if focused_window.type == 'con':
+                    call(['i3-msg', f'swap container with id {swapID[0]}'])
 
-            #    swapID[0] = 0
+                swapID[0] = 0
 
 commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop window swap']
 
