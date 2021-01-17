@@ -22,14 +22,15 @@
 #                        bindsym $mod+Ctrl+Tab nop window selector
 
 import i3ipc
-import json
-import subprocess
-import argparse
-import os
 
+from argparse import ArgumentParser
+from json import loads
+from os import path
+from re import split
+from subprocess import call, check_output, Popen, PIPE
 from tkinter import *
 
-parser = argparse.ArgumentParser()
+parser = ArgumentParser()
 parser.add_argument('--onlyclass', nargs=1, help='Filter visible windows, by the specified classname.')
 parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the switcher popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
 args = parser.parse_args()
@@ -39,8 +40,8 @@ i3 = i3ipc.Connection()
 def fillNodes(f, s=''):
     def fillerUp(tree=None):
         if tree is None:
-            tree = subprocess.check_output(['i3-msg', '-t', 'get_tree'])
-            tree = json.loads(tree.decode('utf8'))
+            tree = check_output(['i3-msg', '-t', 'get_tree'])
+            tree = loads(tree.decode('utf8'))
 
         if tree['window_type'] == 'normal':
             if args.onlyclass and \
@@ -73,14 +74,28 @@ def switchWindow(a, e):
     if wc > 0:
         binding_cmd = e.ipc_data['binding']['command'].strip()
         if binding_cmd in commands:
+            if binding_cmd == commands[0] or binding_cmd == commands[1]:
+                if wc > 1:
+                    try:
+                        focusIDX = windows.index(focusedID[0]) + \
+                        (1 if (binding_cmd == commands[0]) else -1)
+                    except:
+                        focusIDX = 0
+
+                    wc -= 1
+                    if focusIDX < 0: focusIDX = wc
+                    if focusIDX > wc: focusIDX = 0
+
+                call([ 'i3-msg', f'[id={windows[focusIDX]} ] focus']) # focus it using i3-msg
+
             if binding_cmd == commands[2]:
                 fillNodes('switcher')
 
-                if len(switcher) > 0:
+                if len(switcher) > 0: 
                     # Is the program a terminal?  If so, what's running in it?
                     def getTerminalProgram(wID: int, wname: str) -> str:
                         def pexec(command: str) -> str:
-                            p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
                             output, errors = p.communicate()
                             return output.decode(encoding="utf-8", errors="ignore")
 
@@ -107,6 +122,8 @@ def switchWindow(a, e):
                                 result = pexec(f"xprop -id {hex(wID)} _NET_WM_PID | awk '/_NET_WM_PID\(CARDINAL\)/{{print $NF}}'")
 
                                 if not result == '':
+                                    piid = ''
+                                    
                                     while True:
                                         result = pexec(f'pgrep -P {result}')
 
@@ -115,11 +132,11 @@ def switchWindow(a, e):
                                         else:
                                             result = f"{pexec(f'ps -o comm= {piid}')}"
 
-                                            return f"*{''.join(re.split('[^a-zA-Z]*', result))}*"
+                                            return f"*{''.join(split('[^a-zA-Z]*', result))}*"
                             except:
                                 pass
 
-                            return ''
+                        return ''
 
                     cmds = itms = ''                   
 
@@ -129,41 +146,41 @@ def switchWindow(a, e):
                     
                     switcher.clear()
 
-                    path = os.path.dirname(os.path.realpath(__file__))
+                    _path = path.dirname(path.realpath(__file__))
 
-                    command = f"{path}/generic_popup.py --location '+28+20' --className 'tp_popup_menu' --items {itms}--commands {cmds}"
+                    command = f"{_path}/generic_popup.py --location '+28+20' --className 'tp_popup_menu' --items {itms}--commands {cmds}"
 
                     if args.menu_colors:
                         mc = args.menu_colors
                         command = f"{command}--menu_colors '{mc[0]}' '{mc[1]}' '{mc[2]}'"
 
-                    subprocess.Popen(command, shell=True)
-            else:
-                focusIDX = 0
-                 
-                if wc > 1:
-                    focusIDX = windows.index(focusedID[0]) + \
-                    (1 if (binding_cmd == commands[0]) else -1)
+                    Popen(command, shell=True)
 
-                    wc -= 1
-                    if focusIDX < 0: focusIDX = wc
-                    if focusIDX > wc: focusIDX = 0
-
-                subprocess.call([ 'i3-msg', f'[id={windows[focusIDX]} ] focus']) # focus it using i3-msg
+            if binding_cmd == commands[3]:
+                swapID[0] = focusedID[0]
 
 def closeFocusWindow(a, e):
     if e.container.window in windows:
-        if e.ipc_data['change'] == 'close':
+        if e.ipc_data['change'] == 'close':            
             windows.remove(e.container.window)
         else:
             focusedID[0] = e.container.window
+        
+            #if not swapID[0] == 0:
+            #    focused_window = i3.get_tree().find_focused()
 
-commands = ['nop window next', 'nop window prev', 'nop window selector']
+            #    if focused_window.type == 'con':
+            #        call(['i3-msg', f'swap container with id {swapID[0]}'])
+
+            #    swapID[0] = 0
+
+commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop window swap']
 
 windows = []
 switcher = []
 
 focusedID = [0]
+swapID = [0]
 
 fillNodes('')
 
@@ -174,4 +191,4 @@ i3.on('binding', switchWindow)
 
 i3.main()
 
-subprocess.call(['notify-send', 'cycle.py:', 'Script has terminated ...'])
+call(['notify-send', 'cycle.py:', 'Script has terminated ...'])
