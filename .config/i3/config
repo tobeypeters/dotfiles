@@ -249,6 +249,7 @@ bindsym $mod+p exec ~/.config/polybar/scripts/power.sh
 bindsym $mod+Tab nop window next
 bindsym $mod+Shift+Tab nop window prev
 bindsym $mod+Ctrl+Tab nop window selector
+bindsym $mod+Shift+a nop window swap
 
 # open an empty window container
 bindsym $mod+z exec i3-msg open
