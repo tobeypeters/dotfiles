@@ -86,7 +86,7 @@ def switchWindow(a, e):
                     if focusIDX < 0: focusIDX = wc
                     if focusIDX > wc: focusIDX = 0
 
-                call([ 'i3-msg', f'[id={windows[focusIDX]} ] focus']) # focus it using i3-msg
+                call([ 'i3-msg', f'[id={windows[focusIDX]}] focus']) # focus it using i3-msg
 
             if binding_cmd == commands[2]:
                 fillNodes('switcher')
@@ -157,10 +157,14 @@ def switchWindow(a, e):
                     Popen(command, shell=True)
 
             if binding_cmd == commands[3]:
-                swapID[0] = focusedID[0]
-                # Marks will only show, if you have a title bar.
-                # I don't.  My windows have a 1px border.
-                call(['i3-msg', 'mark Swap_Window'])
+                focused_window = i3.get_tree().find_focused()
+
+                if focused_window.type == 'con':
+                    swapID[0] = focusedID[0]
+
+                    # Marks will only show, if you have a title bar.
+                    # I don't.  My windows have a 1px border.
+                    call(['i3-msg', 'mark Swap_Window'])
 
 def closeFocusWindow(a, e):
     if e.container.window in windows:
@@ -171,13 +175,14 @@ def closeFocusWindow(a, e):
         
             if not swapID[0] == 0:
                 # Make sure it's a valid container
-                focused_window = i3.get_tree().find_focused()
+                #focused_window = i3.get_tree().find_focused()
 
-                if focused_window.type == 'con':
-                    call(['i3-msg', f'swap container with id {swapID[0]}'])
+                #if not focused_window.parent == None:
+                    #call(['i3-msg', f'swap container with id {swapID[0]}'])
                 
-                call(['i3-msg', 'unmark Swap_Window'])
-
+                # call(['i3-msg', 'unmark Swap_Window'])
+                    #call(['notify-send', 'swapped window'])
+                call([ 'i3-msg', f'swap container with id {swapID[0]}; unmark Swap_Window; [id={swapID[0]}] focus']) # focus it using i3-msg
                 swapID[0] = 0
 
 commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop window swap']
