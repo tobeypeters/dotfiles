@@ -169,7 +169,7 @@ def containerFocused():
 
 def closeFocusWindow(a, e):
     if e.container.window in windows:
-        if e.ipc_data['change'] == 'close':            
+        if e.ipc_data['change'] == 'close':
             windows.remove(e.container.window)
         else:
             focusedID[0] = e.container.window
