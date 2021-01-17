@@ -158,6 +158,9 @@ def switchWindow(a, e):
 
             if binding_cmd == commands[3]:
                 swapID[0] = focusedID[0]
+                # Marks will only show, if you have a title bar.
+                # I don't.  My windows have a 1px border.
+                call(['i3-msg', 'mark Swap_Window'])
 
 def closeFocusWindow(a, e):
     if e.container.window in windows:
@@ -167,10 +170,13 @@ def closeFocusWindow(a, e):
             focusedID[0] = e.container.window
         
             if not swapID[0] == 0:
+                # Make sure it's a valid container
                 focused_window = i3.get_tree().find_focused()
 
                 if focused_window.type == 'con':
                     call(['i3-msg', f'swap container with id {swapID[0]}'])
+                
+                call(['i3-msg', 'unmark Swap_Window'])
 
                 swapID[0] = 0
 
