@@ -39,8 +39,6 @@
 
 import i3ipc
 import argparse
-import subprocess
-import sys
 import os
 
 parser = argparse.ArgumentParser()
