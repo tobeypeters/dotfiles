@@ -157,16 +157,15 @@ def switchWindow(a, e):
 
                     Popen(command, shell=True)
 
-            if binding_cmd == commands[3]:
-                if containerFocused():
-                    if swapID[0] == 0:
-                        # Mark the focused window.
-                        # Marks will only show, if you have a title bar.
-                        marker(id=focusedID[0])
-                    else:
-                        # Unmark the focused window.
-                        # Maybe, you changed your mind.
-                        marker(prefix='un')
+            if binding_cmd == commands[3] and containerFocused():
+                if swapID[0] == 0:
+                    # Mark the focused window.
+                    # Marks will only show, if you have a title bar.
+                    marker(id=focusedID[0])
+                else:
+                    # Unmark the focused window.
+                    # Maybe, you changed your mind.
+                    marker(prefix='un')
 
 def marker(id:int = 0, prefix:str = ''):
     swapID[0] = id
