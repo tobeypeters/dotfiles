@@ -20,6 +20,7 @@
 #                        bindsym $mod+Tab nop window next
 #                        bindsym $mod+Shift+Tab nop window prev
 #                        bindsym $mod+Ctrl+Tab nop window selector
+#                        bindsym $mod+Shift+a nop window swap
 
 import i3ipc
 
@@ -158,10 +159,18 @@ def switchWindow(a, e):
 
             if binding_cmd == commands[3]:
                 if containerFocused():
-                    swapID[0] = focusedID[0]
+                    if swapID[0] == 0:
+                        # Mark the focused window.
+                        # Marks will only show, if you have a title bar.
+                        marker(id=focusedID[0])
+                    else:
+                        # Unmark the focused window.
+                        # Maybe, you changed your mind.
+                        marker(prefix='un')
 
-                    # Marks will only show, if you have a title bar.
-                    call(['i3-msg', 'mark Swap_Window'])
+def marker(id:int = 0, prefix:str = ''):
+    swapID[0] = id
+    call(['i3-msg', f'{prefix}mark Swap_Window'])
 
 def containerFocused() -> bool:
     # Make sure a app window "con" is focused and not the desktop "workspace".
@@ -175,8 +184,8 @@ def closeFocusWindow(a, e):
             focusedID[0] = e.container.window
         
             if not swapID[0] == 0 and containerFocused():
-                call([ 'i3-msg', f'swap container with id {swapID[0]}; unmark Swap_Window; [id={swapID[0]}] focus']) # focus it using i3-msg
-                swapID[0] = 0
+                call([ 'i3-msg', f'swap container with id {swapID[0]}; [id={swapID[0]}] focus']) # focus it using i3-msg
+                marker(prefix='un')
 
 commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop window swap']
 
