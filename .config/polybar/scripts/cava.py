@@ -39,7 +39,7 @@ parser.add_argument('-c', '-colors', nargs=2, help='Override the background and 
 
 args = parser.parse_args()
 
-# The 'BAR_FACTOR' is used to calculator all those states and keep the code readable
+# The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
 #
 BAR_FACTOR = 100 / 8
