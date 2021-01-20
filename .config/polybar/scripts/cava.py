@@ -22,7 +22,7 @@
 #            Script : https://gitlab.com/linuxstuff/dotfiles/-/blob/master/.config/polybar/scripts/modules/cava.py
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from configparser import ConfigParser
+# from configparser import ConfigParser
 from os import devnull, linesep, mkfifo, path, remove, sep
 from struct import unpack
 from subprocess import Popen, STDOUT
