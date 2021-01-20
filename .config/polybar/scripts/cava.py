@@ -147,20 +147,22 @@ def output(string, file):
 # Create cava config start ##########
 config = ConfigParser()
 
-config.add_section('general')
-config.set('general', 'bars', str(CAVA_BARS_NUMBER))
-#config.set('general', 'overshoot', str(0))
-config.set('general', 'overshoot', '0')
+n = 'general'
+config.add_section(n)
+config.set(n, 'bars', str(CAVA_BARS_NUMBER))
+config.set(n, 'overshoot', '0')
 
-config.add_section('output')
-config.set('output', 'method', 'raw')
-config.set('output', 'channels', 'mono')
-config.set('output', 'mono_option', 'average')
-config.set('output', 'raw_target', PIPE_IN)
-config.set('output', 'bit_format', CAVA_BIT_FORMAT)
+n = 'output'
+config.add_section(n)
+config.set(n, 'method', 'raw')
+config.set(n, 'channels', 'mono')
+config.set(n, 'mono_option', 'average')
+config.set(n, 'raw_target', PIPE_IN)
+config.set(n, 'bit_format', CAVA_BIT_FORMAT)
 
-config.add_section('smoothing')
-config.set('smoothing', 'integral', '0')
+n = 'smoothing'
+config.add_section(n)
+config.set(n, 'integral', '0')
 
 with open(CAVA_CONFIG_PATH, 'w') as configfile:
     config.write(configfile)
