@@ -15,7 +15,7 @@
 #	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #   This script converts cava's data output into fancy little bars. These values can range from 0 to 100
-#   We need to distribute 9 characters ('Zero output' and all bar heights: '▁▂▃▄▅▆▇█') over this value range.
+#   Distributed characters '▁▂▃▄▅▆▇█'.
 #
 #   Original Author : H45H74X
 #            reddit : https://www.reddit.com/user/H45H74X/
@@ -51,22 +51,24 @@ CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
 #
 BAR_FACTOR = 100 / 8
 
+# Characters to display in the visualizer.
+BC = [ '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█' ]
+
 # Configure resolution and style of the output here.
 # The script fetches the cava output value and searches for the biggest matching key to get the character from
 # (See 'BAR_FACTOR')
-#
 BAR_CHARACTERS = dict([
-    (000, '▁'),  # Zero output
+    (000, BC[0]),  # Zero output
 
-    (BAR_FACTOR * 1, '▁'),
-    (BAR_FACTOR * 2, '▂'),
-    (BAR_FACTOR * 3, '▃'),
-    (BAR_FACTOR * 4, '▄'),
-    (BAR_FACTOR * 5, '▅'),
-    (BAR_FACTOR * 6, '▆'),
-    (BAR_FACTOR * 7, '▇'),
+    (BAR_FACTOR * 1, BC[1]),
+    (BAR_FACTOR * 2, BC[2]),
+    (BAR_FACTOR * 3, BC[3]),
+    (BAR_FACTOR * 4, BC[4]),
+    (BAR_FACTOR * 5, BC[4]),
+    (BAR_FACTOR * 6, BC[5]),
+    (BAR_FACTOR * 7, BC[6]),
 
-    (100, '█'),  # Highest output
+    (100, BC[7]),  # Highest output
 ])
 
 def valueToCharacter(value):
@@ -100,7 +102,7 @@ SEPARATOR = ' '
 HIDE_WHEN_EMPTY = False
 
 # Specify how long this script should wait before printing another value.
-OUTPUT_DELAY = 0.0005
+OUTPUT_DELAY = 0.0000
 
 # Specify how many times cava can report "no sound" (all values are 0) 
 # before the script detects it.
