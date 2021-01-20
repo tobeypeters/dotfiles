@@ -35,6 +35,7 @@ parser = ArgumentParser(description="cava polybar parse script\nConverts cava ra
     "(/tmp/cava_polybar.config) is messed up, simply delet it.", formatter_class=RawTextHelpFormatter)
 
 parser.add_argument('-t', '-test', action='store_true', help='Run test mode (stdout only)')
+parser.add_argument('-c', '-colors', nargs=2, help='Override the background and foreground colors.')
 
 args = parser.parse_args()
 
@@ -68,6 +69,7 @@ def valueToCharacter(value):
     Args:
         value ([int]): Value that should be mapped to a character
     """
+
     return BAR_CHARACTERS[BAR_FACTOR * (value // BAR_FACTOR)] if value < 100 else BAR_CHARACTERS[100]
 
 if args.t:
@@ -187,6 +189,9 @@ inputPipe = open(PIPE_IN, "rb")
 
 exitCode = 0
 try:
+    def colorizeText(formatStr: str, formatColors: []) -> str:
+        return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
+
     # Conversion process start ##########
     chunk = bytesize * CAVA_BARS_NUMBER
     fmt = bytetype * CAVA_BARS_NUMBER
@@ -207,7 +212,9 @@ try:
 
             if (len(tstring) > 0):
                 tstring += SEPARATOR
-            tstring += valueToCharacter(value)
+            
+            buffer = valueToCharacter(value)
+            tstring += buffer if not args.c else colorizeText(buffer, args.c)
 
             if (value != 0):
                 emptyOutput = False
