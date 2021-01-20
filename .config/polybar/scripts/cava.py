@@ -112,7 +112,7 @@ PIPE_OUT = None
 # Examples:
 #   "/tmp/cava_polybar.config"
 #   os.path.join(os.sep, "tmp", "cava_polybar.config")
-CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
+# CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
 
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
@@ -166,8 +166,8 @@ with open(CAVA_CONFIG_PATH, 'w') as configfile:
 # Create cava config end ##########
 
 # Create cava subprocess
-#cavaProcess = Popen(["cava"],
-cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
+#cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
+cavaProcess = Popen(["cava"],
     stdout=open(devnull, 'w'),
     stderr=STDOUT
 )
