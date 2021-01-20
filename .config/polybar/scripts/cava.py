@@ -139,8 +139,7 @@ def output(string, file):
     if (PIPE_OUT):
         file.write(string)
     else:
-        string = string if not args.c else colorizeText(string, args.c)
-        print(string, end="")
+        print(string if not args.c else colorizeText(string, args.c), end="")
         stdout.flush()
 
     sleep(OUTPUT_DELAY)
