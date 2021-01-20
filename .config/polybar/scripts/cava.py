@@ -238,6 +238,6 @@ if path.exists(PIPE_IN):
 
     # Close input pipe and kill the subprocess    
     inputPipe.close()
-    cavaProcess.kill()
 
+cavaProcess.kill()
 exit(exitCode)
