@@ -64,7 +64,6 @@ BAR_CHARACTERS = dict([
 def valueToCharacter(value):
     """
     Returns the respective character for specified value.
-    If no match found, it returns the 'highest' character.
 
     Args:
         value ([int]): Value that should be mapped to a character
