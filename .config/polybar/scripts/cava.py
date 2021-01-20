@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
 #   The MIT License(MIT)
-#   Original creator, who made the script which this was 
-#   converted from, https://gist.github.com/elundmark
 #   Copyright(c), Tobey Peters, https://github.com/tobeypeters
 #	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 #	and associated documentation files (the "Software"), to deal in the Software without restriction,
