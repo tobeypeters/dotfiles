@@ -108,10 +108,6 @@ EMPTY_OUTPUT_THRESHOLD = 5
 
 # If the script output should be written to a named pipe, specify the path here.
 # Set to 'None' to disable FIFO output and print to STDOUT
-#
-# Examples:
-#   "/tmp/cava_polybar_output.fifo"
-#   os.path.join(os.sep, "tmp", "cava_polybar_output.fifo")
 PIPE_OUT = None
 
 # The following data will be used in the temporary cava config.
@@ -131,7 +127,6 @@ bytetype, bytesize, bytenorm = ("H", 2, 65535) if (
 
 def output(string, file):
     def colorizeText(formatStr: str, formatColors: []) -> str:
-
         return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
 
     """
@@ -200,7 +195,6 @@ if path.exists(PIPE_IN):
 
     emptyOutputs = 0
 
-    # Convert
     while True:
         rawData = inputPipe.read(chunk)
         if len(rawData) < chunk:
