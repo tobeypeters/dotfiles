@@ -136,6 +136,7 @@ def output(string, file):
         string ([string]): String to print
         file ([file]): [description]
     """
+    string = string if not args.c else colorizeText(string, args.c)
 
     if (PIPE_OUT):
         file.write(string)
@@ -213,8 +214,7 @@ try:
             if (len(tstring) > 0):
                 tstring += SEPARATOR
             
-            buffer = valueToCharacter(value)
-            tstring += buffer if not args.c else colorizeText(buffer, args.c)
+            tstring += valueToCharacter(value)
 
             if (value != 0):
                 emptyOutput = False
