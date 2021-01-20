@@ -147,7 +147,7 @@ def output(string, file):
     sleep(OUTPUT_DELAY)
 
 # Create cava config start ##########
-config = ConfigParser()
+'''config = ConfigParser()
 
 config.add_section('general')
 config.set('general', 'bars', str(CAVA_BARS_NUMBER))
@@ -164,11 +164,12 @@ config.add_section('smoothing')
 config.set('smoothing', 'integral', '0')
 
 with open(CAVA_CONFIG_PATH, 'w') as configfile:
-    config.write(configfile)
+    config.write(configfile)'''
 # Create cava config end ##########
 
 # Create cava subprocess
-cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
+#cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
+cavaProcess = Popen(["cava"],
     stdout=open(devnull, 'w'),
     stderr=STDOUT
 )
