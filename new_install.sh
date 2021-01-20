@@ -73,7 +73,11 @@ sudo apt install -y policykit-1-gnome
 
 sudo apt install -y virtualbox
 
-sudo apt install p7zip-full
+sudo apt install -y p7zip-full
+sudo apt install -y cava
+
+sudo add-apt-repository ppa:tiheum/equinox
+sudo apt-get update && sudo apt-get install faenza-icon-theme
 
 apt install build-essential git cmake cmake-data pkg-config python3-sphinx libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev
 sudo apt install libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev i3-wm libjsoncpp-dev libmpdclient-dev libcurl4-openssl-dev libnl-genl-3-dev
