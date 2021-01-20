@@ -172,27 +172,28 @@ with open(CAVA_CONFIG_PATH, 'w') as configfile:
 # Create cava config end ##########
 
 # Create cava subprocess
-#cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
 cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH])
 #    stdout=open(devnull, 'w'),
 #    stderr=STDOUT
 #)
 
-inputPipe = open(PIPE_IN, "rb")
-
-# Open output pipe if specified
-outputPipe = None
-if (PIPE_OUT):
-    print("The converted output can be found in " + PIPE_OUT)
-
-    if path.exists(PIPE_OUT):
-        remove(PIPE_OUT)
-
-    mkfifo(PIPE_OUT)
-    outputPipe = open(PIPE_OUT, "w")
-
 exitCode = 0
-try:
+
+if path.exists(PIPE_IN):
+    inputPipe = open(PIPE_IN, "rb")
+
+    # Open output pipe if specified
+    outputPipe = None
+    if (PIPE_OUT):
+        print("The converted output can be found in " + PIPE_OUT)
+
+        if path.exists(PIPE_OUT):
+            remove(PIPE_OUT)
+
+        mkfifo(PIPE_OUT)
+        outputPipe = open(PIPE_OUT, "w")
+
+#try:
     # Conversion process start ##########
     chunk = bytesize * CAVA_BARS_NUMBER
     fmt = bytetype * CAVA_BARS_NUMBER
@@ -227,16 +228,16 @@ try:
             emptyOutputs = 0
             output(tstring + linesep, outputPipe)
     # Conversion process end ##########
-except KeyboardInterrupt:
-    exitCode = 1
+#except KeyboardInterrupt:
+#    exitCode = 1
 
-# Close output pipe if needed
-if (PIPE_OUT):
-    outputPipe.close()
-    remove(PIPE_OUT)
+    # Close output pipe if needed
+    if (PIPE_OUT):
+        outputPipe.close()
+        remove(PIPE_OUT)
 
-# Close input pipe and kill the subprocess
-inputPipe.close()
-cavaProcess.kill()
+    # Close input pipe and kill the subprocess    
+    inputPipe.close()
+    cavaProcess.kill()
 
 exit(exitCode)
