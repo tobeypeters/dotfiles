@@ -136,11 +136,10 @@ def output(string, file):
         string ([string]): String to print
         file ([file]): [description]
     """
-    string = string if not args.c else colorizeText(string, args.c)
-
     if (PIPE_OUT):
         file.write(string)
     else:
+        string = string if not args.c else colorizeText(string, args.c)
         print(string, end="")
         stdout.flush()
 
