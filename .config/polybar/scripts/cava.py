@@ -22,7 +22,7 @@
 #            Script : https://gitlab.com/linuxstuff/dotfiles/-/blob/master/.config/polybar/scripts/modules/cava.py
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-# from configparser import ConfigParser
+from configparser import ConfigParser
 from os import devnull, linesep, mkfifo, path, remove, sep
 from struct import unpack
 from subprocess import Popen, STDOUT
@@ -38,6 +38,13 @@ parser.add_argument('-t', '-test', action='store_true', help='Run test mode (std
 parser.add_argument('-c', '-colors', nargs=2, help='Override the background and foreground colors.')
 
 args = parser.parse_args()
+
+# Path of the temporary cava configuration.
+#
+# Examples:
+#   "/tmp/cava_polybar.config"
+#   os.path.join(os.sep, "tmp", "cava_polybar.config")
+CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
@@ -84,7 +91,7 @@ if args.t:
     for i in range(101):
         print('{:03d}: {}'.format(i, valueToCharacter(i)))
 
-    exit()
+    exit(0)
 
 # Separator Character between bars.
 SEPARATOR = ' '
@@ -107,16 +114,10 @@ EMPTY_OUTPUT_THRESHOLD = 5
 #   os.path.join(os.sep, "tmp", "cava_polybar_output.fifo")
 PIPE_OUT = None
 
-# Path of the temporary cava configuration.
-#
-# Examples:
-#   "/tmp/cava_polybar.config"
-#   os.path.join(os.sep, "tmp", "cava_polybar.config")
-# CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
-
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
-PIPE_IN = path.join(sep, "tmp", "cava_polybar_input.fifo")
+# PIPE_IN = path.join(sep, "tmp", "cava_polybar_input.fifo")
+PIPE_IN = "/tmp/cava_polybar_input.fifo"
 
 # Number of bars in cava.  Default: 8
 CAVA_BARS_NUMBER = 16
@@ -129,6 +130,10 @@ bytetype, bytesize, bytenorm = ("H", 2, 65535) if (
     CAVA_BIT_FORMAT == "16bit") else ("B", 1, 255)
 
 def output(string, file):
+    def colorizeText(formatStr: str, formatColors: []) -> str:
+
+        return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
+
     """
     Write the given value either to STDOUT or user specified output pipe
 
@@ -145,11 +150,12 @@ def output(string, file):
     sleep(OUTPUT_DELAY)
 
 # Create cava config start ##########
-'''config = ConfigParser()
+config = ConfigParser()
 
 config.add_section('general')
 config.set('general', 'bars', str(CAVA_BARS_NUMBER))
-config.set('general', 'overshoot', str(0))
+#config.set('general', 'overshoot', str(0))
+config.set('general', 'overshoot', '0')
 
 config.add_section('output')
 config.set('output', 'method', 'raw')
@@ -162,15 +168,17 @@ config.add_section('smoothing')
 config.set('smoothing', 'integral', '0')
 
 with open(CAVA_CONFIG_PATH, 'w') as configfile:
-    config.write(configfile)'''
+    config.write(configfile)
 # Create cava config end ##########
 
 # Create cava subprocess
 #cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
-cavaProcess = Popen(["cava"],
-    stdout=open(devnull, 'w'),
-    stderr=STDOUT
-)
+cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH])
+#    stdout=open(devnull, 'w'),
+#    stderr=STDOUT
+#)
+
+inputPipe = open(PIPE_IN, "rb")
 
 # Open output pipe if specified
 outputPipe = None
@@ -183,14 +191,8 @@ if (PIPE_OUT):
     mkfifo(PIPE_OUT)
     outputPipe = open(PIPE_OUT, "w")
 
-# Open input pipe (raw cava data)
-inputPipe = open(PIPE_IN, "rb")
-
 exitCode = 0
 try:
-    def colorizeText(formatStr: str, formatColors: []) -> str:
-        return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
-
     # Conversion process start ##########
     chunk = bytesize * CAVA_BARS_NUMBER
     fmt = bytetype * CAVA_BARS_NUMBER
