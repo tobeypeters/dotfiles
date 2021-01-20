@@ -69,7 +69,7 @@ def valueToCharacter(value):
     Args:
         value ([int]): Value that should be mapped to a character
     """
-    return BAR_CHARACTERS[BAR_FACTOR * (value // BAR_FACTOR)] if value < 99 else BAR_CHARACTERS[100]
+    return BAR_CHARACTERS[BAR_FACTOR * (value // BAR_FACTOR)] if value < 100 else BAR_CHARACTERS[100]
 
 if args.t:
     # Prints test data to stdout. Useful for checking resolution and customisation configuration
@@ -166,8 +166,8 @@ with open(CAVA_CONFIG_PATH, 'w') as configfile:
 # Create cava config end ##########
 
 # Create cava subprocess
-#cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
-cavaProcess = Popen(["cava"],
+#cavaProcess = Popen(["cava"],
+cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH],
     stdout=open(devnull, 'w'),
     stderr=STDOUT
 )
