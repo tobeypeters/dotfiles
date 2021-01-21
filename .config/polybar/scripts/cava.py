@@ -22,10 +22,8 @@
 #            Script : https://gitlab.com/linuxstuff/dotfiles/-/blob/master/.config/polybar/scripts/modules/cava.py
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from configparser import ConfigParser
 from os import linesep, mkfifo, path, remove
 from struct import unpack
-from subprocess import Popen, STDOUT
 from sys import exit, stdout
 from time import sleep
 
@@ -142,36 +140,6 @@ def output(string, file):
 
     sleep(OUTPUT_DELAY)
 
-# Create cava config start ##########
-config = ConfigParser()
-
-n = 'general'
-config.add_section(n)
-config.set(n, 'bars', str(CAVA_BARS_NUMBER))
-config.set(n, 'overshoot', '0')
-
-n = 'output'
-config.add_section(n)
-config.set(n, 'method', 'raw')
-config.set(n, 'channels', 'mono')
-config.set(n, 'mono_option', 'average')
-config.set(n, 'raw_target', PIPE_IN)
-config.set(n, 'bit_format', CAVA_BIT_FORMAT)
-
-n = 'smoothing'
-config.add_section(n)
-config.set(n, 'integral', '0')
-
-with open(CAVA_CONFIG_PATH, 'w') as configfile:
-    config.write(configfile)
-# Create cava config end ##########
-
-# Create cava subprocess
-cavaProcess = Popen(["cava", "-p", CAVA_CONFIG_PATH])
-#    stdout=open(devnull, 'w'),
-#    stderr=STDOUT
-#)
-
 exitCode = 0
 
 if path.exists(PIPE_IN):
@@ -188,10 +156,12 @@ if path.exists(PIPE_IN):
         mkfifo(PIPE_OUT)
         outputPipe = open(PIPE_OUT, "w")
 
-#try:
+    #try:
     # Conversion process start ##########
     chunk = bytesize * CAVA_BARS_NUMBER
     fmt = bytetype * CAVA_BARS_NUMBER
+
+    oldchunks = [BC[0]] * (bytesize * 8)
 
     emptyOutputs = 0
 
@@ -222,8 +192,8 @@ if path.exists(PIPE_IN):
             emptyOutputs = 0
             output(tstring + linesep, outputPipe)
     # Conversion process end ##########
-#except KeyboardInterrupt:
-#    exitCode = 1
+    #except KeyboardInterrupt:
+    #    exitCode = 1
 
     # Close output pipe if needed
     if (PIPE_OUT):
@@ -234,6 +204,4 @@ if path.exists(PIPE_IN):
     inputPipe.close()
 
 # Make sure we kill the subprocess
-cavaProcess.kill()
-
-exit(exitCode)
+exit(0)
