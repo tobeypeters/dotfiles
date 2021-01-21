@@ -285,3 +285,5 @@ $exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000
 $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
+
+$exec cava -p ~/.config/cava/polybar.conf
