@@ -230,8 +230,10 @@ if path.exists(PIPE_IN):
         outputPipe.close()
         remove(PIPE_OUT)
 
-    # Close input pipe and kill the subprocess    
+    # Close input pipe
     inputPipe.close()
 
+# Make sure we kill the subprocess
 cavaProcess.kill()
+
 exit(exitCode)
