@@ -47,7 +47,6 @@ CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
-#
 BAR_FACTOR = 100 / 8
 
 # Characters to display in the visualizer.
@@ -77,7 +76,6 @@ def valueToCharacter(value):
     Args:
         value ([int]): Value that should be mapped to a character
     """
-
     return BAR_CHARACTERS[BAR_FACTOR * (value // BAR_FACTOR)] if value < 100 else BAR_CHARACTERS[100]
 
 if args.t:
