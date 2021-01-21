@@ -47,7 +47,7 @@ CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
-BAR_FACTOR = 100 / 8
+BAR_FACTOR = 100 / 7
 
 # Characters to display in the visualizer.
 BC = [ '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█' ]
@@ -62,9 +62,8 @@ BAR_CHARACTERS = dict([
     (BAR_FACTOR * 2, BC[2]),
     (BAR_FACTOR * 3, BC[3]),
     (BAR_FACTOR * 4, BC[4]),
-    (BAR_FACTOR * 5, BC[4]),
-    (BAR_FACTOR * 6, BC[5]),
-    (BAR_FACTOR * 7, BC[6]),
+    (BAR_FACTOR * 5, BC[5]),
+    (BAR_FACTOR * 6, BC[6]),
 
     (100, BC[7]),  # Highest output
 ])
