@@ -23,7 +23,7 @@
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 from configparser import ConfigParser
-from os import devnull, linesep, mkfifo, path, remove, sep
+from os import linesep, mkfifo, path, remove
 from struct import unpack
 from subprocess import Popen, STDOUT
 from sys import exit, stdout
@@ -42,9 +42,8 @@ args = parser.parse_args()
 # Path of the temporary cava configuration.
 #
 # Examples:
-#   "/tmp/cava_polybar.config"
-#   os.path.join(os.sep, "tmp", "cava_polybar.config")
-CAVA_CONFIG_PATH = path.join(sep, "tmp", "cava_polybar.config")
+#   path.join(sep, "tmp", "cava_polybar.config")
+CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
