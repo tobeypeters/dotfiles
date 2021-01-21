@@ -93,7 +93,7 @@ if args.t:
 SEPARATOR = ' '
 
 # Display no output if all bars are at minimum level (no sound output).
-HIDE_WHEN_EMPTY = False
+HIDE_WHEN_EMPTY = True
 
 # Specify how long this script should wait before printing another value.
 OUTPUT_DELAY = 0.0000
@@ -161,7 +161,7 @@ if path.exists(PIPE_IN):
     chunk = bytesize * CAVA_BARS_NUMBER
     fmt = bytetype * CAVA_BARS_NUMBER
 
-    oldchunks = [BC[0]] * (bytesize * 8)
+    # oldchunks = [BC[0]] * (bytesize * 8)
 
     emptyOutputs = 0
 
