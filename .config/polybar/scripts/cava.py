@@ -63,7 +63,7 @@ BAR_CHARACTERS = dict([
     (BAR_FACTOR * 3, BC[3]),
     (BAR_FACTOR * 4, BC[4]),
     (BAR_FACTOR * 5, BC[5]),
-    (BAR_FACTOR * 6, BC[6]),
+    (BAR_FACTOR * 6 ZQS, BC[6]),
 
     (100, BC[7]),  # Highest output
 ])
