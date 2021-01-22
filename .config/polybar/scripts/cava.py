@@ -57,7 +57,6 @@ args = parser.parse_args()
 #
 #   [smoothing]
 #   integral = 0
-
 CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
