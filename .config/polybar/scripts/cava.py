@@ -40,7 +40,7 @@ args = parser.parse_args()
 # Path of the temporary cava configuration.
 #
 # Examples:
-#   path.join(sep, "tmp", "cava_polybar.config")
+#   path.join(sep, 'tmp', 'cava_polybar.config')
 #
 # Contents of the config:
 #
@@ -94,12 +94,12 @@ def valueToCharacter(value):
 if args.t:
     # Prints test data to stdout. Useful for checking resolution and customisation configuration
 
-    print("\nBar Characters:")
+    print('\nBar Characters:')
     for bar_threshold in BAR_CHARACTERS:
         print('{:06.2f}: {}'.format(
             bar_threshold, BAR_CHARACTERS[bar_threshold]))
 
-    print("\nValue Test:")
+    print('\nValue Test:')
     for i in range(101):
         print('{:03d}: {}'.format(i, valueToCharacter(i)))
 
@@ -114,7 +114,7 @@ HIDE_WHEN_EMPTY = True
 # Specify how long this script should wait before printing another value.
 OUTPUT_DELAY = 0.0000
 
-# Specify how many times cava can report "no sound" (all values are 0) 
+# Specify how many times cava can report 'no sound' (all values are 0) 
 # before the script detects it.
 EMPTY_OUTPUT_THRESHOLD = 5
 
@@ -124,18 +124,18 @@ PIPE_OUT = None
 
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
-# PIPE_IN = path.join(sep, "tmp", "cava_polybar_input.fifo")
-PIPE_IN = "/tmp/cava_polybar_input.fifo"
+# PIPE_IN = path.join(sep, 'tmp', 'cava_polybar_input.fifo')
+PIPE_IN = '/tmp/cava_polybar_input.fifo'
 
 # Number of bars in cava.  Default: 8
 CAVA_BARS_NUMBER = 16
 
 # Output bit format for cava.
 # Can be 16bit ot 8bit, but 8 should be plenty of resolution for the default of 8 bars...
-CAVA_BIT_FORMAT = "8bit"
+CAVA_BIT_FORMAT = '8bit'
 
-bytetype, bytesize, bytenorm = ("H", 2, 65535) if (
-    CAVA_BIT_FORMAT == "16bit") else ("B", 1, 255)
+bytetype, bytesize, bytenorm = ('H', 2, 65535) if (
+    CAVA_BIT_FORMAT == '16bit') else ('B', 1, 255)
 
 def output(string, file):
     def colorizeText(formatStr: str, formatColors: []) -> str:
@@ -151,7 +151,7 @@ def output(string, file):
     if (PIPE_OUT):
         file.write(string)
     else:
-        print(string if not args.c else colorizeText(string, args.c), end="")
+        print(string if not args.c else colorizeText(string, args.c), end='')
         stdout.flush()
 
     sleep(OUTPUT_DELAY)
@@ -159,18 +159,18 @@ def output(string, file):
 exitCode = 0
 
 if path.exists(PIPE_IN):
-    inputPipe = open(PIPE_IN, "rb")
+    inputPipe = open(PIPE_IN, 'rb')
 
     # Open output pipe if specified
     outputPipe = None
     if (PIPE_OUT):
-        print("The converted output can be found in " + PIPE_OUT)
+        print('The converted output can be found in ' + PIPE_OUT)
 
         if path.exists(PIPE_OUT):
             remove(PIPE_OUT)
 
         mkfifo(PIPE_OUT)
-        outputPipe = open(PIPE_OUT, "w")
+        outputPipe = open(PIPE_OUT, 'w')
 
     #try:
     # Conversion process start ##########
@@ -186,7 +186,7 @@ if path.exists(PIPE_IN):
         if len(rawData) < chunk:
             break
 
-        tstring = ""
+        tstring = ''
         emptyOutput = True
 
         for i in unpack(fmt, rawData):
@@ -203,7 +203,7 @@ if path.exists(PIPE_IN):
         if (emptyOutput and HIDE_WHEN_EMPTY):
             emptyOutputs += 1
             if (emptyOutputs > EMPTY_OUTPUT_THRESHOLD):
-                output("        " + linesep, outputPipe)
+                output('        ' + linesep, outputPipe)
         else:
             emptyOutputs = 0
             output(tstring + linesep, outputPipe)
