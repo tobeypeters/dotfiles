@@ -41,6 +41,23 @@ args = parser.parse_args()
 #
 # Examples:
 #   path.join(sep, "tmp", "cava_polybar.config")
+#
+# Contents of the config:
+#
+#   [general]
+#   bars = 16
+#   overshoot = 0
+#
+#   [output]
+#   method = raw
+#   channels = mono
+#   mono_option = average
+#   raw_target = /tmp/cava_polybar_input.fifo
+#   bit_format = 8bit
+#
+#   [smoothing]
+#   integral = 0
+
 CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
