@@ -28,19 +28,24 @@ from sys import exit, stdout
 from time import sleep
 
 parser = ArgumentParser(description="cava polybar parse script\nConverts cava raw " + \
-    "values into characters and outputs to STDOUT or a fifo buffer.\n\nAdjust thresholds, " + \
-    "characters and config directly in the script.\n\nIf the config file at 'CONFIG_PATH'" + \
-    "(/tmp/cava_polybar.config) is messed up, simply delet it.", formatter_class=RawTextHelpFormatter)
+    "values into characters and outputs to STDOUT or a fifo buffer." + \
+    "\n\nConfiguration file : ~/.config/cava/polybar.conf" + \
+    "\n\nNote: If you do not have a copy of the configuration file, this script " + \
+    "\nspecifies the minimum needed to create it.", formatter_class=RawTextHelpFormatter)
 
 parser.add_argument('-t', '-test', action='store_true', help='Run test mode (stdout only)')
 parser.add_argument('-c', '-colors', nargs=2, help='Override the background and foreground colors.')
 
 args = parser.parse_args()
 
-# Path of the temporary cava configuration.
+# For this script to work, you need to make sure sure
+# an instance of cava is running.
+# 
+# For example, in a i3 configuration, you could have something like:
 #
-# Examples:
-#   path.join(sep, 'tmp', 'cava_polybar.config')
+# exec --no-startup-id cava -p ~/.config/cava/polybar.conf
+
+# Path of the temporary cava configuration.
 #
 # Contents of the config:
 #
@@ -57,7 +62,8 @@ args = parser.parse_args()
 #
 #   [smoothing]
 #   integral = 0
-CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
+#
+# CAVA_CONFIG_PATH = '/tmp/cava_polybar.config'
 
 # The 'BAR_FACTOR' is used to calculate all those states and keep the code readable
 # (See 'BAR_CHARACTERS')
