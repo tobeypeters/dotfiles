@@ -32,8 +32,8 @@ from subprocess import call, check_output, Popen, PIPE
 from tkinter import *
 
 parser = ArgumentParser()
-parser.add_argument('--onlyclass', nargs=1, help='Filter visible windows, by the specified classname.')
-parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the switcher popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
+parser.add_argument('--onlyclass', '--oc', nargs=1, help='Filter visible windows, by the specified classname.')
+parser.add_argument('--menu_colors', '--mc', nargs=3, help='Override the colors, of the switcher popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
 args = parser.parse_args()
 
 i3 = i3ipc.Connection()
