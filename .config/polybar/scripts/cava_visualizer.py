@@ -148,8 +148,7 @@ def output(string):
     Args:
         string ([string]): String to print
     """
-    print(string if not args.c else colorizeText(string, args.c))
-    stdout.flush()
+    print(string if not args.c else colorizeText(string, args.c), flush=True)
 
     sleep(OUTPUT_DELAY)
 
