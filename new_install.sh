@@ -90,4 +90,6 @@ sudo apt install libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev 
 # Chrome Extension: https everywhere
 # Chrome Extension: Google pip
 
+# chrome://flags: Can enable Vuncan, and other such things
+
 # UUID=780AE4AC0AE46918 /media/tibegato/StorageDaemon/    auto nosuid,nodev,nofail,x-gvfs-show 0 0
