@@ -73,7 +73,8 @@ BAR_FACTOR = 100 / 7
 BC = [ '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█' ]
 
 # Configure resolution and style of the output here.
-# The script fetches the cava output value and searches for the biggest matching key to get the character from
+# The script fetches the cava output value and searches for the biggest
+# matching key to get the character from
 # (See 'BAR_FACTOR')
 BAR_CHARACTERS = dict([
     (000, BC[0]),  # Zero output
