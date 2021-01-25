@@ -132,8 +132,7 @@ PIPE_IN = '/tmp/cava_polybar_input.fifo'
 # Number of bars in cava.  Default: 8
 CAVA_BARS_NUMBER = 16
 
-# Output bit format for cava.
-# Can be 16bit ot 8bit, but 8 should be plenty of resolution for the default of 8 bars...
+# Output bit format for cava. Can be 16bit ot 8bit.
 CAVA_BIT_FORMAT = '8bit'
 
 bytetype, bytesize, bytenorm = ('H', 2, 65535) if (
