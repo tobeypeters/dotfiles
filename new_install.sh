@@ -86,4 +86,8 @@ sudo apt install libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev 
 # setup timeshift
 # https://code.visualstudio.com/docs/setup/linux
 
+# Chrome Extension: https://chrome.google.com/webstore/detail/enhanced-h264ify/omkfmpieigblcllmkgbflkikinpkodlk/related
+# Chrome Extension: https everywhere
+# Chrome Extension: Google pip
+
 # UUID=780AE4AC0AE46918 /media/tibegato/StorageDaemon/    auto nosuid,nodev,nofail,x-gvfs-show 0 0
