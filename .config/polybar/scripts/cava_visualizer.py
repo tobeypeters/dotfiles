@@ -101,8 +101,8 @@ if args.t:
     # Prints test data to stdout. Useful for checking resolution and customisation configuration
 
     print('\nBar Characters:')
-    for bt, bc in BAR_CHARACTERS.items():
-        print(f'{bt:06.2f}: {bc}')
+    for BT, BC in BAR_CHARACTERS.items():
+        print(f'{BT:06.2f}: {BC}')
 
     print('\nValue Test:')
     for i in range(101):
