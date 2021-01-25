@@ -102,12 +102,11 @@ if args.t:
 
     print('\nBar Characters:')
     for bar_threshold in BAR_CHARACTERS:
-        print('{:06.2f}: {}'.format(
-            bar_threshold, BAR_CHARACTERS[bar_threshold]))
+        print(f'{bar_threshold:06.2f}: {BAR_CHARACTERS[bar_threshold]}')
 
     print('\nValue Test:')
     for i in range(101):
-        print('{:03d}: {}'.format(i, valueToCharacter(i)))
+        print(f'{i:03d}: {valueToCharacter(i)}')
 
     exit(0)
 
