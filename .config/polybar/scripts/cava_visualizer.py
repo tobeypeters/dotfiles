@@ -189,5 +189,5 @@ if path.exists(PIPE_IN):
     # Close input pipe
     inputPipe.close()
 
-# Make sure we kill the subprocess
+# Exit with a success code
 exit(0)
