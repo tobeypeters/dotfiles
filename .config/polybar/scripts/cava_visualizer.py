@@ -122,7 +122,7 @@ OUTPUT_DELAY = 0.0000
 
 # Specify how many times cava can report 'no sound' (all values are 0) 
 # before the script detects it.
-EMPTY_OUTPUT_THRESHOLD = 5
+EMPTY_OUTPUT_THRESHOLD = 10
 
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
