@@ -141,7 +141,7 @@ def output(string):
         return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
 
     """
-    Write the given value either to STDOUT
+    Write the string to STDOUT
 
     Args: string ([string]): String to print
     """
