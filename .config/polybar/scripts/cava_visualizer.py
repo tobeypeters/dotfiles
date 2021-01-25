@@ -124,10 +124,6 @@ OUTPUT_DELAY = 0.0000
 # before the script detects it.
 EMPTY_OUTPUT_THRESHOLD = 5
 
-# If the script output should be written to a named pipe, specify the path here.
-# Set to 'None' to disable FIFO output and print to STDOUT
-PIPE_OUT = None
-
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
 # PIPE_IN = path.join(sep, 'tmp', 'cava_polybar_input.fifo')
@@ -143,22 +139,18 @@ CAVA_BIT_FORMAT = '8bit'
 bytetype, bytesize, bytenorm = ('H', 2, 65535) if (
     CAVA_BIT_FORMAT == '16bit') else ('B', 1, 255)
 
-def output(string, file):
+def output(string):
     def colorizeText(formatStr: str, formatColors: []) -> str:
         return f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
 
     """
-    Write the given value either to STDOUT or user specified output pipe
+    Write the given value either to STDOUT
 
     Args:
         string ([string]): String to print
-        file ([file]): [description]
     """
-    if (PIPE_OUT):
-        file.write(string)
-    else:
-        print(string if not args.c else colorizeText(string, args.c), end='')
-        stdout.flush()
+    print(string if not args.c else colorizeText(string, args.c), end='')
+    stdout.flush()
 
     sleep(OUTPUT_DELAY)
 
@@ -167,21 +159,7 @@ exitCode = 0
 if path.exists(PIPE_IN):
     inputPipe = open(PIPE_IN, 'rb')
 
-    # Open output pipe if specified
-    outputPipe = None
-    if (PIPE_OUT):
-        print('The converted output can be found in ' + PIPE_OUT)
-
-        if path.exists(PIPE_OUT):
-            remove(PIPE_OUT)
-
-        mkfifo(PIPE_OUT)
-        outputPipe = open(PIPE_OUT, 'w')
-
-    #try:
-    # Conversion process start ##########
     chunk = bytesize * CAVA_BARS_NUMBER
-    fmt = bytetype * CAVA_BARS_NUMBER
 
     # oldchunks = [BC[0]] * (bytesize * 8)
 
@@ -195,32 +173,19 @@ if path.exists(PIPE_IN):
         tstring = ''
         emptyOutput = True
 
-        for i in unpack(fmt, rawData):
+        for i in unpack(bytetype * CAVA_BARS_NUMBER, rawData):
             value = int(i / bytenorm * 100)
 
-            if (len(tstring) > 0):
+            if not (tstring == ''):
                 tstring += SEPARATOR
             
             tstring += valueToCharacter(value)
 
-            if (value != 0):
-                emptyOutput = False
+            emptyOutput = True if (value == 0) else False
 
-        if (emptyOutput and HIDE_WHEN_EMPTY):
-            emptyOutputs += 1
-            if (emptyOutputs > EMPTY_OUTPUT_THRESHOLD):
-                output('        ' + linesep, outputPipe)
-        else:
-            emptyOutputs = 0
-            output(tstring + linesep, outputPipe)
-    # Conversion process end ##########
-    #except KeyboardInterrupt:
-    #    exitCode = 1
+        emptyOutputs += 1 if (emptyOutput and HIDE_WHEN_EMPTY) else -emptyOutputs
 
-    # Close output pipe if needed
-    if (PIPE_OUT):
-        outputPipe.close()
-        remove(PIPE_OUT)
+        output(f"{' ' if (emptyOutputs > EMPTY_OUTPUT_THRESHOLD) else tstring}{linesep}")
 
     # Close input pipe
     inputPipe.close()
