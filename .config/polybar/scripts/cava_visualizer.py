@@ -92,8 +92,7 @@ def valueToCharacter(value):
     """
     Returns the respective character for specified value.
 
-    Args:
-        value ([int]): Value that should be mapped to a character
+    Args: value ([int]): Value that should be mapped to a character
     """
     return BAR_CHARACTERS[BAR_FACTOR * (value // BAR_FACTOR)] if value < 100 else BAR_CHARACTERS[100]
 
@@ -144,8 +143,7 @@ def output(string):
     """
     Write the given value either to STDOUT
 
-    Args:
-        string ([string]): String to print
+    Args: string ([string]): String to print
     """
     print(string if not args.c else colorizeText(string, args.c), flush=True)
 
