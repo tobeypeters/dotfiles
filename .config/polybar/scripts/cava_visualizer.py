@@ -180,7 +180,7 @@ if path.exists(PIPE_IN):
             
             tstring += valueToCharacter(value)
 
-            emptyOutput = True if (value == 0) else False
+            emptyOutput = (value == 0)
 
         emptyOutputs += 1 if (emptyOutput and HIDE_WHEN_EMPTY) else -emptyOutputs
 
