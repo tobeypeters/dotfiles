@@ -96,3 +96,5 @@ sudo apt install -y libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-d
 # chrome://flags: Can enable Vuncan, and other such things
 
 # UUID=780AE4AC0AE46918 /media/tibegato/StorageDaemon/    auto nosuid,nodev,nofail,x-gvfs-show 0 0
+
+# sudo dpkg-query -Wf '${Installed-size}\t${Package}\n' | column -t
