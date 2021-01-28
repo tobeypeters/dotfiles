@@ -73,6 +73,8 @@ sudo apt install -y policykit-1-gnome
 
 sudo apt install -y virtualbox
 
+sudo apt install -y tldr
+
 sudo apt install -y p7zip-full
 sudo apt install -y cava
 
