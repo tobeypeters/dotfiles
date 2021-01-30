@@ -35,7 +35,7 @@ right click - Switches to the previous application window
 
 [alacritty](https://github.com/alacritty/alacritty)  - Default terminal emulator
 
-[cava_visualizer.py](https://github.com/tobeypeters/dotfiles/blob/master/.config/polybar/scripts/cava_visualizer.py)  - python script - Audio Visualizer, which utilizes cava.  Used to display a bar graph in polybar.
+[cava_visualizer.py](https://github.com/tobeypeters/dotfiles/blob/master/.config/polybar/scripts/cava_visualizer.py)  - python script - Audio visualizer, which utilizes cava.  Used to display a bar graph in a polybar module.
 
 Current Style : Mimimick of old school Mac : I'm restricted on what I can do
 
