@@ -35,6 +35,8 @@ right click - Switches to the previous application window
 
 [alacritty](https://github.com/alacritty/alacritty)  - Default terminal emulator
 
+[cava_visualizer.py](https://github.com/tobeypeters/dotfiles/blob/master/.config/polybar/scripts/cava_visualizer.py)  - python script - Audio Visualizer, which utilizes cava.  Used to display a bar graph in polybar.
+
 Current Style : Mimimick of old school Mac : I'm restricted on what I can do
 
 When in i3 is in stack mode, polybar gets hidden.  Right now, I use the tool [xdo](https://github.com/baskerville/xdo), which is a really nice tool and it does many things.  But, I will probably just switch to xdotool or something else.
