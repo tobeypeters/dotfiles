@@ -55,5 +55,7 @@ When in i3 is in stack mode, polybar gets hidden.  Right now, I use the tool [xd
 <img src="images/currentdesktop6.png" /><br><br>
 :[alacritty terminal emulator]:
 <img src="images/currentdesktop7.png" /><br><br>
+:[cava_visualizer.py]:
+<img src="images/currentdesktop9.png" /><br><br>
 :[google-chrome is in a sandboxed private session and on it's own dedicated workspace.  Utilizing a PIP chrome extension, I can watch videos in a sticky window.  Being a sticky window, means it stays on whatever workspace I'm working on. ]:
 <img src="images/currentdesktop8.png" />
