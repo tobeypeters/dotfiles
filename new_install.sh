@@ -99,4 +99,8 @@ sudo apt install -y libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-d
 
 # UUID=780AE4AC0AE46918 /media/tibegato/StorageDaemon/    auto nosuid,nodev,nofail,x-gvfs-show 0 0
 
+# In case, you want a ramdisk
+# Make sure /mnt/ram_disk exists first
+# new_ram_disk    /mnt/ram_disk   tmpfs    nodev,nosuid,noexec,nodiratime,size=256M   0
+
 # sudo dpkg-query -Wf '${Installed-size}\t${Package}\n' | column -t
