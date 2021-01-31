@@ -40,7 +40,7 @@ args = parser.parse_args()
 
 # For this script to work, you need to make sure sure
 # an instance of cava is running.
-# 
+#
 # For example, in a i3 configuration, you could have something like:
 #
 # exec --no-startup-id cava -p ~/.config/cava/polybar.conf
@@ -119,14 +119,17 @@ HIDE_WHEN_EMPTY = True
 # Specify how long this script should wait before printing another value.
 OUTPUT_DELAY = 0.0000
 
-# Specify how many times cava can report 'no sound' (all values are 0) 
+# Specify how many times cava can report 'no sound' (all values are 0)
 # before the script detects it.
 EMPTY_OUTPUT_THRESHOLD = 10
 
 # The following data will be used in the temporary cava config.
 # FIFO input pipe for raw cava data
 # PIPE_IN = path.join(sep, 'tmp', 'cava_polybar_input.fifo')
-PIPE_IN = '/tmp/cava_polybar_input.fifo'
+# NOTE: I created and RAMDISK on my system for "trash" files like this.
+# Keep from hitting the SSD constantly
+# PIPE_IN = '/tmp/cava_polybar_input.fifo'
+PIPE_IN = '/mnt/ram_disk/cava_polybar_input.fifo'
 
 # Number of bars in cava.  Default: 8
 CAVA_BARS_NUMBER = 16
@@ -174,7 +177,7 @@ if path.exists(PIPE_IN):
 
             if not (tstring == ''):
                 tstring += SEPARATOR
-            
+
             tstring += valueToCharacter(value)
 
             emptyOutput = (value == 0)
