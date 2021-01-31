@@ -31,7 +31,11 @@ sudo apt install -y xdo
 sudo apt install -y xdotool
 sudo apt install -y neovim
 sudo apt install -y sonata
+
+# if you don't want to use a ramdisk, change the fifo file location in mpd.conf accordingly.
+# /tmp/mpd.fifo
 sudo apt install -y mpd
+
 sudo apt install -y mpc
 sudo apt install -y feh
 sudo apt install -y htop
