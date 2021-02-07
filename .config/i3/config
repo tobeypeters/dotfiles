@@ -25,12 +25,14 @@ hide_edge_borders both
 new_window pixel 1
 new_float normal
 
+focus_follows_mouse no
+
+show_marks yes
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
-# Permission is hereby granted, free of charge, to any person obtain System San Francisco Display 10
+# Font for window titles.
 font pango:System San Francisco Display 10
 
 # Change the system default terminal, with the following:
@@ -49,7 +51,6 @@ bindsym $mod+Shift+j move left
 bindsym $mod+Shift+k move down
 bindsym $mod+Shift+l move up
 bindsym $mod+Shift+semicolon move right
-
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Right move right
 bindsym $mod+Shift+Up move up
@@ -57,7 +58,6 @@ bindsym $mod+Shift+Down move down
 
 # split in horizontal orientation
 bindsym $mod+h split h
-
 # split in vertical orientation
 bindsym $mod+v split v
 
@@ -75,11 +75,17 @@ bindsym $mod+Shift+space floating toggle
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
 
-# focus the parent container
-bindsym $mod+a focus parent
-
-# focus the child container
-#bindsym $mod+d focus child
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
@@ -92,18 +98,6 @@ bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
-
-# switch to workspace
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
 
 # restart i3 inplace
 bindsym $mod+Shift+r restart
@@ -145,21 +139,20 @@ client.urgent           $urgent-bg-color        $urgent-bg-color        $text-co
 client.placeholder      $bg-color               $bg-color               $text-color             #00ff00
 client.background       $bg-color
 
+set $editor code
+
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run
 
 # kill focused window
 bindsym $mod+F4 kill
-
-# The middle button over a titlebar kills the window
-bindsym --release button2 kill
-
 # The middle button and a modifer over any part of the window kills the window
 bindsym --whole-window $mod+button2 kill
 
+# The middle button over a titlebar kills the window
+# bindsym --release button2 kill
 # The right button toggles floating
-bindsym $mod+button3 floating toggle
-
+# bindsym $mod+button3 floating toggle
 # Make sure to intall jq, if you want to use this marking & focus method
 # bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
 # bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
@@ -167,16 +160,12 @@ bindsym $mod+button3 floating toggle
 # Spawn Nemo file manager
 bindsym $mod+n exec nemo
 
-# bindsym Ctrl+$mod+Delete exec gnome-system-monitor
 bindsym Ctrl+$mod+Delete exec gnome-system-monitor
-
-# set $editor i3-sensible-terminal -e micro
-set $editor code
 
 # Open the i3 config file
 bindsym $mod+c exec $editor ~/.config/i3/config &floating enable
 # Open the polybar - i3 config file
-bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini &
+bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini
 
 # enable floating mode for certain windows
 for_window [class="Alacritty"] floating enable
@@ -237,10 +226,6 @@ for_window [class="Netflix"] move container to workspace 9
 
 for_window [class="krunner"] move position 1450 20
 
-focus_follows_mouse no
-
-show_marks yes
-
 # Starts krunner - alt + f2 is the global shortcut in KDE
 bindsym $mod+F2 exec krunner
 
@@ -262,12 +247,9 @@ bindsym Print exec spectacle
 set $exec exec --no-startup-id
 set $exec_always exec_always --no-startup-id
 
-# Corsair keyboard RGB software
-$exec ckb-next -b
-
-$exec mpd
-
+$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7"
 # --bg-center --bg-max
+
 $exec_always feh --bg-center ~/Pictures/oldapplelogo.jpg
 
 $exec_always ~/.config/polybar/launch.sh
@@ -275,17 +257,21 @@ $exec_always ~/.config/polybar/launch.sh
 $exec mintupdate-launcher
 $exec nm-applet
 
-$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7"
+# Corsair keyboard RGB software
+$exec ckb-next -b
+
+$exec mpd
+
+$exec cava -p ~/.config/cava/polybar.conf
 
 # $exec conky &
 # Change own-window to false, own-window-type to override
 # $exec picom -c --shadow-exclude "! name~=''" --blur-background-exclude  "! name~=''" &
 
-# A fix to get it to ask for sudo password when launching apps like mintupdate from the systray
+# A fix to get it to ask for sudo password when launching apps like mintupdate
 # sudo apt install policykit-desktop-privileges
 # sudo apt install policykit-1-gnome
 $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
 
-$exec cava -p ~/.config/cava/polybar.conf
