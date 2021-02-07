@@ -275,4 +275,3 @@ $exec cava -p ~/.config/cava/polybar.conf
 $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
-
