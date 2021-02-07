@@ -164,7 +164,7 @@ bindsym $mod+n exec nemo
 bindsym Ctrl+$mod+Delete exec gnome-system-monitor
 
 # Open the i3 config file
-bindsym $mod+c exec $editor ~/.config/i3/config &floating enable
+bindsym $mod+c exec $editor ~/.config/i3/config
 # Open the polybar - i3 config file
 bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini
 
