@@ -17,7 +17,6 @@
 
 # mod
 set $mod Mod4
-set $alt Mod1
 
 # border stuff
 hide_edge_borders both
