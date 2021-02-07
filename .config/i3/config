@@ -193,6 +193,7 @@ for_window [class="Gedit"] floating enable
 for_window [class="ghostwriter"] floating enable
 for_window [class="Gimp"] floating enable
 for_window [class="(?i)^gnome*"] floating enable
+for_window [title="Task Manager - Google Chrome"] floating enable
 for_window [class="GParted"] floating enable
 for_window [class="Gufw.py"] floating enable
 for_window [class="Io.elementary.photos"] floating enable
@@ -233,7 +234,7 @@ for_window [class="XTerm"] resize set 900 500
 
 for_window [class="Netflix"] move container to workspace 9
 
-for_window [class="krunner"] move position 1442 20
+for_window [class="krunner"] move position 1450 20
 
 focus_follows_mouse no
 
@@ -259,7 +260,7 @@ bindsym Print exec spectacle
 
 set $exec exec --no-startup-id
 set $exec_always exec_always --no-startup-id
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
 # Corsair keyboard RGB software
 $exec ckb-next -b
 
