@@ -223,8 +223,8 @@ for_window [class="konsole"] resize set 900 500
 for_window [class="x-terminal-emulator"] resize set 900 500
 for_window [class="XTerm"] resize set 900 500
 
+# move specific windows
 for_window [class="Netflix"] move container to workspace 9
-
 for_window [class="krunner"] move position 1450 20
 
 # Starts krunner - alt + f2 is the global shortcut in KDE
