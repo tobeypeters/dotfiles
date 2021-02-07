@@ -160,8 +160,9 @@ bindsym --whole-window $mod+button2 kill
 # The right button toggles floating
 bindsym $mod+button3 floating toggle
 
-bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
-bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
+# Make sure to intall jq, if you want to use this marking & focus method
+# bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
+# bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
 
 # Spawn Nemo file manager
 bindsym $mod+n exec nemo
