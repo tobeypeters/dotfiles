@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #   The MIT License(MIT)
-#   Original creator, who made the script which this was 
+#   Original creator, who made the script which this was
 #   converted from, https://gist.github.com/elundmark
 #   Copyright(c), Tobey Peters, https://github.com/tobeypeters
 #	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -92,7 +92,7 @@ def switchWindow(a, e):
             if binding_cmd == commands[2]:
                 fillNodes('switcher')
 
-                if len(switcher) > 0: 
+                if len(switcher) > 0:
                     # Is the program a terminal?  If so, what's running in it?
                     def getTerminalProgram(wID: int, wname: str) -> str:
                         def pexec(command: str) -> str:
@@ -104,9 +104,9 @@ def switchWindow(a, e):
                         #result = p.communicate()[0].decode(encoding="utf-8", errors="ignore")
                         #program = subprocess.Popen(f'ps -o comm= {piid}', shell=True)
                         #xprop -id 0x3c00002 _NET_WM_PID | awk '/_NET_WM_PID\(CARDINAL\)/{print $NF}'
-                        #return hex(focused_window.window) 
+                        #return hex(focused_window.window)
 
-                        # To make a your terminal window update it's title, when you run & 
+                        # To make a your terminal window update it's title, when you run &
                         # only after you run a command ...You can add something like this,
                         # to your .bashrc:
                         #
@@ -124,7 +124,7 @@ def switchWindow(a, e):
 
                                 if not result == '':
                                     piid = ''
-                                    
+
                                     while True:
                                         result = pexec(f'pgrep -P {result}')
 
@@ -139,12 +139,12 @@ def switchWindow(a, e):
 
                         return ''
 
-                    cmds = itms = ''                   
+                    cmds = itms = ''
 
                     for i in switcher:
                         itms += f"'{i[1]} {getTerminalProgram(i[0], i[1])} ' "
                         cmds += f"'i3-msg [id={i[0]}] focus' "
-                    
+
                     switcher.clear()
 
                     _path = path.dirname(path.realpath(__file__))
@@ -179,12 +179,11 @@ def closeFocusWindow(a, e):
     if e.container.window in windows:
         if e.ipc_data['change'] == 'close':
             windows.remove(e.container.window)
+        elif not swapID[0] == 0 and containerFocused():
+            call([ 'i3-msg', f'swap container with id {swapID[0]}; [id={swapID[0]}] focus']) # focus it using i3-msg
+            marker(prefix='un')
         else:
             focusedID[0] = e.container.window
-        
-            if not swapID[0] == 0 and containerFocused():
-                call([ 'i3-msg', f'swap container with id {swapID[0]}; [id={swapID[0]}] focus']) # focus it using i3-msg
-                marker(prefix='un')
 
 commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop window swap']
 
