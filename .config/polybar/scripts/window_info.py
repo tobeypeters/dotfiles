@@ -90,7 +90,7 @@ def read_configuration() -> ([], []):
                         bEx = True
                         bIg = False
                         continue
-                    
+
                     if bIg: bi.append(b)
                     if bEx: be.append(b)
 
@@ -102,14 +102,6 @@ def get_window_info() -> str:
     # Strip the classname from window titles.  Seems like the window title
     # is in the format f'{window_title}-{classname}'"
     def stripClassFromTitle(title: str) -> str:
-        # Note: This IS a hack.  In the future, I will incorporate a config file.
-        #       The config file will allow you to enter exclusions and stuff.
-        #       Like, for Sonata, the "- str" on the end of the title is the current song.
-        #
-        # Note 2: This IS a hack. :> Not ... 100% ... I'm sure in some cases, it'll give you
-        #         "wrong" info.  I mean, nothing obvious pops out. If it does, I'll address it.
-        #
-        # Note 3: Did I mention, this is a HACK? :>
         if not title == None:
             idx: [] = None
 
@@ -122,7 +114,7 @@ def get_window_info() -> str:
                 if (title[i] in listStrip):
                     idx = i
                     break
-            
+
             return title if focused_window.window_class in exclude_titles or \
                 title[idx:].strip(strStrip).lower() == \
                 str(focused_window.window_class).strip(strStrip).lower() else title[:idx]
@@ -153,14 +145,14 @@ def get_window_info() -> str:
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
 
-        application_text = f' {application_text} '
+        application_text = f"{' ' if args.application else '  '}{application_text.strip()} "
 
         if (args.application_colors):
             application_text = colorizeText(application_text, args.application_colors)
 
         prevInfo = application_text
 
-    if not args.application: 
+    if not args.application:
         title_text = stripClassFromTitle(focused_window.window_title)
 
         # Restrict the number of characters which are displayed.
@@ -169,13 +161,14 @@ def get_window_info() -> str:
             if len(title_text) > l:
                 title_text = f'{title_text[0:l]}...'
 
-        title_text = f' {title_text} '
+        title_text = f"{'  ' if args.title else ' '}{title_text.strip()}  "
 
         if (args.title_colors):
             title_text = colorizeText(title_text, args.title_colors)
+
         prevInfo = title_text
-    
-    if args.application or args.title: return prevInfo    
+
+    if args.application or args.title: return prevInfo
 
     prevInfo = f'{application_text}{title_text}'
 
