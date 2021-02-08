@@ -99,8 +99,10 @@ def read_configuration() -> ([], []):
 prevInfo = ''
 
 def get_window_info() -> str:
-    # Strip the classname from window titles.  Seems like the window title
+    # Strip the classname from window titles.  SEEMS LIKE the window title
     # is in the format f'{window_title}-{classname}'"
+    # Is this true on all Distros?  I DO NOT KNOW
+    # If not, comment out the methods' code and return title back.
     def stripClassFromTitle(title: str) -> str:
         if title == None: return ''
 
@@ -116,7 +118,9 @@ def get_window_info() -> str:
             if (title[i] in listStrip):
                 # Try to make it smarter.  In case the window class has a dask in
                 # it, don't truncate at the wrong spot.
-                if not title[i:].lower().find(str(focused_window.window_class).lower()) == -1:
+                # This still won't get everything. Chrome ... I'm looking at you ...
+                if not title[i:].lower().find(str(focused_window.window_class).lower()) == -1 \
+                    or title[i:] == '- Google Chrome':
                     idx = i
                     break
 
@@ -143,8 +147,6 @@ def get_window_info() -> str:
     application_text = DESKTOPNAME
     title_text = DESKTOPNAME
 
-    bDesktop = True
-
     isContainer = focused_window.type == 'con'
 
     if not args.title:
@@ -153,8 +155,6 @@ def get_window_info() -> str:
         if isContainer:
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
-
-            bDesktop = False
         else:
             title_text = ''
 
