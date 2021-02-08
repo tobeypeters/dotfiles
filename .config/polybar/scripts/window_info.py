@@ -111,6 +111,8 @@ def get_window_info() -> str:
         strStrip = "-—"
         listStrip = list(strStrip)
 
+        oddballs = [ '- Google Chrome' ]
+
         # Look for the the last occurrence.  On paper, going in reverse is faster.
         # But, not necessarily.
         # #for i, c in enumerate(reversed(title)):
@@ -118,9 +120,9 @@ def get_window_info() -> str:
             if (title[i] in listStrip):
                 # Try to make it smarter.  In case the window class has a dask in
                 # it, don't truncate at the wrong spot.
-                # This still won't get everything. Chrome ... I'm looking at you ...
+                # This still won't get everything.
                 if not title[i:].lower().find(str(focused_window.window_class).lower()) == -1 \
-                    or title[i:] == '- Google Chrome':
+                    or title[i:] in oddballs:
                     idx = i
                     break
 
