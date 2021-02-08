@@ -139,18 +139,27 @@ def get_window_info() -> str:
     #if focused_window.window_class in [ 'Tp_popup_menu', 'spectacle', 'krunner' ]: return prevInfo
     if focused_window.window_class in ignore_classes: return prevInfo
 
-    application_text = 'Finder'
-    title_text = ''
+    DESKTOPNAME = 'Finder'
+    application_text = DESKTOPNAME
+    title_text = DESKTOPNAME
+
     bDesktop = True
+
+    isContainer = focused_window.type == 'con'
 
     if not args.title:
         # Not a container, assume it's the desktop which has focus.
-        if focused_window.type == 'con':
+        #if focused_window.type == 'con':
+        if isContainer:
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
-            bDesktop = False
 
-        application_text = f"{' ' if args.application else '  '}{application_text.strip()}  "
+            bDesktop = False
+        else:
+            title_text = ''
+
+#        application_text = f"{'  ' if args.application else '  '}{application_text.strip()}  "
+        application_text = f'  {application_text.strip()}  '
 
         if (args.application_colors):
             application_text = colorizeText(application_text, args.application_colors)
@@ -158,7 +167,7 @@ def get_window_info() -> str:
         prevInfo = application_text
 
     if not args.application:
-        if not bDesktop:
+        if isContainer:
             title_text = stripClassFromTitle(focused_window.window_title)
 
             # Restrict the number of characters which are displayed.
@@ -167,10 +176,10 @@ def get_window_info() -> str:
                 if len(title_text) > l:
                     title_text = f'{title_text[0:l]}...'
 
-            title_text = f"{'  ' if args.title else ' '}{title_text.strip()}  "
+        title_text = f"{'  ' if args.title else ''}{title_text.strip()}  "
 
-            if (args.title_colors):
-                title_text = colorizeText(title_text, args.title_colors)
+        if (args.title_colors):
+            title_text = colorizeText(title_text, args.title_colors)
 
         prevInfo = title_text
 
