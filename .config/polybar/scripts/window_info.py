@@ -76,7 +76,7 @@ def read_configuration() -> ([], []):
 
         for b in buffer:
             if len(b) > 0:
-                b = b.strip(' ')
+                b = b.strip()
 
                 if not b[0] == '#':
                     bl = b.lower()
@@ -102,24 +102,27 @@ def get_window_info() -> str:
     # Strip the classname from window titles.  Seems like the window title
     # is in the format f'{window_title}-{classname}'"
     def stripClassFromTitle(title: str) -> str:
-        if not title == None:
-            idx: [] = None
+        if title == None: return ''
 
-            strStrip = "-—"
-            listStrip = list(strStrip)
+        idx: [] = None
 
-            # Look for the the last occurrence.  On paper, going in reverse is faster.
-            # Not, necessarily.  #for i, c in enumerate(reversed(title)):
-            for i in range(len(title) - 1, 0, -1):
-                if (title[i] in listStrip):
+        strStrip = "-—"
+        listStrip = list(strStrip)
+
+        # Look for the the last occurrence.  On paper, going in reverse is faster.
+        # But, not necessarily.
+        # #for i, c in enumerate(reversed(title)):
+        for i in range(len(title) - 1, 0, -1):
+            if (title[i] in listStrip):
+                # Try to make it smarter.  In case the window class has a dask in
+                # it, don't truncate at the wrong spot.
+                if not title[i:].lower().find(str(focused_window.window_class).lower()) == -1:
                     idx = i
                     break
 
-            return title if focused_window.window_class in exclude_titles or \
-                title[idx:].strip(strStrip).lower() == \
-                str(focused_window.window_class).strip(strStrip).lower() else title[:idx]
-
-        return ''
+        return title if focused_window.window_class in exclude_titles or \
+            title[idx:].strip(strStrip).lower() == \
+            str(focused_window.window_class).strip(strStrip).lower() else title[:idx]
 
     def to_CamelCase(camelStr: str) -> str:
         return ''.join([t.title() for t in camelStr.split()])
@@ -138,14 +141,16 @@ def get_window_info() -> str:
 
     application_text = 'Finder'
     title_text = ''
+    bDesktop = True
 
     if not args.title:
         # Not a container, assume it's the desktop which has focus.
         if focused_window.type == 'con':
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
+            bDesktop = False
 
-        application_text = f"{' ' if args.application else '  '}{application_text.strip()} "
+        application_text = f"{' ' if args.application else '  '}{application_text.strip()}  "
 
         if (args.application_colors):
             application_text = colorizeText(application_text, args.application_colors)
@@ -153,18 +158,19 @@ def get_window_info() -> str:
         prevInfo = application_text
 
     if not args.application:
-        title_text = stripClassFromTitle(focused_window.window_title)
+        if not bDesktop:
+            title_text = stripClassFromTitle(focused_window.window_title)
 
-        # Restrict the number of characters which are displayed.
-        if args.len_title:
-            l = args.len_title[0]
-            if len(title_text) > l:
-                title_text = f'{title_text[0:l]}...'
+            # Restrict the number of characters which are displayed.
+            if args.len_title:
+                l = args.len_title[0]
+                if len(title_text) > l:
+                    title_text = f'{title_text[0:l]}...'
 
-        title_text = f"{'  ' if args.title else ' '}{title_text.strip()}  "
+            title_text = f"{'  ' if args.title else ' '}{title_text.strip()}  "
 
-        if (args.title_colors):
-            title_text = colorizeText(title_text, args.title_colors)
+            if (args.title_colors):
+                title_text = colorizeText(title_text, args.title_colors)
 
         prevInfo = title_text
 
