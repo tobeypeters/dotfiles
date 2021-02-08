@@ -158,7 +158,6 @@ def get_window_info() -> str:
         else:
             title_text = ''
 
-#        application_text = f"{'  ' if args.application else '  '}{application_text.strip()}  "
         application_text = f'  {application_text.strip()}  '
 
         if (args.application_colors):
