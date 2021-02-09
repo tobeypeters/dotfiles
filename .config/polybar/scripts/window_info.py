@@ -37,6 +37,7 @@
 
 # Add this to your i3 config : for_window [class="Cycle_switcher"] floating enable
 
+from typing import List, Tuple
 import i3ipc
 
 from argparse import ArgumentParser
@@ -50,7 +51,7 @@ parser.add_argument('--application_colors', nargs=2, help='Override the backgrou
 parser.add_argument('--title_colors', nargs=2, help='Override the background & foreground colors, of the displayed text.  Colors must be specified in hex format and in the order: bg fg')
 args = parser.parse_args()
 
-def read_configuration() -> ([], []):
+def read_configuration() -> Tuple[List[str], List[str]]:
     # Defalut location: <script xxecution directory>/window_info.conf
     #
     # Format:
@@ -106,7 +107,7 @@ def get_window_info() -> str:
     def stripClassFromTitle(title: str) -> str:
         if title == None: return ''
 
-        idx: [] = None
+        idx: int = None
 
         strStrip = "-—"
         listStrip = list(strStrip)
@@ -133,7 +134,7 @@ def get_window_info() -> str:
     def to_CamelCase(camelStr: str) -> str:
         return ''.join([t.title() for t in camelStr.split()])
 
-    def colorizeText(formatStr: str, formatColors: []) -> str:
+    def colorizeText(formatStr: str, formatColors: List[str]) -> str:
         return '' if len(formatStr) < 3 else \
             f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
 
