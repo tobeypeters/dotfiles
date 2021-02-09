@@ -24,6 +24,8 @@
 
 import i3ipc
 
+import subprocess
+
 from argparse import ArgumentParser
 from json import loads
 from os import path
@@ -76,12 +78,13 @@ def switchWindow(a, e):
         binding_cmd = e.ipc_data['binding']['command'].strip()
         if binding_cmd in commands:
             if binding_cmd == commands[0] or binding_cmd == commands[1]:
+                focusIDX = 0
                 if wc > 1:
                     try:
                         focusIDX = windows.index(focusedID[0]) + \
                         (1 if (binding_cmd == commands[0]) else -1)
                     except:
-                        focusIDX = 0
+                        pass
 
                     wc -= 1
                     if focusIDX < 0: focusIDX = wc
