@@ -24,8 +24,6 @@
 
 import i3ipc
 
-import subprocess
-
 from argparse import ArgumentParser
 from json import loads
 from os import path
