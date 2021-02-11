@@ -71,22 +71,9 @@ colors:
     cyan:    '#5b7d78'
     white:   '#828482'
 
-#cursor:
-  # Cursor style
-  #style:
-    # Cursor shape
-    #
-    # Values for `shape`:
-    #   - ▇ Block
-    #   - _ Underline
-    #   - | Beam
-    #shape: Block
-
-# Allowed values are CellForeground and CellBackground, which reference the
-  # affected cell, or hexadecimal colors like #ff00ff.
-  #cursor:
-  #  text: CellBackground
-  #  cursor: CellForeground
+  # Cursor colors
+  cursor:
+    cursor: '#ff0000'
 
   # Selection colors
   #
