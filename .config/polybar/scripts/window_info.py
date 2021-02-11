@@ -40,7 +40,7 @@
 from typing import List, Tuple
 import i3ipc
 
-from argparse import ArgumentParser
+from argparse import Action, ArgumentParser
 from os import path
 
 parser = ArgumentParser()
@@ -134,9 +134,10 @@ def get_window_info() -> str:
     def to_CamelCase(camelStr: str) -> str:
         return ''.join([t.title() for t in camelStr.split()])
 
-    def colorizeText(formatStr: str, formatColors: List[str]) -> str:
+    def colorizeText(formatStr: str, formatColors: List[str], bold: bool = False) -> str:
+        # If you want bold to work, you need a font-2 def in you polybar config.
         return '' if len(formatStr) < 3 else \
-            f'%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{formatStr}%{{B- F-}}'
+            f"%{{B{formatColors[0]}}}%{{F{formatColors[1]}}}{'%{T3}' if bold else ''}{formatStr}{'%{T-}' if bold else ''}%{{B- F-}}"
 
     global prevInfo
 
@@ -154,7 +155,7 @@ def get_window_info() -> str:
 
     if not args.title:
         # Not a container, assume it's the desktop which has focus.
-        #if focused_window.type == 'con':
+        #if focused_window.type == 'con':R
 
         if isContainer:
             application_text = '' if focused_window.window_class is None \
@@ -165,7 +166,7 @@ def get_window_info() -> str:
         application_text = f" {' ' if not application_text == '' else ''}{application_text.strip()}  "
 
         if (args.application_colors):
-            application_text = colorizeText(application_text, args.application_colors)
+            application_text = colorizeText(application_text, args.application_colors, True)
 
         prevInfo = application_text
 
