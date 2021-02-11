@@ -247,7 +247,8 @@ bindsym Print exec spectacle
 set $exec exec --no-startup-id
 set $exec_always exec_always --no-startup-id
 
-$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7" "#000000"
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7" "#000000"
+$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
 
 # --bg-center --bg-max
 $exec_always feh --bg-center ~/Pictures/oldapplelogo.jpg
