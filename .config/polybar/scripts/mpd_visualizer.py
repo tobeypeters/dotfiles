@@ -20,12 +20,13 @@
 #   Original Author : H45H74X
 #            reddit : https://www.reddit.com/user/H45H74X/
 #            Script : https://gitlab.com/linuxstuff/dotfiles/-/blob/master/.config/polybar/scripts/modules/cava.py
-
 from argparse import ArgumentParser, RawTextHelpFormatter
 from os import linesep, mkfifo, path, remove
 from struct import unpack
 from sys import exit, stdout
 from time import sleep
+
+from _sounddevice import *
 
 parser = ArgumentParser(description="cava polybar parse script\nConverts cava raw " + \
     "values into characters and outputs to STDOUT or a fifo buffer." + \
@@ -156,33 +157,11 @@ exitCode = 0
 if path.exists(PIPE_IN):
     inputPipe = open(PIPE_IN, 'rb')
 
-    chunk = bytesize * CAVA_BARS_NUMBER
-
-    # oldchunks = [BC[0]] * (bytesize * 8)
-
-    emptyOutputs = 0
-
     while True:
-        rawData = inputPipe.read(chunk)
-        if len(rawData) < chunk:
-            break
-
-        tstring = ''
-        emptyOutput = True
-
-        for i in unpack(bytetype * CAVA_BARS_NUMBER, rawData):
-            value = int(i / bytenorm * 100)
-
-            if not (tstring == ''):
-                tstring += SEPARATOR
-
-            tstring += valueToCharacter(value)
-
-            emptyOutput = (value == 0)
-
-        emptyOutputs += 1 if (emptyOutput and HIDE_WHEN_EMPTY) else -emptyOutputs
-
-        output(f"{' ' if (emptyOutputs > EMPTY_OUTPUT_THRESHOLD) else tstring}{linesep}")
+        for i in range(30): #30 updates in 1 second
+            rec = sounddevice.rec(44100/30)
+            sounddevice.wait()
+            output(f'{rec.shape}')
 
     # Close input pipe
     inputPipe.close()

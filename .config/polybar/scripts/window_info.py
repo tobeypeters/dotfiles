@@ -155,13 +155,14 @@ def get_window_info() -> str:
     if not args.title:
         # Not a container, assume it's the desktop which has focus.
         #if focused_window.type == 'con':
+
         if isContainer:
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
         else:
             title_text = ''
 
-        application_text = f'  {application_text.strip()}  '
+        application_text = f" {' ' if not application_text == '' else ''}{application_text.strip()}  "
 
         if (args.application_colors):
             application_text = colorizeText(application_text, args.application_colors)

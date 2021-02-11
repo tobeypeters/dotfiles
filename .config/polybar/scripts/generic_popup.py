@@ -36,7 +36,7 @@ parser.add_argument('--location', help='Location to display the popup.')
 parser.add_argument('--width', type=int, help='Override the width of the popup.')
 parser.add_argument('--items', nargs='*', help='Menu Items to display.')
 parser.add_argument('--commands', nargs='*', help='Commands to execute.')
-parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
+parser.add_argument('--menu_colors', nargs=4, help='Override the colors, of the popup menu.  Colors must be specified in hex format and in the order: bg fg highlightbg highlightfg')
 
 args = parser.parse_args()
 
@@ -65,7 +65,7 @@ for i in range(w):
 
 my_w = Tk(className='tp_popup_menu' if not args.className else args.className)
 
-listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w }
+listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, 'height' : sc }
 
 if args.menu_colors:
     mc = args.menu_colors
@@ -74,7 +74,7 @@ if args.menu_colors:
 #    listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
 #        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : '#00FF00' })
     listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
-        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : '#000000' })
+        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : mc[3] })
 
 my_listbox = Listbox(**listbox_params)
 my_listbox.bind('<ButtonRelease-1>', onselect)
@@ -84,8 +84,6 @@ my_listbox.bind("<FocusOut>", onclose)
 
 for i in range(sc):
     my_listbox.insert(END, f" {args.items[i] if args.items[i] != 'sep' else sep}" )
-
-my_listbox.config(height=my_listbox.size())
 
 my_listbox.pack()
 

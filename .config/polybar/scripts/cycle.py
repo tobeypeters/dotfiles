@@ -33,7 +33,7 @@ from tkinter import *
 
 parser = ArgumentParser()
 parser.add_argument('--onlyclass', '--oc', nargs=1, help='Filter visible windows, by the specified classname.')
-parser.add_argument('--menu_colors', '--mc', nargs=3, help='Override the colors, of the switcher popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
+parser.add_argument('--menu_colors', '--mc', nargs=4, help='Override the colors, of the switcher popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
 args = parser.parse_args()
 
 i3 = i3ipc.Connection()
@@ -154,7 +154,7 @@ def switchWindow(a, e):
 
                     if args.menu_colors:
                         mc = args.menu_colors
-                        command = f"{command}--menu_colors '{mc[0]}' '{mc[1]}' '{mc[2]}'"
+                        command = f"{command}--menu_colors '{mc[0]}' '{mc[1]}' '{mc[2]}' '{mc[3]}'"
 
                     Popen(command, shell=True)
 

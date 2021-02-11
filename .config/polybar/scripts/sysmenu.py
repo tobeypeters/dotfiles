@@ -19,7 +19,7 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--menu_colors', nargs=3, help='Override the colors, of the sysmenu popup menu.  Colors must be specified in hex format and in the order: bg fg highlightcolor')
+parser.add_argument('--menu_colors', nargs=4, help='Override the colors, of the sysmenu popup menu.  Colors must be specified in hex format and in the order: bg fg highlightbg highlightfg')
 
 args = parser.parse_args()
 
@@ -44,6 +44,6 @@ command = f"{path}/generic_popup.py --width 29 --className 'tp_popup_menu' --ite
 
 if args.menu_colors:
     mc = args.menu_colors
-    command = f"{command}--menu_colors '{mc[0]}' '{mc[1]}' '{mc[2]}'"
+    command = f"{command}--menu_colors '{mc[0]}' '{mc[1]}' '{mc[2]}' '{mc[3]}'"
 
 subprocess.Popen(command, shell=True)
