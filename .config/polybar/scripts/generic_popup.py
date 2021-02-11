@@ -65,25 +65,29 @@ for i in range(w):
 
 my_w = Tk(className='tp_popup_menu' if not args.className else args.className)
 
-listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, \
-'relief' : FLAT, 'height' : sc }
+listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w }
 
 if args.menu_colors:
     mc = args.menu_colors
     my_w.configure(bg=mc[0])
 
+#    listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
+#        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : '#00FF00' })
     listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
-        'highlightcolor' : mc[0], 'selectbackground' : mc[2] })
+        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : '#000000' })
 
 my_listbox = Listbox(**listbox_params)
 my_listbox.bind('<ButtonRelease-1>', onselect)
 my_listbox.bind('<Return>', onselect)
 my_listbox.bind('<Escape>', onclose)
 my_listbox.bind("<FocusOut>", onclose)
-my_listbox.pack()
 
 for i in range(sc):
     my_listbox.insert(END, f" {args.items[i] if args.items[i] != 'sep' else sep}" )
+
+my_listbox.config(height=my_listbox.size())
+
+my_listbox.pack()
 
 my_w.update()
 
