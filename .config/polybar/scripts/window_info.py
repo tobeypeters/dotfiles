@@ -143,8 +143,6 @@ def get_window_info() -> str:
 
     focused_window = i3.get_tree().find_focused()
 
-    # Logic added to work in conjunction with cycle.py
-    #if focused_window.window_class in [ 'Tp_popup_menu', 'spectacle', 'krunner' ]: return prevInfo
     if focused_window.window_class in ignore_classes: return prevInfo
 
     DESKTOPNAME = 'Finder'
