@@ -153,8 +153,6 @@ def get_window_info() -> str:
 
     if not args.title:
         # Not a container, assume it's the desktop which has focus.
-        #if focused_window.type == 'con':R
-
         if isContainer:
             application_text = '' if focused_window.window_class is None \
                                   else to_CamelCase(focused_window.window_class)
