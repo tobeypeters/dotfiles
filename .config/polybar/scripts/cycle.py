@@ -41,8 +41,7 @@ i3 = i3ipc.Connection()
 def fillNodes(f, s=''):
     def fillerUp(tree=None):
         if tree is None:
-            tree = check_output(['i3-msg', '-t', 'get_tree'])
-            tree = loads(tree.decode('utf8'))
+            tree = loads(check_output(['i3-msg', '-t', 'get_tree']).decode('utf8'))
 
         if tree['window_type'] == 'normal':
             if args.onlyclass and \
