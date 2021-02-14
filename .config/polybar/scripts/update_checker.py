@@ -23,4 +23,8 @@ def pexec(command: str) -> str:
     output, errors = p.communicate()
     return output.decode(encoding="utf-8", errors="ignore")
 
-print(f"{'' if int(pexec('apt list --upgradable | wc -l')) == 1 else ''}")
+updates = int(pexec('apt list --upgradable | wc -l'))
+
+if not updates == 1:
+    pexec('polybar-msg cmd show.updater')
+    print('')
