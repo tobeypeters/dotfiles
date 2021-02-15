@@ -65,14 +65,12 @@ for i in range(w):
 
 my_w = Tk(className='tp_popup_menu' if not args.className else args.className)
 
-listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, 'height' : sc }
+listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, 'height' : sc, 'relief' : RAISED }
 
 if args.menu_colors:
     mc = args.menu_colors
     my_w.configure(bg=mc[0])
 
-#    listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
-#        'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : '#00FF00' })
     listbox_params.update({'bg' : mc[0], 'fg' : mc[1], \
         'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : mc[3] })
 
