@@ -44,11 +44,31 @@ def onclose(evt):
     my_w.destroy()
 
 def onselect(evt):
+    # We want to skip over separater lines
+    # NOTE : Really ... it took this much code?  Killing me tkinter.
+    global prevIDX
+
+    nextIDX = idx = my_listbox.curselection()[0]
+
+    if args.commands[idx] == 'nop':
+        nextIDX = max(nextIDX + (1 if nextIDX > prevIDX else -1), 0)
+
+        my_listbox.selection_clear(0, END)
+        my_listbox.select_set(nextIDX)
+        my_listbox.activate(nextIDX)
+
+    prevIDX = nextIDX
+
+    return
+
+def onexecute(evt):
     command = args.commands[my_listbox.curselection()[0]]
 
     if not command == 'nop':
         Popen(command, shell=True)
         onclose('')
+
+prevIDX = 0
 
 sc = len(args.items)
 
@@ -63,7 +83,10 @@ sep = ''
 for i in range(w):
     sep += '-'
 
+l = '+2+20' if not args.location else args.location
+
 my_w = Tk(className='tp_popup_menu' if not args.className else args.className)
+my_w.geometry(l)
 
 listbox_params = { 'master' : my_w, 'bd' : 0, 'width' : w, 'height' : sc, 'relief' : RAISED }
 
@@ -75,8 +98,9 @@ if args.menu_colors:
         'highlightcolor' : mc[0], 'selectbackground' : mc[2], 'selectforeground' : mc[3] })
 
 my_listbox = Listbox(**listbox_params)
-my_listbox.bind('<ButtonRelease-1>', onselect)
-my_listbox.bind('<Return>', onselect)
+my_listbox.bind('<<ListboxSelect>>', onselect)
+my_listbox.bind('<ButtonRelease-1>', onexecute)
+my_listbox.bind('<Return>', onexecute)
 my_listbox.bind('<Escape>', onclose)
 my_listbox.bind("<FocusOut>", onclose)
 
@@ -87,8 +111,7 @@ my_listbox.pack()
 
 my_w.update()
 
-l = '+2+20' if not args.location else args.location
-my_w.geometry(f'{my_listbox.winfo_width()}x{my_listbox.winfo_height()}{l}')
+my_w.geometry(f'{my_listbox.winfo_width()}x{my_listbox.winfo_height()}')
 
 my_listbox.focus()
 my_listbox.select_set(0)
