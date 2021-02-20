@@ -27,6 +27,8 @@ alias openports='ports | grep LISTEN'		# All listening connections
 alias showBlocked='sudo ipfw list'			# All ipfw rules inc/ blocked IPs
 alias ipconfig='ifconfig'					# sudo apt install net-tools
 
+alias ip='ip --color=auto'                  # always have color
+
 alias edit='code'							# Use VSCode as my editor
 
 alias machineinfo='sudo dmidecode'			# Hardware info. You have hwinfo to
@@ -117,7 +119,7 @@ complete -cf sudo
 NC="\[\033[00m\]"
 
 COLOR1=`xrdb -query | awk '/prompt.color1':'/ { print substr($2,2) }'`
- 
+
 qq=';2;'$( h2d ${COLOR1:0:2} )';'$( h2d ${COLOR1:2:2} )';'$( h2d ${COLOR1:4:2} )'m\]'
 
 COLOR1='\[\033[48'$qq
@@ -125,12 +127,12 @@ COLOR2='\[\033[38'$qq
 
 if [ ${EUID:-$(id -u) } -ne 0 ]; then
     COLOR1=${COLOR2}
-    
+
     # cat /etc/os-release
 
     hostnamectl
 else
-    COLOR1=${COLOR1}    
+    COLOR1=${COLOR1}
 fi
 
 export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h:${NC}\W ${COLOR2}]${NC} "
