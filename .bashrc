@@ -14,6 +14,8 @@ echo ''<<LICENSE
 	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 LICENSE
 
+# .bashrc file
+
 [[ $- != *i* ]] && return
 
 # --------------------------- ALIASES START
