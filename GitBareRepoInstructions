@@ -20,3 +20,8 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 #       git config --global credentials.helper cache
 #
 # This will cache the username and personal access token the first time you it
+#
+# To clear the git cache if you need to.
+# Run:
+#       git config --global --unset credential.helper
+#
