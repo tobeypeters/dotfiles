@@ -82,6 +82,8 @@ sudo apt install -y tldr
 sudo apt install -y p7zip-full
 sudo apt install -y cava
 
+sudo apt install -y wmctrl
+
 sudo add-apt-repository ppa:tiheum/equinox
 sudo apt-get update && sudo apt-get install faenza-icon-theme
 
