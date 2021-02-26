@@ -17,7 +17,7 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 
 # Might need to go on Github and generate a new Personal Access Token
 # Run:
-#       git config --global credentials.helper cache
+#       git config --global credential.helper manager
 #
 # This will cache the username and personal access token the first time you it
 #
