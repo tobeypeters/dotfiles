@@ -24,3 +24,4 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 # To clear the git cache if you need to.
 # Run:
 #       git config --global --unset credential.helper
+#
