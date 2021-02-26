@@ -16,12 +16,14 @@ git config --global user.name "tobeypeters"
 git remote add origin https://github.com/tobeypeters/dotfiles.git
 
 # Might need to go on Github and generate a new Personal Access Token
-# Run:
-#       git config --global credential.helper manager
 #
-# This will cache the username and personal access token the first time you it
+# Next:
+#       Download : https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.252-beta/gcmcore-linux_amd64.2.0.252.766.deb
+#       run : sudo dpkg -i <path-to-package>
+#       run : git-credential-manager-core configure
 #
-# To clear the git cache if you need to.
-# Run:
-#       git config --global --unset credential.helper
+# Should now be able to store your pat with:
+#       git config --global credential.helper manager-core
+#
+# c8c27b1805a25d585f29bb418fbe27d7c51a4f55
 #
