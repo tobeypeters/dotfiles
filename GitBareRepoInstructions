@@ -25,3 +25,4 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 #
 # Should now be able to store your pat with:
 #       git config --global credential.helper manager-core
+#
