@@ -26,4 +26,3 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 #       git config --global credential.helper manager-core
 #
 # c8c27b1805a25d585f29bb418fbe27d7c51a4f55
-#
