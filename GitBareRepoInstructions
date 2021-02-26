@@ -21,8 +21,7 @@ git remote add origin https://github.com/tobeypeters/dotfiles.git
 #       Download : https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.252-beta/gcmcore-linux_amd64.2.0.252.766.deb
 #       run : sudo dpkg -i <path-to-package>
 #       run : git-credential-manager-core configure
+#       run : git config --global credential.credentialStore secretservice
 #
 # Should now be able to store your pat with:
 #       git config --global credential.helper manager-core
-#
-# c8c27b1805a25d585f29bb418fbe27d7c51a4f55
