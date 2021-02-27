@@ -147,9 +147,7 @@ def switchWindow(a, e):
 
                     switcher.clear()
 
-                    _path = path.dirname(path.realpath(__file__))
-
-                    command = f"{_path}/generic_popup.py --location '+28+20' --className 'tp_popup_menu' --items {itms}--commands {cmds}"
+                    command = f"{path.dirname(path.realpath(__file__))}/generic_popup.py --location '+28+20' --className 'tp_popup_menu' --items {itms}--commands {cmds}"
 
                     if args.menu_colors:
                         mc = args.menu_colors
