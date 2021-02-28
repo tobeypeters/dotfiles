@@ -44,12 +44,9 @@ def fillNodes(f, s=''):
             tree = loads(check_output(['i3-msg', '-t', 'get_tree']).decode('utf8'))
 
         if tree['window_type'] == 'normal':
-            if args.onlyclass and \
+            return [] if args.onlyclass and \
                 (not 'class' in tree['window_properties'] or \
-                tree['window_properties']['class'] != args.onlyclass[0]):
-                    return []
-
-            return [tree]
+                tree['window_properties']['class'] != args.onlyclass[0]) else [tree]
 
         for nodes in ['nodes', 'floating_nodes']:
             for node in tree[nodes]:
@@ -72,16 +69,15 @@ def switchWindow(a, e):
     wc = len(windows)
 
     if wc > 0:
-        binding_cmd = e.ipc_data['binding']['command'].strip()
+        binding_cmd = e.ipc_data['binding']['command']
         if binding_cmd in commands:
             if binding_cmd == commands[0] or binding_cmd == commands[1]:
                 focusIDX = 0
                 if wc > 1:
-                    try:
-                        focusIDX = windows.index(focusedID[0]) + \
-                        (1 if (binding_cmd == commands[0]) else -1)
-                    except:
-                        pass
+                    #focusedID[0] should always be in windows[], at this point.
+                    #if focusedID[0] in windows:
+                    focusIDX = windows.index(focusedID[0]) + \
+                    (1 if (binding_cmd == commands[0]) else -1)
 
                     wc -= 1
                     if focusIDX < 0: focusIDX = wc
