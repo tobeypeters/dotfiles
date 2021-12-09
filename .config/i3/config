@@ -1,0 +1,299 @@
+# The MIT License(MIT)
+# Copyright(c), Tobey Peters, https://github.com/tobeypeters
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+# and associated documentation files (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+# OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# i3 configuration
+
+# mod
+set $mod Mod4
+
+# border stuff
+hide_edge_borders both
+
+new_window pixel 1
+new_float normal
+
+focus_follows_mouse no
+
+show_marks yes
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Font for window titles.
+font pango:System San Francisco Display 10
+
+# Change the system default terminal, with the following:
+# sudo update-alternatives --config x-terminal-emulator
+# start a terminal
+bindsym $mod+Return exec i3-sensible-terminal
+
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Down move down
+
+# split in horizontal orientation
+bindsym $mod+h split h
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking, exec polybar-msg cmd hide
+bindsym $mod+w layout tabbed, exec polybar-msg cmd hide
+bindsym $mod+e layout toggle split, exec polybar-msg cmd show
+
+#bindsym $mod+s layout stacking, exec xdo hide -N "Polybar"
+#bindsym $mod+w layout tabbed, exec xdo hide -N "Polybar"
+#bindsym $mod+e layout toggle split, exec xdo show -N "Polybar"
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+# restart i3 inplace
+bindsym $mod+Shift+r restart
+
+# resize window
+mode "resize" {
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# set default colors
+set_from_resource $bg color0 #ff0000
+set_from_resource $fg color1 #ffffff
+set_from_resource $bg-color color0 #ff0000
+set_from_resource $text-color color1 #ffffff
+set_from_resource $inactive-bg-color color2 #00ff00
+set_from_resource $inactive-text-color color1 #ffffff
+set_from_resource $urgent-bg-color color2 #0000ff
+
+# window colors         border                  background              text                    indicator
+client.focused          $bg-color               $bg-color               $text-color             #00ff00
+client.unfocused        $inactive-bg-color      $inactive-bg-color      $inactive-text-color    #00ff00
+client.focused_inactive $inactive-bg-color      $inactive-bg-color      $inactive-text-color    #00ff00
+client.urgent           $urgent-bg-color        $urgent-bg-color        $text-color             #00ff00
+client.placeholder      $bg-color               $bg-color               $text-color             #00ff00
+client.background       $bg-color
+
+set $editor code
+
+# start dmenu (a program launcher)
+bindsym $mod+d exec dmenu_run
+
+# kill focused window
+bindsym $mod+F4 kill
+# The middle button and a modifer over any part of the window kills the window
+bindsym --whole-window $mod+button2 kill
+
+# The middle button over a titlebar kills the window
+# bindsym --release button2 kill
+# The right button toggles floating
+# bindsym $mod+button3 floating toggle
+
+# Make sure to intall jq, if you want to use this marking & focus method
+# bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
+# bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
+
+# Spawn Nemo file manager
+bindsym $mod+n exec nemo
+
+bindsym Ctrl+$mod+Delete exec gnome-system-monitor
+
+# Open the i3 config file
+bindsym $mod+c exec $editor ~/.config/i3/config
+# Open the polybar - i3 config file
+bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini
+
+# enable floating mode for certain windows
+for_window [class="Alacritty"] floating enable
+for_window [class="ark"] floating enable
+for_window [class="ckb-next"] floating enable
+for_window [class="Code"] floating enable
+for_window [class="Cubic_wizard.py"] floating enable
+for_window [class="Cycle_switcher"] floating enable
+for_window [class="discover"] floating enable
+for_window [class="feh"] floating enable
+for_window [class="Feren-store.py"] floating enable
+for_window [class="ffplay"] floating enable
+for_window [class="File-roller"] floating enable
+for_window [class="Firefox"] floating enable
+for_window [class="Gdebi-gtk"] floating enable
+for_window [class="Gedit"] floating enable
+for_window [class="ghostwriter"] floating enable
+for_window [class="Gimp"] floating enable
+for_window [class="(?i)^gnome*"] floating enable
+for_window [title="Task Manager - Google Chrome"] floating enable
+for_window [class="GParted"] floating enable
+for_window [class="Gufw.py"] floating enable
+for_window [class="Io.elementary.photos"] floating enable
+for_window [class="jetbrains-pycharm-ce"] floating enable
+for_window [class="kate"] floating enable
+for_window [class="kinfocenter"] floating enable
+for_window [class="konsole"] floating enable
+for_window [class="ksysguard"] floating enable
+for_window [class="Lightdm-settings"] floating enable
+for_window [class="Luakit"] floating enable
+for_window [class="Lxappearance"] floating enable
+for_window [class="Lxtask"] floating enable
+for_window [class="Microsoft-edge-dev"] floating enable
+for_window [class="MintUpdate.py"] floating enable
+for_window [class="mpv"] floating enable
+for_window [class="Nautilus"] floating enable
+for_window [class="Nemo"] floating enable
+for_window [class="Nm-connection-editor"] floating enable
+for_window [class="Nyxt"] floating enable
+for_window [class="Org.gnome.Software"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="Snap-store"] floating enable
+for_window [class="Software-properties-gtk"] floating enable
+for_window [class="Sonata"] floating enable
+for_window [class="(?i)^steam*"] floating enable
+for_window [class="strawberry"] floating enable
+for_window [class="systemsettings"] floating enable
+for_window [class="system_updater"] floating enable
+for_window [class="Tk"] floating enable
+for_window [class="Tp_popup_menu"] floating enable
+for_window [class="(?i)^virtualBox*"] floating enable
+for_window [class="Virt-manager"] floating enable
+for_window [class="vlc"] floating enable
+for_window [class="x-terminal-emulator"] floating enable
+for_window [class="XTerm"] floating enable
+for_window [class="Yad"] floating enable
+
+# resize specific windows
+for_window [class="Alacritty"] resize set 900 500
+for_window [class="Gnome-system-monitor"] resize set 900 500
+for_window [class="konsole"] resize set 900 500
+for_window [class="system_updater"] resize set 900 500
+for_window [class="x-terminal-emulator"] resize set 900 500
+for_window [class="XTerm"] resize set 900 500
+
+# move specific windows
+for_window [class="Netflix"] move container to workspace 9
+for_window [class="krunner"] move position 1450 20
+
+# windows we want to stay visible, even if you switch workspaces.
+for_window [class="vlc"] sticky enable
+
+# enable titlebar icons
+#for_window [all] title_window_icon on
+
+# enable title bar for the system updater script
+for_window [class="system_updater"] border normal
+
+# Starts krunner - alt + f2 is the global shortcut in KDE
+bindsym $mod+F2 exec krunner
+
+# power options
+bindsym $mod+p exec ~/.config/polybar/scripts/power.sh
+
+# window selector
+bindsym $mod+Tab nop window next
+bindsym $mod+Shift+Tab nop window prev
+bindsym $mod+Ctrl+Tab nop window selector
+bindsym $mod+Shift+a nop window swap
+
+# open an empty window container
+bindsym $mod+z exec i3-msg open
+
+# Take a screenshot
+bindsym Print exec spectacle
+
+set $exec exec --no-startup-id
+set $exec_always exec_always --no-startup-id
+
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7" "#000000"
+$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
+
+# --bg-center --bg-max
+$exec_always feh --bg-center ~/Pictures/oldapplelogoascii.png
+
+$exec_always ~/.config/polybar/launch.sh
+
+# $exec mintupdate-launcher
+$exec nm-applet
+
+# Corsair keyboard RGB software
+$exec ckb-next -b
+
+$exec mpd
+
+# $exec cava -p ~/.config/cava/polybar.conf
+
+# $exec conky &
+# Change own-window to false, own-window-type to override
+# $exec picom -c --shadow-exclude "! name~=''" --blur-background-exclude  "! name~=''" &
+
+# A fix to get it to ask for sudo password when launching apps like mintupdate
+# sudo apt install policykit-desktop-privileges
+# sudo apt install policykit-1-gnome
+$exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+
+$exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com

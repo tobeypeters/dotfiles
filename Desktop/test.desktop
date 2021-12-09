@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Trash
+Comment=Contains removed files
+Icon=/home/tibegato/DesktopAssets/red.ico
+EmptyIcon=/home/tibegato/DesktopAssets/orange.ico
+Type=Link
+URL=trash:/
+OnlyShowIn=KDE;

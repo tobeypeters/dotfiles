@@ -1,0 +1,99 @@
+[audioscrobbler]
+use_audioscrobbler = False
+password_md5 = 
+username = 
+
+[connection]
+auto = True
+profile_num = 0
+
+[currformat]
+current = %A - %T|%L
+currsong1 = %T
+currsong2 = by %A from %B
+library = %A - %T
+title = [Sonata] %A - %T
+
+[library]
+lib_view = 0
+lib_album = !NONE!
+lib_artist = !NONE!
+lib_genre = !NONE!
+lib_year = !NONE!
+lib_path = /
+
+[notebook]
+current_tab_pos = 0
+current_tab_visible = True
+info_tab_pos = 4
+info_tab_visible = True
+library_tab_pos = 1
+library_tab_visible = True
+playlists_tab_pos = 2
+playlists_tab_visible = True
+streams_tab_pos = 3
+streams_tab_visible = True
+
+[player]
+art_location = 0
+art_location_custom_filename = 
+columnwidths = 325,10
+covers_pref = 1
+covers_type = 1
+decorated = True
+existing_playlist = 0
+expanded = True
+h = 461
+info_album_expanded = True
+info_art_enlarged = False
+info_lyrics_expanded = True
+info_song_expanded = True
+info_song_more = False
+infofile_path = /tmp/xmms-info
+initial_run = False
+search_num = 0
+lyrics_location = 0
+minimize = False
+ontop = True
+popup_time = 2
+screen = 0
+covers = True
+show_header = True
+lyrics = True
+notification = False
+playback = True
+progressbar = True
+statusbar = False
+trayicon = True
+sticky = True
+stop_on_exit = True
+tabs_expanded = False
+notif_location = 0
+update_on_start = False
+browser = 
+use_infofile = False
+w = 686
+withdrawn = False
+x = 120
+xfade = 0
+xfade_enabled = False
+y = 357
+
+[plugins]
+autostart_plugins = lyricwiki,localmpd
+known_plugins = gajim_tune,lyricwiki,test,localmpd,covers_lastfm
+
+[tags]
+use_mpdpaths = False
+
+[streams]
+num_streams = 0
+
+[profiles]
+names[0] = Default Profile
+musicdirs[0] = /home/tibegato/music/
+hosts[0] = localhost
+ports[0] = 6601
+passwords[0] = 
+num_profiles = 1
+

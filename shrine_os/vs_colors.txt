@@ -1,0 +1,5 @@
+white : 167abf
+dark grey : 242525
+light grey : 2d2d30
+light blue : 167abf
+grey : 008000

@@ -1,0 +1,30 @@
+Xft.autohint: 0
+Xft.antialias: 1
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.dpi: 96
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+
+! Color generator - http://colllor.com/
+
+! Background
+*.color0:       #FFFFFF
+! Foreground
+*.color1:       #000000
+! Border 1
+*.color2:       #B7B7B7
+
+! Complimentary one
+*.color3:       #B7B7B7
+! Complimentary two
+*.color4:       #B7B7B7
+
+! Prompt
+prompt.color1:  #FFFFFF
+
+dmenu.font : System San Francisco Display:size=10
+dmenu.background:   #FFFFFF
+dmenu.foreground:   #000000
+dmenu.selbackground: #FF0000
+dmenu.selforeground: #FFFFFF

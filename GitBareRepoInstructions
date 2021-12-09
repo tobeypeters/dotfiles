@@ -1,0 +1,39 @@
+mkdir ~/dotfiles
+cd ~/dotfiles
+
+git init --bare $HOME/dotfiles
+
+# Put this alias in your .bashrc
+alias config='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
+
+bash
+
+config config --local status.showUntrackedFiles no
+
+# Add these two lines. But, think, they might be worthless.
+# Cause, you have to use two-way auth now
+git config --global user.email "tobeypeters@hotmail.com"
+git config --global user.name "tobeypeters"
+
+git remote add origin https://github.com/tobeypeters/dotfiles.git
+
+# Might need to go on Github and generate a new Personal Access Token
+#
+# Next:
+#       Download Microsoft Github CredentialStore Manager-Core:
+        https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.252-beta/gcmcore-linux_amd64.2.0.252.766.deb
+#
+#       Desc: It's their cross-platform credentials storage manager. It locally
+#             stores your Github, Azure, etc ... credentials.
+#
+#       run : sudo dpkg -i <path-to-package>
+#       run : git-credential-manager-core configure
+#
+#       run : git config --global credential.credentialStore secretservice
+#
+#       CredentialStore options:
+#       https://github.com/microsoft/Git-Credential-Manager-Core/blob/master/docs/configuration.md#credentialcredentialstore
+#
+# Should now be able to store your pat with:
+#       git config --global credential.helper manager-core
+#
