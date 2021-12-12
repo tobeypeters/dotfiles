@@ -54,8 +54,8 @@ alias gitcommit="gitexec commit -m"
 alias gitpush="gitexec push --force origin master"
 
 # File preview
-alias fp="find . | fzf --header='Press space to preview selected file' --preview 'file {}' --bind 'space:preview:cat {}'"
-
+alias fp="fzf --preview '([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200'"
+
 # HISTORY START ---------------------------
 HISTCONTROL=ignoreboth:erasedups
 
