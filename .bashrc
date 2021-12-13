@@ -56,7 +56,7 @@ alias gitpush="gitexec push --force origin master"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 alias fp="fzf --preview '([[ -f {} ]] && (bat --style=numbers --color=always {} ||
  cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200' --prompt='~ ' --pointer='▶' --marker='✗' --color='light'"
-alias dm="find /usr/bin | fzf --bind 'enter:execute({})' --header='Launch program: ' --height=80 --layout=reverse  --prompt='~ ' --pointer='▶' --marker='✗' --color='light'"
+alias dm="find /usr/bin | fzf --bind 'enter:execute({} &>/dev/null &)' --header='Launch program: ' --height=80 --layout=reverse  --prompt='~ ' --pointer='▶' --marker='✗' --color='light'"
 
 # HISTORY START ---------------------------
 shopt -s histappend # append to the history file, don't overwrite it
