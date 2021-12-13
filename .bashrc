@@ -48,9 +48,9 @@ alias cls='clear'                        # Just a alias to clear
 #       gitexec commit -m "Desired comment"
 #       gitexec push -u origin master
 alias gitexec='/usr/bin/git --git-dir=/home/tibegato/dotfiles/ --work-tree=$HOME'
-alias gitadd="gitexec add"
-alias gitcommit="gitexec commit -m"
-alias gitpush="gitexec push --force origin master"
+alias gitadd='gitexec add'
+alias gitcommit='gitexec commit -m'
+alias gitpush='gitexec push --force origin master'
 
 # FZF START ---------------------------
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
