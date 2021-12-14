@@ -1,6 +1,6 @@
-#define CMDS_LEN 9
-U8 *cmds[CMDS_LEN] = {"cp", "mv", "mkdir", "rm", "edit", "cd", "ls", "exit", "help"};
-U8 *cmds_help[CMDS_LEN] = {"Copy a file", "Move a file", "Make a directory", "Remove a file", "Edit a file", "Change Directory", "List files in directory", "Exit shell", "Display help"};
+#define CMDS_LEN 10
+U8 *cmds[CMDS_LEN] = {"cp", "mv", "mkdir", "rm", "edit", "cd", "ls", "clear", "exit", "help"};
+U8 *cmds_help[CMDS_LEN] = {"Copy a file", "Move a file", "Make a directory", "Remove a file", "Edit a file", "Change Directory", "List files in directory", "Clear the screen", "Exit shell", "Display help"};
 
 #define MAX_ARG_LEN 50
 
@@ -199,7 +199,7 @@ I8 HandleCmd(U8 *input)
     FreeArgs(cur_args);
   }
   // rm
-  else if (StrNCmp(input,"rm",2) == 0) {
+  else if (StrNCmp(input,"rm",2) == 0) {
     num_args = GetNumArgs(input);
     if (num_args != 1) {
       "ERROR: 1 argument expected!\n";
@@ -208,6 +208,10 @@ I8 HandleCmd(U8 *input)
     cur_args = GetArgs(input);
     Del(cur_args->argv[0]);
     FreeArgs(cur_args);
+  }
+  else if (StrNCmp(input,"clear", 4) == 0)
+  {
+    DocClear;
   }
 }
 
