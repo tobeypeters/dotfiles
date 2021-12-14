@@ -199,7 +199,7 @@ I8 HandleCmd(U8 *input)
     FreeArgs(cur_args);
   }
   // rm
-  else if (StrNCmp(input,"rm",2) == 0) {
+  else if (StrNCmp(input,"rm",2) == 0) {
     num_args = GetNumArgs(input);
     if (num_args != 1) {
       "ERROR: 1 argument expected!\n";
@@ -223,7 +223,7 @@ U0 TempleShell()
   while (1) 
   {
     // Display prompt
-    "%s # ",Fs->cur_dir;
+    "\n%s # ",Fs->cur_dir;
 
     // Grab user input
     U8 *input = GetStr();
