@@ -1,3 +1,5 @@
+#include "~/common.HC"
+
 #define CMDS_LEN 10
 U8 *cmds[CMDS_LEN] = {"cp", "mv", "mkdir", "rm", "edit", "cd", "ls", "clear", "exit", "help"};
 U8 *cmds_help[CMDS_LEN] = {"Copy a file", "Move a file", "Make a directory", "Remove a file", "Edit a file", "Change Directory", "List files in directory", "Clear the screen", "Exit shell", "Display help"};
@@ -40,7 +42,7 @@ I64 GetNumArgs(U8 *input)
 args *GetArgs(U8 *input)
 {
   I64 num_args = GetNumArgs(input);
-  
+
   // Allocate space for response
   args *toret = ACAlloc(sizeof(args));
   toret->argc = num_args;
@@ -50,7 +52,7 @@ args *GetArgs(U8 *input)
   {
     toret->argv[i] = ACAlloc(sizeof(U8) * MAX_ARG_LEN);
   }
-  
+
   // Skip past command
   for (i=0; i<StrLen(input); i++)
   {
@@ -100,7 +102,7 @@ U0 PrintHelp()
     "%s - %s\n", cmds[i], cmds_help[i];
   }
 }
-  
+
 
 // Handle command
 I8 HandleCmd(U8 *input)
@@ -124,12 +126,13 @@ I8 HandleCmd(U8 *input)
 
    cur_args = GetArgs(input);
    Cd(cur_args->argv[0]);
-   
+
    // Free args
    FreeArgs(cur_args);
   }
   // exit
   else if (StrNCmp(input,"exit",4) == 0) {
+    Exit;
     return 0;
   }
   // ls
@@ -160,7 +163,7 @@ I8 HandleCmd(U8 *input)
       "ERROR: 1 argument expected!\n";
       return 1;
     }
-    
+
     cur_args = GetArgs(input);
     Ed(cur_args->argv[0]);
     FreeArgs(cur_args);
@@ -216,17 +219,84 @@ I8 HandleCmd(U8 *input)
 }
 
 
+Bool ProcessCommand(...) {
+  // Thank you Terry, for < ... >
+
+  "argc :%d\n", argc;
+
+  if (argc == 0) return TRUE;
+
+  Bool ok = FALSE;
+
+  if (argv[0] == "cd") {
+    if (ok = argc == 2) Cd(argv[1]);
+  }
+  else if (argv[0] == "exit") return FALSE;
+  else if (argv[0] == "ls") {
+    if (ok = argc == 2) {
+      if (argc == 1) Dir;
+      else Dir(argv[1]);
+    }
+  }
+  else if (argv[0] == "help") {
+    if (ok = argc == 1)
+    {
+      PrintHelp();
+    }
+  }
+  else if (argv[0] == "edit") {
+    if (ok = argc == 2) Ed(argv[1]);
+  }
+  else if (argv[0] == "cp") {
+    if (ok = argc == 3) Copy(argv[1], argv[2]);
+  }
+  else if (argv[0] == "mv") {
+    if (ok = argc == 3) Move(argv[1], argv[2]);
+  }
+  else if (argv[0] == "mkdir") {
+    if (ok = argc == 2) DirMk(argv[1]);
+
+  }
+  else if (argv[0] == "rm") {
+    if (ok = argc == 2) Del(argv[1]);
+  }
+  else if (argv[0] == "clear") {
+    if (ok = argc == 1) DocClear;
+  }
+
+  if (!ok) {
+    "\nERROR: Invalid argument(s) provided ... \n";
+  }
+
+  return ok;
+}
+
+
 U0 TempleShell()
 {
   "Welcome to TempleShell!\n";
   "Type 'help' for a list of commands.\n\n";
-  while (1) 
+  while (1)
   {
     // Display prompt
-    "\n%s # ",Fs->cur_dir;
+    "\n%s # ",Fs->cur_dir;
 
     // Grab user input
     U8 *input = GetStr();
+
+
+    SV sv;
+    sv.begin = input;
+    sv.size = StrLen(input);
+
+
+    //"\nCommand: %s - Command Length : %d\n", sv.begin, sv.size;
+
+    //SVTrim(&sv);
+
+    //"Command: %s - Command Length : %d\n", sv.begin, sv.size; */
+
+
     // Remove all shift spaces
     I64 i;
     for (i=0; i<StrLen(input); i++)
@@ -245,11 +315,11 @@ U0 TempleShell()
     } else {
     // Otherwise, ignore
       "ERROR: Unrecognized command!\n";
-    }  
+    }
 
   skip_cmd:
     Free(input);
-  }
+ }
 }
 
 TempleShell;
