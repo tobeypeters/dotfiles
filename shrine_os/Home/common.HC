@@ -2,9 +2,63 @@
 // shared across all of the solutions
 
 class SV {
-  I64 size;
   U8 *begin;
+  I64 size;
+  I64 count;
 };
+
+
+// tp : start
+U0 SVTrim(SV *sv, Bool left = TRUE) {
+  if (left) {
+    StrUtil(sv->begin, SUF_REM_LEADING);
+  }
+  else {
+    StrUtil(sv->begin, SUF_REM_TRAILING);
+  }
+
+  sv->size = StrLen(sv->begin);
+}
+
+I64 SVWordCount(SV *sv, U8 delim = ' ') {
+  if (sv->size <= 0) return 0;
+
+  I64 word_count = 0, i = 0;
+
+  while (i < sv->size) {
+    if (sv->begin[i] == delim) word_count++;
+    i++;
+  }
+
+  return word_count + 1;
+}
+
+U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
+  I64 i = 0;
+
+  while (i < sv->size) {
+    if (sv->begin[i] == delim) break;
+    out[i] = sv->begin[i];
+    i++;
+  }
+
+  out[i] = '\0';
+
+
+  if (i<sv->size) {
+    sv->begin += i+1;
+    sv->size -= i+1;
+  } else {
+    sv->begin += i;
+    sv->size -= i;
+  }
+
+
+  sv->count -= 1;
+}
+
+// tp : end
+
 
 I64 SVChopI64(SV *sv, I64 radix=10) {
   U8 *endp;
@@ -36,17 +90,6 @@ Bool IsSpace(U8 x) {
   }
   return FALSE;
 }
-
-U0 SVTrim(SV *sv, Bool left = TRUE) {
-  if (left) {
-    StrUtil(sv->begin, SUF_REM_LEADING);
-  }
-  else {
-    StrUtil(sv->begin, SUF_REM_TRAILING);
-  }
-
-  sv->size = StrLen(sv->begin);
-}
 
 
 U0 SVChopWord(SV *input, SV *word) {

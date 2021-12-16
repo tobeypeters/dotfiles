@@ -219,85 +219,57 @@ I8 HandleCmd(U8 *input)
 }
 
 
-Bool ProcessCommand(...) {
-  // Thank you Terry, for < ... >
+Bool exec_command(SV *sv) {
+  "sv->begin : %d\n", sv->begin;
 
-  "argc :%d\n", argc;
-
-  if (argc == 0) return TRUE;
-
-  Bool ok = FALSE;
-
-  if (argv[0] == "cd") {
-    if (ok = argc == 2) Cd(argv[1]);
-  }
-  else if (argv[0] == "exit") return FALSE;
-  else if (argv[0] == "ls") {
-    if (ok = argc == 2) {
-      if (argc == 1) Dir;
-      else Dir(argv[1]);
-    }
-  }
-  else if (argv[0] == "help") {
-    if (ok = argc == 1)
-    {
-      PrintHelp();
-    }
-  }
-  else if (argv[0] == "edit") {
-    if (ok = argc == 2) Ed(argv[1]);
-  }
-  else if (argv[0] == "cp") {
-    if (ok = argc == 3) Copy(argv[1], argv[2]);
-  }
-  else if (argv[0] == "mv") {
-    if (ok = argc == 3) Move(argv[1], argv[2]);
-  }
-  else if (argv[0] == "mkdir") {
-    if (ok = argc == 2) DirMk(argv[1]);
-
-  }
-  else if (argv[0] == "rm") {
-    if (ok = argc == 2) Del(argv[1]);
-  }
-  else if (argv[0] == "clear") {
-    if (ok = argc == 1) DocClear;
-  }
-
-  if (!ok) {
-    "\nERROR: Invalid argument(s) provided ... \n";
-  }
-
-  return ok;
+  return TRUE;
 }
-
 
 U0 TempleShell()
 {
-  "Welcome to TempleShell!\n";
+  "\nWelcome to TempleShell!\n";
   "Type 'help' for a list of commands.\n\n";
   while (1)
   {
     // Display prompt
-    "\n%s # ",Fs->cur_dir;
+    "\n%s # ", Fs->cur_dir;
 
-    // Grab user input
-    U8 *input = GetStr();
-
+    //U8 *input = GetStr();  
 
     SV sv;
-    sv.begin = input;
-    sv.size = StrLen(input);
+    sv.begin = GetStr; // Grab user input
+    sv.size = StrLen(sv.begin);
+    sv.count = SVWordCount(&sv);
 
 
-    //"\nCommand: %s - Command Length : %d\n", sv.begin, sv.size;
+    U8 *svp = sv.begin;
+ 
 
-    //SVTrim(&sv);
+    if (sv.count > 0) {
+      exec_command(&sv);
+    }
 
-    //"Command: %s - Command Length : %d\n", sv.begin, sv.size; */
+
+    U8 *test[1024];
+
+    "Size : %d Count : %d\n", sv.size, sv.count;
+    
+    I64 q;
+    I64 x = sv.count; // Count gets updated in SVPullWord();
+
+    for(q=0; q < x; q++) {
+      SVTrim(&sv);
+      SVPullWord(&sv, &test);
+      "test :%s\n", test;
+    }
 
 
-    // Remove all shift spaces
+    //Free(test);
+    Free(svp);
+
+    return;
+
+/*    // Remove all shift spaces
     I64 i;
     for (i=0; i<StrLen(input); i++)
     {
@@ -319,7 +291,7 @@ U0 TempleShell()
 
   skip_cmd:
     Free(input);
- }
+*/  }
 }
 
 TempleShell;
