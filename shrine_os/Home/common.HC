@@ -5,11 +5,14 @@ class SV {
   U8 *begin;
   I64 size;
   I64 count;
+  U8 *fp;
 };
 
 
 // tp : start
 U0 SVTrim(SV *sv, Bool left = TRUE) {
+  if (sv->size <= 0) return;
+
   if (left) {
     StrUtil(sv->begin, SUF_REM_LEADING);
   }
@@ -54,7 +57,7 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
   }
 
 
-  sv->count -= 1;
+  sv->count -= 1;
 }
 
 // tp : end

@@ -1,97 +1,6 @@
 #include "~/common.HC"
 
 #define CMDS_LEN 10
-U8 *cmds[CMDS_LEN] = {"cp", "mv", "mkdir", "rm", "edit", "cd", "ls", "clear", "exit", "help"};
-U8 *cmds_help[CMDS_LEN] = {"Copy a file", "Move a file", "Make a directory", "Remove a file", "Edit a file", "Change Directory", "List files in directory", "Clear the screen", "Exit shell", "Display help"};
-
-#define MAX_ARG_LEN 50
-
-class args
-{
-  U8 **argv;
-  I64 argc;
-};
-
-// Check if string begins with any string in
-// supplied array
-I8 StrInArray(U8* str, U8 **arr, I64 len)
-{
-  I64 i;
-  for (i=0; i<len; i++)
-  {
-    if (StrNCmp(str, arr[i], StrLen(arr[i])) == 0) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-
-I64 GetNumArgs(U8 *input)
-{
-  I64 i, count = 0;
-  for (i=0; i<StrLen(input); i++)
-  {
-    if (input[i] == ' ') {
-      ++count;
-    }
-  }
-  return count;
-}
-
-args *GetArgs(U8 *input)
-{
-  I64 num_args = GetNumArgs(input);
-
-  // Allocate space for response
-  args *toret = ACAlloc(sizeof(args));
-  toret->argc = num_args;
-  toret->argv = ACAlloc(sizeof(U8*) * num_args);
-  I64 i, j, k;
-  for (i=0; i<num_args; i++)
-  {
-    toret->argv[i] = ACAlloc(sizeof(U8) * MAX_ARG_LEN);
-  }
-
-  // Skip past command
-  for (i=0; i<StrLen(input); i++)
-  {
-    if (input[i] == ' ') {
-      break;
-    }
-  }
-  ++i;
-
-  // Add args to array
-  for (j=0; j<num_args; j++)
-  {
-    k = 0;
-    // Copy chars until space
-    for (; i<StrLen(input); i++)
-    {
-      if (input[i] == ' ') {
-        break;
-      }
-      toret->argv[j][k] = input[i];
-      ++k;
-    }
-    toret->argv[j][k] = '\0';
-    ++i;
-  }
-  return toret;
-}
-
-// Free an args object
-U0 FreeArgs(args *tofree)
-{
-  I64 i;
-  for (i=0; i<tofree->argc; i++)
-  {
-    Free(tofree->argv[i]);
-  }
-  Free(tofree->argv);
-  Free(tofree);
-}
 
 U0 PrintHelp()
 {
@@ -99,22 +8,12 @@ U0 PrintHelp()
   I64 i;
   for (i=0; i<CMDS_LEN; i++)
   {
-    "%s - %s\n", cmds[i], cmds_help[i];
+    //"%s - %s\n", cmds[i], cmds_help[i];
   }
 }
 
-
-// Handle command
-I8 HandleCmd(U8 *input)
-{
-
-
-  // Replace this with something
-  // better than ifelse spam
-
-  I64 num_args;
-  args *cur_args;
-
+U0 not_used() {
+/*
   // cd
   if (StrNCmp(input,"cd",2) == 0) {
    // Parse arguments
@@ -216,11 +115,24 @@ I8 HandleCmd(U8 *input)
   {
     DocClear;
   }
+*/
+
 }
 
-
 Bool exec_command(SV *sv) {
-  "sv->begin : %d\n", sv->begin;
+  U8 tokens[sv->count][128 + 1];
+
+  I64 q;
+  I64 x = sv->count; // Count gets updated in SVPullWord();
+
+  for(q=0; q < x; q++) {
+    SVTrim(sv);
+    SVPullWord(sv, tokens[q]);
+  }
+ 
+  for(q=0; q < x; q++) {
+    "token :%s\n", tokens[q];
+  }
 
   return TRUE;
 }
@@ -229,69 +141,26 @@ U0 TempleShell()
 {
   "\nWelcome to TempleShell!\n";
   "Type 'help' for a list of commands.\n\n";
+
   while (1)
   {
-    // Display prompt
-    "\n%s # ", Fs->cur_dir;
-
-    //U8 *input = GetStr();  
+    "\n%s # ", Fs->cur_dir; // Display the prompt
 
     SV sv;
     sv.begin = GetStr; // Grab user input
     sv.size = StrLen(sv.begin);
     sv.count = SVWordCount(&sv);
+    sv.fp = sv.begin;
 
-
-    U8 *svp = sv.begin;
- 
 
     if (sv.count > 0) {
       exec_command(&sv);
     }
 
-
-    U8 *test[1024];
-
-    "Size : %d Count : %d\n", sv.size, sv.count;
-    
-    I64 q;
-    I64 x = sv.count; // Count gets updated in SVPullWord();
-
-    for(q=0; q < x; q++) {
-      SVTrim(&sv);
-      SVPullWord(&sv, &test);
-      "test :%s\n", test;
-    }
-
-
-    //Free(test);
-    Free(svp);
+    Free(sv.fp);
 
     return;
-
-/*    // Remove all shift spaces
-    I64 i;
-    for (i=0; i<StrLen(input); i++)
-    {
-      if (input[i] == 31) input[i] = ' ';
-    }
-
-
-    // Ignore empty command
-    if (StrLen(input) == 0) goto skip_cmd;
-
-    // Check if user entered overridden command
-    if (StrInArray(input, cmds, CMDS_LEN)) {
-      I64 res = HandleCmd(input);
-      if (!res) return;
-    } else {
-    // Otherwise, ignore
-      "ERROR: Unrecognized command!\n";
-    }
-
-  skip_cmd:
-    Free(input);
-*/  }
+  }
 }
 
 TempleShell;
