@@ -119,28 +119,52 @@ U0 not_used() {
 
 }
 
-Bool exec_command(SV *sv) {
-  U8 tokens[sv->count][128 + 1];
-
+I64 exec_command(SV *sv) {
   I64 q;
   I64 x = sv->count; // Count gets updated in SVPullWord();
+
+  Bool arg_error = FALSE;
+
+  U8 tokens[sv->count][128 + 1];
 
   for(q=0; q < x; q++) {
     SVTrim(sv);
     SVPullWord(sv, tokens[q]);
   }
  
-  for(q=0; q < x; q++) {
+  /*for(q=0; q < x; q++) {
     "token :%s\n", tokens[q];
+  }*/
+  
+
+  if (!StrCmp(tokens[0], "exit")) {
+    if (arg_error = x == 1) {
+      return 1;
+    }
+  }
+  else if (!StrCmp(tokens[0], "clear")) {
+    if (arg_error = x == 1) {
+      DocClear;
+    }
+  }
+  else {
+    "Error :%s - Unknown command.\n", tokens[0];
   }
 
-  return TRUE;
+  arg_error = !arg_error;
+  if (arg_error) {
+    "Error: %s - Argument count\n", tokens[0];
+  }
+
+  return 0;
 }
 
 U0 TempleShell()
 {
   "\nWelcome to TempleShell!\n";
   "Type 'help' for a list of commands.\n\n";
+
+  I64 result = 0;
 
   while (1)
   {
@@ -154,12 +178,14 @@ U0 TempleShell()
 
 
     if (sv.count > 0) {
-      exec_command(&sv);
+      result = exec_command(&sv);
     }
 
     Free(sv.fp);
 
-    return;
+    if (result) {
+      return;
+    }
   }
 }
 
