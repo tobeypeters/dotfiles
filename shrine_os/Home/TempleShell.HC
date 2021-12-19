@@ -151,8 +151,7 @@ I64 exec_command(SV *sv) {
     "Error :%s - Unknown command.\n", tokens[0];
   }
 
-  arg_error = !arg_error;
-  if (arg_error) {
+  if (!arg_error) {
     "Error: %s - Argument count\n", tokens[0];
   }
 

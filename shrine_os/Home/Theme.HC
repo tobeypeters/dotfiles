@@ -1,3 +1,9 @@
+// colorhexa.com
+//  0x63638c8c8080, // Spearmint
+//  0xe2e280808a8a, // Honeysuckle
+//  0xefef7c7c8e8e, // Hot Pink
+//  0x808000002020, // Burgundy
+
 public CBGR48 gr_palette_test[COLORS_NUM]={
   //0xeeeee8e8d5d5 0xb5b589890000
   0x00002b2b3636,0x070736364242,0x000080808080,0x31318282a4a4,
@@ -8,26 +14,46 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0xf0f0eaead6d6, // BLACK
-  0xe0e0e0e0e1e1, // BORDERS - BLUE
-  0x000099990000, // COMMENTS - GREEN
-  0x00007474cccc, // TYPES - CYAN
+  0xf8f8e2e2c6c6, // BORDERS - BLUE
+  0x63638c8c8080, // COMMENTS - GREEN
 
-  0xcccc24241d1d, // RED
+
+
+  0xb5b5b5b5f0f0, // TYPES - CYAN
+//  0xd7d7e6e6fafa // TYPES - CYAN
+
+
+
+  0xb3b300002d2d, // RED
+
+
   0x16167a7abfbf, // PURPLE
-  0x7c7c6f6f6464, // BROWN
-  0x2d2d2d2d3030, // LTGRAY
+
+  0x868654541111, // BROWN
+
+
+  0x1e1e00000707, // LTGRAY
+//  0x2d2d2d2d3030, // LTGRAY
+
+
   0x505049494545, // DKGRAY
 
-  0x00007474cccc, // LTBLUE
-  0x000000000000, // LTGREEN
-  0x8e8ec0c07c7c, // LTCYAN
 
-  0xfbfb49493434, // LTRED
-  0xd3d386869b9b, // LTPURPLE
+  0x30304c4c3434, // Folders - LTBLUE
+//  0x00007474cccc, // LTBLUE
+
+  0x000000000000, // LTGREEN
+
+
+  0x8e8ec0c07c7c, // LTCYAN
+  0x00000000ffff, // LTRED
+
+
+  0x1e1e00000707, // SELECTION FG - LTPURPLE
+
 
   0x000000000000, // MENU TEXT - YELLOW
-
-  0x000000000000  // BG MAIN - WHITE
+  0x020202020000  // BG MAIN - WHITE
 };
 
 GrPaletteSet(gr_palette_gruv);
