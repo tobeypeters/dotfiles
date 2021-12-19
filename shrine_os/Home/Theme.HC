@@ -32,7 +32,8 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0x868654541111, // BROWN
 
 
-  0x1e1e00000707, // LTGRAY
+  0x020202020000, // LTGRAY
+//  0x1e1e00000707, // LTGRAY
 //  0x2d2d2d2d3030, // LTGRAY
 
 
@@ -40,7 +41,6 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 
 
   0x30304c4c3434, // Folders - LTBLUE
-//  0x00007474cccc, // LTBLUE
 
   0x000000000000, // LTGREEN
 
@@ -53,7 +53,7 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 
 
   0x000000000000, // MENU TEXT - YELLOW
-  0x020202020000  // BG MAIN - WHITE
+  0x020202020000  // BG MAIN - WHITE
 };
 
 GrPaletteSet(gr_palette_gruv);
