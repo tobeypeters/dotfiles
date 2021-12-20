@@ -105,8 +105,6 @@ I64 exec_command(SV *sv) {
 
     if (ae = x > 0 && x < 3) {
 
-      "x : %d\n", x;
-
       if (x == 2) {
         Dir(tokens[1]);
       } else {
@@ -127,12 +125,23 @@ I64 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "cp")) {
 
-    if (ae = x == 3) {
-      Copy(tokens[1], tokens[2]);
+    if (ae = (x > 2 && x < 5)) {
+
+
+      if (x == 3) {
+        Copy(tokens[1], tokens[2]);
+      }
+      else {
+        if (!StrCmp(tokens[1], "-d")) {
+          CopyTree(tokens[2]. tokens[3]);
+        }
+      }
+
+
     }
 
   }
-  else if (!StrCmp(tokens[0], "mv")) {
+  else if (!StrCmp(tokens[0], "mv")) {
 
     if (ae = x == 3) {
       Move(tokens[1], tokens[2]);
@@ -160,7 +169,6 @@ I64 exec_command(SV *sv) {
       }
 
     }
-
   }
   else if (!StrCmp(tokens[0], "cat")) {
 
@@ -171,9 +179,18 @@ I64 exec_command(SV *sv) {
     }
 
   }
+  else if (!StrCmp(tokens[0], "grep")) {
+
+    if (ae = x == 2) { 
+      if (x == 2) {
+        F(tokens[1]);
+      }
+    }
+
+  }
   else {
     ExePutS(tokens[0]);
-    ae = TRUE;
+    ae = TRUE;
   }
 	
   if (x > 0 && !ae) {
