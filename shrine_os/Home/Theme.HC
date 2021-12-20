@@ -13,46 +13,35 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 };
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
-  0xf0f0eaead6d6, // BLACK
-  0xf8f8e2e2c6c6, // BORDERS - BLUE
-  0x63638c8c8080, // COMMENTS - GREEN
+  0xf0f0eaead6d6, // MOUSE, CURSOR - BLACK
+  0xffffffffffff, // BORDERS - BLUE
+//  0xf8f8e2e2c6c6, // BORDERS - BLUE
 
+//  0x63638c8c8080, // COMMENTS - GREEN
+  0xf4f4b7b70000, // COMMENTS - GREEN
 
 
   0xb5b5b5b5f0f0, // TYPES - CYAN
-//  0xd7d7e6e6fafa // TYPES - CYAN
-
-
-
   0xb3b300002d2d, // RED
-
-
   0x16167a7abfbf, // PURPLE
-
   0x868654541111, // BROWN
 
 
-  0x020202020000, // LTGRAY
-//  0x1e1e00000707, // LTGRAY
-//  0x2d2d2d2d3030, // LTGRAY
 
 
-  0x505049494545, // DKGRAY
+  0x0000a4a4dbdb, // BRACES - LTGRAY
 
 
-  0x30304c4c3434, // Folders - LTBLUE
 
+
+
+  0xe2e280808a8a, // DKGRAY
+  0x30304c4c3434, // Folders, RETURNTYPES - LTBLUE
   0x000000000000, // LTGREEN
-
-
-  0x8e8ec0c07c7c, // LTCYAN
-  0x00000000ffff, // LTRED
-
-
+  0xb3b300002d2d, // LTCYAN
+  0xffff00000000, // ERRORS-LTRED
   0x1e1e00000707, // SELECTION FG - LTPURPLE
-
-
-  0x000000000000, // MENU TEXT - YELLOW
+  0x000000000000, // MENU TEXT, SCROLLBARGRIPPERS - YELLOW
   0x020202020000  // BG MAIN - WHITE
 };
 
@@ -62,4 +51,4 @@ GrPaletteSet(gr_palette_gruv);
 // a User Task (usually a terminal) the theme may reset to
 // gr_palette_std. I could not figure out why and how to fix that.
 // So I just made gr_palette_std to be gr_palette_gruv.
-MemCpy(gr_palette_std, gr_palette_gruv, sizeof(gr_palette_gruv));
+MemCpy(gr_palette_std, gr_palette_gruv, sizeof(gr_palette_gruv));
