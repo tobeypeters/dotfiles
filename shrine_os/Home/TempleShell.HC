@@ -89,63 +89,94 @@ I64 exec_command(SV *sv) {
     }
 
   }
+  else if (!StrCmp(tokens[0], "cd")) {
 
-  else if (!StrCmp(tokens[0]," cd")) {
-
-    if (ae = x == 2) {
-      Cd(tokens[1]);
+    if (ae = x > 0 && x < 3) {
+      if (x == 2) {
+        Cd(tokens[1]);
+      }
+      else {
+        Cd("~");
+      }
     }
 
   }
-
   else if (!StrCmp(tokens[0], "ls")) {
 
-    if (ar = (x > 0 < 3)) { 
+    if (ae = x > 0 && x < 3) {
+
+      "x : %d\n", x;
+
       if (x == 2) {
         Dir(tokens[1]);
       } else {
         Dir;
       }
     }
-
+
   }
+  else if (!StrCmp(tokens[0], "help")) {
+    //PrintHelp();
+  }
+  else if (!StrCmp(tokens[0], "ed")) {
 
-    // help
-    else if (StrNCmp(input,"help",4) == 0) {
-      PrintHelp();
+    if (ae = x == 2) {
+      Ed(tokens[1]);
     }
 
-    // edit
-    else if (StrNCmp(input,"edit",4) == 0) {
-      Ed(cur_args->argv[0]);
+  }
+  else if (!StrCmp(tokens[0], "cp")) {
+
+    if (ae = x == 3) {
+      Copy(tokens[1], tokens[2]);
     }
 
-    // cp
-    else if (StrNCmp(input,"cp",2) == 0) {
-      Copy(cur_args->argv[0], cur_args->argv[1]);
+  }
+  else if (!StrCmp(tokens[0], "mv")) {
+
+    if (ae = x == 3) {
+      Move(tokens[1], tokens[2]);
     }
 
-    // mv
-    else if (StrNCmp(input,"mv",2) == 0) {
-      Copy(cur_args->argv[0], cur_args->argv[1]);
+  }
+  else if (!StrCmp(tokens[0], "mkdir")) {
+
+    if (ae = x == 2) {
+      DirMk(tokens[1]);
     }
 
-    // mkdir
-    else if (StrNCmp(input,"mkdir",5) == 0) {
-      DirMk(cur_args->argv[0]);
+  }
+  else if (!StrCmp(tokens[0], "rm")) {
+
+    if (ae = (x > 1 && x < 4)) {
+
+      if (x == 2) {
+        Del(tokens[1]);
+      }
+      else {
+        if (!StrCmp(tokens[1], "-d")) {
+          DelTree(tokens[2]);
+        }
+      }
+
     }
 
-    // rm
-    else if (StrNCmp(input,"rm",2) == 0) {
-      Del(cur_args->argv[0]);
+  }
+  else if (!StrCmp(tokens[0], "cat")) {
 
+    if (ae = x == 2) { 
+      if (x == 2) {
+        Type(tokens[1]);
+      }
+    }
 
   }
   else {
-    "Error :%s - Unknown command.\n", tokens[0];
+    ExePutS(tokens[0]);
+    ae = TRUE;
   }
 	
-  if (!arg_error) {
+  if (x > 0 && !ae) {
     "Error: %s - Argument count\n", tokens[0];
   }
 
