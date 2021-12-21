@@ -10,13 +10,18 @@ class SV {
 
 
 // tp : start
-U0 SVTrim(SV *sv, Bool left = TRUE) {
+U0 SVTrim(SV *sv, Bool left = TRUE, Bool both = FALSE) {
+  // Trims leading or trailing spaces from a string.
+  // left = TRUE : left trim
+  // left = FALSE : right trim
+  // both = TRUE : left &right trim
   if (sv->size <= 0) return;
-
-  if (left) {
+
+  if (left || both) {
     StrUtil(sv->begin, SUF_REM_LEADING);
   }
-  else {
+  
+  if (!left || both) {
     StrUtil(sv->begin, SUF_REM_TRAILING);
   }
 
@@ -45,7 +50,7 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
     i++;
   }
 
-  out[i] = '\0';
+  out[i] = '\0';
 
 
   if (i<sv->size) {
