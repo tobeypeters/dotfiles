@@ -73,7 +73,7 @@ I64 exec_command(SV *sv) {
   /*for(q=0; q < x; q++) {
     "token :%s\n", tokens[q];
   }*/
-  
+
 
   if (!StrCmp(tokens[0], "exit")) {
 
@@ -133,7 +133,7 @@ I64 exec_command(SV *sv) {
       }
       else {
         if (!StrCmp(tokens[1], "-d")) {
-          CopyTree(tokens[2]. tokens[3]);
+          CopyTree(tokens[2], tokens[3]);
         }
       }
 
@@ -141,7 +141,7 @@ I64 exec_command(SV *sv) {
     }
 
   }
-  else if (!StrCmp(tokens[0], "mv")) {
+  else if (!StrCmp(tokens[0], "mv")) {
 
     if (ae = x == 3) {
       Move(tokens[1], tokens[2]);
@@ -202,8 +202,9 @@ I64 exec_command(SV *sv) {
 
 U0 TempleShell()
 {
-  "\nWelcome to TempleShell!\n";
-  "Type 'help' for a list of commands.\n\n";
+  "\nTempleShell [Version 1.0]\n";
+  "(c) 2021 No rights reserved. Public Domain use.\n";
+  "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   I64 result = 0;
 
@@ -212,7 +213,7 @@ U0 TempleShell()
     "\n%s # ", Fs->cur_dir; // Display the prompt
 
     SV sv;
-    sv.begin = GetStr; // Grab user input
+    sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input
     sv.size = StrLen(sv.begin);
     sv.count = SVWordCount(&sv);
     sv.fp = sv.begin;
