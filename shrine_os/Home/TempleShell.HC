@@ -39,7 +39,7 @@ I8 exec_command(SV *sv) {
         Cd(tokens[1]);
       }
       else {
-        Cd;
+        Cd;
       }
     }
 
@@ -134,6 +134,7 @@ I8 exec_command(SV *sv) {
     //PrintHelp();
   }
   else {
+    "\n";
     ExePutS(tokens[0]);
     ae = TRUE;
   }
@@ -175,4 +176,4 @@ U0 TempleShell()
   }
 }
 
-TempleShell;
+TempleShell;
