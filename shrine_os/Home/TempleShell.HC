@@ -148,6 +148,8 @@ I8 exec_command(SV *sv) {
 
 U0 TempleShell()
 {
+  DocClear;
+
   "\nTempleShell [Version 1.0]\n";
   "(c) 2021 No rights reserved. Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
@@ -176,4 +178,4 @@ U0 TempleShell()
   }
 }
 
-TempleShell;
+//TempleShell;
