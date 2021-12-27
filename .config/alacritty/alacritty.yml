@@ -9,6 +9,8 @@ font:
   # Point size
   size: 10.0
 
+
+
 # Colors (Tomorrow Night)
 colors:
   # Default colors
@@ -81,3 +83,6 @@ colors:
   selection:
     text: '#000000'
     background: '#00ffff'
+
+  window:
+    dynamic_title: true
