@@ -130,6 +130,15 @@ I8 exec_command(SV *sv) {
     }
 
   }
+  else if (!StrCmp(tokens[0], "man")) {
+
+    if (ae = x == 2) { 
+      if (x == 2) {
+        Man(tokens[1]);
+      }
+    }
+
+  }
   else if (!StrCmp(tokens[0], "help")) {
     //PrintHelp();
   }
@@ -149,7 +158,7 @@ I8 exec_command(SV *sv) {
 U0 TempleShell()
 {
   DocClear;
-
+
   "\nTempleShell [Version 1.0]\n";
   "(c) 2021 No rights reserved. Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
