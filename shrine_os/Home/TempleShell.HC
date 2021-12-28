@@ -134,8 +134,15 @@ I8 exec_command(SV *sv) {
 
     if (ae = x == 2) { 
       if (x == 2) {
-        Man(tokens[1]);
+        Man(tokens[1]);
       }
+    }
+
+  }
+  else if (!StrCmp(tokens[0], "df")) {
+
+    if (ae = x == 1) { 
+      DrvRep;
     }
 
   }
