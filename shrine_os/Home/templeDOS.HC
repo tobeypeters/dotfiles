@@ -1,29 +1,38 @@
 #include "~/common.HC"
 
-#define CMD_LEN 15
+#define CMD_LEN 20
 
 U8 *CMD_LIST[CMD_LEN][2] = {
 {"cat","Concatenate FILE to standard output."},
 {"cd", "Change the current working directory."},
-{"cdd", "Change the current working directory\n\tand display the directories contents."},
+{"cdd", "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
 {"cp", "Copy files and directories."},
+{"date", "Display the current date."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
 {"exit", "Cause normal process termination of TempleShell."},
 {"grep", "Recursively search files and\n\tprint lines that contain a specified string."},
 {"help", "Displays this list of TempleShell commands."},
 {"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like Dir; - DrvRep; - etc ..."},
+{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$ - etc ..."},
+{"mem", "Display a memory representation."},
 {"mkdir", "Make directories."},
 {"mv", "Move (rename) files."},
-{"rm", "Remove files or directories."}
+{"now", "Display the current date and time."},
+{"rm", "Remove files or directories."},
+{"time", "Display the current time."},
+{"touch", "Create an empty file. TempleOS also has\n\ta <$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
 };
 
+// DATE : "\n\n%D\n\n\n",Now;
+// TIME : "\n\n%T\n\n\n",Now;
+// now : "\n\n%D %T\n\n\n",Now,Now;
+// mem : MemRep;
+
+
 U0 external(U8 *cmd) {
-  "\n";
-  ExePutS(cmd);
-//  ae = TRUE;
+  "\n"; ExePutS(cmd);
 }
 
 U8 exec_command(SV *sv) {
@@ -142,6 +151,19 @@ U8 exec_command(SV *sv) {
   else if (!StrCmp(tokens[0], "df")) {
     if (ae = x == 1) {
       DrvRep;
+    }
+  }
+  else if (!StrCmp(tokens[0], "touch")) {
+    if (ae = x == 2) {
+      // Currently only creates an empty file.
+      // The templeOS touch command can update
+      // file attributes and the date.
+
+      // FileFind is the closes thing I've found,
+      // to a fileexists(). I'm still looking.
+      if (!FileFind(tokens[1])) {
+        FileWrite(tokens[1], NULL, 0);
+      }
     }
   }
   else if (!StrCmp(tokens[0], "help")) {
