@@ -1,23 +1,30 @@
 #include "~/common.HC"
 
-#define CMD_LEN 14
+#define CMD_LEN 15
 
 U8 *CMD_LIST[CMD_LEN][2] = {
 {"cat","Concatenate FILE to standard output."},
 {"cd", "Change the current working directory."},
+{"cdd", "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
 {"cp", "Copy files and directories."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
 {"exit", "Cause normal process termination of TempleShell."},
-{"grep", "Recursively search files and\n        print lines that contain a specified string. "},
+{"grep", "Recursively search files and\n\tprint lines that contain a specified string."},
 {"help", "Displays this list of TempleShell commands."},
 {"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n        internal TempleOS command. Like Dir; - DrvRep; - etc ..."},
+{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like Dir; - DrvRep; - etc ..."},
 {"mkdir", "Make directories."},
 {"mv", "Move (rename) files."},
 {"rm", "Remove files or directories."}
 };
+
+U0 external(U8 *cmd) {
+  "\n";
+  ExePutS(cmd);
+//  ae = TRUE;
+}
 
 U8 exec_command(SV *sv) {
   U64 q;
@@ -47,7 +54,8 @@ U8 exec_command(SV *sv) {
       }
     }
   }
-  else if (!StrCmp(tokens[0], "cd")) {
+  else if (!StrCmp(tokens[0], "cd") || 
+           !StrCmp(tokens[0], "cdd")) {
     if (ae = x > 0 && x < 3) {
       if (x == 2) {
         Cd(tokens[1]);
@@ -55,6 +63,10 @@ U8 exec_command(SV *sv) {
       else {
         Cd;
       }
+
+     if (!StrCmp(tokens[0], "cdd")) {
+       external("Dir;");
+     } 
     }
   }
   else if (!StrCmp(tokens[0], "ed")) {
@@ -144,8 +156,9 @@ U8 exec_command(SV *sv) {
     }
   }
   else {
-    "\n";
-    ExePutS(tokens[0]);
+/*    "\n";
+    ExePutS(tokens[0]);*/
+    external(tokens[0]);
     ae = TRUE;
   }
 
