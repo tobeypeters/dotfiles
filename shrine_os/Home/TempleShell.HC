@@ -1,5 +1,24 @@
 #include "~/common.HC"
 
+#define CMD_LEN 14
+
+U8 *CMD_LIST[CMD_LEN][2] = {
+{"cat","Concatenate FILE to standard output."},
+{"cd","Change the shell working directory."},
+{"clear", "Clear the terminal screen."},
+{"cp", "Copy files and directories."},
+{"df", "Display currently mounted drives."},
+{"ed", "Edit / Create text files."},
+{"exit", "Cause normal process termination of TempleShell."},
+{"grep", "Recursively search files * print lines that contain a specified string. "},
+{"help", "Displays this list of TempleShell commands."},
+{"ls", "List directory contents."},
+{"man", "Display the source code for a specified internal TempleOS command. Like Dir; - DrvRep; - etc ..."},
+{"mkdir", "Make directories."},
+{"mv", "Move (rename) files."},
+{"rm", "Remove files or directories."}
+};
+
 I8 exec_command(SV *sv) {
   I64 q;
   I64 x = sv->count; // Count gets updated in SVPullWord();
@@ -13,7 +32,7 @@ I8 exec_command(SV *sv) {
     SVTrim(sv,,TRUE);
     SVPullWord(sv, tokens[q]);
   }
- 
+
   /*for(q=0; q < x; q++) {
     "token :%s\n", tokens[q];
   }*/
@@ -114,7 +133,7 @@ I8 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "cat")) {
 
-    if (ae = x == 2) { 
+    if (ae = x == 2) {
       if (x == 2) {
         Type(tokens[1]);
       }
@@ -123,7 +142,7 @@ I8 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "grep")) {
 
-    if (ae = x == 2) { 
+    if (ae = x == 2) {
       if (x == 2) {
         F(tokens[1]);
       }
@@ -132,29 +151,36 @@ I8 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "man")) {
 
-    if (ae = x == 2) { 
+    if (ae = x == 2) {
       if (x == 2) {
         Man(tokens[1]);
       }
     }
 
   }
-  else if (!StrCmp(tokens[0], "df")) {
+  else if (!StrCmp(tokens[0], "df")) {
 
-    if (ae = x == 1) { 
+    if (ae = x == 1) {
       DrvRep;
     }
 
   }
   else if (!StrCmp(tokens[0], "help")) {
-    //PrintHelp();
+    if (ae = x == 1) {
+      I8 i;
+
+      "Command List:\n";
+      for (i=0; i < CMD_LEN; i++) {
+        "%s - %s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+      }
+    }
   }
   else {
     "\n";
     ExePutS(tokens[0]);
     ae = TRUE;
   }
-	
+
   if (x > 0 && !ae) {
     "Error: %s - Argument count\n", tokens[0];
   }
