@@ -25,11 +25,6 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"touch", "Create an empty file. TempleOS also has\n\ta <$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
 };
 
-// DATE : "\n\n%D\n\n\n",Now;
-// TIME : "\n\n%T\n\n\n",Now;
-// now : "\n\n%D %T\n\n\n",Now,Now;
-// mem : MemRep;
-
 
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
@@ -164,6 +159,26 @@ U8 exec_command(SV *sv) {
       if (!FileFind(tokens[1])) {
         FileWrite(tokens[1], NULL, 0);
       }
+    }
+  }
+  else if (!StrCmp(tokens[0], "date")) {
+    if (ae = x == 1) {
+      "\n\n%D\n\n", Now;
+    }
+  }
+  else if (!StrCmp(tokens[0], "time")) {
+    if (ae = x == 1) {
+      "\n\n%T\n\n", Now;
+    }
+  }
+  else if (!StrCmp(tokens[0], "now")) {
+    if (ae = x == 1) {
+      "\n\n%D %T\n\n", Now, Now;
+    }
+  }
+  else if (!StrCmp(tokens[0], "mem")) {
+    if (ae = x == 1) {
+      MemRep;
     }
   }
   else if (!StrCmp(tokens[0], "help")) {
