@@ -136,7 +136,7 @@ U8 exec_command(SV *sv) {
     if (ae = x == 1) {
       U64 i;
 
-      "\n%-6s- Description\n", "Cmd";
+      "\n%-6s- Description\n", "Cmd";
       "---------------------------\n";
       for (i=0; i < CMD_LEN; i++) {
         "$FG$$FG,4$%-6s$FG$- %s\n", CMD_LIST[i][0], CMD_LIST[i][1];
@@ -168,7 +168,7 @@ U0 TempleShell()
 
   while (1)
   {
-    "\n%s # ", Fs->cur_dir; // Display the prompt
+    "\n%s: ", Fs->cur_dir; // Display the prompt
 
     SV sv;
     sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input

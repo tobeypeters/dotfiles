@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-    echo "Usage: ./install2.sh <shrineos.img>"
+    echo "Usage: ./install.sh <shrineos.img>"
     echo "ERROR: no path to image is provided"
     exit 1
 fi
