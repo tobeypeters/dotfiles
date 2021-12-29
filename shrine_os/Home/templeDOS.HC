@@ -156,11 +156,11 @@ U8 exec_command(SV *sv) {
   return 0;
 }
 
-U0 TempleShell()
+U0 TempleDOS()
 {
   DocClear;
 
-  "\nTempleShell [Version 1.0]\n";
+  "\nTempleDOS [Version 1.0]\n";
   "(c) 2021 No rights reserved. Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
@@ -168,7 +168,7 @@ U0 TempleShell()
 
   while (1)
   {
-    "\n%s: ", Fs->cur_dir; // Display the prompt
+    "\n%s: ", Fs->cur_dir; // Display the prompt
 
     SV sv;
     sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input
@@ -188,4 +188,4 @@ U0 TempleShell()
   }
 }
 
-//TempleShell;
+//TempleDOS;
