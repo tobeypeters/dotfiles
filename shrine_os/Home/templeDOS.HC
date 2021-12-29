@@ -163,17 +163,24 @@ U8 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "date")) {
     if (ae = x == 1) {
-      "\n\n%D\n\n", Now;
+      "%D\n", Now;
     }
   }
   else if (!StrCmp(tokens[0], "time")) {
     if (ae = x == 1) {
-      "\n\n%T\n\n", Now;
+      "%T\n", Now;
     }
   }
   else if (!StrCmp(tokens[0], "now")) {
     if (ae = x == 1) {
-      "\n\n%D %T\n\n", Now, Now;
+      CDateStruct ds;
+      Date2Struct(&ds,Now+local_time_offset);
+
+      "%03tZ %03tZ %03d %T\n\n", 
+      ds.day_of_week, "ST_DAYS_OF_WEEK",
+      ds.mon-1, "ST_MONTHS",
+      ds.day_of_week,
+      Now;
     }
   }
   else if (!StrCmp(tokens[0], "mem")) {
