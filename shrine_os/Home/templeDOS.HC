@@ -33,6 +33,7 @@ U0 external(U8 *cmd) {
 U8 exec_command(SV *sv) {
   U64 q;
   U64 x = sv->count; // Count gets updated in SVPullWord();
+  U64 h = 0;
 
   Bool ae = FALSE;
 
@@ -43,13 +44,107 @@ U8 exec_command(SV *sv) {
     SVPullWord(sv, tokens[q]);
   }
 
-  /*for(q=0; q < x; q++) {
+  // List all the tokens.
+  /*for (q=0; q < x; q++) {
     "token : %s\n", tokens[q];
   }*/
 
+  // Get the hash codes, for all the commands and
+  // partially build a switch statement.
+  "switch () {\n";
+  for (q=0; q < CMD_LEN; q++) {
+    "  case %d: //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
+    "    break;\n";
+  }
+  "  default:\n}\n";
+
+  // Using pre-calculated hash codes, for comparison.
+  // Faster and better, than using 100 StrCmp() calls.
+  h = HashCodeFor(tokens[0]);
+
+//  case 98262: //cat
+//    break;
+//  case 3169: //cd
+//    break;
+//  case 98339: //cdd
+//    break;
+
+//      if (ae = x == 2) {
+//        if (x == 2) {
+//          Type(tokens[1]);
+//        }
+//      }
+
+//  switch (h) {
+//    case "98262": //cat
+//      "cat\n";
+//      break;
+//    case "1": //cd
+//      "cd\n";
+//      break;
+//    default:
+//  }
+
+/*      if (ae = x > 0 && x < 3) {
+        if (x == 2) {
+          Cd(tokens[1]);
+        }
+        else {
+          Cd;
+        }
+
+       if (h = 98339) {
+         external("Dir;");
+       }
+      }
+
+      break;
+    case 3169: //cd
+      "cd\n";
+      break;
+    case 98339: //cdd
+      "cdd\n";
+      break;
+
+    case 94746189: //clear
+      break;
+    case 3181: //cp
+      break;
+    case 3076014: //date
+      break;
+    case 3202: //df
+      break;
+    case 3231: //ed
+      break;
+    case 3127582: //exit
+      break;
+    case 3181270: //grep
+      break;
+    case 3198785: //help
+      break;
+    case 3463: //ls
+      break;
+    case 107866: //man
+      break;
+    case 107989: //mem
+      break;
+    case 103950895: //mkdir
+      break;
+    case 3497: //mv
+      break;
+    case 109270: //now
+      break;
+    case 3643: //rm
+      break;
+    case 3560141: //time
+      break;
+    case 110550847: //touch
+      break;
+    default:
+*/
 
   if (!StrCmp(tokens[0], "ls")) {
-    if (ae = x > 0 && x < 3) {
+    if (ae = x > 0 && x < 3) {
 
       "\n";
       if (x == 2) {
@@ -123,13 +218,6 @@ U8 exec_command(SV *sv) {
       }
     }
   }
-  else if (!StrCmp(tokens[0], "cat")) {
-    if (ae = x == 2) {
-      if (x == 2) {
-        Type(tokens[1]);
-      }
-    }
-  }
   else if (!StrCmp(tokens[0], "grep")) {
     if (ae = x == 2) {
       if (x == 2) {
@@ -148,6 +236,13 @@ U8 exec_command(SV *sv) {
     if (ae = x == 1) {
       DrvRep;
     }
+  }
+  else if (!StrCmp(tokens[0], "cat")) {
+//    if (ae = x == 2) {
+//      if (x == 2) {
+//        Type(tokens[1]);
+//      }
+//    }
   }
   else if (!StrCmp(tokens[0], "touch")) {
     if (ae = x == 2) {

@@ -50,7 +50,7 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
     i++;
   }
 
-  out[i] = '\0';
+  out[i] = '\0';
 
 
   if (i<sv->size) {
@@ -63,6 +63,20 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
 
 
   sv->count -= 1;
+}
+
+U64 HashCodeFor(U8 *str) {
+  // Pretty basic. But, "effective"
+  // hash code generator for strings.
+  U64 hash = 0;
+  U64 g = 31;
+  U64 i;  
+
+  for (i=0; i < StrLen(str); i++) {
+    hash = g * hash + str[i];
+  }
+
+  return hash;
 }
 
 // tp : end
