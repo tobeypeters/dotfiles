@@ -46,12 +46,10 @@ U8 exec_command(SV *sv) {
   /*for(q=0; q < x; q++) {
     "token : %s\n", tokens[q];
   }*/
-
-  "len %d\n", StrLen(tokens[q]);
 
 
   if (!StrCmp(tokens[0], "ls")) {
-    if (ae = x > 0 && x < 3) {
+    if (ae = x > 0 && x < 3) {
 
       "\n";
       if (x == 2) {
