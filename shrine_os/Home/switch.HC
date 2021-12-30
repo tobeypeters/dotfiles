@@ -2,7 +2,7 @@
 I64 a = 2;
 
 // Works
-switch (a) {
+switch (a) {
   case 0:
     "0\n";
     break;
@@ -22,10 +22,8 @@ switch (a) {
     "2\n";
     break;
   case 99998:
-    "2\n";
+    "99998\n";
     break;
   default:
     break;
 }*/
-
-}
