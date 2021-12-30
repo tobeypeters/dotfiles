@@ -46,6 +46,9 @@ U8 exec_command(SV *sv) {
   /*for(q=0; q < x; q++) {
     "token : %s\n", tokens[q];
   }*/
+
+  "len %d\n", StrLen(tokens[q]);
+
 
   if (!StrCmp(tokens[0], "ls")) {
     if (ae = x > 0 && x < 3) {
@@ -58,7 +61,7 @@ U8 exec_command(SV *sv) {
       }
     }
   }
-  else if (!StrCmp(tokens[0], "cd") || 
+  else if (!StrCmp(tokens[0], "cd") ||
            !StrCmp(tokens[0], "cdd")) {
     if (ae = x > 0 && x < 3) {
       if (x == 2) {
@@ -70,7 +73,7 @@ U8 exec_command(SV *sv) {
 
      if (!StrCmp(tokens[0], "cdd")) {
        external("Dir;");
-     } 
+     }
     }
   }
   else if (!StrCmp(tokens[0], "ed")) {
@@ -163,7 +166,7 @@ U8 exec_command(SV *sv) {
   }
   else if (!StrCmp(tokens[0], "date")) {
     if (ae = x == 1) {
-      "%D\n", Now;
+      "%D\n", Now;
     }
   }
   else if (!StrCmp(tokens[0], "time")) {
@@ -176,7 +179,7 @@ U8 exec_command(SV *sv) {
       CDateStruct ds;
       Date2Struct(&ds,Now+local_time_offset);
 
-      "%03tZ %03tZ %03d %T\n\n", 
+      "%03tZ %03tZ %03d %T\n\n",
       ds.day_of_week, "ST_DAYS_OF_WEEK",
       ds.mon-1, "ST_MONTHS",
       ds.day_of_week,
@@ -200,8 +203,6 @@ U8 exec_command(SV *sv) {
     }
   }
   else {
-/*    "\n";
-    ExePutS(tokens[0]);*/
     external(tokens[0]);
     ae = TRUE;
   }
