@@ -2,7 +2,7 @@
 I64 a = 2;
 
 // Works
-switch (a) {
+/*switch (a) {
   case 0:
     "0\n";
     break;
@@ -11,10 +11,10 @@ I64 a = 2;
     break;
   default:
     break;
-}
+}*/
 
 // Doesn't work
-/*switch (a) {
+switch (a) {
   case 0:
     "0\n";
     break;
@@ -26,4 +26,16 @@ I64 a = 2;
     break;
   default:
     break;
-}*/
+}
+
+// Doesn't work;
+/*  switch (2) {
+    case 0:
+      "one\n";
+      break;
+    case 99998:
+      "two\n";
+      break;
+    default:
+  }*/
+
