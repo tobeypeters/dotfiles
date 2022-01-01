@@ -202,7 +202,7 @@ $FG$$BG$  if (h == 98262) { //cat
       CDateStruct ds;
       Date2Struct(&ds, Now + local_time_offset);
 
-      "%03tZ %03tZ %03d %T\n",
+      "%03tZ %03tZ %03d %T\n",
       ds.day_of_week, "ST_DAYS_OF_WEEK",
       ds.mon-1, "ST_MONTHS",
       ds.day_of_week,
@@ -283,4 +283,4 @@ U0 TempleDOS()
   }
 }
 
-//TempleDOS;
+//TempleDOS;

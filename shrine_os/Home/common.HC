@@ -70,14 +70,14 @@ U64 HashCodeFor(U8 *str) {
   // hash code generator for strings.
   U64 hash = 0;
   U64 g = 31;
-  U64 i;  
+  U64 i;  
 
   for (i=0; i < StrLen(str); i++) {
     hash = g * hash + str[i];
   }
 
   return hash;
-}
+}
 
 // tp : end
 
