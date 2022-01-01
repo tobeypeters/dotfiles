@@ -1,4 +1,4 @@
-$GREEN$/*
+/*
   The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -12,8 +12,8 @@ $GREEN$/*
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/$FG$
-
+*/
+
 General:
  * Added $LK,"common.HC",A="FI:C:/Home/Common.HC"$ : Holy C include file,
    for common shared code.
