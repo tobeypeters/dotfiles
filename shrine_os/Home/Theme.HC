@@ -20,6 +20,8 @@
 //  0xefef7c7c8e8e, // Hot Pink
 //  0x808000002020, // Burgundy
 
+#include "~/tp_Compositor.HC"
+
 public CBGR48 gr_palette_test[COLORS_NUM]={
   0x00002b2b3636,0x070736364242,0x000080808080,0x31318282a4a4,
   0xcbcb4b4b1616,0x9c9c3636b6b6,0x858599990000,0xeeeee8e8d5d5,
