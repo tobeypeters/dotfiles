@@ -14,33 +14,38 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-General:
+<b>Description:</b>
+              Running list of additions and changes made to my 
+              distribution of Shrine/TempleOS.
+
+<b>General:</b>
  * Added $LK,"common.HC",A="FI:C:/Home/Common.HC"$ : Holy C include file,
    for common shared code.
  * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
-C:/Once.HC.Z:
+<b>C:/Once.HC.Z:</b>
  * Commented out everything.
 
-C:/StartOS.HC.Z:
+<b>C:/StartOS.HC.Z:</b>
  * Comment out WallPaperInit
 
-C:/Home/HomeSys.HC.Z:
+<b>C:/Home/HomeSys.HC.Z:</b>
  * Code restructure.
  * Added theme include.
  * Added TempleDOS execution logic.
 
-C:/Home/Once.HC.Z:
+<b>C:/Home/Once.HC.Z:</b>
  * Commented out everything.
 
-C:/Adam/DolDoc/DocRecalc.HC.Z:
+<b>C:/Adam/DolDoc/DocRecalc.HC.Z:</b>
  * Turned off blinking text on the sidebar.
 
-C:/Adam/DolDoc/DocTerm.HC.Z:
+<b>C:/Adam/DolDoc/DocTerm.HC.Z:</b>
  * Changed window close button(s) 'X'
 
-C:/Adam/DolDoc/PutKey.HC.Z:
+<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
  * Changed <END> shortcut to move to the end of line.
  * Added <CTRL> + <ESC> shortcut, to move
    to the end of the document.
+
