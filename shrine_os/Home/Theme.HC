@@ -1,3 +1,19 @@
+/*
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 // colorhexa.com
 //  0x63638c8c8080, // Spearmint
 //  0xe2e280808a8a, // Honeysuckle
@@ -20,20 +36,12 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 //  0x63638c8c8080, // COMMENTS - GREEN
   0xf4f4b7b70000, // COMMENTS - GREEN
 
-
   0xb5b5b5b5f0f0, // TYPES - CYAN
   0xb3b300002d2d, // RED
   0x16167a7abfbf, // PURPLE
   0x868654541111, // BROWN
 
-
-
-
   0x0000a4a4dbdb, // BRACES - LTGRAY
-
-
-
-
 
   0xe2e280808a8a, // DKGRAY
   0x30304c4c3434, // Folders, RETURNTYPES - LTBLUE
@@ -51,4 +59,5 @@ GrPaletteSet(gr_palette_gruv);
 // a User Task (usually a terminal) the theme may reset to
 // gr_palette_std. I could not figure out why and how to fix that.
 // So I just made gr_palette_std to be gr_palette_gruv.
-MemCpy(gr_palette_std, gr_palette_gruv, sizeof(gr_palette_gruv));
+MemCpy(gr_palette_std, gr_palette_gruv, sizeof(gr_palette_gruv));
+

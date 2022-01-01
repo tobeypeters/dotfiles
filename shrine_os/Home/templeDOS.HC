@@ -1,3 +1,19 @@
+/*
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include "~/common.HC"
 
 #define CMD_LEN 20
@@ -24,7 +40,6 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"time", "Display the current time."},
 {"touch", "Create an empty file. TempleOS also has\n\ta <$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
 };
-
 
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
@@ -88,7 +103,7 @@ U8 exec_command(SV *sv) {
 
   h = HashCodeFor(tokens[0]);
 
-$FG$$BG$  if (h == 98262) { //cat
+  if (h == 98262) { //cat
     if (ae = x == 2) {
       if (x == 2) {
         Type(tokens[1]);
@@ -255,7 +270,7 @@ U0 TempleDOS()
 {
   DocClear;
 
-  "\nTempleDOS [Version 1.0]\n";
+  "\n$FG,4$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2021 No rights reserved. Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
@@ -283,4 +298,4 @@ U0 TempleDOS()
   }
 }
 
-//TempleDOS;
+//TempleDOS;
