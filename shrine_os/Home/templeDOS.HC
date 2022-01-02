@@ -135,7 +135,9 @@ U8 exec_command(SV *sv) {
         Copy(tokens[1], tokens[2]);
       }
       else {
-        if (!StrCmp(tokens[1], "-d")) {
+        h = HashCodeFor(tokens[1]);
+
+        if (h == 1495) { // "-d"
           CopyTree(tokens[2], tokens[3]);
         }
       }
@@ -230,7 +232,9 @@ U8 exec_command(SV *sv) {
         Del(tokens[1]);
       }
       else {
-        if (!StrCmp(tokens[1], "-d")) {
+        h = HashCodeFor(tokens[1]);
+
+        if (h == 1495) { // "-d"
           DelTree(tokens[2]);
         }
       }
@@ -270,11 +274,12 @@ U0 TempleDOS()
 {
   DocClear;
 
-  "\n$FG,4$TempleDOS [Version 1.0]$FG$\n";
+  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2021 No rights reserved. Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   I64 result = 0;
+
 
   while (1)
   {

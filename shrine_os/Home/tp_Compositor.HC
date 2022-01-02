@@ -17,9 +17,9 @@
 
 // Override the mouse cursor.
 public U0 DrawStdMs(CDC *dc,I64 x,I64 y) {
-  dc->color=LTRED;
+  dc->color=LTRED;
 
-  dc->thick=1;
+  dc->thick=1;
   dc->flags&=~(DCF_TRANSFORMATION|DCF_SYMMETRY);
   GrArrow3(dc,x+8,y+8,0,x,y,0);
 }

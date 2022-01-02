@@ -15,12 +15,16 @@
 */
 
 // colorhexa.com
-//  0x63638c8c8080, // Spearmint
+//  0xa4a4c6c63939, // Android Green
+//  0xf2f2f3f3f4f4, // Anti-flash White
+//  0x99996666cccc, // Amethyst
+//  0x9f9f81817070, // Beaver
+//  0x808000002020, // Burgundy
 //  0xe2e280808a8a, // Honeysuckle
 //  0xefef7c7c8e8e, // Hot Pink
-//  0x808000002020, // Burgundy
+//  0x63638c8c8080, // Spearmint
 
-#include "~/tp_Compositor.HC"
+#include "~/tp_Compositor.HC"
 
 public CBGR48 gr_palette_test[COLORS_NUM]={
   0x00002b2b3636,0x070736364242,0x000080808080,0x31318282a4a4,
@@ -31,15 +35,20 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0xf0f0eaead6d6, // MOUSE, CURSOR - BLACK
-  0xffffffffffff, // BORDERS - BLUE
-  0xf4f4b7b70000, // COMMENTS - GREEN
+
+  0xd0d0d2d2d4d4, // BORDERS - BLUE
+
+  0xa4a4c6c63939, // COMMENTS - GREEN
   0x0000ffffffff, // TYPES - CYAN
-  0xb3b300002d2d, // RED
+
+//  0xffffffffffff, // RED
+  0xd0d0d2d2d4d4, // RED
+
   0x16167a7abfbf, // PURPLE
-  0x868654541111, // BROWN
-  0x0000a4a4dbdb, // BRACES - LTGRAY
+  0xF4F4A4A46060$ER$, // BROWN
+  0x80809090a0a0, // BRACES - LTGRAY
   0xe2e280808a8a, // DKGRAY
-  0x30304c4c3434, // Folders, RETURNTYPES - LTBLUE
+  0xa4a4c6c63939, // Folders, RETURNTYPES - LTBLUE
   0x000000000000, // LTGREEN
   0xb3b300002d2d, // LTCYAN
   0xffff00000000, // ERRORS-LTRED
