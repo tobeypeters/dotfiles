@@ -35,7 +35,7 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0xf0f0eaead6d6, // MOUSE, CURSOR - BLACK
-  0xd0d0d2d2d4d4, // BORDERS - BLUE
+  0xd0d0d2d2d4d4, // BORDERS - BLUE
   0xa4a4c6c63939, // COMMENTS - GREEN
   0x0000ffffffff, // TYPES - CYAN
   0xd0d0d2d2d4d4, // RED
@@ -54,7 +54,7 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 
 GrPaletteSet(gr_palette_gruv);
 
-// NOTE: for whatever reason when you Abort&Exit (Shift+Esc)
+// NOTE: for whatever reason when you Abort&Exit (Shift+Esc)
 // a User Task (usually a terminal) the theme may reset to
 // gr_palette_std. I could not figure out why and how to fix that.
 // So I just made gr_palette_std to be gr_palette_gruv.

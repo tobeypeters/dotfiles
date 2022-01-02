@@ -6,7 +6,7 @@ else
     QEMU_IMG=$QEMU_HOME/bin/qemu-img
 fi
 
-QEMU_FLAGS="-display gtk,zoom-to-fit=on -enable-kvm -m 512"
+QEMU_FLAGS="-cpu host -smp 4 -m 1g -display gtk,zoom-to-fit=on -enable-kvm"
 QEMU_IMG_SIZE="512M"
 QEMU_IMG_MOUNT_DIR="./mnt/"
 # Note on the offset: https://www.cloudsavvyit.com/7517/how-to-mount-a-qemu-virtual-disk-image/

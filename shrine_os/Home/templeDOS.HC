@@ -275,7 +275,7 @@ U0 TempleDOS()
   DocClear;
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
-  "(c) 2021 No rights reserved. For Public Domain use.\n";
+  "(c) 2021 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   I64 result = 0;
@@ -283,7 +283,7 @@ U0 TempleDOS()
 
   while (1)
   {
-    "\n%s: ", Fs->cur_dir; // Display the prompt
+    "\n%s: ", Fs->cur_dir; // Display the prompt
 
     SV sv;
     sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input
