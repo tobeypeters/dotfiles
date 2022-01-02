@@ -35,15 +35,10 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0xf0f0eaead6d6, // MOUSE, CURSOR - BLACK
-
-  0xd0d0d2d2d4d4, // BORDERS - BLUE
-
+  0xd0d0d2d2d4d4, // BORDERS - BLUE
   0xa4a4c6c63939, // COMMENTS - GREEN
   0x0000ffffffff, // TYPES - CYAN
-
-//  0xffffffffffff, // RED
-  0xd0d0d2d2d4d4, // RED
-
+  0xd0d0d2d2d4d4, // RED
   0x16167a7abfbf, // PURPLE
   0xF4F4A4A46060$ER$, // BROWN
   0x80809090a0a0, // BRACES - LTGRAY
