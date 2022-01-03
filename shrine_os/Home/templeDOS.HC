@@ -51,7 +51,8 @@ U8 exec_command(SV *sv) {
   U64 x = sv->count; // Count gets updated in SVPullWord();
   U64 h = 0;
 
-  Bool ae = FALSE;
+  Bool ace = FALSE;
+  Bool ape = TRUE;
 
   U8 tokens[sv->count][128 + 1];
 
@@ -105,12 +106,12 @@ U8 exec_command(SV *sv) {
   h = HashCodeFor(tokens[0]);
 
   if (h == 98262) { //cat
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       Type(tokens[1]);
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
-    if (ae = x > 0 && x < 3) {
+    if (ace = 0 < x < 3) {
       if (x == 2) {
         Cd(tokens[1]);
       }
@@ -124,65 +125,65 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 94746189) { //clear
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       DocClear;
     }
   }
   else if (h == 3181) { //cp
-    if (ae = (x > 2 && x < 5)) {
+    if (ace = (2 < x < 5)) {
       if (x == 3) {
         Copy(tokens[1], tokens[2]);
       }
       else {
         h = HashCodeFor(tokens[1]);
 
-        if (h == 1495) { // "-d"
+        if (ape = h == 1495) { // "-d"
           CopyTree(tokens[2], tokens[3]);
         }
       }
     }
   }
   else if (h == 98728) { //cpu
-    if (ae = (x > 0 && x < 3)) {
+    if (ace = (0 < x < 3)) {
       if (x == 1) {
         CPURep;
       }
       else {
         h = HashCodeFor(tokens[1]); //"-f"
 
-        if (h == 1497) {
+        if (ape = h == 1497) {
           CPURep(TRUE);
         }
       }
     }
   }
   else if (h == 3076014) { //date
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       "%D\n", Now;
     }
   }
   else if (h == 3202) { //df
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       DrvRep;
     }
   }
   else if (h == 3231) { //ed
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       Ed(tokens[1]);
     }
   }
   else if (h == 3127582) { //exit
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       return 1;
     }
   }
   else if (h == 3181270) { //grep
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       F(tokens[1]);
     }
   }
   else if (h == 3198785) { //help
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       U64 i;
 
       "\n%-6s\tDescription\n", "Cmd";
@@ -193,8 +194,7 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 3463) { //ls
-    if (ae = x > 0 && x < 3) {
-
+    if (ace = 0 < x < 3) {
       "\n";
       if (x == 2) {
         Dir(tokens[1]);
@@ -204,27 +204,27 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 107866) { //man
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       Man(tokens[1]);
     }
   }
   else if (h == 107989) { //mem
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       MemRep;
     }
   }
   else if (h == 103950895) { //mkdir
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       DirMk(tokens[1]);
     }
   }
   else if (h == 3497) { //mv
-    if (ae = x == 3) {
+    if (ace = x == 3) {
       Move(tokens[1], tokens[2]);
     }
   }
   else if (h == 109270) { //now
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       CDateStruct ds;
       Date2Struct(&ds, Now + local_time_offset);
 
@@ -235,27 +235,27 @@ U8 exec_command(SV *sv) {
       Now;
     }
   }
-   else if (h == 3643) { //rm
-    if (ae = (x > 1 && x < 4)) {
+  else if (h == 3643) { //rm
+    if (ace = (1 < x < 4)) {
       if (x == 2) {
         Del(tokens[1]);
       }
       else {
         h = HashCodeFor(tokens[1]);
 
-        if (h == 1495) { // "-d"
+        if (ape = h == 1495) { //"-d"
           DelTree(tokens[2]);
         }
       }
     }
   }
   else if (h == 3560141) { //time
-    if (ae = x == 1) {
+    if (ace = x == 1) {
       "%T\n", Now;
     }
   }
   else if (h == 110550847) { //touch
-    if (ae = x == 2) {
+    if (ace = x == 2) {
       // Currently only creates an empty file.
       // The templeOS touch command can update
       // file attributes and the date.
@@ -269,11 +269,21 @@ U8 exec_command(SV *sv) {
   }
   else {
     external(tokens[0]);
-    ae = TRUE;
+    ace = TRUE;
   }
 
-  if (x > 0 && !ae) {
-    "Error: %s - Argument count\n", tokens[0];
+  if (x > 0 && (!ace || !ape)) {
+    U8 *err_msg = "";
+
+    if (!ace) {
+      err_msg = "Invalid argument count.";
+    }
+
+    if (!ape) {
+      err_msg = "Invalid parameter(s) provided.";
+    }
+
+    "$FG$$FG,2$Error:$FG$ %s\n", err_msg;
   }
 
   return 0;
@@ -287,7 +297,7 @@ U0 TempleDOS()
   "(c) 2021 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  U64 result = 0;
+  U64 result = 0;
 
   while (1)
   {
