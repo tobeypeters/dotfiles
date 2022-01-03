@@ -16,14 +16,15 @@
 
 #include "~/common.HC"
 
-#define CMD_LEN 20
+#define CMD_LEN 21
 
 U8 *CMD_LIST[CMD_LEN][2] = {
 {"cat","Concatenate FILE to standard output."},
 {"cd", "Change the current working directory."},
 {"cdd", "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
-{"cp", "Copy files and directories."},
+{"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
+{"\ncpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
 {"date", "Display the current date."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
@@ -36,9 +37,9 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"mkdir", "Make directories."},
 {"mv", "Move (rename) files."},
 {"now", "Display the current date and time."},
-{"rm", "Remove files or directories."},
+{"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
 {"time", "Display the current time."},
-{"touch", "Create an empty file. TempleOS also has\n\ta <$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
+{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
 };
 
 U0 external(U8 *cmd) {
@@ -105,9 +106,7 @@ U8 exec_command(SV *sv) {
 
   if (h == 98262) { //cat
     if (ae = x == 2) {
-      if (x == 2) {
-        Type(tokens[1]);
-      }
+      Type(tokens[1]);
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
@@ -119,9 +118,9 @@ U8 exec_command(SV *sv) {
         Cd;
       }
 
-     if (h == 98339) {
-       external("Dir;");
-     }
+      if (h == 98339) {
+        external("Dir;");
+      }
     }
   }
   else if (h == 94746189) { //clear
@@ -139,6 +138,20 @@ U8 exec_command(SV *sv) {
 
         if (h == 1495) { // "-d"
           CopyTree(tokens[2], tokens[3]);
+        }
+      }
+    }
+  }
+  else if (h == 98728) { //cpu
+    if (ae = (x > 0 && x < 3)) {
+      if (x == 1) {
+        CPURep;
+      }
+      else {
+        h = HashCodeFor(tokens[1]); //"-f"
+
+        if (h == 1497) {
+          CPURep(TRUE);
         }
       }
     }
@@ -165,19 +178,17 @@ U8 exec_command(SV *sv) {
   }
   else if (h == 3181270) { //grep
     if (ae = x == 2) {
-      if (x == 2) {
-        F(tokens[1]);
-      }
+      F(tokens[1]);
     }
   }
   else if (h == 3198785) { //help
     if (ae = x == 1) {
       U64 i;
 
-      "\n%-6s- Description\n", "Cmd";
+      "\n%-6s\tDescription\n", "Cmd";
       "---------------------------\n";
       for (i=0; i < CMD_LEN; i++) {
-        "$FG$$FG,4$%-6s$FG$- %s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
       }
     }
   }
@@ -194,9 +205,7 @@ U8 exec_command(SV *sv) {
   }
   else if (h == 107866) { //man
     if (ae = x == 2) {
-      if (x == 2) {
-        Man(tokens[1]);
-      }
+      Man(tokens[1]);
     }
   }
   else if (h == 107989) { //mem
@@ -278,12 +287,11 @@ U0 TempleDOS()
   "(c) 2021 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  I64 result = 0;
-
+  U64 result = 0;
 
   while (1)
   {
-    "\n%s: ", Fs->cur_dir; // Display the prompt
+    "\n%s: ", Fs->cur_dir; // Display the prompt
 
     SV sv;
     sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input
