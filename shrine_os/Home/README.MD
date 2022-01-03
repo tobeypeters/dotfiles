@@ -23,7 +23,7 @@
    for common shared code.
  * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
    compositor. Right now it overrides the
-   mouse cursor color.
+   mouse cursor color.
  * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
@@ -41,13 +41,17 @@
 <b>C:/Home/Once.HC.Z:</b>
  * Commented out everything.
 
+<b>C:/Adam/DolDoc/DocEd.HC.Z:</b>
+ * Changed Window "MENU" to "µMENUÆ".
+
 <b>C:/Adam/DolDoc/DocRecalc.HC.Z:</b>
  * Turned off blinking text on the sidebar.
 
 <b>C:/Adam/DolDoc/DocTerm.HC.Z:</b>
- * Changed window close button(s) 'X'
+ * Changed window close button(s) 'X'.
+ * Changed Window "MENU" to "µMENUÆ".
 
 <b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
  * Changed <END> shortcut to move to the end of line.
- * Added <CTRL> + <ESC> shortcut, to move
+ * Added <CTRL> + <ESC> shortcut, to move
    to the end of the document.
