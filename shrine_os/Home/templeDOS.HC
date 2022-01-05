@@ -24,23 +24,23 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"cdd", "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
 {"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
-{"\ncpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
-{"date", "Display the current date."},
+{"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
+{"\ndate", "Display the current date."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
 {"exit", "Cause normal process termination of TempleShell."},
-{"fm", "FIleManager"},
-{"grep", "Recursively search files and\n\tprint lines that contain a specified string."},
+{"fm", "FileManager which displays treeview of\n\tthe current or specified directory."},
+{"grep", "Recursively search files and print any lines\n\twhich contain the specified string."},
 {"help", "Displays this list of TempleShell commands."},
 {"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$ - etc ..."},
+{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
 {"mem", "Display a memory representation."},
 {"mkdir", "Make directories."},
 {"mv", "Move (rename) files."},
 {"now", "Display the current date and time."},
 {"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
 {"time", "Display the current time."},
-{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update the date & file attributes."}
+{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
 U0 external(U8 *cmd) {
@@ -305,25 +305,25 @@ U0 TempleDOS()
   DocClear;
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
-  "(c) 2021 No rights reserved. For Public Domain use.\n";
+  "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 result = 0;
 
-  "Hash Code : %d\n", HashCodeFor("fm");
+  // "Hash Code : %d\n", HashCodeFor("fm");
 
   while (1)
   {
-    "\n%s: ", Fs->cur_dir; // Display the prompt
+    "\n%s: ", Fs->cur_dir; // Display prompt
 
     SV sv;
-    sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Grab user input
+    sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Get user input
     sv.size = StrLen(sv.begin);
     sv.count = SVWordCount(&sv);
     sv.fp = sv.begin;
 
     if (sv.count > 0) {
-      result = exec_command(&sv);
+      result = exec_command(&sv); // Execute terminal command
     }
 
     Free(sv.fp);

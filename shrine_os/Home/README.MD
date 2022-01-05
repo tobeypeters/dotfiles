@@ -51,7 +51,10 @@
  * Changed window close button(s) 'X'.
  * Changed Window "MENU" to "µMENUÆ".
 
-<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
+<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
  * Changed <END> shortcut to move to the end of line.
- * Added <CTRL> + <ESC> shortcut, to move
+ * Added <CTRL> + <ESC> shortcut, to move
    to the end of the document.
+
+<b>C:/Adam/Opt/Utils/LineRep.HC.Z:</b>
+ * Added in-line file manager. Refactored SizeRep;
