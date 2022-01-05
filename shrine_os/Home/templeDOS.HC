@@ -16,7 +16,7 @@
 
 #include "~/common.HC"
 
-#define CMD_LEN 21
+#define CMD_LEN 22
 
 U8 *CMD_LIST[CMD_LEN][2] = {
 {"cat","Concatenate FILE to standard output."},
@@ -29,6 +29,7 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
 {"exit", "Cause normal process termination of TempleShell."},
+{"fm", "FIleManager"},
 {"grep", "Recursively search files and\n\tprint lines that contain a specified string."},
 {"help", "Displays this list of TempleShell commands."},
 {"ls", "List directory contents."},
@@ -177,6 +178,16 @@ U8 exec_command(SV *sv) {
       return 1;
     }
   }
+  else if (h == 3271) { //fm
+    if (ace = (0 < x < 3)) {
+      if (x == 1) {
+        MiniFM;
+      }
+      else {
+        MiniFM(tokens[1]);
+      }
+    }
+  }
   else if (h == 3181270) { //grep
     if (ace = x == 2) {
       F(tokens[1]);
@@ -279,7 +290,7 @@ U8 exec_command(SV *sv) {
       err_msg = "Invalid argument count.";
     }
 
-    if (!ape) {
+    if (!ape) {
       err_msg = "Invalid parameter(s) provided.";
     }
 
@@ -298,6 +309,8 @@ U0 TempleDOS()
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 result = 0;
+
+  "Hash Code : %d\n", HashCodeFor("fm");
 
   while (1)
   {
