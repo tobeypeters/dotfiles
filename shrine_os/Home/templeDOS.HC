@@ -25,7 +25,7 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"clear", "Clear the terminal screen."},
 {"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
 {"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
-{"\ndate", "Display the current date."},
+{"\ndate", "Display the current date."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
 {"exit", "Cause normal process termination of TempleShell."},
@@ -43,6 +43,23 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
+// File / directory error messages.
+U8 *ERR_MSG[2] = {
+"Not a directory",
+"Not a file"
+};
+
+//"Invalid argument count.";
+//"Invalid flag(s) provided.";
+
+U0 err_msg(I64 idx = 0, U8 *fd) {
+ // Could do this error stuff better in python.
+ // Using this to allow for consistant errors and
+ // formatting.
+ // I don't want to use PrintErr() or PrintWarn().
+ "'%s': %s\n", fd, ERR_MSG[idx];
+}
+
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
@@ -53,7 +70,7 @@ U8 exec_command(SV *sv) {
   U64 h = 0;
 
   Bool ace = FALSE;
-  Bool ape = TRUE;
+  Bool afe = TRUE;
 
   U8 tokens[sv->count][128 + 1];
 
@@ -138,7 +155,7 @@ U8 exec_command(SV *sv) {
       else {
         h = HashCodeFor(tokens[1]);
 
-        if (ape = h == 1495) { // "-d"
+        if (afe = h == 1495) { // "-d"
           CopyTree(tokens[2], tokens[3]);
         }
       }
@@ -152,7 +169,7 @@ U8 exec_command(SV *sv) {
       else {
         h = HashCodeFor(tokens[1]); //"-f"
 
-        if (ape = h == 1497) {
+        if (afe = h == 1497) {
           CPURep(TRUE);
         }
       }
@@ -184,7 +201,12 @@ U8 exec_command(SV *sv) {
         MiniFM;
       }
       else {
-        MiniFM(tokens[1]);
+        if (IsDir(tokens[1])) {
+          MiniFM(tokens[1]);
+        }
+        else {
+          err_msg(0, tokens[1]);
+        }
       }
     }
   }
@@ -254,7 +276,7 @@ U8 exec_command(SV *sv) {
       else {
         h = HashCodeFor(tokens[1]);
 
-        if (ape = h == 1495) { //"-d"
+        if (afe = h == 1495) { //"-d"
           DelTree(tokens[2]);
         }
       }
@@ -267,14 +289,15 @@ U8 exec_command(SV *sv) {
   }
   else if (h == 110550847) { //touch
     if (ace = x == 2) {
-      // Currently only creates an empty file.
-      // The templeOS touch command can update
-      // file attributes and the date.
-
-      // FileFind is the closes thing I've found,
-      // to a fileexists(). I'm still looking.
-      if (!FileFind(tokens[1])) {
+      // Currently only creates an empty file, if 
+      // it doesn't exist already.
+      if (!FileExists(tokens[1])) {
+        // Off-hand, looks like Touch() doesn't create
+        // files. I'll look more at it and touchfile().
         FileWrite(tokens[1], NULL, 0);
+      }
+      else {
+        Touch(tokens[1],"");
       }
     }
   }
@@ -283,15 +306,15 @@ U8 exec_command(SV *sv) {
     ace = TRUE;
   }
 
-  if (x > 0 && (!ace || !ape)) {
+  if (x > 0 && (!ace || !afe)) {
     U8 *err_msg = "";
 
     if (!ace) {
       err_msg = "Invalid argument count.";
     }
 
-    if (!ape) {
-      err_msg = "Invalid parameter(s) provided.";
+    if (!afe) {
+      err_msg = "Invalid flag(s) provided.";
     }
 
     "$FG$$FG,2$Error:$FG$ %s\n", err_msg;

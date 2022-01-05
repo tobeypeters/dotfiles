@@ -22,7 +22,7 @@ class SV {
 };
 
 // tp : start
-U0 SVTrim(SV *sv, Bool left = TRUE, Bool both = FALSE) {
+U0 SVTrim(SV *sv, Bool left = TRUE, Bool both = FALSE) {
   // Trims leading or trailing spaces from a string.
   // left = TRUE : left trim
   // left = FALSE : right trim
@@ -87,6 +87,10 @@ U64 HashCodeFor(U8 *str) {
   }
 
   return hash;
+}
+
+Bool FileExists(U8 *file) {
+  return FileFind(file,,FUF_JUST_FILES);
 }
 
 // tp : end
