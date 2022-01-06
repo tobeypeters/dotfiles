@@ -23,8 +23,8 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"cd", "Change the current working directory."},
 {"cdd", "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
-{"\ncp", "Copy files and directories.\n\t$FG$$GREEN$Flags:$FG$ -d Directory copy.\n"},
-{"cpu", "Display a cpu representation.\n\t$FG$$GREEN$Flags:$FG$ -f Detailed cpu info."},
+{"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
+{"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
 {"\ndate", "Display the current date."},
 {"df", "Display currently mounted drives."},
 {"ed", "Edit / Create text files."},
@@ -33,31 +33,31 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"grep", "Recursively search files and print any lines\n\twhich contain the specified string."},
 {"help", "Displays this list of TempleShell commands."},
 {"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$GREEN$Dir;$FG$ - $FG$$GREEN$DrvRep;$FG$, etc."},
+{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
 {"mem", "Display a memory representation."},
 {"mkdir", "Make directories."},
 {"mv", "Move (rename) files."},
 {"now", "Display the current date and time."},
-{"\nrm", "Remove files or directories.\n\t$FG$$GREEN$Flags:$FG$ -d Directory remove.\n"},
+{"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
 {"time", "Display the current time."},
-{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$GREEN$touch$FG$> command which can update\n\tthe date & file attributes."}
+{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
 // File / directory error messages.
-U8 *ERR_MSG[2] = {
+U8 *ERR_MSG[4] = {
 "Not a directory",
-"Not a file"
+"Not a file",
+"Invalid argument count",
+"Invalid flag provided"
 };
 
-//"Invalid argument count.";
-//"Invalid flag(s) provided.";
 
 U0 err_msg(I64 idx = 0, U8 *fd) {
  // Could do this error stuff better in python.
  // Using this to allow for consistant errors and
  // formatting.
  // I don't want to use PrintErr() or PrintWarn().
- "'%s': %s\n", fd, ERR_MSG[idx];
+ "'%s': %s\n", fd, ERR_MSG[idx];
 }
 
 U0 external(U8 *cmd) {
@@ -222,7 +222,7 @@ U8 exec_command(SV *sv) {
       "\n%-6s\tDescription\n", "Cmd";
       "---------------------------\n";
       for (i=0; i < CMD_LEN; i++) {
-        "$FG$$GREEN$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
       }
     }
   }
@@ -317,7 +317,7 @@ U8 exec_command(SV *sv) {
       err_msg = "Invalid flag(s) provided.";
     }
 
-    "$FG$$GREEN$Error:$FG$ %s\n", err_msg;
+    "$FG$$FG,2$Error:$FG$ %s\n", err_msg;
   }
 
   return 0;
@@ -327,9 +327,9 @@ U0 TempleDOS()
 {
   DocClear;
 
-  "\n$CYAN$TempleDOS [Version 1.0]$FG$\n";
+  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$GREEN$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 result = 0;
 
