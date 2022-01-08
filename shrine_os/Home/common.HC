@@ -40,19 +40,19 @@ U0 SVTrim(SV *sv, Bool left = TRUE, Bool both = FALSE) {
   sv->size = StrLen(sv->begin);
 }
 
-I64 SVWordCount(SV *sv, U8 delim = ' ') {
+I64 SVCount(SV *sv, Bool count_words = TRUE, U8 delim = ' ')
+{//Count the occurences of either the words or a specific char.
   if (sv->size <= 0) return 0;
 
-  I64 word_count = 0, i = 0;
+  I64 count = 0, i = 0;
 
   while (i < sv->size) {
-    if (sv->begin[i] == delim) word_count++;
+    if (sv->begin[i] == delim) count++;
     i++;
   }
-
-  return word_count + 1;
+  return count + count_words;
 }
-
+
 U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
   I64 i = 0;
 

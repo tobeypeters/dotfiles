@@ -73,8 +73,13 @@ U0 external(U8 *cmd) {
 U8 exec_command(SV *sv) {
   if (sv->count == 0) return;
 
-  U64 q;
+// Lots of this WILLchange. Lots of extra "crap" right now.
+
+  U64 tc = sv->count; // Token Count. Count gets updated in SVPullWord;
+  U64 fc = SVCount(sv, FALSE, '-'); // Flag Count.
+
   U64 x = sv->count; // Count gets updated in SVPullWord();
+
   U64 h = 0;
 
   Bool ace = FALSE;
@@ -86,9 +91,13 @@ U8 exec_command(SV *sv) {
 
   Bool ec = FALSE;
 
+//  U8 tokens[tc - fc][256];
+//  U8 flags[fc][256];
+
   U8 tokens[sv->count][256];
   U8 *cmd_buf = "";
 
+  U64 q;
   for(q=0; q < x; q++) {
     SVTrim(sv,,TRUE);
     SVPullWord(sv, tokens[q]);
@@ -386,7 +395,7 @@ U0 TempleDOS()
     SV sv;
     sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Get user input
     sv.size = StrLen(sv.begin);
-    sv.count = SVWordCount(&sv);
+    sv.count = SVCount(&sv);
     sv.fp = sv.begin;
 
     result = exec_command(&sv); // Execute terminal command
