@@ -16,6 +16,29 @@
 
 #include "~/common.HC"
 
+// Before we begin ... Yes, Ihandle errors stupidly.
+#define ERR_ARGF 0 // Too many args FALSE.
+#define ERR_ARGT 1 // Too many args TRUE.
+#define ERR_ARGI 2 // Invalid arg provied.
+#define ERR_FILE 3 // File doesn't exist.
+#define ERR_DIR  4 // Directory doesn't exist.
+
+// File / directory error messages.
+U8 *ERR_MSG[4] = {
+"Not a directory",
+"Not a file",
+"Invalid argument count",
+"Invalid flag provided"
+};
+
+U0 err_msg(I64 idx = 0, U8 *fd) {
+ // Could do this error stuff better i'n python.
+ // Using this to allow for consistant errors and
+ // formatting.
+ // I don't want to use PrintErr() or PrintWarn().
+ "'%s': %s\n", fd, ERR_MSG[idx];
+}
+
 #define CMD_LEN 22
 
 U8 *CMD_LIST[CMD_LEN][2] = {
@@ -43,36 +66,28 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
-// File / directory error messages.
-U8 *ERR_MSG[4] = {
-"Not a directory",
-"Not a file",
-"Invalid argument count",
-"Invalid flag provided"
-};
-
-
-U0 err_msg(I64 idx = 0, U8 *fd) {
- // Could do this error stuff better in python.
- // Using this to allow for consistant errors and
- // formatting.
- // I don't want to use PrintErr() or PrintWarn().
- "'%s': %s\n", fd, ERR_MSG[idx];
-}
-
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
 
 U8 exec_command(SV *sv) {
+  if (sv->count == 0) return;
+
   U64 q;
   U64 x = sv->count; // Count gets updated in SVPullWord();
   U64 h = 0;
 
   Bool ace = FALSE;
+  Bool ade = FALSE;
   Bool afe = TRUE;
+  Bool tf = FALSE;
 
-  U8 tokens[sv->count][128 + 1];
+  U8 lt = 0;
+
+  Bool ec = FALSE;
+
+  U8 tokens[sv->count][256];
+  U8 *cmd_buf = "";
 
   for(q=0; q < x; q++) {
     SVTrim(sv,,TRUE);
@@ -196,19 +211,52 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 3271) { //fm
-    if (ace = (0 < x < 3)) {
+    // Could refactor this section,
+    // in another language.
+    if (ec = (0 < x < 4)) {
       if (x == 1) {
         MiniFM;
-      }
-      else {
-        if (IsDir(tokens[1])) {
-          MiniFM(tokens[1]);
-        }
-        else {
-          err_msg(0, tokens[1]);
-        }
+        return 0;
       }
     }
+//Correct:
+//MiniFM
+//MiniFM -d
+//MiniFM /Adam
+
+/*
+      // Second param is a flag & valid.
+      tf = HashCodeFor(tokens[1]) == 1495;      
+      afe = tokens[1][0] == '-' && !tf;
+
+      // Last param is a directory
+      // and valid.
+      lt = x - 1;
+      id = IsDir(tokens[l]);
+      ade = !ace && id;
+      
+      if (!afe || id) {
+        CatPrint(cmd_buf,"MinFM(");
+
+        if (id) {
+ 	  CatPrint(cmd_buf,tokens[lt]);
+        }
+        else {
+          ec = ERR_DIR;
+        }
+
+        if (tf) {
+          CatPrint(cmd_buf,",,TRUE");
+        }
+
+        CatPrint(cmd_buf, ");");
+      }
+
+
+//      err_msg(0, tokens[x - 1]);
+
+    }*/
+
   }
   else if (h == 3181270) { //grep
     if (ace = x == 2) {
@@ -306,18 +354,14 @@ U8 exec_command(SV *sv) {
     ace = TRUE;
   }
 
-  if (x > 0 && (!ace || !afe)) {
-    U8 *err_msg = "";
-
-    if (!ace) {
-      err_msg = "Invalid argument count.";
-    }
+  if (!ace || !afe) {
+    U64 err_num = 0; // Default: argument count.
 
     if (!afe) {
-      err_msg = "Invalid flag(s) provided.";
+      //err_num = ERR_PARM;
     }
 
-    "$FG$$FG,2$Error:$FG$ %s\n", err_msg;
+    //err_msg(err_num, "Usage Error:");
   }
 
   return 0;
@@ -345,9 +389,7 @@ U0 TempleDOS()
     sv.count = SVWordCount(&sv);
     sv.fp = sv.begin;
 
-    if (sv.count > 0) {
-      result = exec_command(&sv); // Execute terminal command
-    }
+    result = exec_command(&sv); // Execute terminal command
 
     Free(sv.fp);
 
