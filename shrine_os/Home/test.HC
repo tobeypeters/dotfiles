@@ -105,10 +105,15 @@ I64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
 I64 token_pull(U8 *cmd, U8 *out, U8 delim = ' ') {
   I64 i;
 
-  for (i=0;*cmd != delim; cmd++) {
+  "cmd : %s\n", cmd;
+  "cmd before %d\n", cmd;
+  for (i=0;*cmd != '\0' && *cmd != delim; cmd++) {
     out[i] = cmd[0];
+    "%c", cmd[0];
     i++;
   };
+  "\n";
+  "cmd after  %d\n\n", cmd;
 
   return cmd;
 }
@@ -158,22 +163,33 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
     return 0;
   }
 
+  "cc->token_count :%d\n", cc->token_count;
+  "cc->flag_count :%d\n", cc->flag_count;
+  "cc->size :%d\n", cc->size;
   U8 tokens[cc->token_count][cc->size];
   U8 flags[cc->flag_count][cc->size];
 
-  for (i=0; i < cc->token_count; i++) {
-    token_trim(cmd);   
+  "All tokens :%d\n\n", at;
+  for (i=0; i < at; i++) {
+    token_trim(cmd,,TRUE);   
     if (cmd[0] == '-') {
-      token_pull(cmd, flags[fi]); fi++;      
+      "fi : %d\n", fi;
+      cmd = token_pull(cmd, &flags[fi]); fi++;
     }
     else {
-      token_pull(cmd, tokens[ti]); ti++;
+      "ti : %d\n", ti;
+      cmd = token_pull(cmd, &tokens[ti]); ti++;
     }
   }
 
   // List all the tokens.
   for (i=0; i < tc; i++) {
-    "token[%d] : %s\n", i, tokens[i];
+    "tokens[%d] : %s\n", i, tokens[i];
+  }
+  "\n";
+  // List all the flags.
+  for (i=0; i < fc; i++) {
+    "flags[%d] : %s\n", i, flags[i];
   }
 
   // Get the hash codes, for all the command strings.
@@ -213,6 +229,43 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
 //    default:
 //  }
 
+
+  return 0;
+}
+
+U0 TempleDOS() {
+  DocClear;
+
+  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
+  "(c) 2022 No rights reserved. For Public Domain use.\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+
+  U64 result = 0;
+
+  U8 *input;
+
+  while (1)
+  {
+    "\n%s: ", Fs->cur_dir; // Display prompt
+
+    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
+
+    CC cc;    
+
+
+    if (StrLen(input) > 0) {
+      execute_cmd(input, &cc);
+    }
+
+    input = '\0';
+
+//    Free(tokenc);
+  }
+}
+
+TempleDOS;
+
+/*
   h = HashCodeFor(tokens[0]);
 
   if (h == 98262) { //cat
@@ -253,7 +306,6 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
 //          CopyTree(tokens[2], tokens[3]);
 //        }
 //      }
-
 
 
 
@@ -398,38 +450,4 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
   else {
     external(tokens[0]);
   }
-
-  return 0;
-}
-
-U0 TempleDOS() {
-  DocClear;
-
-  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
-  "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
-
-  U64 result = 0;
-
-  U8 *input;
-
-  while (1)
-  {
-    "\n%s: ", Fs->cur_dir; // Display prompt
-
-    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
-
-    CC cc;    
-
-
-    if (StrLen(input) > 0) {
-      execute_cmd(input, &cc);
-    }
-
-    input = '\0';
-
-//    Free(tokenc);
-  }
-}
-
-TempleDOS;
+*/
