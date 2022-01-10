@@ -14,7 +14,7 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-class SV {
+class SV {
   U8 *begin;
   I64 size;
   I64 count;
@@ -52,7 +52,7 @@ I64 SVCount(SV *sv, Bool count_words = TRUE, U8 delim = ' ')
   }
   return count + count_words;
 }
-
+
 U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
   I64 i = 0;
 
@@ -62,7 +62,16 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
     i++;
   }
 
-  out[i] = '\0';
+//5
+//fm /a
+//xxxxx
+//^
+
+//  ^
+
+
+
+//  out[i] = '\0';
 
   if (i<sv->size) {
     sv->begin += i+1;
@@ -73,6 +82,8 @@ U0 SVPullWord(SV *sv, U8 *out, U8 delim = ' ') {
   }
 
   sv->count -= 1;
+
+  if (sv->count < 0) sv->count = 0;
 }
 
 U64 HashCodeFor(U8 *str) {

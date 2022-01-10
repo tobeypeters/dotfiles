@@ -14,8 +14,6 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "~/common.HC"
-
 // Before we begin ... Yes, I handle errors stupidly.
 #define ERR_NONE  0 // None or too many args FALSE.
 #define ERR_ARGT  1 // Too many args TRUE.
@@ -25,7 +23,6 @@
 #define ERR_FLAGC 5 // Too many flags provided.
 #define ERR_FLAGI 6 // Invalid flag provided.
 
-// File / directory error messages.
 U8 *ERR_MSG[4] = {
 "Not a directory",
 "Not a file",
@@ -68,69 +65,116 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
+class CC {
+  U64 token_count;
+  U64 flag_count;
+  U64 size;
+};
+
+U0 token_trim(U8 *str, Bool left = TRUE, Bool both = FALSE) {
+  // Trims leading or trailing spaces from a string.
+  // left = TRUE : left trim
+  // left = FALSE : right trim
+  // both = TRUE : left &right trim
+  if (StrLen(str) == 0) return;
+
+  if (left || both) {
+    StrUtil(str, SUF_REM_LEADING);
+  }
+
+  if (!left || both) {
+    StrUtil(str, SUF_REM_TRAILING);
+  }
+}
+
+I64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
+{//Count the occurences of either the words or a specific char.
+  I64 l = StrLen(str);
+
+  if (l == 0) return 0;
+
+  I64 count = 0, i = 0;
+
+  while (i < l) {
+    if (str[i] == delim) count++;
+    i++;
+  }
+  return count + count_words;
+}
+
+I64 token_pull(U8 *cmd, U8 *out, U8 delim = ' ') {
+  I64 i;
+
+  for (i=0;*cmd != delim; cmd++) {
+    out[i] = cmd[0];
+    i++;
+  };
+
+  return cmd;
+}
+
+U64 HashCodeFor(U8 *str) {
+  // Pretty basic. But, "effective"
+  // hash code generator for strings.
+  U64 hash = 0;
+  U64 g = 31;
+  U64 i;
+
+  for (i=0; i < StrLen(str); i++) {
+    hash = g * hash + str[i];
+  }
+
+  return hash;
+}
+
+Bool FileExists(U8 *file) {
+  return FileFind(file,,FUF_JUST_FILES);
+}
+
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
 
-U8 exec_command(SV *sv) {
-// Lots of this WILLchange. Lots of extra "crap" right now.
-  if (sv->count == 0) return 0;
-
-  U8 tokens[sv->count][256];
-  U8 flags[sv->count][256];
-
-  U8 *cmd_buf = "";
-
-  U64 tc = sv->count; // Token Count. Count gets updated in SVPullWord;
-  U64 fc = SVCount(sv, FALSE, '-'); // Flag Count.
-
-  I64 x = sv->count; // Count gets updated in SVPullWord();
-
-  U64 h = 0;
-
-  Bool ace = FALSE;
-  Bool ade = FALSE;
-  Bool afe = TRUE;
-  Bool tf = FALSE;
-
-  U8 lt = 0;
-
-
-  Bool ec = FALSE;
-  Bool id = FALSE;
-
-  U64  q = 0, 
+U8 execute_cmd(U8 *cmd, CC *cc) {
+  U64 at = token_count(cmd),
+       i = 0,
+       h = 0,
+      fc = 0,
+      tc = 0,
+      ti = 0,
       fi = 0,
-      ti= 0;
+      ln = 0;
 
-  for(q=0; q < x; q++) {
-    SVTrim(sv,,TRUE);
-    if (sv->begin[0] == '-') {
-      SVPullWord(sv, flags[fi]);
-      fi++;
+  Bool vd = FALSE;
+
+  cc->flag_count = token_count(cmd,FALSE,'-');
+  cc->token_count = at - cc->flag_count;
+  cc->size = StrLen(cmd) / at;
+
+  tc = cc->token_count;
+  fc = cc->flag_count;
+
+  if (tc == 0) {//Potentially, got flags and no command.
+    return 0;
+  }
+
+  U8 tokens[cc->token_count][cc->size];
+  U8 flags[cc->flag_count][cc->size];
+
+  for (i=0; i < cc->token_count; i++) {
+    token_trim(cmd);   
+    if (cmd[0] == '-') {
+      token_pull(cmd, flags[fi]); fi++;      
     }
     else {
-      SVPullWord(sv, tokens[ti]);
-      ti++;
+      token_pull(cmd, tokens[ti]); ti++;
     }
   }
 
-//  "%d %d\n", sv->
-
-  return 0;
-
-//  "fc : %d len flags : %d\n", fc, StrLen(&flags);
-//  "fc : %d\n", fc;
-//  if (fc > 0) {
-//    for (q=0; q < fc; q++) {
-//      "flag[%d] :  %s\n", q, flags[q];
-//    }
-//  }
-
   // List all the tokens.
-  /*for (q=0; q < x; q++) {
-    "token : %s\n", tokens[q];
-  }*/
+  for (i=0; i < tc; i++) {
+    "token[%d] : %s\n", i, tokens[i];
+  }
 
   // Get the hash codes, for all the command strings.
   /*for (q=0; q < CMD_LEN; q++) {
@@ -172,13 +216,13 @@ U8 exec_command(SV *sv) {
   h = HashCodeFor(tokens[0]);
 
   if (h == 98262) { //cat
-    if (ace = x == 2) {
+    if (tc == 2) {
       Type(tokens[1]);
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
-    if (ace = 0 < x < 3) {
-      if (x == 2) {
+    if (0 < tc < 3) {
+      if (tc == 2) {
         Cd(tokens[1]);
       }
       else {
@@ -191,117 +235,84 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 94746189) { //clear
-    if (ace = x == 1) {
+    if (tc == 1) {
       DocClear;
     }
   }
   else if (h == 3181) { //cp
-    if (ace = (2 < x < 5)) {
-      if (x == 3) {
-        Copy(tokens[1], tokens[2]);
-      }
-      else {
-        h = HashCodeFor(tokens[1]);
+    if (tc == 3) {
 
-        if (afe = h == 1495) { // "-d"
-          CopyTree(tokens[2], tokens[3]);
-        }
-      }
+
+//      if (tc == 3) {
+//        Copy(tokens[1], tokens[2]);
+//      }
+//      else {
+//        h = HashCodeFor(tokens[1]);
+//
+//        if (h == 1495) { // "-d"
+//          CopyTree(tokens[2], tokens[3]);
+//        }
+//      }
+
+
+
+
     }
   }
   else if (h == 98728) { //cpu
-    if (ace = (0 < x < 3)) {
-      if (x == 1) {
+    if (0 < tc < 3) {
+      if (tc == 1) {
         CPURep;
       }
-      else {
-        h = HashCodeFor(tokens[1]); //"-f"
+//      else {
+//        h = HashCodeFor(tokens[1]); //"-f"
 
-        if (afe = h == 1497) {
-          CPURep(TRUE);
-        }
-      }
+//        if (h == 1497) {
+//          CPURep(TRUE);
+//        }
+//      }
     }
   }
   else if (h == 3076014) { //date
-    if (ace = x == 1) {
+    if (tc == 1) {
       "%D\n", Now;
     }
   }
   else if (h == 3202) { //df
-    if (ace = x == 1) {
+    if (tc == 1) {
       DrvRep;
     }
   }
   else if (h == 3231) { //ed
-    if (ace = x == 2) {
+    if (tc == 2) {
       Ed(tokens[1]);
     }
   }
   else if (h == 3127582) { //exit
-    if (ace = x == 1) {
+    if (tc == 1) {
       return 1;
     }
   }
   else if (h == 3271) { //fm
     // Could refactor this section,
     // in another language.
-//    if (ec = (0 < x < 4)) {
-    if (ec = (0 < tc < 3)) {
+    if (0 < tc < 3) {
       if (tc == 1) {
         MiniFM;
         return 0;
       }
       else {
-//        id = IsDir(tokens[1]); //Directory was provided?
-
-//        if (!id) ec = ERR_DIR;
-//        ec = id * ERR_DIR;
-//        "ec : %d\n", ec;
       }
-
-//      if (fc < 2) {
-//        if (fc == 1) {
-//          tf = HashCodeFor(flags[0]) == 1495;
-//          ec = ERR_FLAGI;
-//        }
-//      }
-//      else {
-//        ec = ERR_FLAGC;
-//      }
-
-//      if (ec == ERR_NONE) {
-//        "Proceed\n";
-//      }
-      return 0;
-
-/*      CatPrint(cmd_buf,"MinFM(");
-
-
-      if (id) {
-        CatPrint(cmd_buf,tokens[1]);      
-      }
-
-      if (tf) {
-        CatPrint(cmd_buf,",,TRUE");
-      }
-
-      CatPrint(cmd_buf,");");*/
-
-
-
     }
 
   }
   else if (h == 3181270) { //grep
-    if (ace = x == 2) {
+    if (tc == 2) {
       F(tokens[1]);
     }
   }
   else if (h == 3198785) { //help
-    if (ace = x == 1) {
-      U64 i;
-
+    if (tc == 1) {
       "\n%-6s\tDescription\n", "Cmd";
       "---------------------------\n";
       for (i=0; i < CMD_LEN; i++) {
@@ -310,9 +321,9 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 3463) { //ls
-    if (ace = 0 < x < 3) {
+    if (0 < tc < 3) {
       "\n";
-      if (x == 2) {
+      if (tc == 2) {
         Dir(tokens[1]);
       } else {
         Dir;
@@ -320,27 +331,27 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 107866) { //man
-    if (ace = x == 2) {
+    if (tc == 2) {
       Man(tokens[1]);
     }
   }
   else if (h == 107989) { //mem
-    if (ace = x == 1) {
+    if (tc == 1) {
       MemRep;
     }
   }
   else if (h == 103950895) { //mkdir
-    if (ace = x == 2) {
+    if (tc == 2) {
       DirMk(tokens[1]);
     }
   }
   else if (h == 3497) { //mv
-    if (ace = x == 3) {
+    if (tc == 3) {
       Move(tokens[1], tokens[2]);
     }
   }
   else if (h == 109270) { //now
-    if (ace = x == 1) {
+    if (tc == 1) {
       CDateStruct ds;
       Date2Struct(&ds, Now + local_time_offset);
 
@@ -352,26 +363,26 @@ U8 exec_command(SV *sv) {
     }
   }
   else if (h == 3643) { //rm
-    if (ace = (1 < x < 4)) {
-      if (x == 2) {
+    if (1 < tc < 4) {
+      if (tc == 2) {
         Del(tokens[1]);
       }
-      else {
-        h = HashCodeFor(tokens[1]);
+//      else {
+//        h = HashCodeFor(tokens[1]);
 
-        if (afe = h == 1495) { //"-d"
-          DelTree(tokens[2]);
-        }
-      }
+//        if (h == 1495) { //"-d"
+//          DelTree(tokens[2]);
+//        }
+//      }
     }
   }
   else if (h == 3560141) { //time
-    if (ace = x == 1) {
+    if (tc == 1) {
       "%T\n", Now;
     }
   }
   else if (h == 110550847) { //touch
-    if (ace = x == 2) {
+    if (tc == 2) {
       // Currently only creates an empty file, if
       // it doesn't exist already.
       if (!FileExists(tokens[1])) {
@@ -386,24 +397,12 @@ U8 exec_command(SV *sv) {
   }
   else {
     external(tokens[0]);
-    ace = TRUE;
   }
-
-//  if (!ace || !afe) {
-//    U64 err_num = 0; // Default: argument count.
-
-//    if (!afe) {
-      //err_num = ERR_PARM;
-//    }
-
-//    //err_msg(err_num, "Usage Error:");
-//  }
 
   return 0;
 }
 
-U0 TempleDOS()
-{
+U0 TempleDOS() {
   DocClear;
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
@@ -412,27 +411,25 @@ U0 TempleDOS()
 
   U64 result = 0;
 
-  // "Hash Code : %d\n", HashCodeFor("fm");
+  U8 *input;
 
   while (1)
   {
     "\n%s: ", Fs->cur_dir; // Display prompt
 
-    SV sv;
-    sv.begin = GetStr(,,GSF_SHIFT_ESC_EXIT); // Get user input
-    sv.size = StrLen(sv.begin);
-    sv.count = SVCount(&sv);
-    sv.fp = sv.begin;
+    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
 
-//    result = exec_command(&sv); // Execute terminal command
+    CC cc;    
 
-    "sv.count : %d\n", sv.count;
-    //Free(sv.fp);
 
-    if (result) {
-      break;
+    if (StrLen(input) > 0) {
+      execute_cmd(input, &cc);
     }
+
+    input = '\0';
+
+//    Free(tokenc);
   }
 }
 
-//TempleDOS;
+TempleDOS;
