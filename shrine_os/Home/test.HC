@@ -65,17 +65,11 @@ U8 *CMD_LIST[CMD_LEN][2] = {
 {"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
-class CC {
-  U64 token_count;
-  U64 flag_count;
-  U64 size;
-};
-
-U0 token_trim(U8 *str, Bool left = TRUE, Bool both = FALSE) {
-  // Trims leading or trailing spaces from a string.
-  // left = TRUE : left trim
-  // left = FALSE : right trim
-  // both = TRUE : left &right trim
+U0 token_trim(U8 *str, Bool left = TRUE, Bool both = FALSE)
+{//Trims leading or trailing spaces from a string.
+ //left = TRUE : left trim
+ //left = FALSE : right trim
+ //both = TRUE : left &right trim
   if (StrLen(str) == 0) return;
 
   if (left || both) {
@@ -87,13 +81,13 @@ U0 token_trim(U8 *str, Bool left = TRUE, Bool both = FALSE) {
   }
 }
 
-I64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
+U64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
 {//Count the occurences of either the words or a specific char.
-  I64 l = StrLen(str);
+  U64 l = StrLen(str);
 
   if (l == 0) return 0;
 
-  I64 count = 0, i = 0;
+  U64 count = 0, i = 0;
 
   while (i < l) {
     if (str[i] == delim) count++;
@@ -102,25 +96,22 @@ I64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
   return count + count_words;
 }
 
-I64 token_pull(U8 *cmd, U8 *out, U8 delim = ' ') {
+U64 token_pull(U8 *str, U8 *out, U8 delim = ' ') 
+{//Pull off the first token off a str and assign
+ //it to what you pasted in as out.
   I64 i;
 
-  "cmd : %s\n", cmd;
-  "cmd before %d\n", cmd;
-  for (i=0;*cmd != '\0' && *cmd != delim; cmd++) {
-    out[i] = cmd[0];
-    "%c", cmd[0];
+  for (i=0;*str != '\0' && *str != delim; str++) {
+    out[i] = str[0];
     i++;
   };
-  "\n";
-  "cmd after  %d\n\n", cmd;
+  out[i] = '\0';
 
-  return cmd;
+  return str;
 }
 
-U64 HashCodeFor(U8 *str) {
-  // Pretty basic. But, "effective"
-  // hash code generator for strings.
+U64 HashCodeFor(U8 *str) 
+{//Hash code generator for strings.
   U64 hash = 0;
   U64 g = 31;
   U64 i;
@@ -132,7 +123,8 @@ U64 HashCodeFor(U8 *str) {
   return hash;
 }
 
-Bool FileExists(U8 *file) {
+Bool FileExists(U8 *file) 
+{//Formatted File existence checker.
   return FileFind(file,,FUF_JUST_FILES);
 }
 
@@ -140,7 +132,7 @@ U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
 
-U8 execute_cmd(U8 *cmd, CC *cc) {
+U8 execute_cmd(U8 *cmd) {
   U64 at = token_count(cmd),
        i = 0,
        h = 0,
@@ -152,53 +144,49 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
 
   Bool vd = FALSE;
 
-  cc->flag_count = token_count(cmd,FALSE,'-');
-  cc->token_count = at - cc->flag_count;
-  cc->size = StrLen(cmd) / at;
-
-  tc = cc->token_count;
-  fc = cc->flag_count;
+  fc = token_count(cmd,FALSE,'-');
+  tc = at - fc;
 
   if (tc == 0) {//Potentially, got flags and no command.
     return 0;
   }
 
-  "cc->token_count :%d\n", cc->token_count;
-  "cc->flag_count :%d\n", cc->flag_count;
-  "cc->size :%d\n", cc->size;
-  U8 tokens[cc->token_count][cc->size];
-  U8 flags[cc->flag_count][cc->size];
+  //This tokens / flag system is alright. But, not great.
+  //You can't give flags values.  For example: -fg_color "#FF00FF".
 
-  "All tokens :%d\n\n", at;
+  //Holy doesn't like variables:
+  //U8 tokens[x][s] 
+  U8 tokens[32][128];
+  U8 flags[132][128];
+
   for (i=0; i < at; i++) {
-    token_trim(cmd,,TRUE);   
+    token_trim(cmd,FALSE,TRUE);   
     if (cmd[0] == '-') {
-      "fi : %d\n", fi;
-      cmd = token_pull(cmd, &flags[fi]); fi++;
+      cmd = token_pull(cmd, flags[fi]); fi++;
     }
     else {
-      "ti : %d\n", ti;
-      cmd = token_pull(cmd, &tokens[ti]); ti++;
+      cmd = token_pull(cmd, tokens[ti]); ti++;
     }
   }
 
-  // List all the tokens.
+  //List all the tokens.
   for (i=0; i < tc; i++) {
     "tokens[%d] : %s\n", i, tokens[i];
   }
-  "\n";
-  // List all the flags.
+  "\n";
+  //List all the flags.
   for (i=0; i < fc; i++) {
     "flags[%d] : %s\n", i, flags[i];
   }
 
-  // Get the hash codes, for all the command strings.
-  /*for (q=0; q < CMD_LEN; q++) {
-    "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
-  }*/
+  //U64 q;
+  //Get the hash codes, for all the command strings.
+  //for (q=0; q < CMD_LEN; q++) {
+  //  "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
+  //}
 
-  // Get the hash codes, for all the command strings and
-  // partially build a if nest.
+  //Get the hash codes, for all the command strings and
+  //partially build a if nest.
   /*"  if (h == %d) { //%s\n  }\n", HashCodeFor(CMD_LIST[0][0]), CMD_LIST[0][0];
   for (q=1; q < CMD_LEN; q++) {
     "  else if (h == %d) { //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
@@ -206,8 +194,8 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
   }
   "  else {\n  }\n";*/
 
-  // Get the hash codes, for all the command strings and
-  // partially build a switch statement.
+  //Get the hash codes, for all the command strings and
+  //partially build a switch statement.
   /*"switch () {\n";
   for (q=0; q < CMD_LEN; q++) {
     "  case %d: //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
@@ -215,20 +203,33 @@ U8 execute_cmd(U8 *cmd, CC *cc) {
   }
   "  default:\n}\n";*/
 
-  // Using pre-calculated hash codes, for comparison.
-  // Faster and better, than using 100 StrCmp() calls.
 
-// Switch seem broke.
-//  switch (h) {
-//    case 0:
-//      "one\n";
-//      break;
-//    case 99998:
-//      "two\n";
-//      break;
-//    default:
-//  }
+  ///Switch seems broke.
+  /*switch (h) {
+      case 0:
+        "one\n";
+        break;
+      case 99998:
+        "two\n";
+        break;
+      default:
+    }*/
 
+  //Using pre-calculated hash codes, for comparison.
+  //Faster and better, than using 100 StrCmp() calls.
+
+  h = HashCodeFor(tokens[0]);
+
+  if (h == 3127582) { //exit
+    if (tc == 1) {
+      return 1;
+    }
+  }
+  else if (h == 98262) { //cat
+    if (tc == 2) {
+      Type(tokens[1]);
+    }
+  }
 
   return 0;
 }
@@ -250,29 +251,17 @@ U0 TempleDOS() {
 
     input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
 
-    CC cc;    
-
-
     if (StrLen(input) > 0) {
-      execute_cmd(input, &cc);
+      execute_cmd(input);
     }
 
     input = '\0';
-
-//    Free(tokenc);
   }
 }
 
 TempleDOS;
 
 /*
-  h = HashCodeFor(tokens[0]);
-
-  if (h == 98262) { //cat
-    if (tc == 2) {
-      Type(tokens[1]);
-    }
-  }
   else if (h == 3169 || h == 98339) { //cd & cdd
     if (0 < tc < 3) {
       if (tc == 2) {
@@ -338,11 +327,6 @@ TempleDOS;
   else if (h == 3231) { //ed
     if (tc == 2) {
       Ed(tokens[1]);
-    }
-  }
-  else if (h == 3127582) { //exit
-    if (tc == 1) {
-      return 1;
     }
   }
   else if (h == 3271) { //fm
