@@ -133,9 +133,18 @@ U0 external(U8 *cmd) {
 }
 
 U8 execute_cmd(U8 *cmd) {
+
+  //This check will become moved into the 
+  //the error handling stuff.
+  if (cmd[0] == '-') {
+    "Command cannot start, with a flag.\n";
+    return 0;
+  }
+
   U64 at = token_count(cmd),
        i = 0,
        h = 0,
+      ec = 0,
       fc = 0,
       tc = 0,
       ti = 0,
@@ -154,13 +163,17 @@ U8 execute_cmd(U8 *cmd) {
   //This tokens / flag system is alright. But, not great.
   //You can't give flags values.  For example: -fg_color "#FF00FF".
 
-  //Holy doesn't like variables:
-  //U8 tokens[x][s] 
-  U8 tokens[32][128];
-  U8 flags[132][128];
+  //Holyc angers me.
+  //Look how big I had to make these arrays. Since, vars &
+  //#define(s) don't work, in array defs. I guess.
+  //U8 tokens[x][y]
+
+  // [num_of_tokens_or_flags][length]
+  U8 tokens[80][240];
+  U8  flags[80][240];
 
   for (i=0; i < at; i++) {
-    token_trim(cmd,FALSE,TRUE);   
+    token_trim(cmd,FALSE,TRUE);   
     if (cmd[0] == '-') {
       cmd = token_pull(cmd, flags[fi]); fi++;
     }
@@ -176,7 +189,7 @@ U8 execute_cmd(U8 *cmd) {
   "\n";
   //List all the flags.
   for (i=0; i < fc; i++) {
-    "flags[%d] : %s\n", i, flags[i];
+    "flags[%d] : %s\n", i, flags[i]$WW,1$;
   }
 
   //U64 q;
@@ -252,10 +265,12 @@ U0 TempleDOS() {
     input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
 
     if (StrLen(input) > 0) {
-      execute_cmd(input);
+      result = execute_cmd(input);
     }
 
     input = '\0';
+
+    if (result > 0) break;
   }
 }
 
