@@ -133,7 +133,6 @@ U0 external(U8 *cmd) {
 }
 
 U8 execute_cmd(U8 *cmd) {
-
   //This check will become moved into the 
   //the error handling stuff.
   if (cmd[0] == '-') {
@@ -156,7 +155,11 @@ U8 execute_cmd(U8 *cmd) {
   fc = token_count(cmd,FALSE,'-');
   tc = at - fc;
 
-  if (tc == 0) {//Potentially, got flags and no command.
+
+  //Good or bad decision, IDK.  I manually make sure
+  //we don't have too many tokens or too many flags and
+  //we we're given too much input.
+  if (tc == 0 || tc > 3 || fc > 3 || StrLen(cmd) > 160) {
     return 0;
   }
 
@@ -168,12 +171,12 @@ U8 execute_cmd(U8 *cmd) {
   //#define(s) don't work, in array defs. I guess.
   //U8 tokens[x][y]
 
-  // [num_of_tokens_or_flags][length]
-  U8 tokens[80][240];
-  U8  flags[80][240];
+  //  [num_of][len] - WAY too big. 160 is 2 full lines of text.
+  U8 tokens[3][161];
+  U8  flags[3][161];
 
   for (i=0; i < at; i++) {
-    token_trim(cmd,FALSE,TRUE);   
+    token_trim(cmd,FALSE,TRUE);
     if (cmd[0] == '-') {
       cmd = token_pull(cmd, flags[fi]); fi++;
     }
