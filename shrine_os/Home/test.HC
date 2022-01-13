@@ -14,28 +14,54 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// Before we begin ... Yes, I handle errors stupidly.
-#define ERR_NONE  0 // None or too many args FALSE.
-#define ERR_ARGT  1 // Too many args TRUE.
-#define ERR_ARGI  2 // Invalid arg provied.
-#define ERR_FILE  3 // File doesn't exist.
-#define ERR_DIR   4 // Directory doesn't exist.
-#define ERR_FLAGC 5 // Too many flags provided.
-#define ERR_FLAGI 6 // Invalid flag provided.
+U64 no_errors(U8 *tokens, U8 *flags,
+              U64 tcmin=1, U64 tcmax=1, U64 tcgot=0,
+              U64 fcmin=0, U64 fcmax=0, U64 fcgot=0,
+              Bool dir_check=FALSE,
+              Bool file_check=FALSE)
+{
+  tcgot < tcmin
+  tcgot > tcmax
+  fcgot < fcmin
+  fcgot > fcmax
 
-U8 *ERR_MSG[4] = {
-"Not a directory",
-"Not a file",
-"Invalid argument count",
-"Invalid flag provided"
-};
 
-U0 err_msg(I64 idx = 0, U8 *fd) {
- // Could do this error stuff better i'n python.
- // Using this to allow for consistant errors and
- // formatting.
- // I don't want to use PrintErr() or PrintWarn().
- "'%s': %s\n", fd, ERR_MSG[idx];
+  if (tc_got + fc_got > t) {
+  }
+
+  if (!tc_need == tc_got) {
+    "Invalid number of arguments provided ...%s\n";
+    return FALSE;
+  }
+ 
+  if (!fc_need == fc_got) {
+    "Invalid number of flags provided ...%";
+    return FALSE;
+  }
+
+  if (dir_check || file_check) {
+    U64 i;
+
+    if (dir_check) {
+      for (i=1;i < tc; i++) {
+        if (!IsDir(tokens[i])) {
+          "`[%s]`: Not a directory\n", tokens[i];
+         return FALSE;
+        }
+      }
+    }
+
+    if (file_check) {
+      for (i=0;i < fc; i++) {
+        if (!FileExists(tokens[i])) {
+          "`[%s]`: Not a file\n", tokens[i];
+          return FALSE;
+        }
+      }
+    }
+  }
+ 
+  return TRUE;
 }
 
 #define CMD_LEN 22
@@ -132,11 +158,15 @@ U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
 
+#define MAX_TOKENS  3
+#define MAX_FLAGS   3
+#define MAX_TKLEN 161
+
 U8 execute_cmd(U8 *cmd) {
   //This check will become moved into the 
   //the error handling stuff.
   if (cmd[0] == '-') {
-    "Command cannot start, with a flag.\n";
+    "Command cannot start  with a flag.\n";
     return 0;
   }
 
@@ -155,25 +185,25 @@ U8 execute_cmd(U8 *cmd) {
   fc = token_count(cmd,FALSE,'-');
   tc = at - fc;
 
-
   //Good or bad decision, IDK.  I manually make sure
   //we don't have too many tokens or too many flags and
   //we we're given too much input.
   if (tc == 0 || tc > 3 || fc > 3 || StrLen(cmd) > 160) {
-    return 0;
+//    return 0;
   }
 
   //This tokens / flag system is alright. But, not great.
   //You can't give flags values.  For example: -fg_color "#FF00FF".
 
-  //Holyc angers me.
-  //Look how big I had to make these arrays. Since, vars &
-  //#define(s) don't work, in array defs. I guess.
-  //U8 tokens[x][y]
-
-  //  [num_of][len] - WAY too big. 160 is 2 full lines of text.
-  U8 tokens[3][161];
-  U8  flags[3][161];
+  // 160 is 2 full lines of text. For some reason, Ican't just use
+  // local variables.
+  //
+  // Holyc angers me.
+  // U8 tokens[tc][y]
+  //
+  // [num_of][len] - MAX_TKLEN is WAY too big.
+  U8 tokens[MAX_TOKENS][MAX_TKLEN];
+  U8  flags[MAX_FLAGS][MAX_TKLEN];
 
   for (i=0; i < at; i++) {
     token_trim(cmd,FALSE,TRUE);
@@ -195,7 +225,7 @@ U8 execute_cmd(U8 *cmd) {
     "flags[%d] : %s\n", i, flags[i]$WW,1$;
   }
 
-  //U64 q;
+  U64 q;
   //Get the hash codes, for all the command strings.
   //for (q=0; q < CMD_LEN; q++) {
   //  "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
@@ -219,7 +249,6 @@ U8 execute_cmd(U8 *cmd) {
   }
   "  default:\n}\n";*/
 
-
   ///Switch seems broke.
   /*switch (h) {
       case 0:
@@ -232,54 +261,32 @@ U8 execute_cmd(U8 *cmd) {
     }*/
 
   //Using pre-calculated hash codes, for comparison.
-  //Faster and better, than using 100 StrCmp() calls.
+  //IMO : Faster and better, than using 100 StrCmp() calls.
+  
+
+if (tc > 0) {
+
+
+
+
+
+
 
   h = HashCodeFor(tokens[0]);
 
   if (h == 3127582) { //exit
-    if (tc == 1) {
+    if (at == 1) {
       return 1;
     }
   }
   else if (h == 98262) { //cat
+    if (fc > 0) {
+      "Unrecognized flag(s) provied\n";  
+    }
     if (tc == 2) {
       Type(tokens[1]);
     }
   }
-
-  return 0;
-}
-
-U0 TempleDOS() {
-  DocClear;
-
-  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
-  "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
-
-  U64 result = 0;
-
-  U8 *input;
-
-  while (1)
-  {
-    "\n%s: ", Fs->cur_dir; // Display prompt
-
-    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
-
-    if (StrLen(input) > 0) {
-      result = execute_cmd(input);
-    }
-
-    input = '\0';
-
-    if (result > 0) break;
-  }
-}
-
-TempleDOS;
-
-/*
   else if (h == 3169 || h == 98339) { //cd & cdd
     if (0 < tc < 3) {
       if (tc == 2) {
@@ -300,20 +307,20 @@ TempleDOS;
     }
   }
   else if (h == 3181) { //cp
-    if (tc == 3) {
+    if (2 < tc < 5) {
 
 
-//      if (tc == 3) {
-//        Copy(tokens[1], tokens[2]);
-//      }
-//      else {
+      if (tc == 3) {
+        Copy(tokens[1], tokens[2]);
+      }
+      else {
+        
 //        h = HashCodeFor(tokens[1]);
 //
 //        if (h == 1495) { // "-d"
 //          CopyTree(tokens[2], tokens[3]);
 //        }
-//      }
-
+      }
 
 
     }
@@ -347,6 +354,48 @@ TempleDOS;
       Ed(tokens[1]);
     }
   }
+
+
+
+
+
+
+
+
+}
+  return 0;
+}
+
+U0 TempleDOS() {
+  DocClear;
+
+  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
+  "(c) 2022 No rights reserved. For Public Domain use.\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+
+  U64 result = 0;
+
+  U8 *input;
+
+  while (1)
+  {
+    "\n%s: ", Fs->cur_dir; // Display prompt
+
+    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
+
+    if (StrLen(input) > 0) {
+      result = execute_cmd(input);
+    }
+
+    input = '\0';
+
+    if (result > 0) break;
+  }
+}
+
+TempleDOS;
+
+/*
   else if (h == 3271) { //fm
     // Could refactor this section,
     // in another language.
