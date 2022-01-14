@@ -14,28 +14,38 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-U64 no_errors(U8 *tokens, U8 *flags,
-              U64 tcmin=1, U64 tcmax=1, U64 tcgot=0,
-              U64 fcmin=0, U64 fcmax=0, U64 fcgot=0,
-              Bool dir_check=FALSE,
-              Bool file_check=FALSE)
-{
-  tcgot < tcmin
-  tcgot > tcmax
-  fcgot < fcmin
-  fcgot > fcmax
+//YES, I handling validation and errors horribly.
+class EC {
+  U8 *tokens;
+  U8 *flags;
+  I64 tc;
+  I64 fc;
+};
 
+U0 err_disp(U8 *err, U8 *tok="Usage") {
+  "`[%s]`: %s ...\n", tok, err;
+}
 
-  if (tc_got + fc_got > t) {
-  }
+U64 err_check(EC *ec, U64 tcmin=1, U64 tcmax=1,
+              U64 fcmin=0, U64 fcmax=0, 
+              Bool dir_check=FALSE, Bool file_check=FALSE)
+{//Used to do all the "basic" usage errors.
+//  if (cmd[0] == '-') {
+//    "Command cannot start  with a flag.\n";
+//    return 0;
+//  }
 
-  if (!tc_need == tc_got) {
-    "Invalid number of arguments provided ...%s\n";
-    return FALSE;
-  }
- 
-  if (!fc_need == fc_got) {
-    "Invalid number of flags provided ...%";
+//  "(%d > %d || %d > %dd) \n", tcmin, tcgot, tcgot, tcmax;
+
+  if (
+
+//(tcmin > tcgot <= tcmax) || 
+//(fcgot > 0 && fcgot > fcmax)
+$FG$$BG$
+(tcmin > ec->tc || ec->tc > tcmax)
+
+) {
+    err_disp("Invalid number of parameters and/or flags provided");
     return FALSE;
   }
 
@@ -43,18 +53,18 @@ U64 no_errors(U8 *tokens, U8 *flags,
     U64 i;
 
     if (dir_check) {
-      for (i=1;i < tc; i++) {
-        if (!IsDir(tokens[i])) {
-          "`[%s]`: Not a directory\n", tokens[i];
-         return FALSE;
+      for (i=1;i < ec->tc; i++) {
+        if (!IsDir(ec->tokens[i])) {
+          err_disp("Not a directory", ec->tokens[i]);
+          return FALSE;
         }
       }
     }
 
     if (file_check) {
-      for (i=0;i < fc; i++) {
-        if (!FileExists(tokens[i])) {
-          "`[%s]`: Not a file\n", tokens[i];
+      for (i=0;i < ec->tc; i++) {
+        if (!FileExists(ec->tokens[i])) {
+          err_disp("Not a file", ec->tokens[i]);
           return FALSE;
         }
       }
@@ -65,7 +75,7 @@ U64 no_errors(U8 *tokens, U8 *flags,
 }
 
 #define CMD_LEN 22
-
+
 U8 *CMD_LIST[CMD_LEN][2] = {
 {"cat","Concatenate FILE to standard output."},
 {"cd", "Change the current working directory."},
@@ -113,16 +123,21 @@ U64 token_count(U8 *str, Bool count_words = TRUE, U8 delim = ' ')
 
   if (l == 0) return 0;
 
-  U64 count = 0, i = 0;
+  U64 i = 0,
+  count = 0;
 
   while (i < l) {
-    if (str[i] == delim) count++;
+    if (str[i] == delim) {
+      count++;
+    }
+
     i++;
   }
+
   return count + count_words;
 }
 
-U64 token_pull(U8 *str, U8 *out, U8 delim = ' ') 
+U64 token_pull(U8 *str, U8 *out, U8 delim = ' ')
 {//Pull off the first token off a str and assign
  //it to what you pasted in as out.
   I64 i;
@@ -131,7 +146,9 @@ U64 token_pull(U8 *str, U8 *out, U8 delim = ' ')
     out[i] = str[0];
     i++;
   };
-  out[i] = '\0';
+  if (i > 0) out[i] = '\0';
+  
+  while (*str == delim) str++;
 
   return str;
 }
@@ -163,48 +180,28 @@ U0 external(U8 *cmd) {
 #define MAX_TKLEN 161
 
 U8 execute_cmd(U8 *cmd) {
-  //This check will become moved into the 
-  //the error handling stuff.
-  if (cmd[0] == '-') {
-    "Command cannot start  with a flag.\n";
-    return 0;
-  }
-
   U64 at = token_count(cmd),
        i = 0,
        h = 0,
-      ec = 0,
       fc = 0,
       tc = 0,
       ti = 0,
       fi = 0,
       ln = 0;
 
-  Bool vd = FALSE;
+  EC ec2;
 
   fc = token_count(cmd,FALSE,'-');
   tc = at - fc;
 
-  //Good or bad decision, IDK.  I manually make sure
-  //we don't have too many tokens or too many flags and
-  //we we're given too much input.
-  if (tc == 0 || tc > 3 || fc > 3 || StrLen(cmd) > 160) {
-//    return 0;
-  }
-
   //This tokens / flag system is alright. But, not great.
   //You can't give flags values.  For example: -fg_color "#FF00FF".
-
-  // 160 is 2 full lines of text. For some reason, Ican't just use
-  // local variables.
-  //
-  // Holyc angers me.
-  // U8 tokens[tc][y]
-  //
-  // [num_of][len] - MAX_TKLEN is WAY too big.
+  // 
+  //       [num_of]    [len] - 160 WAY too big.
   U8 tokens[MAX_TOKENS][MAX_TKLEN];
-  U8  flags[MAX_FLAGS][MAX_TKLEN];
+  U8   flags[MAX_FLAGS][MAX_TKLEN];
 
+  //Time to split our tokens up.
   for (i=0; i < at; i++) {
     token_trim(cmd,FALSE,TRUE);
     if (cmd[0] == '-') {
@@ -214,6 +211,12 @@ U8 execute_cmd(U8 *cmd) {
       cmd = token_pull(cmd, tokens[ti]); ti++;
     }
   }
+
+  ec2.tokens = tokens;
+  ec2.flags = flags;
+  ec2.tc = tc;
+  ec2.fc = fc;
+
 
   //List all the tokens.
   for (i=0; i < tc; i++) {
@@ -225,11 +228,11 @@ U8 execute_cmd(U8 *cmd) {
     "flags[%d] : %s\n", i, flags[i]$WW,1$;
   }
 
-  U64 q;
+  /*U64 q;
   //Get the hash codes, for all the command strings.
-  //for (q=0; q < CMD_LEN; q++) {
-  //  "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
-  //}
+  for (q=0; q < CMD_LEN; q++) {
+    "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
+  }*/
 
   //Get the hash codes, for all the command strings and
   //partially build a if nest.
@@ -268,15 +271,31 @@ if (tc > 0) {
 
 
 
+/*
+tokens,
+flags,
+tcmin=1,
+tcmax=1,
+tcgot=0,
+fcmin=0,
+fcmax=0,
+fcgot=0,
+dir_check=FALSE,
+file_check=FALSE
+*/
 
-
-
+//err_check(tokens, flags);
 
   h = HashCodeFor(tokens[0]);
 
   if (h == 3127582) { //exit
-    if (at == 1) {
+    if (err_check(&ec2)) {
       return 1;
+    }
+  }
+  else if (h == 3560141) { //time
+    if (err_check(&ec2)) {
+      "%T\n", Now;
     }
   }
   else if (h == 98262) { //cat
@@ -354,7 +373,8 @@ if (tc > 0) {
       Ed(tokens[1]);
     }
   }
-
+  else {
+  }
 
 
 
@@ -373,15 +393,15 @@ U0 TempleDOS() {
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  U64 result = 0;
-
   U8 *input;
+  U64 result = 0;
 
   while (1)
   {
     "\n%s: ", Fs->cur_dir; // Display prompt
 
-    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT)); // Get user input
+    // Get user input
+    input = token_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
 
     if (StrLen(input) > 0) {
       result = execute_cmd(input);
@@ -389,7 +409,7 @@ U0 TempleDOS() {
 
     input = '\0';
 
-    if (result > 0) break;
+    if (result) break;
   }
 }
 
@@ -477,11 +497,6 @@ TempleDOS;
 //          DelTree(tokens[2]);
 //        }
 //      }
-    }
-  }
-  else if (h == 3560141) { //time
-    if (tc == 1) {
-      "%T\n", Now;
     }
   }
   else if (h == 110550847) { //touch
