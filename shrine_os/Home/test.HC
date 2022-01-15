@@ -14,37 +14,65 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//YES, I handling validation and errors horribly.
-class EC {
-  U8 *tokens;
-  U8 *flags;
-  I64 tc;
-  I64 fc;
-};
-
-U0 err_disp(U8 *err, U8 *tok="Usage") {
-  "`[%s]`: %s ...\n", tok, err;
+Bool FileExists(U8 *file) 
+{//Formatted File existence checker.
+  return FileFind(file,,FUF_JUST_FILES);
 }
 
-//Bool err_check(U8 *tokens, U8 *flags,
-//               U64 tc, U64 fc,
-Bool err_check(EC *ec,
-               U64 tcmin=1, U64 tcmax=1,
+#define MAX_TOKENS  3
+#define MAX_FLAGS   3
+#define MAX_TKLEN 161
+
+//NOTES:
+//
+//  * This tokens / flag system is alright. But, not great.
+//    You can't give flags values.  For example: -fg_color "#FF00FF".
+//
+//  * Seems like you can't use variables inside array definitions.
+//    tokens[x][s];
+//
+//  * Seems like you can's pass 2d-3d-etc arrays into functions,
+//    without losing definition.  No syntax for it?
+//    Had to make the arrays global.  Global vars are fine.  But, I
+//    shouldn't be forced to use them.
+//
+//    I thought, Icould trick it. Thought, maybe I could pass in the
+//    address of the array, assign a pointer to that and then access
+//    the array.  But, I only seem to get whatever the first element of the
+//    array is.
+//
+//    In regular c, you can:
+//                           function(char x[][10])
+//                           function(int (*a)[3])
+//                           function(char *x) - But, if I do this in HolyC
+//                                               I seem to only get the first
+//                                               element.
+//
+//    IF ANYONE KNOWS HOW TO OVERCOME THIS IN HOLYC PLEASE LET ME KNOW.
+//
+//  * IF ICAN CREATE SOMETHING IN YOUR LANGUAGE, I SHOULD BE ABLE TO PASS
+//    IT AROUND. AM I MISSING SYNTAX SOMEWHERE? IF I WAS GOING TO MAKE A GAME
+//    OR SOMETHING, WOULDN'T I EVER PASS A 2D or 3D ARRAY AROUND?
+//
+//  
+//
+//       [num_of]    [len] - 160 WAY too big.
+U8 tokens[MAX_TOKENS][MAX_TKLEN];
+U8   flags[MAX_FLAGS][MAX_TKLEN];
+
+U64 tc = 0,
+    fc = 0;
+
+//YES, I handling validation and errors horribly.
+U0 err_disp(U8 *err, U8 *tok="Usage") {
+  "`[$FG,3$%s$FG$]`: %s ...\n", tok, err;
+}
+
+Bool err_check(U64 tcmin=1, U64 tcmax=1,
                U64 fcmin=0, U64 fcmax=0, 
                Bool dir_check=FALSE, Bool file_check=FALSE)
 {//Used to do all the "basic" usage errors.
-
-//  "ec->tokens[0] : %s\n", ec->tokens[1];
-/*
-  if (
-
-(tcmin > tc || tc > tcmax)
-||
-(fc > 0 && (fcmin <= fc <= fcmax))
-
-     )
-
-  {
+  if ((tcmin > tc || tc > tcmax) || (fc > 0 && (fcmin <= fc <= fcmax))) {
     err_disp("Invalid number of parameters and/or flags provided");
     return FALSE;
   }
@@ -62,7 +90,7 @@ Bool err_check(EC *ec,
     }
 
     if (file_check) {
-      for (i=0;i < tc; i++) {
+      for (i=1;i < tc; i++) {
         if (!FileExists(tokens[i])) {
           err_disp("Not a file", tokens[i]);
           return FALSE;
@@ -70,7 +98,7 @@ Bool err_check(EC *ec,
       }
     }
   }
-*/ 
+ 
   return TRUE;
 }
 
@@ -166,44 +194,20 @@ U64 HashCodeFor(U8 *str)
   return hash;
 }
 
-Bool FileExists(U8 *file) 
-{//Formatted File existence checker.
-  return FileFind(file,,FUF_JUST_FILES);
-}
-
-U0 external(U8 *cmd) {
-  "\n"; ExePutS(cmd);
-}
-
-#define MAX_TOKENS  3
-#define MAX_FLAGS   3
-#define MAX_TKLEN 161
-
-U0 tester(U8 *test) {
-  "test[0] : %s\n", test;
+U0 external(U8 *cmd,U8 *prefix='',U8 *postfix='') {
+  "%s", prefix; ExePutS(cmd); "%s", postfix;
 }
 
 U8 execute_cmd(U8 *cmd) {
   U64 at = token_count(cmd),
        i = 0,
        h = 0,
-      fc = 0,
-      tc = 0,
       ti = 0,
       fi = 0,
       ln = 0;
 
-  EC ec;
-
   fc = token_count(cmd,FALSE,'-');
   tc = at - fc;
-
-  //This tokens / flag system is alright. But, not great.
-  //You can't give flags values.  For example: -fg_color "#FF00FF".
-  // 
-  //       [num_of]    [len] - 160 WAY too big.
-  U8 tokens[MAX_TOKENS][MAX_TKLEN];
-  U8   flags[MAX_FLAGS][MAX_TKLEN];
 
   //Time to split our tokens up.
   for (i=0; i < at; i++) {
@@ -215,13 +219,6 @@ U8 execute_cmd(U8 *cmd) {
       cmd = token_pull(cmd, tokens[ti]); ti++;
     }
   }
-
-  ec.tokens = tokens;
-  ec.flags = flags;
-  ec.tc = tc;
-  ec.fc = fc;
-
-  tester(tokens);
 
   //List all the tokens.
   /*for (i=0; i < tc; i++) {
@@ -272,7 +269,6 @@ U8 execute_cmd(U8 *cmd) {
   //IMO : Faster and better, than using 100 StrCmp() calls.
   
 
-//EC *ec
 //tcmin=1
 //tcmax=1
 //fcmin=0
@@ -280,99 +276,25 @@ U8 execute_cmd(U8 *cmd) {
 //dir_check=FALSE
 //file_check=FALSE)
 
-//err_check(tokens, flags);
-
   h = HashCodeFor(tokens[0]);
 
   if (h == 3127582) { //exit
-    if (err_check(&ec)) {
-//    if (err_check(tokens,flags,tc,fc)) {
+    if (err_check) {
       return 1;
     }
   }
-  else if (h == 3560141) { //time
-//    if (err_check(&ec)) {
-//      "%T\n", Now;
-//    }
-  }
   else if (h == 98262) { //cat
-//    if (err_check(&ec,2,2,,,,TRUE)) {
-//      Type(tokens[1]);
-//    }
-  }
-  else if (h == 3169 || h == 98339) { //cd & cdd
-    if (0 < tc < 3) {
-      if (tc == 2) {
-        Cd(tokens[1]);
-      }
-      else {
-        Cd;
-      }
-
-      if (h == 98339) {
-        external("Dir;");
-      }
+    if (err_check(2,2,,,,TRUE)) {
+      Type(tokens[1]);
     }
   }
-  else if (h == 94746189) { //clear
-    if (tc == 1) {
-      DocClear;
+  else if (h == 3560141) { //time
+    if (err_check) {
+      "%T\n", Now;
     }
   }
-  else if (h == 3181) { //cp
-    if (2 < tc < 5) {
-
-
-      if (tc == 3) {
-        Copy(tokens[1], tokens[2]);
-      }
-      else {
-        
-//        h = HashCodeFor(tokens[1]);
-//
-//        if (h == 1495) { // "-d"
-//          CopyTree(tokens[2], tokens[3]);
-//        }
-      }
-
-
-    }
+  else {
   }
-  else if (h == 98728) { //cpu
-    if (0 < tc < 3) {
-      if (tc == 1) {
-        CPURep;
-      }
-//      else {
-//        h = HashCodeFor(tokens[1]); //"-f"
-
-//        if (h == 1497) {
-//          CPURep(TRUE);
-//        }
-//      }
-    }
-  }
-  else if (h == 3076014) { //date
-    if (tc == 1) {
-      "%D\n", Now;
-    }
-  }
-  else if (h == 3202) { //df
-    if (tc == 1) {
-      DrvRep;
-    }
-  }
-  else if (h == 3231) { //ed
-    if (tc == 2) {
-      Ed(tokens[1]);
-    }
-  }
-  else {
-  }
-
-
-
-
 
 
 
@@ -408,7 +330,71 @@ U0 TempleDOS() {
 
 TempleDOS;
 
-/*
+/*  else if (h == 3169 || h == 98339) { //cd & cdd
+    if (0 < tc < 3) {
+      if (tc == 2) {
+        Cd(tokens[1]);
+      }
+      else {
+        Cd;
+      }
+
+      if (h == 98339) {
+        external("Dir;");
+      }
+    }
+  }
+  else if (h == 94746189) { //clear
+    if (err_check) {
+      DocClear;
+    }
+  }
+  else if (h == 3181) { //cp
+    if (2 < tc < 5) {
+
+
+      if (tc == 3) {
+        Copy(tokens[1], tokens[2]);
+      }
+      else {
+        
+//        h = HashCodeFor(tokens[1]);
+//
+//        if (h == 1495) { // "-d"
+//          CopyTree(tokens[2], tokens[3]);
+//        }
+      }
+    }
+  }
+  else if (h == 98728) { //cpu
+    if (0 < tc < 3) {
+      if (tc == 1) {
+        CPURep;
+      }
+//      else {
+//        h = HashCodeFor(tokens[1]); //"-f"
+
+//        if (h == 1497) {
+//          CPURep(TRUE);
+//        }
+//      }
+    }
+  }
+  else if (h == 3076014) { //date
+    if (tc == 1) {
+      "%D\n", Now;
+    }
+  }
+  else if (h == 3202) { //df
+    if (tc == 1) {
+      DrvRep;
+    }
+  }
+  else if (h == 3231) { //ed
+    if (tc == 2) {
+      Ed(tokens[1]);
+    }
+  }
   else if (h == 3271) { //fm
     // Could refactor this section,
     // in another language.

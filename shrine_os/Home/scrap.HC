@@ -1,14 +1,16 @@
-U0 test(U64 addr_buff1) {
-  U64 *p = addr_buff1;
- 
-  "test() : %s, %s!!! \n", p[0], p[1];
+
+U0 test(U8 *buf) { 
+  "%d\n", StrLen(&buf);
+  "test() : %s, %s!!! \n", buf, buf;
 }
 
-U8 *buffer[2][12];
+U8 *buffer[3][12];
+
 
 *buffer[0] = "Hello";
 *buffer[1] = "World";
+*buffer[2] = "car";
 
-"buffer : %s, %s!!! AddressOf[buffer] : %d \n", *buffer[0], *buffer[1], &buffer;
+"buffer : %s, %s!!! AddressOf[buffer] : %d \n", *buffer[0], *buffer[1], &buffer;
 
-test(&buffer);
+test(*buffer);
