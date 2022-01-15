@@ -26,25 +26,25 @@ U0 err_disp(U8 *err, U8 *tok="Usage") {
   "`[%s]`: %s ...\n", tok, err;
 }
 
-U64 err_check(EC *ec, U64 tcmin=1, U64 tcmax=1,
-              U64 fcmin=0, U64 fcmax=0, 
-              Bool dir_check=FALSE, Bool file_check=FALSE)
+//Bool err_check(U8 *tokens, U8 *flags,
+//               U64 tc, U64 fc,
+Bool err_check(EC *ec,
+               U64 tcmin=1, U64 tcmax=1,
+               U64 fcmin=0, U64 fcmax=0, 
+               Bool dir_check=FALSE, Bool file_check=FALSE)
 {//Used to do all the "basic" usage errors.
-//  if (cmd[0] == '-') {
-//    "Command cannot start  with a flag.\n";
-//    return 0;
-//  }
 
-//  "(%d > %d || %d > %dd) \n", tcmin, tcgot, tcgot, tcmax;
-
+//  "ec->tokens[0] : %s\n", ec->tokens[1];
+/*
   if (
 
-//(tcmin > tcgot <= tcmax) || 
-//(fcgot > 0 && fcgot > fcmax)
-$FG$$BG$
-(tcmin > ec->tc || ec->tc > tcmax)
+(tcmin > tc || tc > tcmax)
+||
+(fc > 0 && (fcmin <= fc <= fcmax))
 
-) {
+     )
+
+  {
     err_disp("Invalid number of parameters and/or flags provided");
     return FALSE;
   }
@@ -53,51 +53,51 @@ $FG$$BG$
     U64 i;
 
     if (dir_check) {
-      for (i=1;i < ec->tc; i++) {
-        if (!IsDir(ec->tokens[i])) {
-          err_disp("Not a directory", ec->tokens[i]);
+      for (i=1;i < tc; i++) {
+        if (!IsDir(tokens[i])) {
+          err_disp("Not a directory", tokens[i]);
           return FALSE;
         }
       }
     }
 
     if (file_check) {
-      for (i=0;i < ec->tc; i++) {
-        if (!FileExists(ec->tokens[i])) {
-          err_disp("Not a file", ec->tokens[i]);
+      for (i=0;i < tc; i++) {
+        if (!FileExists(tokens[i])) {
+          err_disp("Not a file", tokens[i]);
           return FALSE;
         }
       }
     }
   }
- 
+*/ 
   return TRUE;
 }
 
 #define CMD_LEN 22
-
+
 U8 *CMD_LIST[CMD_LEN][2] = {
-{"cat","Concatenate FILE to standard output."},
-{"cd", "Change the current working directory."},
-{"cdd", "Change the current working directory\n\tand display the directories contents."},
+{"cat",   "Concatenate FILE to standard output."},
+{"cd",    "Change the current working directory."},
+{"cdd",   "Change the current working directory\n\tand display the directories contents."},
 {"clear", "Clear the terminal screen."},
-{"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
-{"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
-{"\ndate", "Display the current date."},
-{"df", "Display currently mounted drives."},
-{"ed", "Edit / Create text files."},
-{"exit", "Cause normal process termination of TempleShell."},
-{"fm", "FileManager which displays treeview of\n\tthe current or specified directory."},
-{"grep", "Recursively search files and print any lines\n\twhich contain the specified string."},
-{"help", "Displays this list of TempleShell commands."},
-{"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
-{"mem", "Display a memory representation."},
+{"\ncp",  "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
+{"cpu",   "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
+{"\ndate","Display the current date."},
+{"df",    "Display currently mounted drives."},
+{"ed",    "Edit / Create text files."},
+{"exit",  "Cause normal process termination of TempleShell."},
+{"fm",    "FileManager which displays treeview of\n\tthe current or specified directory."},
+{"grep",  "Recursively search files and print any lines\n\twhich contain the specified string."},
+{"help",  "Displays this list of TempleShell commands."},
+{"ls",    "List directory contents."},
+{"man",   "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
+{"mem",   "Display a memory representation."},
 {"mkdir", "Make directories."},
-{"mv", "Move (rename) files."},
-{"now", "Display the current date and time."},
-{"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
-{"time", "Display the current time."},
+{"mv",    "Move (rename) files."},
+{"now",   "Display the current date and time."},
+{"\nrm",  "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
+{"time",  "Display the current time."},
 {"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
 };
 
@@ -179,6 +179,10 @@ U0 external(U8 *cmd) {
 #define MAX_FLAGS   3
 #define MAX_TKLEN 161
 
+U0 tester(U8 *test) {
+  "test[0] : %s\n", test;
+}
+
 U8 execute_cmd(U8 *cmd) {
   U64 at = token_count(cmd),
        i = 0,
@@ -189,7 +193,7 @@ U8 execute_cmd(U8 *cmd) {
       fi = 0,
       ln = 0;
 
-  EC ec2;
+  EC ec;
 
   fc = token_count(cmd,FALSE,'-');
   tc = at - fc;
@@ -212,21 +216,22 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
 
-  ec2.tokens = tokens;
-  ec2.flags = flags;
-  ec2.tc = tc;
-  ec2.fc = fc;
+  ec.tokens = tokens;
+  ec.flags = flags;
+  ec.tc = tc;
+  ec.fc = fc;
 
+  tester(tokens);
 
   //List all the tokens.
-  for (i=0; i < tc; i++) {
+  /*for (i=0; i < tc; i++) {
     "tokens[%d] : %s\n", i, tokens[i];
   }
   "\n";
   //List all the flags.
   for (i=0; i < fc; i++) {
     "flags[%d] : %s\n", i, flags[i]$WW,1$;
-  }
+  }*/
 
   /*U64 q;
   //Get the hash codes, for all the command strings.
@@ -267,44 +272,33 @@ U8 execute_cmd(U8 *cmd) {
   //IMO : Faster and better, than using 100 StrCmp() calls.
   
 
-if (tc > 0) {
-
-
-
-/*
-tokens,
-flags,
-tcmin=1,
-tcmax=1,
-tcgot=0,
-fcmin=0,
-fcmax=0,
-fcgot=0,
-dir_check=FALSE,
-file_check=FALSE
-*/
+//EC *ec
+//tcmin=1
+//tcmax=1
+//fcmin=0
+//fcmax=0
+//dir_check=FALSE
+//file_check=FALSE)
 
 //err_check(tokens, flags);
 
   h = HashCodeFor(tokens[0]);
 
   if (h == 3127582) { //exit
-    if (err_check(&ec2)) {
+    if (err_check(&ec)) {
+//    if (err_check(tokens,flags,tc,fc)) {
       return 1;
     }
   }
   else if (h == 3560141) { //time
-    if (err_check(&ec2)) {
-      "%T\n", Now;
-    }
+//    if (err_check(&ec)) {
+//      "%T\n", Now;
+//    }
   }
   else if (h == 98262) { //cat
-    if (fc > 0) {
-      "Unrecognized flag(s) provied\n";  
-    }
-    if (tc == 2) {
-      Type(tokens[1]);
-    }
+//    if (err_check(&ec,2,2,,,,TRUE)) {
+//      Type(tokens[1]);
+//    }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
     if (0 < tc < 3) {
@@ -382,7 +376,6 @@ file_check=FALSE
 
 
 
-}
   return 0;
 }
 
