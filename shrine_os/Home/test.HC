@@ -293,7 +293,26 @@ U8 execute_cmd(U8 *cmd) {
       "%T\n", Now;
     }
   }
-  else {
+  else if (h == 3169 || h == 98339) { //cd & cdd
+    if (err_check(1,3,,,TRUE)) {
+      if (tc == 2) {
+        Cd(tokens[1]);
+      }
+      else {
+        Cd;
+      }
+
+      if (h == 98339) {
+        external("Dir;");
+      }
+    }
+  }
+  else if (h == 94746189) { //clear
+    if (err_check) {
+      DocClear;
+    }
+  }
+  else {
   }
 
 
@@ -330,26 +349,7 @@ U0 TempleDOS() {
 
 TempleDOS;
 
-/*  else if (h == 3169 || h == 98339) { //cd & cdd
-    if (0 < tc < 3) {
-      if (tc == 2) {
-        Cd(tokens[1]);
-      }
-      else {
-        Cd;
-      }
-
-      if (h == 98339) {
-        external("Dir;");
-      }
-    }
-  }
-  else if (h == 94746189) { //clear
-    if (err_check) {
-      DocClear;
-    }
-  }
-  else if (h == 3181) { //cp
+/*  else if (h == 3181) { //cp
     if (2 < tc < 5) {
 
 
