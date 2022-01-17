@@ -23,10 +23,14 @@ Bool FileExists(U8 *file)
 #define MAX_FLAGS   3
 #define MAX_TKLEN 161
 
+#define STK_ITEMS  64
+#define STK_LEN   128
+
 //NOTES:
 //
 //  * This tokens / flag system is alright. But, not great.
 //    You can't give flags values.  For example: -fg_color "#FF00FF".
+//    Could use a stack based approach, to remedy this.
 //
 //  * Seems like you can't use variables inside array definitions.
 //    tokens[x][s];
@@ -59,6 +63,36 @@ Bool FileExists(U8 *file)
 //       [num_of]    [len] - 160 WAY too big.
 U8 tokens[MAX_TOKENS][MAX_TKLEN];
 U8   flags[MAX_FLAGS][MAX_TKLEN];
+
+U8 *stack[STK_ITEMS][STK_LEN];
+U64 count = 0;
+
+
+U0 stack_push(U8 *tok) {
+  *stack[count] = tok;
+  count++;  
+  "Pushing [%s]  onto the stack at [%d][%s].\n", *stack[count-1], count-1, tok;
+}
+
+U8 stack_pop() {
+ if (count > 0) {
+   "stack[count - 1] before : %s\n", *stack[count - 1];
+
+   U8 *result = *stack[count - 1];
+
+   *stack[count - 1] = '\0';
+
+   "stack[count - 1] after : %s\n", *stack[count - 1];
+
+   count--;
+
+   "result : %s\n", result;
+   return result;
+ }
+
+ return "";
+}
+
 
 U64 tc = 0,
     fc = 0;
@@ -198,6 +232,11 @@ U0 external(U8 *cmd,U8 *prefix='',U8 *postfix='') {
   "%s", prefix; ExePutS(cmd); "%s", postfix;
 }
 
+
+
+
+
+
 U8 execute_cmd(U8 *cmd) {
   U64 at = token_count(cmd),
        i = 0,
@@ -213,10 +252,14 @@ U8 execute_cmd(U8 *cmd) {
   for (i=0; i < at; i++) {
     token_trim(cmd,FALSE,TRUE);
     if (cmd[0] == '-') {
-      cmd = token_pull(cmd, flags[fi]); fi++;
+      cmd = token_pull(cmd, flags[fi]);
+      stack_push(flags[fi]);
+      fi++;
     }
     else {
-      cmd = token_pull(cmd, tokens[ti]); ti++;
+      cmd = token_pull(cmd, tokens[ti]);
+      stack_push(tokens[fi]);
+      ti++;
     }
   }
 
@@ -294,7 +337,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
-    if (err_check(1,3,,,TRUE)) {
+    if (err_check(1,3,,,TRUE)) {
       if (tc == 2) {
         Cd(tokens[1]);
       }
@@ -312,6 +355,69 @@ U8 execute_cmd(U8 *cmd) {
       DocClear;
     }
   }
+  else if (h == 3181) { //cp
+//    if (err_check(3,4,0,1)) {
+//      if (tc == 3) {
+//        if (err_check(3,4,0,1,,TRUE) { //verify the files
+//          Copy(tokens[1], tokens[2]);
+//        }
+//      }
+//      else { 
+//        h = HashCodeFor(tokens[1]);
+
+//        if (h == 1495) { // "-d"
+//          if (err_check(3,4,0,1,TRUE) { //verify the directories
+//            CopyTree(tokens[2], tokens[3]);
+//          }
+//        }
+//      }
+//    }
+  }
+  else if (h == 98728) { //cpu
+    if (err_check(1,2,0,1)) {
+      if (tc == 1) {
+        CPURep;
+      }
+//      else {
+//        h = HashCodeFor(tokens[1]); //"-f"
+
+//        if (h == 1497) {
+//          CPURep(TRUE);
+//        }
+//      }
+    }
+  }
+  else if (h == 3076014) { //date
+    if (err_check) {
+      "%D\n", Now;
+    }
+  }
+  else if (h == 3202) { //df
+    if (err_check) {
+      DrvRep;
+    }
+  }
+  else if (h == 3231) { //ed
+    if (tc == 2) {
+      Ed(tokens[1]);
+    }
+  }
+  else if (h == 3271) { //fm
+    // Could refactor this section,
+    // in another language.
+    if (0 < tc < 3) {
+      if (tc == 1) {
+        MiniFM;
+        return 0;
+      }
+      else {
+      }
+    }
+
+  }
+
+
+
   else {
   }
 
@@ -349,66 +455,7 @@ U0 TempleDOS() {
 
 TempleDOS;
 
-/*  else if (h == 3181) { //cp
-    if (2 < tc < 5) {
-
-
-      if (tc == 3) {
-        Copy(tokens[1], tokens[2]);
-      }
-      else {
-        
-//        h = HashCodeFor(tokens[1]);
-//
-//        if (h == 1495) { // "-d"
-//          CopyTree(tokens[2], tokens[3]);
-//        }
-      }
-    }
-  }
-  else if (h == 98728) { //cpu
-    if (0 < tc < 3) {
-      if (tc == 1) {
-        CPURep;
-      }
-//      else {
-//        h = HashCodeFor(tokens[1]); //"-f"
-
-//        if (h == 1497) {
-//          CPURep(TRUE);
-//        }
-//      }
-    }
-  }
-  else if (h == 3076014) { //date
-    if (tc == 1) {
-      "%D\n", Now;
-    }
-  }
-  else if (h == 3202) { //df
-    if (tc == 1) {
-      DrvRep;
-    }
-  }
-  else if (h == 3231) { //ed
-    if (tc == 2) {
-      Ed(tokens[1]);
-    }
-  }
-  else if (h == 3271) { //fm
-    // Could refactor this section,
-    // in another language.
-    if (0 < tc < 3) {
-      if (tc == 1) {
-        MiniFM;
-        return 0;
-      }
-      else {
-      }
-    }
-
-  }
-  else if (h == 3181270) { //grep
+/*  else if (h == 3181270) { //grep
     if (tc == 2) {
       F(tokens[1]);
     }
