@@ -16,6 +16,10 @@
 
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
+//Also, really, in the future ... might as well remove
+//the popping logic.  No need. CAUSE, all we need to really
+//do is treat begin as a pointer or actually make a pointer
+//and move it back & forth.
 #define MAX_LINKS 256
 #define LINK_LEN  256
 
@@ -25,6 +29,16 @@ U64 links = 0,
 
 U64 tc = 0,
     fc = 0;
+
+U8 chain_peek(U64 idx)
+{//Peek at a link on the chain.
+ if (idx < links) {
+//   "chain_peek [%s]\n", chain[idx];
+   return chain[idx];
+ }
+
+ return "";
+}
 
 //Yes, I'm handing error checking and validation horribly.
 U0 err_print(U8 *msg, U8 *link="Usage")
@@ -38,12 +52,23 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 {//Cheap error checker.
   if ((tc < tcmin || tc > tcmax) ||
       (fc > fcmin || fc > fcmax)) {
-    err_print("Too many arguments provided");
+    err_print("Invalid number of arguments provided");
     return FALSE;
   }
 
   if (existance_check) {//Make sure all files & directories exist.
-    
+    U64 i = begin; //begin should be 1, from prev chain_pop
+
+    while (i <= links) {
+      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
+
+      //if (!FileFind(chain_peek(i))) {
+      //  err_print("does not exist",chain[i]);
+      //  return FALSE;
+      //}
+
+      i++;
+    }
   }
 
   return TRUE;
@@ -90,7 +115,7 @@ U64 link_count(U8 *in_chain, Bool count_links = TRUE, U8 delim = ' ')
     i++;
   }
 
-  "link_count [%d]\n", count+count_links;
+//  "link_count [%d]\n", count+count_links;
 
   return count + count_links;
 }
@@ -103,27 +128,17 @@ U64 chain_push(U8 *si, U8 delim = ' ')
 
   while (si[0] != '\0' && si[0] != delim) {
     chain[links][i] = si[0];
-    "%c", si[0];
+//    "%c", si[0];
     si++; i++;
   }
   if (i > 0) chain[links][i] = '\0';
-  "\nchain_push [%s]\n\n", chain[links];
+//  "\nchain_push [%s]\n\n", chain[links];
 
   links++;  
 
   while (*si == delim) si++;
 
   return si;
-}
-
-U8 chain_peek(U64 idx)
-{//Peek at a link on the chain.
- if (idx >= begin && idx < links) {
-   "chain_peek [%s]\n", chain[idx];
-   return chain[idx];
- }
-
- return "";
 }
 
 U8 chain_pop()
@@ -134,7 +149,9 @@ U8 chain_pop()
    begin++;
    links--;
 
-   "chain_pop [%s], chain[%s]\n", result, chain[begin];
+//   "chain_pop [%s], chain[%s]\n", result, chain[begin];
+   chain[begin][0] = '\0';
+
    return result;
  }
 
@@ -163,7 +180,7 @@ U8 execute_cmd(U8 *cmd) {
   tc = at - fc;
 
   if (tc > 0) {
-    "\ntc [%d] fc [%d]\n\n",tc,fc;
+//    "\ntc [%d] fc [%d]\n\n",tc,fc;
 
     for (i=0; i < at; i++) {
       link_trim(cmd,FALSE,TRUE);
@@ -172,10 +189,18 @@ U8 execute_cmd(U8 *cmd) {
     }
 
     //h = HashCodeFor(chain_peek(begin));
-    h = HashCodeFor(chain_pop);
+    h = HashCodeFor(chain_pop);
   }
 
-  "HashCodeFor [%d]\n", h;
+//  "HashCodeFor [%d]\n", h;
+
+/*
+tcmin=1
+tcmax=1
+fcmin=0
+fcmax=1
+existance_check=FALSE
+*/
 
   if (h == 3127582) { //exit
     if (err_check) {
@@ -183,9 +208,10 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 98262) { //cat
-//    if (err_check(2,2,,,,TRUE)) {
-//      Type(tokens[1]);
-//    }
+    if (err_check(2,2,,0,TRUE)) {
+      chain_pop;
+//      Type(chain_pop);
+    }
   }
   else if (h == 3560141) { //time
 //    if (err_check) {
