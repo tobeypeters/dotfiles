@@ -32,8 +32,11 @@ Bool FileExists(U8 *file)
 }
 
 
-U0 chain_delinker()
+U0 chain_clean()
 {//Clear the chain.
+  MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
+
+  links = begin = 0;
 }
 
 U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
@@ -208,9 +211,7 @@ U0 TempleDOS() {
 
   while (1)
   {
-    MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
-
-    links = begin = 0;
+    chain_clean;
 
     "\n%s: ", Fs->cur_dir; // Display prompt
 
