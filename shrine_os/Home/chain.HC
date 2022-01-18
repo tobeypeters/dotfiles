@@ -16,13 +16,24 @@
 
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
-U8 chain[256][256];
+#define MAX_LINKS 256
+#define LINK_LEN  256
+
+U8 chain[MAX_LINKS][LINK_LEN];
 U64 links = 0,
     begin = 0;
+
+U64 tc = 0,
+    fc = 0;
 
 Bool FileExists(U8 *file) 
 {//Formatted File existence checker.
   return FileFind(file,,FUF_JUST_FILES);
+}
+
+
+U0 chain_delinker()
+{//Clear the chain.
 }
 
 U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
@@ -76,8 +87,7 @@ U64 chain_push(U8 *si, U8 delim = ' ')
     si++; i++;
   }
   if (i > 0) chain[links][i] = '\0';
-  
-  "chain_push [%s]\n", chain[links];
+  "\nchain_push [%s]\n\n", chain[links];
 
   links++;  
 
@@ -129,11 +139,18 @@ U8 execute_cmd(U8 *cmd) {
        i = 0,
        h = 0;
 
+  fc = link_count(cmd,FALSE,'-');
+  tc = at - fc;
+
+  "\ntc [%d] fc [%d]\n\n",tc,fc;
+
   for (i=0; i < at; i++) {
     link_trim(cmd,FALSE,TRUE);
 
     cmd = chain_push(cmd);
   }
+
+//  chain_degrease;
 
   h = HashCodeFor(chain_peek(begin));
 
@@ -191,16 +208,20 @@ U0 TempleDOS() {
 
   while (1)
   {
+    MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
+
+    links = begin = 0;
+
     "\n%s: ", Fs->cur_dir; // Display prompt
 
     // Get user input
-    input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
+    input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
 
     if (StrLen(input) > 0) {
       result = execute_cmd(input);
     }
 
-    input = '\0';
+    MemSet(input, '\0', sizeof(U8)*StrLen(input));
 
     if (result) break;
   }
