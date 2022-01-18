@@ -26,13 +26,30 @@ U64 links = 0,
 U64 tc = 0,
     fc = 0;
 
-Bool FileExists(U8 *file) 
-{//Formatted File existence checker.
-  return FileFind(file,,FUF_JUST_FILES);
+//Yes, I'm handing error checking and validation horribly.
+U0 err_print(U8 *msg, U8 *link="Usage")
+{//Print our err_msg.
+  "`[$FG,3$%s$FG$]`: %s ...\n", link, msg;
 }
 
+Bool err_check(U64 tcmin=1, U64 tcmax=1,
+               U64 fcmin=0, U64 fcmax=1,
+               Bool existance_check=FALSE)
+{//Cheap error checker.
+  if ((tc < tcmin || tc > tcmax) ||
+      (fc > fcmin || fc > fcmax)) {
+    err_print("Too many arguments provided");
+    return FALSE;
+  }
 
-U0 chain_clean()
+  if (existance_check) {//Make sure all files & directories exist.
+    
+  }
+
+  return TRUE;
+}
+
+U0 chain_clean()
 {//Clear the chain.
   MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
 
@@ -145,24 +162,25 @@ U8 execute_cmd(U8 *cmd) {
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
 
-  "\ntc [%d] fc [%d]\n\n",tc,fc;
+  if (tc > 0) {
+    "\ntc [%d] fc [%d]\n\n",tc,fc;
 
-  for (i=0; i < at; i++) {
-    link_trim(cmd,FALSE,TRUE);
+    for (i=0; i < at; i++) {
+      link_trim(cmd,FALSE,TRUE);
 
-    cmd = chain_push(cmd);
+      cmd = chain_push(cmd);
+    }
+
+    //h = HashCodeFor(chain_peek(begin));
+    h = HashCodeFor(chain_pop);
   }
-
-//  chain_degrease;
-
-  h = HashCodeFor(chain_peek(begin));
 
   "HashCodeFor [%d]\n", h;
 
   if (h == 3127582) { //exit
-//    if (err_check) {
-//      return 1;
-//    }
+    if (err_check) {
+      return 1;
+    }
   }
   else if (h == 98262) { //cat
 //    if (err_check(2,2,,,,TRUE)) {
