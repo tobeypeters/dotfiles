@@ -48,10 +48,8 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 
   0xffffffff0000, // PURPLE
 
-//  0xffffffff0000, // BROWN
-  0x0000ffffffff, // BROWN
+  0x0000ffffffff, // BROWN
 
-//  0xffff0000ffff, // BRACES - LTGRAY
   0xffffffff0000, // BRACES - LTGRAY
 
   0x000000000000, // DKGRAY
@@ -59,7 +57,9 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
   0x0000ffffffff, // Folders, RETURNTYPES - LTBLUE
 
   0x000000000000, // LTGREEN
-  0x000087870000, // LTCYAN
+
+//  0x000087870000, // LTCYAN
+  0x0000ffffffff, // LTCYAN
 
   0xffff00000000, // ERRORS-LTRED
   0xd0d0d2d2d4d4, // SELECTION FG - LTPURPLE

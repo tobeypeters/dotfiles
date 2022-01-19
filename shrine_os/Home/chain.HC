@@ -11,8 +11,8 @@
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/7
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
@@ -60,7 +60,8 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
     U64 i = begin; //begin should be 1, from prev chain_pop
 
     while (i <= links) {
-      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
+//      "chain[%d] [%s]\n",i,chain[1];
+//      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
 
       //if (!FileFind(chain_peek(i))) {
       //  err_print("does not exist",chain[i]);
@@ -132,7 +133,7 @@ U64 chain_push(U8 *si, U8 delim = ' ')
     si++; i++;
   }
   if (i > 0) chain[links][i] = '\0';
-//  "\nchain_push [%s]\n\n", chain[links];
+  "\nchain_push [%s]\n\n", chain[links];
 
   links++;  
 
@@ -145,12 +146,13 @@ U8 chain_pop()
 {//Pop an link, off the chain.
  if (links > 0) {
    U8 *result = chain[begin];
+   chain[begin][0] = '\0';
+
+//   "chain_pop [%s], chain[%s]\n", result, chain[begin];
 
    begin++;
    links--;
 
-//   "chain_pop [%s], chain[%s]\n", result, chain[begin];
-   chain[begin][0] = '\0';
 
    return result;
  }
@@ -188,10 +190,12 @@ U8 execute_cmd(U8 *cmd) {
       cmd = chain_push(cmd);
     }
 
+    "chain[1] [%s]\n",chain[1];
     //h = HashCodeFor(chain_peek(begin));
     h = HashCodeFor(chain_pop);
+    "chain[1] [%s]\n",chain[1];
   }
-
+
 //  "HashCodeFor [%d]\n", h;
 
 /*
