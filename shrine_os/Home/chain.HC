@@ -11,8 +11,8 @@
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/7
 
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
@@ -60,7 +60,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
     U64 i = begin; //begin should be 1, from prev chain_pop
 
     while (i <= links) {
-      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
+      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
 
       //if (!FileFind(chain_peek(i))) {
       //  err_print("does not exist",chain[i]);
@@ -244,7 +244,7 @@ existance_check=FALSE
 }
 
 U0 TempleDOS() {
-  DocClear;
+//  DocClear;
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";

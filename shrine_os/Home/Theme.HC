@@ -23,6 +23,9 @@
 //  0xe2e280808a8a, // Honeysuckle
 //  0xefef7c7c8e8e, // Hot Pink
 //  0x63638c8c8080, // Spearmint
+//  0xf8f8dede7e7e, // Mellow Yellow
+//  0x9a9acdcd3232, // Yellow Green
+//  0x6666ffff0000, // Bright Green
 
 #include "~/tp_Compositor.HC"
 
@@ -34,27 +37,41 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 };
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
-  0xf0f0eaead6d6, // MOUSE, CURSOR - BLACK
+//CURRENTLY TRYING FOR AN OLD SCHOOL'ISH DOS LOOK.
+  0xffffffffffff, // MOUSE, CURSOR - BLACK
   0xd0d0d2d2d4d4, // BORDERS - BLUE
-  0xa4a4c6c63939, // COMMENTS - GREEN
-  0x0000ffffffff, // TYPES - CYAN
-  0xd0d0d2d2d4d4, // RED
-  0x16167a7abfbf, // PURPLE
-  0xF4F4A4A46060$ER$, // BROWN
-  0x80809090a0a0, // BRACES - LTGRAY
-  0xe2e280808a8a, // DKGRAY
-  0xa4a4c6c63939, // Folders, RETURNTYPES - LTBLUE
+
+  0x0000dddd0000, // COMMENTS - GREEN
+  0x0000b7b70000, // TYPES - CYAN
+
+  0xd0d0d2d2d4d4, // RED - FILE LINKS
+
+  0xffffffff0000, // PURPLE
+
+//  0xffffffff0000, // BROWN
+  0x0000ffffffff, // BROWN
+
+//  0xffff0000ffff, // BRACES - LTGRAY
+  0xffffffff0000, // BRACES - LTGRAY
+
+  0x000000000000, // DKGRAY
+
+  0x0000ffffffff, // Folders, RETURNTYPES - LTBLUE
+
   0x000000000000, // LTGREEN
-  0xb3b300002d2d, // LTCYAN
+  0x000087870000, // LTCYAN
+
   0xffff00000000, // ERRORS-LTRED
-  0x1e1e00000707, // SELECTION FG - LTPURPLE
+  0xd0d0d2d2d4d4, // SELECTION FG - LTPURPLE
   0x000000000000, // MENU TEXT, SCROLLBARGRIPPERS - YELLOW
-  0x020202020000  // BG MAIN - WHITE
+
+  0x00000000ffff  // BG MAIN - WHITE
+//  0x000000000000  // BG MAIN - WHITE
 };
 
 GrPaletteSet(gr_palette_gruv);
 
-// NOTE: for whatever reason when you Abort&Exit (Shift+Esc)
+// NOTE: for whatever reason when you Abort&Exit (Shift+Esc)
 // a User Task (usually a terminal) the theme may reset to
 // gr_palette_std. I could not figure out why and how to fix that.
 // So I just made gr_palette_std to be gr_palette_gruv.

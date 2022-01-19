@@ -41,17 +41,24 @@
 <b>C:/Home/Once.HC.Z:</b>
  * Commented out everything.
 
+<b>C:/Adam/AutoComplete/ACTask.HC.Z:</b>
+ * Remove all the colors.
+
 <b>C:/Adam/DolDoc/DocEd.HC.Z:</b>
+ * Changed window close button(s) 'X' to 'þ'.
  * Changed Window "MENU" to "µMENUÆ".
+ * Changed the length of the title display, from 16 to 32.
+   Still haven't figured out, what I need to delete to
+   stop the scrolling.
 
 <b>C:/Adam/DolDoc/DocRecalc.HC.Z:</b>
  * Turned off blinking text on the sidebar.
 
 <b>C:/Adam/DolDoc/DocTerm.HC.Z:</b>
- * Changed window close button(s) 'X'.
+ * Changed window close button(s) 'X' to 'þ'.
  * Changed Window "MENU" to "µMENUÆ".
 
-<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
+<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
  * Changed <END> shortcut to move to the end of line.
  * Added <CTRL> + <ESC> shortcut, to move
    to the end of the document.
