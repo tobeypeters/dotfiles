@@ -49,7 +49,7 @@
  * Changed Window "MENU" to "µMENUÆ".
  * Changed the length of the title display, from 16 to 32.
    Still haven't figured out, what I need to delete to
-   stop the scrolling.
+   stop the scrolling.
 
 <b>C:/Adam/DolDoc/DocRecalc.HC.Z:</b>
  * Turned off blinking text on the sidebar.
@@ -62,6 +62,7 @@
  * Changed <END> shortcut to move to the end of line.
  * Added <CTRL> + <ESC> shortcut, to move
    to the end of the document.
+ * Unimportant - Fixed a typo.
 
 <b>C:/Adam/Opt/Utils/LineRep.HC.Z:</b>
  * Added in-line file manager. Refactored SizeRep;

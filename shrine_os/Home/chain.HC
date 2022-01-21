@@ -176,9 +176,17 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-Bool flag_eq(U8 *flag, U64 eq)
+Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
 {
-  return (HashCodeFor(flag) == eq);
+  if (!(HashCodeFor(flag) == eq)) {
+    if (err_disp) {
+      err_print("Invalid flag provided",flag);
+    }
+
+    return FALSE;
+  }
+
+  return TRUE;
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -203,8 +211,6 @@ U8 execute_cmd(U8 *cmd) {
     h = HashCodeFor(chain_pop);
   }
 
-  "HashCodeFor[%d]\n",HashCodeFor("-");
-
 //  "HashCodeFor [%d]\n", h;
 
 // MemBIOSRep;
@@ -217,7 +223,7 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
     if (err_check(,2,TRUE)) {
-      if (at == 2) {
+      if (tc == 2) {
         Cd(chain_pop);
       }
       else {
@@ -226,23 +232,6 @@ U8 execute_cmd(U8 *cmd) {
 
       if (h == 98339) {
         external("Dir;");
-      }
-    }
-  }
-  else if (h == 94746189) { //clear
-    if (err_check) {
-      DocClear;
-    }
-  }
-  else if (h == 3181) { //cp
-    if (err_check(3,4,TRUE,,1)) {
-      if (at == 3) {
-        Copy(chain_pop, chain_pop);
-      }
-      else {
-        if (flag_eq(chain_pop,1495)) { // "-d"
-          CopyTree(chain_pop, chain_pop);
-        }
       }
     }
   }
@@ -255,13 +244,32 @@ fcmin=0
 fcmax=0
 */
 
+
+  else if (h == 94746189) { //clear
+    if (err_check) {
+      DocClear;
+    }
+  }
+  else if (h == 3181) { //cp
+    if (err_check(3,4,TRUE,,1)) {
+      if (at == 3) {
+        Copy(chain_pop, chain_pop);
+      }
+      else {
+        if (flag_eq(chain_pop,1495)) { // "-d"
+          CopyTree(chain_pop, chain_pop);
+        }
+      }
+    }
+  }
+
   else if (h == 98728) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
         if (flag_eq(chain_pop,1497)) { //-f
           tf = TRUE;
         }
-        else {
+        else {
           return 0;
         }
       }
