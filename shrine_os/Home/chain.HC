@@ -144,48 +144,14 @@ U0 err_print(U8 *msg, U8 *link="Usage")
 }
 
 Bool err_check(U64 tcmin=1, U64 tcmax=1,
-               U64 fcmin=0, U64 fcmax=1,
-               Bool existance_check=FALSE, Bool flag_check=FALSE)
+               Bool existance_check=FALSE,
+               U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
   if ((tc < tcmin || tc > tcmax) ||
       (fc < fcmin || fc > fcmax)) {
     err_print("Invalid number of arguments provided");
     return FALSE;
   }
-
-  //INCORRECT way to do this. This DEFINITELY
-  //restricts the flags you can have to one.
-  if (flag_check) {
-/*    U64 i = 0,
-        h = 0,
-    flagc = 2;
-
-    Bool found = FALSE;
-
-    h = HashCodeFor(chain_peek{begin));
-
-    while (i < flagc) {
-      if (h = 1495) found = TRUE; //-d
-      if (h = 1497) found = TRUE; //-f
-      i++;
-    }
-
-    if (!found) {
-      
-      return FALSE;
-    }
-
-
-    U64 i = begin; //begin should be 1, from prev chain_pop
-
-    while (i <= links) {
-      if (
-      i++;
-    }
-
-
-    chain_pop;
-*/  }
 
   if (existance_check) {//Make sure all files & directories exist.
     U64 i = begin; //begin should be 1, from prev chain_pop
@@ -210,10 +176,17 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
+Bool flag_eq(U8 *flag, U64 eq)
+{
+  return (HashCodeFor(flag) == eq);
+}
+
 U8 execute_cmd(U8 *cmd) {
   U64 at = link_count(cmd),
        i = 0,
        h = 0;
+
+  Bool tf = FALSE;
 
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
@@ -229,7 +202,7 @@ U8 execute_cmd(U8 *cmd) {
 
     h = HashCodeFor(chain_pop);
   }
-
+
   "HashCodeFor[%d]\n",HashCodeFor("-");
 
 //  "HashCodeFor [%d]\n", h;
@@ -238,17 +211,12 @@ U8 execute_cmd(U8 *cmd) {
 // Trace(ON); or Trace(OFF);
 
   if (h == 98262) { //cat
-    if (err_check(2,2,,0,TRUE)) {
+    if (err_check(2,2,TRUE)) {
       Type(chain_pop());
     }
   }
-  else if (h == 3560141) { //time
-    if (err_check) {
-      "%T\n", Now;
-    }
-  }
   else if (h == 3169 || h == 98339) { //cd & cdd
-    if (err_check(,2,,0,TRUE)) {
+    if (err_check(,2,TRUE)) {
       if (at == 2) {
         Cd(chain_pop);
       }
@@ -267,31 +235,38 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3181) { //cp
-    if (err_check(3,4,,1,TRUE)) {
+    if (err_check(3,4,TRUE,,1)) {
       if (at == 3) {
         Copy(chain_pop, chain_pop);
       }
       else {
-        h = HashCodeFor(chain_pop);
-
-        if (h == 1495) { // "-d"
+        if (flag_eq(chain_pop,1495)) { // "-d"
           CopyTree(chain_pop, chain_pop);
         }
       }
     }
   }
-  else if (h == 98728) { //cpu
-    if (err_check) {
-      if (at == 1) {
-        CPURep;
-      }
-      else {
-        h = HashCodeFor(chain_pop); //"-f"
 
-        if (h == 1497) {
-          CPURep(TRUE);
+/*
+tcmin=1
+tcmax=1
+existance_check=FALSE
+fcmin=0
+fcmax=0
+*/
+
+  else if (h == 98728) { //cpu
+    if (err_check(,,,,1)) {
+      if (fc == 1) {
+        if (flag_eq(chain_pop,1497)) { //-f
+          tf = TRUE;
+        }
+        else {
+          return 0;
         }
       }
+
+      CPURep(tf);
     }
   }
   else if (h == 3076014) { //date
@@ -314,18 +289,113 @@ U8 execute_cmd(U8 *cmd) {
       return 1;
     }
   }
-/*
-tcmin=1
-tcmax=1
-fcmin=0
-fcmax=1
-existance_check=FALSE
-*/
+  else if (h == 3271) { //fm
+    if (err_check(,3,,1)) {
+      Bool full_details = FALSE;
 
+      if (fc == 1) {
+        full_details = flag_eq(chain_pop,1497); //-f
+      }
+
+      MiniFM(chain_pop,,full_details); 
+    }
+  }
+  else if (h == 3181270) { //grep
+//    if (err_check(,2,,0)) {
+//      F(tokens[1]);
+//    }
+  }
+  else if (h == 3198785) { //help
+//    if (ace = x == 1) {
+//      U64 i;
+
+//      "\n%-6s\tDescription\n", "Cmd";
+//      "---------------------------\n";
+//      for (i=0; i < CMD_LEN; i++) {
+//        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+//      }
+//    }
+  }
+  else if (h == 3463) { //ls
+//    if (ace = 0 < x < 3) {
+//      "\n";
+//      if (x == 2) {
+//        Dir(tokens[1]);
+//      } else {
+//        Dir;
+//      }
+//    }
+  }
+  else if (h == 107866) { //man
+//    if (ace = x == 2) {
+//      Man(tokens[1]);
+//    }
+  }
+  else if (h == 107989) { //mem
+//    if (ace = x == 1) {
+//      MemRep;
+//    }
+  }
+  else if (h == 103950895) { //mkdir
+//    if (ace = x == 2) {
+//      DirMk(tokens[1]);
+//    }
+  }
+  else if (h == 3497) { //mv
+//    if (ace = x == 3) {
+//      Move(tokens[1], tokens[2]);
+//    }
+  }
+  else if (h == 109270) { //now
+//    if (ace = x == 1) {
+//      CDateStruct ds;
+//      Date2Struct(&ds, Now + local_time_offset);
+
+//      "%03tZ %03tZ %03d %T\n",
+//      ds.day_of_week, "ST_DAYS_OF_WEEK",
+//      ds.mon-1, "ST_MONTHS",
+//      ds.day_of_week,
+//      Now;
+//    }
+  }
+  else if (h == 3643) { //rm
+//    if (ace = (1 < x < 4)) {
+//      if (x == 2) {
+//        Del(tokens[1]);
+//      }
+//      else {
+//        h = HashCodeFor(tokens[1]);
+
+//        if (afe = h == 1495) { //"-d"
+//          DelTree(tokens[2]);
+//        }
+//      }
+//    }
+  }
+  else if (h == 3560141) { //time
+//    if (ace = x == 1) {
+//      "%T\n", Now;
+//    }
+  }
+  else if (h == 110550847) { //touch
+//    if (ace = x == 2) {
+//      // Currently only creates an empty file, if
+//      // it doesn't exist already.
+//      if (!FileExists(tokens[1])) {
+//        // Off-hand, looks like Touch() doesn't create
+//        // files. I'll look more at it and touchfile().
+//        FileWrite(tokens[1], NULL, 0);
+//      }
+//      else {
+//        Touch(tokens[1],"");
+//      }
+//    }
+  }
   else {
+//    external(tokens[0]);
   }
 
-  return FALSE;
+  return 0;
 }
 
 U0 TempleDOS() {
