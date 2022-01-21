@@ -17,9 +17,8 @@
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
 //Also, really, in the future ... might as well remove
-//the popping logic.  No need. CAUSE, all we need to really
-//do is treat begin as a pointer or actually make a pointer
-//and move it back & forth.
+//the popping logic.  All I'm really doing is incrementing
+//a number, which tells us where the start of the chain is.
 #define MAX_LINKS 256
 #define LINK_LEN  256
 
@@ -30,49 +29,55 @@ U64 links = 0,
 U64 tc = 0,
     fc = 0;
 
-U8 chain_peek(U64 idx)
-{//Peek at a link on the chain.
- if (idx < links) {
-//   "chain_peek [%s]\n", chain[idx];
-   return chain[idx];
+
+U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
+{//Weld a link, onto the chain.
+  U64 i = 0,
+    pos = links;
+
+  //Another example, of why this really a stack.
+  //I need to replace values.
+  if (link_num > -1) {
+    pos = link_num;
+    links--;
+  }
+
+  while (si[0] != '\0' && si[0] != delim) {
+    chain[pos][i] = si[0];
+    si++; i++;
+  }
+  if (i > 0) chain[pos][i] = '\0';
+
+  links++;  
+
+  while (*si == delim) si++;
+
+  return si;
+}
+
+U8 chain_pop()
+{//Pop a link, off the chain. Here we're not removing
+ //anything from the chain. So, this is another big
+ //difference from a normal stack.
+ if (links > 0) {
+   U8 *result = chain[begin];
+
+   begin++;
+   links--;
+
+   return result;
  }
 
  return "";
 }
 
-//Yes, I'm handing error checking and validation horribly.
-U0 err_print(U8 *msg, U8 *link="Usage")
-{//Print our err_msg.
-  "`[$FG,3$%s$FG$]`: %s ...\n", link, msg;
-}
+U8 chain_peek(U64 idx)
+{//Peek at a link on the chain.
+ if (idx <= links) {
+   return chain[idx];
+ }
 
-Bool err_check(U64 tcmin=1, U64 tcmax=1,
-               U64 fcmin=0, U64 fcmax=1,
-               Bool existance_check=FALSE)
-{//Cheap error checker.
-  if ((tc < tcmin || tc > tcmax) ||
-      (fc > fcmin || fc > fcmax)) {
-    err_print("Invalid number of arguments provided");
-    return FALSE;
-  }
-
-  if (existance_check) {//Make sure all files & directories exist.
-    U64 i = begin; //begin should be 1, from prev chain_pop
-
-    while (i <= links) {
-//      "chain[%d] [%s]\n",i,chain[1];
-//      "filefind : [%s] i : [%d] links [%d] begin : [%d]\n",chain_peek(i),i,links, begin;
-
-      //if (!FileFind(chain_peek(i))) {
-      //  err_print("does not exist",chain[i]);
-      //  return FALSE;
-      //}
-
-      i++;
-    }
-  }
-
-  return TRUE;
+ return "";
 }
 
 U0 chain_clean()
@@ -80,22 +85,6 @@ U0 chain_clean()
   MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
 
   links = begin = 0;
-}
-
-U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
-{//Trims leading or trailing spaces from a link.
- //left = TRUE : left trim
- //left = FALSE : right trim
- //both = TRUE : left &right trim
-  if (StrLen(link) == 0) return;
-
-  if (left || both) {
-    StrUtil(link, SUF_REM_LEADING);
-  }
-
-  if (!left || both) {
-    StrUtil(link, SUF_REM_TRAILING);
-  }
 }
 
 U64 link_count(U8 *in_chain, Bool count_links = TRUE, U8 delim = ' ')
@@ -116,61 +105,109 @@ U64 link_count(U8 *in_chain, Bool count_links = TRUE, U8 delim = ' ')
     i++;
   }
 
-//  "link_count [%d]\n", count+count_links;
-
   return count + count_links;
 }
 
+U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
+{//Trims leading or trailing spaces from a link.
+ //left = TRUE : left trim
+ //left = FALSE : right trim
+ //both = TRUE : left &right trim
+  if (StrLen(link) == 0) return;
 
-
-U64 chain_push(U8 *si, U8 delim = ' ')
-{//Weld a link, onto the chain.
-  U64 i = 0;
-
-  while (si[0] != '\0' && si[0] != delim) {
-    chain[links][i] = si[0];
-//    "%c", si[0];
-    si++; i++;
+  if (left || both) {
+    StrUtil(link, SUF_REM_LEADING);
   }
-  if (i > 0) chain[links][i] = '\0';
-  "\nchain_push [%s]\n\n", chain[links];
 
-  links++;  
-
-  while (*si == delim) si++;
-
-  return si;
-}
-
-U8 chain_pop()
-{//Pop an link, off the chain.
- if (links > 0) {
-   U8 *result = chain[begin];
-   chain[begin][0] = '\0';
-
-//   "chain_pop [%s], chain[%s]\n", result, chain[begin];
-
-   begin++;
-   links--;
-
-
-   return result;
- }
-
- return "";
+  if (!left || both) {
+    StrUtil(link, SUF_REM_TRAILING);
+  }
 }
 
 U64 HashCodeFor(U8 *str) 
 {//Hash code generator for strings.
-  U64 hash = 0;
-  U64 g = 31;
-  U64 i;
-
-  for (i=0; i < StrLen(str); i++) {
+  U64 g = 31,
+      i = 0,
+   hash = 0;
+ 
+  for (; i < StrLen(str); i++) {
     hash = g * hash + str[i];
   }
 
   return hash;
+}
+
+//Yes, I'm handing error checking and validation HORRIBLY.
+U0 err_print(U8 *msg, U8 *link="Usage")
+{//Print our err_msg.
+  "`[$FG,3$%s$FG$]`: %s ...\n", link, msg;
+}
+
+Bool err_check(U64 tcmin=1, U64 tcmax=1,
+               U64 fcmin=0, U64 fcmax=1,
+               Bool existance_check=FALSE, Bool flag_check=FALSE)
+{//Cheap error checker.
+  if ((tc < tcmin || tc > tcmax) ||
+      (fc < fcmin || fc > fcmax)) {
+    err_print("Invalid number of arguments provided");
+    return FALSE;
+  }
+
+  //INCORRECT way to do this. This DEFINITELY
+  //restricts the flags you can have to one.
+  if (flag_check) {
+/*    U64 i = 0,
+        h = 0,
+    flagc = 2;
+
+    Bool found = FALSE;
+
+    h = HashCodeFor(chain_peek{begin));
+
+    while (i < flagc) {
+      if (h = 1495) found = TRUE; //-d
+      if (h = 1497) found = TRUE; //-f
+      i++;
+    }
+
+    if (!found) {
+      
+      return FALSE;
+    }
+
+
+    U64 i = begin; //begin should be 1, from prev chain_pop
+
+    while (i <= links) {
+      if (
+      i++;
+    }
+
+
+    chain_pop;
+*/  }
+
+  if (existance_check) {//Make sure all files & directories exist.
+    U64 i = begin; //begin should be 1, from prev chain_pop
+
+    while (i <= links) {
+      //I don't use IsDir(), cause FileFind works
+      //on 99% of directories. If you want to cd to the root,
+      //It doesn't like 'cd /'. FileFind wants "cd ..";
+      if ((StrLen(chain[i]) == 1) && chain[i][0] == 47) { // '/' check
+        chain_push("..",i);
+      }
+          
+      if (!FileFind(chain_peek(i))) {
+        err_print("does not exist",chain[i]);
+        return FALSE;
+      }
+
+      i++;
+    }
+  }
+
+  return TRUE;
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -190,14 +227,93 @@ U8 execute_cmd(U8 *cmd) {
       cmd = chain_push(cmd);
     }
 
-    "chain[1] [%s]\n",chain[1];
-    //h = HashCodeFor(chain_peek(begin));
     h = HashCodeFor(chain_pop);
-    "chain[1] [%s]\n",chain[1];
   }
 
+  "HashCodeFor[%d]\n",HashCodeFor("-");
+
 //  "HashCodeFor [%d]\n", h;
 
+// MemBIOSRep;
+// Trace(ON); or Trace(OFF);
+
+  if (h == 98262) { //cat
+    if (err_check(2,2,,0,TRUE)) {
+      Type(chain_pop());
+    }
+  }
+  else if (h == 3560141) { //time
+    if (err_check) {
+      "%T\n", Now;
+    }
+  }
+  else if (h == 3169 || h == 98339) { //cd & cdd
+    if (err_check(,2,,0,TRUE)) {
+      if (at == 2) {
+        Cd(chain_pop);
+      }
+      else {
+        Cd;
+      }
+
+      if (h == 98339) {
+        external("Dir;");
+      }
+    }
+  }
+  else if (h == 94746189) { //clear
+    if (err_check) {
+      DocClear;
+    }
+  }
+  else if (h == 3181) { //cp
+    if (err_check(3,4,,1,TRUE)) {
+      if (at == 3) {
+        Copy(chain_pop, chain_pop);
+      }
+      else {
+        h = HashCodeFor(chain_pop);
+
+        if (h == 1495) { // "-d"
+          CopyTree(chain_pop, chain_pop);
+        }
+      }
+    }
+  }
+  else if (h == 98728) { //cpu
+    if (err_check) {
+      if (at == 1) {
+        CPURep;
+      }
+      else {
+        h = HashCodeFor(chain_pop); //"-f"
+
+        if (h == 1497) {
+          CPURep(TRUE);
+        }
+      }
+    }
+  }
+  else if (h == 3076014) { //date
+    if (err_check) {
+      "%D\n", Now;
+    }
+  }
+  else if (h == 3202) { //df
+    if (err_check) {
+      DrvRep;
+    }
+  }
+  else if (h == 3231) { //ed
+    if (err_check(,2,,0,TRUE)) {
+      Ed(chain_pop);
+    }
+  }
+  else if (h == 3127582) { //exit
+    if (err_check) {
+      return 1;
+    }
+  }
 /*
 tcmin=1
 tcmax=1
@@ -206,41 +322,6 @@ fcmax=1
 existance_check=FALSE
 */
 
-  if (h == 3127582) { //exit
-    if (err_check) {
-      return 1;
-    }
-  }
-  else if (h == 98262) { //cat
-    if (err_check(2,2,,0,TRUE)) {
-      chain_pop;
-//      Type(chain_pop);
-    }
-  }
-  else if (h == 3560141) { //time
-//    if (err_check) {
-//      "%T\n", Now;
-//    }
-  }
-  else if (h == 3169 || h == 98339) { //cd & cdd
-//    if (err_check(1,3,,,TRUE)) {
-//      if (tc == 2) {
-//        Cd(tokens[1]);
-//      }
-//      else {
-//        Cd;
-//      }
-
-//      if (h == 98339) {
-//        external("Dir;");
-//      }
-//    }
-  }
-  else if (h == 94746189) { //clear
-//    if (err_check) {
-//      DocClear;
-//    }
-  }
   else {
   }
 
@@ -277,5 +358,3 @@ U0 TempleDOS() {
 }
 
 TempleDOS;
-
-
