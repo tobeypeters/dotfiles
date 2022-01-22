@@ -140,7 +140,7 @@ U64 HashCodeFor(U8 *str)
 //Yes, I'm handing error checking and validation HORRIBLY.
 U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
-  "`[$FG,3$%s$FG$]`: %s ...\n", link, msg;
+  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
 }
 
 Bool err_check(U64 tcmin=1, U64 tcmax=1,
@@ -213,6 +213,7 @@ U8 execute_cmd(U8 *cmd) {
 
 //  "HashCodeFor [%d]\n", h;
 
+//TODO:
 // MemBIOSRep;
 // Trace(ON); or Trace(OFF);
 
@@ -222,6 +223,8 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
+    //TODO: Add -m to allow cd to make directories,
+    //      if they don't exist.
     if (err_check(,2,TRUE)) {
       if (tc == 2) {
         Cd(chain_pop);
@@ -235,16 +238,6 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-
-/*
-tcmin=1
-tcmax=1
-existance_check=FALSE
-fcmin=0
-fcmax=0
-*/
-
-
   else if (h == 94746189) { //clear
     if (err_check) {
       DocClear;
@@ -252,7 +245,7 @@ fcmax=0
   }
   else if (h == 3181) { //cp
     if (err_check(3,4,TRUE,,1)) {
-      if (at == 3) {
+      if (at == 3) {
         Copy(chain_pop, chain_pop);
       }
       else {
@@ -262,12 +255,10 @@ fcmax=0
       }
     }
   }
-
   else if (h == 98728) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
-        if (flag_eq(chain_pop,1497)) { //-f
-          tf = TRUE;
+        if (tf = flag_eq(chain_pop,1497)) { //-f
         }
         else {
           return 0;
@@ -298,16 +289,26 @@ fcmax=0
     }
   }
   else if (h == 3271) { //fm
+    //TODO: Potentially, add the hash for tree.
     if (err_check(,3,,1)) {
-      Bool full_details = FALSE;
+      Bool fd = FALSE; //Full details.
 
       if (fc == 1) {
-        full_details = flag_eq(chain_pop,1497); //-f
+        fd = flag_eq(chain_pop,1497); //-f
       }
 
-      MiniFM(chain_pop,,full_details); 
+      MiniFM(chain_pop,,fd); 
     }
   }
+
+/*
+tcmin=1
+tcmax=1
+existance_check=FALSE
+fcmin=0
+fcmax=0
+*/
+
   else if (h == 3181270) { //grep
 //    if (err_check(,2,,0)) {
 //      F(tokens[1]);
@@ -340,9 +341,9 @@ fcmax=0
 //    }
   }
   else if (h == 107989) { //mem
-//    if (ace = x == 1) {
-//      MemRep;
-//    }
+    if (err_check) {
+      MemRep;
+    }
   }
   else if (h == 103950895) { //mkdir
 //    if (ace = x == 2) {
@@ -355,16 +356,16 @@ fcmax=0
 //    }
   }
   else if (h == 109270) { //now
-//    if (ace = x == 1) {
-//      CDateStruct ds;
-//      Date2Struct(&ds, Now + local_time_offset);
+    if (err_check) {
+      CDateStruct ds;
+      Date2Struct(&ds, Now + local_time_offset);
 
-//      "%03tZ %03tZ %03d %T\n",
-//      ds.day_of_week, "ST_DAYS_OF_WEEK",
-//      ds.mon-1, "ST_MONTHS",
-//      ds.day_of_week,
-//      Now;
-//    }
+      "%03tZ %03tZ %03d %T\n",
+      ds.day_of_week, "ST_DAYS_OF_WEEK",
+      ds.mon-1, "ST_MONTHS",
+      ds.day_of_week,
+      Now;
+    }
   }
   else if (h == 3643) { //rm
 //    if (ace = (1 < x < 4)) {
@@ -381,9 +382,9 @@ fcmax=0
 //    }
   }
   else if (h == 3560141) { //time
-//    if (ace = x == 1) {
-//      "%T\n", Now;
-//    }
+    if (err_check) {
+      "%T\n", Now;
+    }
   }
   else if (h == 110550847) { //touch
 //    if (ace = x == 2) {
@@ -399,13 +400,17 @@ fcmax=0
 //      }
 //    }
   }
+//  else if (h == ?) { //vol
+//    "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
+//    "Volume Serial Number is %s\n",look_at_code_for_drvrep;
+//  }
   else {
 //    external(tokens[0]);
   }
 
   return 0;
 }
-
+
 U0 TempleDOS() {
 //  DocClear;
 
