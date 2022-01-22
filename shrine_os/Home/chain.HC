@@ -14,6 +14,38 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#define CMD_LEN 23
+
+U8 *CMD_LIST[CMD_LEN][2] = {
+{"cat","Concatenate FILE to standard output."},
+{"cd", "Change the current working directory or\n\tchange to a different mount drive."},
+{"cdd", "Change the current working directory or\n\tchange to a different mounted drive\n\tand display the directories contents."},
+{"clear", "Clear the terminal screen."},
+{"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
+{"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
+{"\ndate", "Display the current date."},
+{"df", "Display currently mounted drives."},
+{"ed", "Edit / Create text files."},
+{"exit", "Cause normal process termination of TempleShell."},
+{"fm", "File Manager which displays treeview of\n\tthe current or specified directory."},
+{"grep", "Recursively search files and print any lines\n\twhich contain the specified string."},
+{"help", "Displays this list of TempleShell commands."},
+{"ls", "List directory contents."},
+{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
+{"mem", "Display a memory representation."},
+{"mkdir", "Make directories."},
+{"mv", "Move (rename) files."},
+{"now", "Display the current date and time."},
+{"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
+{"time", "Display the current time."},
+{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
+{"tree", "File Manager which displays treeview of\n\tthe current or specified directory."},
+};
+
+U0 external(U8 *cmd) {
+  "\n"; ExePutS(cmd);
+}
+
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
 //Also, really, in the future ... might as well remove
@@ -154,14 +186,26 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   }
 
   if (existance_check) {//Make sure all files & directories exist.
-    U64 i = begin; //begin should be 1, from prev chain_pop
+    U64 i = begin, //begin should be 1, from prev chain_pop.
+        l = 0;
 
     while (i <= links) {
+      l = StrLen(chain[i]);
+
       //I don't use IsDir(), cause FileFind works
       //on 99% of directories. If you want to cd to the root,
       //It doesn't like 'cd /'. FileFind wants "cd ..";
-      if ((StrLen(chain[i]) == 1) && chain[i][0] == 47) { // '/' check
+      if (l == 1 && chain[i][0] == 47) { // '/' check
         chain_push("..",i);
+      }
+
+      //We're changing to another mounted drive ...
+      //cd d: 
+      if (14912<l<14939 || $FG$$BG$14944<1<4971) {
+      }
+
+
+      if (64<l<91 || 96<l<123) { //We're changing drives
       }
           
       if (!FileFind(chain_peek(i))) {
@@ -174,6 +218,12 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   }
 
   return TRUE;
+}
+
+U8 ternary(Bool condition, U8 *first, U8 *second) {
+  if (condition) return first;
+
+  return second;
 }
 
 Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
@@ -194,7 +244,10 @@ U8 execute_cmd(U8 *cmd) {
        i = 0,
        h = 0;
 
-  Bool tf = FALSE;
+  U8 *buffer = "",
+     *orig_cmd = cmd;
+
+  Bool tf = FALSE; //Scratch flag I can use for true/false.
 
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
@@ -207,19 +260,61 @@ U8 execute_cmd(U8 *cmd) {
 
       cmd = chain_push(cmd);
     }
-
-    h = HashCodeFor(chain_pop);
+  }
+  else {
+    return 0;
   }
 
-//  "HashCodeFor [%d]\n", h;
+  h = HashCodeFor(chain_pop);
 
-//TODO:
-// MemBIOSRep;
-// Trace(ON); or Trace(OFF);
+  //U64 q;
+  //Get the hash codes, for all the command strings.
+  /*for (q=0; q < CMD_LEN; q++) {
+  "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
+  }*/
+
+  //Get the hash codes, for all the command strings and
+  //partially build a if nest.
+  /*"  if (h == %d) { //%s\n  }\n", HashCodeFor(CMD_LIST[0][0]), CMD_LIST[0][0];
+  for (q=1; q < CMD_LEN; q++) {
+    "  else if (h == %d) { //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
+    "  }\n";
+  }
+  "  else {\n  }\n";*/
+
+  //Get the hash codes, for all the command strings and
+  //partially build a switch statement.
+  /*"switch () {\n";
+  for (q=0; q < CMD_LEN; q++) {
+    "  case %d: //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
+    "    break;\n";
+  }
+  "  default:\n}\n";*/
+
+  //Switch seems broke.
+  //  switch (h) {
+  //    case 0:
+  //      "one\n";
+  //      break;
+  //    case 99998:
+  //      "two\n";
+  //      break;
+  //    default:
+  //  }
+
+  //I'm using pre-calculated hash codes, for comparison.
+  //My opinion ... This is faster and better, than
+  //using 100 StrCmp() calls.
+
+  //  "HashCodeFor [%d]\n", HashCodeFor("tree");
+
+  //TODO:
+  // MemBIOSRep;
+  // Trace(ON); or Trace(OFF);
 
   if (h == 98262) { //cat
     if (err_check(2,2,TRUE)) {
-      Type(chain_pop());
+      "\n"; Type(chain_pop());
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
@@ -279,7 +374,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3231) { //ed
-    if (err_check(,2,,0,TRUE)) {
+    if (err_check(,2,TRUE)) {
       Ed(chain_pop);
     }
   }
@@ -288,57 +383,47 @@ U8 execute_cmd(U8 *cmd) {
       return 1;
     }
   }
-  else if (h == 3271) { //fm
-    //TODO: Potentially, add the hash for tree.
-    if (err_check(,3,,1)) {
-      Bool fd = FALSE; //Full details.
-
+  else if (h == 3271 || h == 3568542) { //fm & tree
+    if (err_check(,3,,,1)) {
       if (fc == 1) {
-        fd = flag_eq(chain_pop,1497); //-f
+        if (tf = flag_eq(chain_pop,1497)) { //-f
+        }
+        else {
+          return 0;
+        }
       }
 
-      MiniFM(chain_pop,,fd); 
+      buffer = ternary(tc == 1,".",chain_pop);
+
+      MiniFM(buffer,,tf);     
     }
   }
-
-/*
-tcmin=1
-tcmax=1
-existance_check=FALSE
-fcmin=0
-fcmax=0
-*/
-
   else if (h == 3181270) { //grep
-//    if (err_check(,2,,0)) {
-//      F(tokens[1]);
-//    }
+    if (err_check(2,2,TRUE)) {
+      F(chain_pop);
+    }
   }
   else if (h == 3198785) { //help
-//    if (ace = x == 1) {
-//      U64 i;
-
-//      "\n%-6s\tDescription\n", "Cmd";
-//      "---------------------------\n";
-//      for (i=0; i < CMD_LEN; i++) {
-//        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
-//      }
-//    }
+    if (err_check) {
+      "\n%-6s\tDescription\n", "Cmd";
+      "---------------------------\n";
+      for (i=0; i < CMD_LEN; i++) {
+        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+      }
+    }
   }
   else if (h == 3463) { //ls
-//    if (ace = 0 < x < 3) {
-//      "\n";
-//      if (x == 2) {
-//        Dir(tokens[1]);
-//      } else {
-//        Dir;
-//      }
-//    }
+    "ls\n";
+    if (err_check(,2,TRUE)) {
+      "\n";
+
+      Dir(ternary(tc == 1,".",chain_pop));
+    }
   }
   else if (h == 107866) { //man
-//    if (ace = x == 2) {
-//      Man(tokens[1]);
-//    }
+    if (err_check(2,2,TRUE)) {
+      Man(chain_pop);
+    }
   }
   else if (h == 107989) { //mem
     if (err_check) {
@@ -346,14 +431,15 @@ fcmax=0
     }
   }
   else if (h == 103950895) { //mkdir
-//    if (ace = x == 2) {
-//      DirMk(tokens[1]);
-//    }
+    if (err_check(2,2)) {
+      //TODO: Add an already exists check.
+      DirMk(chain_pop);
+    }
   }
   else if (h == 3497) { //mv
-//    if (ace = x == 3) {
-//      Move(tokens[1], tokens[2]);
-//    }
+      if (err_check(3,3,TRUE)) {
+        Move(chain_pop, chain_pop);
+      }
   }
   else if (h == 109270) { //now
     if (err_check) {
@@ -367,52 +453,19 @@ fcmax=0
       Now;
     }
   }
-  else if (h == 3643) { //rm
-//    if (ace = (1 < x < 4)) {
-//      if (x == 2) {
-//        Del(tokens[1]);
-//      }
-//      else {
-//        h = HashCodeFor(tokens[1]);
-
-//        if (afe = h == 1495) { //"-d"
-//          DelTree(tokens[2]);
-//        }
-//      }
-//    }
-  }
-  else if (h == 3560141) { //time
-    if (err_check) {
-      "%T\n", Now;
-    }
-  }
-  else if (h == 110550847) { //touch
-//    if (ace = x == 2) {
-//      // Currently only creates an empty file, if
-//      // it doesn't exist already.
-//      if (!FileExists(tokens[1])) {
-//        // Off-hand, looks like Touch() doesn't create
-//        // files. I'll look more at it and touchfile().
-//        FileWrite(tokens[1], NULL, 0);
-//      }
-//      else {
-//        Touch(tokens[1],"");
-//      }
-//    }
-  }
-//  else if (h == ?) { //vol
-//    "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
-//    "Volume Serial Number is %s\n",look_at_code_for_drvrep;
-//  }
   else {
-//    external(tokens[0]);
+    external(orig_cmd); //User is trying to normally run a OS command?
   }
 
   return 0;
 }
-
+
 U0 TempleDOS() {
-//  DocClear;
+  DocClear;
+
+  //Perhaps, I'll get rid of this:
+  DocMax; //Force people to use an unlimited command buffer.
+          //It's not really unlimited, see $LK,"max_entries",A="FF:::/Adam/DolDoc/DocTerm.HC,max_entries"$.
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
@@ -441,3 +494,43 @@ U0 TempleDOS() {
 }
 
 TempleDOS;
+
+/*
+    else if (h == 3643) { //rm
+//      if (ace = (1 < x < 4)) {
+//        if (x == 2) {
+//          Del(tokens[1]);
+//        }
+//        else {
+//          h = HashCodeFor(tokens[1]);
+
+//          if (afe = h == 1495) { //"-d"
+//            DelTree(tokens[2]);
+//          }
+//        }
+//      }
+    }
+    else if (h == 3560141) { //time
+      if (err_check) {
+        "%T\n", Now;
+      }
+    }
+    else if (h == 110550847) { //touch
+//      if (ace = x == 2) {
+//        // Currently only creates an empty file, if
+//        // it doesn't exist already.
+//        if (!FileExists(tokens[1])) {
+//          // Off-hand, looks like Touch() doesn't create
+//          // files. I'll look more at it and touchfile().
+//          FileWrite(tokens[1], NULL, 0);
+//        }
+//        else {
+//          Touch(tokens[1],"");
+//        }
+//      }
+    }
+//    else if (h == ?) { //vol
+//      "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
+//      "Volume Serial Number is %s\n",look_at_code_for_drvrep;
+//    }
+*/
