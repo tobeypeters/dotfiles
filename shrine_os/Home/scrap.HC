@@ -1,19 +1,29 @@
-/*
-U0 test(U64 x = 3, U64 y = 0, ...) {
-  "%d %d\n",x,y;
+Bool drv_valid(U8 *drv)
+{//Valid mounted drive?
+  CDrv *dv;
+  CBlkDev *bd;
 
-  U64 i;
+  I64 i,drv_let;
 
-  for (i=0; i < argc; i++) {
-    "%d\n", argv[i];
+  drv = ToUpper(drv);
+
+  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
+    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
+      bd=dv->bd;
+      drv_let=Drv2Let(dv);
+      "%c\n",drv_let;
+      if (drv_let == drv) {
+        return TRUE;
+      }
+    }
   }
+
+  return FALSE;
 }
 
-test(5,,"viper",12,"butt",43);
-
-test();
-*/
-
-U8 *test = __DIR__ + "templeDOS.HC";
-
-"test [%s]\n", test;
+if (drv_valid('c')) {
+  "yeppers\n";
+}
+else {
+  "nope\n";
+}

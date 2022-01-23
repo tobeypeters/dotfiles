@@ -15,7 +15,7 @@
 */
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
-
+
 U0 external(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
@@ -142,6 +142,31 @@ U64 HashCodeFor(U8 *str)
   return hash;
 }
 
+Bool drv_valid(U8 *drv)
+{//Valid mounted drive?
+  //I cannot find any built-in functions,
+  //which didn't throw exceptions if I tested
+  //for a unmounted/non existant drive ... like 'z:'
+  CDrv *dv;
+  CBlkDev *bd;
+
+  I64 i,drv_let;
+
+  drv = ToUpper(drv);
+
+  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
+    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
+      bd=dv->bd;
+      drv_let=Drv2Let(dv);
+      if (drv_let == drv) {
+        return TRUE;
+      }
+    }
+  }
+
+  return FALSE;
+}
+
 //Yes, I'm handing error checking and validation HORRIBLY.
 U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
@@ -160,26 +185,43 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 
   if (existance_check) {//Make sure all files & directories exist.
     U64 i = begin, //begin should be 1, from prev chain_pop.
-        l = 0;
+        l = 0,
+        h = 0;
 
     while (i <= links) {
-      l = StrLen(chain[i]);
+      if (!(chain[i][0] == '-')) {
+        l = StrLen(chain[i]);
 
-      //I don't use IsDir(), cause FileFind works
-      //on 99% of directories. If you want to cd to the root,
-      //It doesn't like 'cd /'. FileFind wants "cd ..";
-      if (l == 1 && chain[i][0] == 47) { // '/' check
-        chain_push("..",i);
-      }
+        //Are we changing to another mounted drive?
+        if (l == 2 && chain[i][1] == ':') { 
+          h = HashCodeFor(chain[i]);
 
-      //We're changing to another mounted drive ...
-      //cd d: 
-      if (14912<l<14939 || $FG$$BG$14944<1<4971) { //We're changing drives.
-      }
+          if (3064<h<3841 || 2072<h<2849) { //a:..z: or A:..Z:
+            if (!drv_valid(chain[i][0])) {
+              goto drv_error;
+            }
+            goto drv_change;
+          }
+          else {
+            goto drv_error;
+          }
+
+          drv_error:
+            err_print("invalid drive specified or drive is currently not mounted",chain[i]);
+            return FALSE;
          
-      if (!FileFind(chain_peek(i))) {
-        err_print("does not exist",chain[i]);
-        return FALSE;
+          goto drv_change;
+        }
+
+        if (l == 1 && chain[i][0] == 47) { //FileFInd doesn't "/"
+        }
+        else {
+          if (!FileFind(chain_peek(i))) {
+            err_print("does not exist",chain[i]);
+            return FALSE;
+          }
+        }
+        drv_change:
       }
 
       i++;
@@ -208,14 +250,14 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
   return TRUE;
 }
 
-U8 *buffer = "";
-
 U8 execute_cmd(U8 *cmd) {
   U64 at = link_count(cmd),
        i = 0,
        h = 0;
 
-  U8 *orig_cmd = cmd;
+  U8 *orig_cmd = cmd,
+       *buffer = "";
+     
 
   Bool tf = FALSE; //Scratch flag I can use for true/false.
 
@@ -276,7 +318,7 @@ U8 execute_cmd(U8 *cmd) {
   //My opinion ... This is faster and better, than
   //using 100 StrCmp() calls.
 
-  //  "HashCodeFor [%d]\n", HashCodeFor("tree");
+  //"HashCodeFor [%d]\n", HashCodeFor("a:");
 
   //TODO:
   // MemBIOSRep;
@@ -292,7 +334,14 @@ U8 execute_cmd(U8 *cmd) {
     //      if they don't exist.
     if (err_check(,2,TRUE)) {
       if (tc == 2) {
+//        buffer = chain_peek(begin);
+//        if (StrLen(buffer) == 2 &&
+//            buffer[1] == ':') {
+//          Drv(buffer[0]);
+//        }
+//        else {
         Cd(chain_pop);
+//        }
       }
       else {
         Cd;
@@ -354,7 +403,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3271 || h == 3568542) { //fm & tree
-    if (err_check(,3,,,1)) {
+    if (err_check(,3,TRUE,,1)) {
       if (fc == 1) {
         if (tf = flag_eq(chain_pop,1497)) { //-f
         }
@@ -363,9 +412,9 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-      buffer = ternary(tc == 1,".",chain_pop);
+//      buffer = chain_pop;
 
-      MiniFM(buffer,,tf);     
+      MiniFM(ternary(tc == 1,".",chain_pop),,tf);
     }
   }
   else if (h == 3181270) { //grep
@@ -424,6 +473,49 @@ U8 execute_cmd(U8 *cmd) {
       Now;
     }
   }
+  else if (h == 3643) { //rm
+    if (err_check(2,3,TRUE,,1)) {
+      if (fc == 1) {
+        if (tf = flag_eq(chain_pop,1495)) { //-d
+        }
+        else {
+          return 0;
+        }
+      }
+
+      if (tc == 2) {
+        Del(chain_pop);
+      }
+      else {
+        DelTree(chain_pop);
+      }
+    }
+  }
+  else if (h == 3560141) { //time
+    if (err_check) {
+      "%T\n", Now;
+    }
+  }
+  else if (h == 110550847) { //touch
+//    if (err_check()) {
+      // Currently only creates an empty file, if
+      // it doesn't exist already.
+//      buffer = chain_pop;
+
+//      if (!FileExists(buffer)) {
+        // Off-hand, looks like Touch() doesn't create
+        // files. I'll look more at it and touchfile().
+//        FileWrite(buffer, NULL, 0);
+//      }
+//      else {
+//        Touch(buffer,"");
+//      }
+//    }
+  }
+//  else if (h == ?) { //vol
+//      "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
+//      "Volume Serial Number is %s\n",look_at_code_for_drvrep;
+//  }
   else {
     external(orig_cmd); //User is trying to normally run a OS command?
   }
@@ -465,43 +557,3 @@ U0 TempleDOS() {
 }
 
 TempleDOS;
-
-/*
-    else if (h == 3643) { //rm
-//      if (ace = (1 < x < 4)) {
-//        if (x == 2) {
-//          Del(tokens[1]);
-//        }
-//        else {
-//          h = HashCodeFor(tokens[1]);
-
-//          if (afe = h == 1495) { //"-d"
-//            DelTree(tokens[2]);
-//          }
-//        }
-//      }
-    }
-    else if (h == 3560141) { //time
-      if (err_check) {
-        "%T\n", Now;
-      }
-    }
-    else if (h == 110550847) { //touch
-//      if (ace = x == 2) {
-//        // Currently only creates an empty file, if
-//        // it doesn't exist already.
-//        if (!FileExists(tokens[1])) {
-//          // Off-hand, looks like Touch() doesn't create
-//          // files. I'll look more at it and touchfile().
-//          FileWrite(tokens[1], NULL, 0);
-//        }
-//        else {
-//          Touch(tokens[1],"");
-//        }
-//      }
-    }
-//    else if (h == ?) { //vol
-//      "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
-//      "Volume Serial Number is %s\n",look_at_code_for_drvrep;
-//    }
-*/
