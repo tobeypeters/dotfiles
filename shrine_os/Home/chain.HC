@@ -454,14 +454,14 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(2,2)) {
       //TODO: Add an already exists check.
 
-      if (DirMk(chain_peek)) {
+      if (DirMk(chain_pop)) {
       }
       else {
         buffer = ternary(FileFind(chain_peek),
-                         "Directory already exists",
+                         "Directory already exists",
                          "Unable to create directory");
 
-        err_print(buffer,chain_peek);
+        err_print(buffer,chain_pop);
       }
     }
   }
@@ -538,7 +538,7 @@ U0 TempleDOS() {
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffer.
           //It's not really unlimited, see $LK,"max_entries",A="FF:::/Adam/DolDoc/DocTerm.HC,max_entries"$.
-
+
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
