@@ -76,8 +76,10 @@ U8 chain_pop()
  return "";
 }
 
-U8 chain_peek(U64 idx)
+U8 chain_peek(I64 idx=-1)
 {//Peek at a link on the chain.
+ if (idx == -1) idx = begin;
+
  if (idx <= links) {
    return chain[idx];
  }
@@ -196,7 +198,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         if (l == 2 && chain[i][1] == ':') { 
           h = HashCodeFor(chain[i]);
 
-          if (3064<h<3841 || 2072<h<2849) { //a:..z: or A:..Z:
+          if (3064<h<3841 || 2072<h<2849) { //a:..z: or A:..Z:
             if (!drv_valid(chain[i][0])) {
               goto drv_error;
             }
@@ -323,6 +325,7 @@ U8 execute_cmd(U8 *cmd) {
   //TODO:
   // MemBIOSRep;
   // Trace(ON); or Trace(OFF);
+  // StkRep;
 
   if (h == 98262) { //cat
     if (err_check(2,2,TRUE)) {
@@ -412,9 +415,7 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-//      buffer = chain_pop;
-
-      MiniFM(ternary(tc == 1,".",chain_pop),,tf);
+      MiniFM(ternary(tc == 1,".",chain_peek),,tf);
     }
   }
   else if (h == 3181270) { //grep
@@ -433,15 +434,14 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3463) { //ls
-    "ls\n";
     if (err_check(,2,TRUE)) {
       "\n";
 
-      Dir(ternary(tc == 1,".",chain_pop));
+      Dir(ternary(tc == 1,".",chain_peek));
     }
   }
   else if (h == 107866) { //man
-    if (err_check(2,2,TRUE)) {
+    if (err_check(2,2)) {
       Man(chain_pop);
     }
   }
@@ -453,7 +453,16 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 103950895) { //mkdir
     if (err_check(2,2)) {
       //TODO: Add an already exists check.
-      DirMk(chain_pop);
+
+      if (DirMk(chain_peek)) {
+      }
+      else {
+        buffer = ternary(FileFind(chain_peek),
+                         "Directory already exists",
+                         "Unable to create directory");
+
+        err_print(buffer,chain_peek);
+      }
     }
   }
   else if (h == 3497) { //mv
@@ -541,7 +550,7 @@ U0 TempleDOS() {
   {
     chain_clean;
 
-    "\n%s: ", Fs->cur_dir; // Display prompt
+    "\n%c:%s> ",Drv2Let(Fs->cur_dv),Fs->cur_dir; // Display prompt
 
     // Get user input
     input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
@@ -555,5 +564,7 @@ U0 TempleDOS() {
     if (result) break;
   }
 }
+
+//Adam("\"\nStarting templeDOS...\n\";");
 
 TempleDOS;
