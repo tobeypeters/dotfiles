@@ -1,0 +1,103 @@
+
+Command	Description
+---------------------------
+cat	Concatenate FILE to standard output.
+	$FG,2$usage$FG$: cat [filename]
+
+cd	Change the current working directory, to
+	your HOME directory, a specified directory,
+	or to a different mounted drive.
+	$FG,2$usage$FG$: cd
+	       cd [dir]
+	       cd [drive:]
+
+cdd	Change the current working directory, to
+	your HOME directory, a specified directory,
+	or to a different mounted drive.
+	$FG,2$usage$FG$: cdd
+	       cdd [dir]
+	       cdd [drive:]
+
+clear	Clear the terminal screen.
+	$FG,2$usage$FG$: clear
+
+cp	Copy files and directories.
+	$FG,2$usage$FG$: cp [option] [source] [destination]
+
+	$FG,3$Options:$FG$
+		 -d,	Directory copy
+
+cpu	Display cpu info.
+	$FG,2$usage$FG$: cpu [option]
+
+	$FG,2$Options$FG$:
+		 -f,	Detailed cpu info
+
+date	Display the current date.
+	$FG,2$usage$FG$: date
+
+df	Display currently mounted drives.
+	$FG,2$usage$FG$: df
+
+ed	Edit / Create text files.
+	$FG,2$usage$FG$: ed [filename]
+
+exit	Cause normal process termination of templeDOS.
+	$FG,2$usage$FG$: exit
+
+fm	File Manager which displays treeview of the
+	current or specified directory.
+	$FG,2$usage$FG$: fm
+	       fm [option] [dir]
+
+	$FG,2$Options$FG$:
+		 -f	Full details
+
+grep	Recursively search files and print any lines
+	which contain the specified string.
+	$FG,2$usage$FG$: grep [filename]
+
+help	Displays this list of TempleShell commands.
+	$FG,2$usage$FG$: help
+
+ls	List directory contents.
+	$FG,2$usage$FG$: ls
+	       ls [dir]
+
+man	Display the source code for a specified 
+	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
+	$FG,2$usage$FG$: man [command]
+
+mem	Display a memory representation.
+	$FG,2$usage$FG$: mem
+
+mkdir	Make directories.
+	$FG,2$usage$FG$: mkdir [dir]
+
+mv	Move (rename) files.
+	$FG,2$usage$FG$: mv [source] [destination]
+
+now	Display the current date and time.
+	$FG,2$usage$FG$: now
+
+rm	Remove files or directories.
+	$FG,2$usage$FG$: rm [filename]
+	       rm [option] [dir]
+
+	$FG,2$Options$FG$:
+		-d	Directory remove
+
+time	Display the current time.
+	$FG,2$usage$FG$: time
+
+touch	Create an empty file. TempleOS also has a
+	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
+	$FG,2$usage$FG$: touch [filename]
+
+tree	File Manager which displays treeview of the
+	current or specified directory.
+	$FG,2$usage$FG$: fm
+	       fm [option] [dir]
+
+	$FG,2$Options$FG$:
+		 -f	Full details

@@ -14,9 +14,6 @@ test(5,,"viper",12,"butt",43);
 test();
 */
 
+U8 *test = __DIR__ + "templeDOS.HC";
 
-"%d\n", 'a:';
-"%d\n", 'z:';
-
-"%d\n", 'A:';
-"%d\n", 'Z:';
+"test [%s]\n", test;

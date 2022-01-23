@@ -14,36 +14,10 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#define CMD_LEN 23
-
-U8 *CMD_LIST[CMD_LEN][2] = {
-{"cat","Concatenate FILE to standard output."},
-{"cd", "Change the current working directory or\n\tchange to a different mount drive."},
-{"cdd", "Change the current working directory or\n\tchange to a different mounted drive\n\tand display the directories contents."},
-{"clear", "Clear the terminal screen."},
-{"\ncp", "Copy files and directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory copy.\n"},
-{"cpu", "Display a cpu representation.\n\t$FG$$FG,2$Flags:$FG$ -f Detailed cpu info."},
-{"\ndate", "Display the current date."},
-{"df", "Display currently mounted drives."},
-{"ed", "Edit / Create text files."},
-{"exit", "Cause normal process termination of TempleShell."},
-{"fm", "File Manager which displays treeview of\n\tthe current or specified directory."},
-{"grep", "Recursively search files and print any lines\n\twhich contain the specified string."},
-{"help", "Displays this list of TempleShell commands."},
-{"ls", "List directory contents."},
-{"man", "Display the source code for a specified\n\tinternal TempleOS command. Like $FG$$FG,2$Dir;$FG$ - $FG$$FG,2$DrvRep;$FG$, etc."},
-{"mem", "Display a memory representation."},
-{"mkdir", "Make directories."},
-{"mv", "Move (rename) files."},
-{"now", "Display the current date and time."},
-{"\nrm", "Remove files or directories.\n\t$FG$$FG,2$Flags:$FG$ -d Directory remove.\n"},
-{"time", "Display the current time."},
-{"touch", "Create an empty file. TempleOS also has a\n\t<$FG$$FG,2$touch$FG$> command which can update\n\tthe date & file attributes."}
-{"tree", "File Manager which displays treeview of\n\tthe current or specified directory."},
-};
-
+U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
+
 U0 external(U8 *cmd) {
-  "\n"; ExePutS(cmd);
+  "\n"; ExePutS(cmd);
 }
 
 //I use this chain system, like a stack. Kinda ...
@@ -60,7 +34,6 @@ U64 links = 0,
 
 U64 tc = 0,
     fc = 0;
-
 
 U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
 {//Weld a link, onto the chain.
@@ -201,13 +174,9 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 
       //We're changing to another mounted drive ...
       //cd d: 
-      if (14912<l<14939 || $FG$$BG$14944<1<4971) {
+      if (14912<l<14939 || $FG$$BG$14944<1<4971) { //We're changing drives.
       }
-
-
-      if (64<l<91 || 96<l<123) { //We're changing drives
-      }
-          
+         
       if (!FileFind(chain_peek(i))) {
         err_print("does not exist",chain[i]);
         return FALSE;
@@ -239,13 +208,14 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
   return TRUE;
 }
 
+U8 *buffer = "";
+
 U8 execute_cmd(U8 *cmd) {
   U64 at = link_count(cmd),
        i = 0,
        h = 0;
 
-  U8 *buffer = "",
-     *orig_cmd = cmd;
+  U8 *orig_cmd = cmd;
 
   Bool tf = FALSE; //Scratch flag I can use for true/false.
 
@@ -405,10 +375,11 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 3198785) { //help
     if (err_check) {
-      "\n%-6s\tDescription\n", "Cmd";
-      "---------------------------\n";
-      for (i=0; i < CMD_LEN; i++) {
-        "$FG$$FG,2$%-6s $FG$\t%s\n", CMD_LIST[i][0], CMD_LIST[i][1];
+      if (FileFind(help_file)) {
+        Type(help_file);
+      }
+      else {
+        err_print("File not found",help_file);
       }
     }
   }
