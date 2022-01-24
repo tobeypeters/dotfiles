@@ -254,21 +254,12 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
 
 U8 execute_cmd(U8 *cmd) {
   U64 at = link_count(cmd),
-       i = 0,
-       h = 0;
-
-  U8 *orig_cmd = cmd,
-       *buffer = "";
-     
-
-  Bool tf = FALSE; //Scratch flag I can use for true/false.
+       i = 0;
 
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
 
   if (tc > 0) {
-//    "\ntc [%d] fc [%d]\n\n",tc,fc;
-
     for (i=0; i < at; i++) {
       link_trim(cmd,FALSE,TRUE);
 
@@ -279,31 +270,13 @@ U8 execute_cmd(U8 *cmd) {
     return 0;
   }
 
-  h = HashCodeFor(chain_pop);
+  U64 h = 0;
 
-  //U64 q;
-  //Get the hash codes, for all the command strings.
-  /*for (q=0; q < CMD_LEN; q++) {
-  "%-6s: %d\n", CMD_LIST[q][0], HashCodeFor(CMD_LIST[q][0]);
-  }*/
+  U8 *orig_cmd = cmd,
+       *buffer = ""; //General purpose buffer.
+     
 
-  //Get the hash codes, for all the command strings and
-  //partially build a if nest.
-  /*"  if (h == %d) { //%s\n  }\n", HashCodeFor(CMD_LIST[0][0]), CMD_LIST[0][0];
-  for (q=1; q < CMD_LEN; q++) {
-    "  else if (h == %d) { //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
-    "  }\n";
-  }
-  "  else {\n  }\n";*/
-
-  //Get the hash codes, for all the command strings and
-  //partially build a switch statement.
-  /*"switch () {\n";
-  for (q=0; q < CMD_LEN; q++) {
-    "  case %d: //%s\n", HashCodeFor(CMD_LIST[q][0]), CMD_LIST[q][0];
-    "    break;\n";
-  }
-  "  default:\n}\n";*/
+  Bool tf = FALSE; //Scratch flag I can use for true/false.
 
   //Switch seems broke.
   //  switch (h) {
@@ -319,6 +292,7 @@ U8 execute_cmd(U8 *cmd) {
   //I'm using pre-calculated hash codes, for comparison.
   //My opinion ... This is faster and better, than
   //using 100 StrCmp() calls.
+  h = HashCodeFor(chain_pop);
 
   //"HashCodeFor [%d]\n", HashCodeFor("a:");
 
@@ -492,7 +466,7 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-      if (tc == 2) {
+      if (at == 2) {
         Del(chain_pop);
       }
       else {
@@ -506,20 +480,18 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 110550847) { //touch
-//    if (err_check()) {
+    if (err_check(2,2)) {
       // Currently only creates an empty file, if
       // it doesn't exist already.
-//      buffer = chain_pop;
-
-//      if (!FileExists(buffer)) {
-        // Off-hand, looks like Touch() doesn't create
+      if (!FileFind(chain_peek)) {
+        // Off-hand, looks like Touch() doesn't create
         // files. I'll look more at it and touchfile().
-//        FileWrite(buffer, NULL, 0);
-//      }
-//      else {
-//        Touch(buffer,"");
-//      }
-//    }
+        FileWrite(chain_pop, NULL, 0);
+      }
+      else {
+        Touch(chain_pop,"");
+      }
+    }
   }
 //  else if (h == ?) { //vol
 //      "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
@@ -538,7 +510,7 @@ U0 TempleDOS() {
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffer.
           //It's not really unlimited, see $LK,"max_entries",A="FF:::/Adam/DolDoc/DocTerm.HC,max_entries"$.
-
+
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
