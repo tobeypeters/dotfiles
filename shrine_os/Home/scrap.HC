@@ -21,9 +21,11 @@ Bool drv_valid(U8 *drv)
   return FALSE;
 }
 
-if (drv_valid('c')) {
+if (drv_valid('c')) {
   "yeppers\n";
 }
 else {
   "nope\n";
 }
+
+"DrvSerialNum %s\n",DrvSerialNum(Drv2Let(Fs->cur_dv));

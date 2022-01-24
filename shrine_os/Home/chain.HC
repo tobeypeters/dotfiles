@@ -252,6 +252,10 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
   return TRUE;
 }
 
+U8 cur_drv() {
+  return Drv2Let(Fs->cur_dv);
+}
+
 U8 execute_cmd(U8 *cmd) {
   U64 at = link_count(cmd),
        i = 0;
@@ -484,7 +488,7 @@ U8 execute_cmd(U8 *cmd) {
       // Currently only creates an empty file, if
       // it doesn't exist already.
       if (!FileFind(chain_peek)) {
-        // Off-hand, looks like Touch() doesn't create
+        // Off-hand, looks like Touch() doesn't create
         // files. I'll look more at it and touchfile().
         FileWrite(chain_pop, NULL, 0);
       }
@@ -493,10 +497,10 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-//  else if (h == ?) { //vol
-//      "Volume in drive %s has no label.\n",how_do_we_get_current_drive; //Don't think drives have labels in this OS.
-//      "Volume Serial Number is %s\n",look_at_code_for_drvrep;
-//  }
+  else if (h == 116947) { //vol
+    "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
+    "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+  }
   else {
     external(orig_cmd); //User is trying to normally run a OS command?
   }
@@ -522,7 +526,7 @@ U0 TempleDOS() {
   {
     chain_clean;
 
-    "\n%c:%s> ",Drv2Let(Fs->cur_dv),Fs->cur_dir; // Display prompt
+    "\n%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
     input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
