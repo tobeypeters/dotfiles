@@ -16,10 +16,6 @@
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
-U0 external(U8 *cmd) {
-  "\n"; ExePutS(cmd);
-}
-
 //I use this chain system, like a stack. Kinda ...
 //But, one major difference, Ipull from the bottom.
 //Also, really, in the future ... might as well remove
@@ -34,6 +30,12 @@ U64 links = 0,
 
 U64 tc = 0,
     fc = 0;
+
+U8 ternary(Bool condition, U8 *first, U8 *second) {
+  if (condition) return first;
+
+  return second;
+}
 
 U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
 {//Weld a link, onto the chain.
@@ -60,15 +62,51 @@ U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
   return si;
 }
 
-U8 chain_pop()
+U8 chain_pop(Bool rock_bottom=TRUE)
 {//Pop a link, off the chain. Here we're not removing
  //anything from the chain. So, this is another big
  //difference from a normal stack.
  if (links > 0) {
-   U8 *result = chain[begin];
+   U64 idx = begin;
 
-   begin++;
+   if (!rock_bottom) {
+
+
+   /* We're making the chain bi-directional. 
+
+      * You can take links, from the begining and end.
+      * You can't go pass the "beginning" link.
+      * Ater, the "beginning" link is grabbed, links
+        should be getting set to 0.
+
+      EVERYTHING NEEDS TESTED. BUT, SHOULD WORK FINE.
+
+      0 1 2
+     [a|b|c] <- 3 elements
+      ^ ^
+      | |                  
+      ------ : begin = 0 : elements - (begin == 0) = <--- 2
+        |
+        ---- : begin = 1 : elements - (begin == 0) = <--- 2
+
+    */
+
+     idx = links - (begin == 0);
+   }
+
+   "\n\n";
+   "idx %d\n",idx;
+
+   "rock_bottom %d\n",rock_bottom;
+   "begin %d links %d\n",begin,links;
+   U8 *result = ternary(rock_bottom, chain[begin], chain[idx]);
+   
+   begin += rock_bottom;
+
+   "result %s\n",result;
+
    links--;
+   "begin %d links %d\n",begin,links;
 
    return result;
  }
@@ -76,7 +114,7 @@ U8 chain_pop()
  return "";
 }
 
-U8 chain_peek(I64 idx=-1)
+ U8 chain_peek(I64 idx=-1)
 {//Peek at a link on the chain.
  if (idx == -1) idx = begin;
 
@@ -233,10 +271,8 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-U8 ternary(Bool condition, U8 *first, U8 *second) {
-  if (condition) return first;
-
-  return second;
+U0 external(U8 *cmd) {
+  "\n"; ExePutS(cmd);
 }
 
 Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
@@ -252,7 +288,8 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
   return TRUE;
 }
 
-U8 cur_drv() {
+U8 cur_drv()
+{//Return the current drive letter.
   return Drv2Let(Fs->cur_dv);
 }
 
@@ -305,6 +342,16 @@ U8 execute_cmd(U8 *cmd) {
   // Trace(ON); or Trace(OFF);
   // StkRep;
 
+  //NOTE:
+  //I don't think, it's anything I'm doing.
+  //Seems like HolyC evals right to left.
+  //I don't know if eval is the correct term.
+  //
+  //For example:
+  //             I want : Copy(file1, file2);
+  //             I do   : Copy(chain_pop, chain_pop);
+  //             I get  : Copy(file2, file1);
+
   if (h == 98262) { //cat
     if (err_check(2,2,TRUE)) {
       "\n"; Type(chain_pop());
@@ -315,14 +362,7 @@ U8 execute_cmd(U8 *cmd) {
     //      if they don't exist.
     if (err_check(,2,TRUE)) {
       if (tc == 2) {
-//        buffer = chain_peek(begin);
-//        if (StrLen(buffer) == 2 &&
-//            buffer[1] == ':') {
-//          Drv(buffer[0]);
-//        }
-//        else {
         Cd(chain_pop);
-//        }
       }
       else {
         Cd;
@@ -341,11 +381,14 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 3181) { //cp
     if (err_check(3,4,TRUE,,1)) {
       if (at == 3) {
-        Copy(chain_pop, chain_pop);
+//        "cp %s %s\n",chain_pop,chain_pop;
+        "cp %s %s\n",chain_pop,chain_pop(FALSE);
+//        Copy(chain_pop(TRUE), chain_pop);
       }
       else {
         if (flag_eq(chain_pop,1495)) { // "-d"
-          CopyTree(chain_pop, chain_pop);
+//          buffer = chain_pop;
+//          CopyTree(buffer, chain_pop);
         }
       }
     }
@@ -499,7 +542,7 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 116947) { //vol
     "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
-    "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+    "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
   }
   else {
     external(orig_cmd); //User is trying to normally run a OS command?
