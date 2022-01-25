@@ -76,7 +76,7 @@ U8 chain_pop(Bool rock_bottom=TRUE)
 
       * You can take links, from the begining and end.
       * You can't go pass the "beginning" link.
-      * Ater, the "beginning" link is grabbed, links
+      * Ater, the "beginning" link is grabbed, links
         should be getting set to 0.
 
       EVERYTHING NEEDS TESTED. BUT, SHOULD WORK FINE.
@@ -91,6 +91,7 @@ U8 chain_pop(Bool rock_bottom=TRUE)
 
     */
 
+     "links %d - (begin == 0) %d\n",links,(begin == 0);
      idx = links - (begin == 0);
    }
 
@@ -381,14 +382,14 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 3181) { //cp
     if (err_check(3,4,TRUE,,1)) {
       if (at == 3) {
-//        "cp %s %s\n",chain_pop,chain_pop;
-        "cp %s %s\n",chain_pop,chain_pop(FALSE);
-//        Copy(chain_pop(TRUE), chain_pop);
+        "Copy(%s,%s)\n",chain_pop,chain_pop(FALSE);
+//        Copy(chain_pop, chain_pop(FALSE));
       }
       else {
         if (flag_eq(chain_pop,1495)) { // "-d"
-//          buffer = chain_pop;
-//          CopyTree(buffer, chain_pop);
+          "CopyTree(%s,%s)\n",chain_pop,chain_pop(FALSE);
+//          "CopyTree(%s,%s)\n",chain_pop,chain_pop(FALSE);
+//          CopyTree(chain_pop, chain_pop(FALSE));
         }
       }
     }
