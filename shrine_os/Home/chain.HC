@@ -55,7 +55,7 @@ U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
   }
   if (i > 0) chain[pos][i] = '\0';
 
-  links++;  
+  links++;
 
   while (*si == delim) si++;
 
@@ -74,7 +74,7 @@ U8 chain_pop(Bool rock_bottom=TRUE)
    }
 
    U8 *result = ternary_str(rock_bottom, chain[begin], chain[idx]);
-   
+
    begin += rock_bottom;
 
    links--;
@@ -140,15 +140,30 @@ U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
   }
 }
 
-U64 HashCodeFor(U8 *str) 
+U64 FNV(U8 *str)
+{// FNV hash implemention, orig -> http://isthe.com/chongo/tech/comp/fnv/
+
+//const uint32_t Prime = 0x01000193; //   16777619
+//const uint32_t Seed  = 0x811C9DC5; // 2166136261
+
+///hash a single byte
+//inline uint32_t fnv1a(unsigned char oneByte, uint32_t hash = Seed)
+//{
+//  return (oneByte ^ hash) * Prime;
+//}
+
+  return 0;
+}
+
+U64 HashCodeFor(U8 *str)
 {//Hash code generator for strings.
   U64 g = 31, //Magic generator <- odd prime
       i = 0,
    hash = 0;
- 
+
   for (; i < StrLen(str); i++) {
     hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
-  }
+  }
 
   return hash;
 }
@@ -209,7 +224,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         l = StrLen(chain[i]);
 
         //Are we changing to another mounted drive?
-        if (l == 2 && chain[i][1] == ':') { 
+        if (l == 2 && chain[i][1] == ':') {
           h = HashCodeFor(chain[i]);
 
           if (3064<h<3841 || 2072<h<2849) { //a:..z: or A:..Z:
@@ -225,7 +240,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
           drv_error:
             err_print("invalid drive specified or drive is currently not mounted",chain[i]);
             return FALSE;
-         
+
           goto drv_change;
         }
 
@@ -291,7 +306,7 @@ U8 execute_cmd(U8 *cmd) {
 
   U8 *orig_cmd = cmd,
        *buffer = ""; //General purpose buffer.
-     
+
 
   Bool tf = FALSE; //Scratch flag I can use for true/false.
 
