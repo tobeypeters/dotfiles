@@ -142,13 +142,13 @@ U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
 
 U64 HashCodeFor(U8 *str) 
 {//Hash code generator for strings.
-  U64 g = 31,
+  U64 g = 31, //Magic generator <- odd prime
       i = 0,
    hash = 0;
  
   for (; i < StrLen(str); i++) {
-    hash = g * hash + str[i];
-  }
+    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
+  }
 
   return hash;
 }
@@ -188,7 +188,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
                Bool existance_check=FALSE,
                U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
-  if (tc < tcmin || tc > tcmax) {
+  if (tc < tcmin || tc > tcmax) {
     err_print("Invalid number of arguments provided");
     return FALSE;
   }
@@ -313,20 +313,17 @@ U8 execute_cmd(U8 *cmd) {
 
   //"HashCodeFor [%d]\n", HashCodeFor("a:");
 
-  //TODO:
-  // MemBIOSRep;
-  // Trace(ON); or Trace(OFF);
-  // StkRep;
-
   //NOTE:
-  //I don't think, it's anything I'm doing.
-  //Seems like HolyC evals right to left.
-  //I don't know if eval is the correct term.
+  //Seems like HolyC evals right to left ...
+  //Sometimes or always?
   //
-  //For example:
-  //             I want : Copy(file1, file2);
-  //             I do   : Copy(chain_pop, chain_pop);
-  //             I get  : Copy(file2, file1);
+  //For example:  [straa,strb]
+  //              "Example strings: [%s,%s]\n",chain_pop,chain_pop;
+  //
+  //    I'd get:  Example strings: [strb,stra]
+  // Instead of:  Example strings: [stra,strbb]
+  //
+  //I'll look at it more.  Pretty sure, it's not my code.
 
   if (h == 98262) { //cat
     if (err_check(2,2,TRUE)) {
