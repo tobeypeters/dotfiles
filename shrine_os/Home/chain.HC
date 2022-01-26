@@ -14,6 +14,13 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*#define HASH_CNT 29
+U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu", "-d", "-f",
+                         "date", "df", "ed", "exit", "fm", "tree", "grep",
+                         "help", "ls", "man", "mem", "mkdir", "mv", "now",
+                         "rm", "rd", "rmdir", "run", "time", "touch", "vol" };
+*/
+
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
 //I use this chain system, like a stack. Kinda ...
@@ -140,29 +147,18 @@ U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
   }
 }
 
-U64 FNV(U8 *str)
-{// FNV hash implemention, orig -> http://isthe.com/chongo/tech/comp/fnv/
-
-//const uint32_t Prime = 0x01000193; //   16777619
-//const uint32_t Seed  = 0x811C9DC5; // 2166136261
-
-///hash a single byte
-//inline uint32_t fnv1a(unsigned char oneByte, uint32_t hash = Seed)
-//{
-//  return (oneByte ^ hash) * Prime;
-//}
-
-  return 0;
-}
-
 U64 HashCodeFor(U8 *str)
 {//Hash code generator for strings.
-  U64 g = 31, //Magic generator <- odd prime
-      i = 0,
+ //This is a pretty weak one. I don't need much.
+ //CRC16 would've been perfect for me. But, you
+ //have to use big lookup table.
+  U64 i = 0,
+//  U64 g = 31, //Magic generator <- odd prime
    hash = 0;
 
   for (; i < StrLen(str); i++) {
-    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
+    hash =  (hash << 2) + str[i];
+//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
   }
 
   return hash;
@@ -326,6 +322,10 @@ U8 execute_cmd(U8 *cmd) {
   //using 100 StrCmp() calls.
   h = HashCodeFor(chain_pop);
 
+  /*for (i=0;i < HASH_CNT; i++) {
+    "%s %d\n",hashes[i],HashCodeFor(hashes[i]);
+  }*/
+
   //"HashCodeFor [%d]\n", HashCodeFor("a:");
 
   //NOTE:
@@ -340,12 +340,12 @@ U8 execute_cmd(U8 *cmd) {
   //
   //I'll look at it more.  Pretty sure, it's not my code.
 
-  if (h == 98262) { //cat
+  if (h == 2088) { //cat
     if (err_check(2,2,TRUE)) {
       "\n"; Type(chain_pop);
     }
   }
-  else if (h == 3169 || h == 98339) { //cd & cdd
+  else if (h == 496 || h == 2084) { //cd & cdd
     //TODO: Add -m to allow cd to make directories,
     //      if they don't exist.
     if (err_check(,2,TRUE)) {
@@ -356,20 +356,20 @@ U8 execute_cmd(U8 *cmd) {
         Cd;
       }
 
-      if (h == 98339) {
+      if (h == 2084) {
         shell_execute("Dir;");
       }
     }
   }
-  else if (h == 94746189) { //clear
+  else if (h == 34374) { //clear
     if (err_check) {
       DocClear;
     }
   }
-  else if (h == 3181) { //cp
+  else if (h == 508) { //cp
     if (err_check(3,3,TRUE,,1)) {
       if (fc == 1) {
-        if (flag_eq(chain_pop,1495)) { // "-d"
+        if (flag_eq(chain_pop,280)) { // "-d"
           CopyTree(chain_pop,chain_pop(FALSE));
         }
       }
@@ -378,10 +378,10 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-  else if (h == 98728) { //cpu
+  else if (h == 2149) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_pop,1497)) { //-f
+        if (tf = flag_eq(chain_pop,282)) { //-f
         }
         else {
           return 0;
@@ -391,30 +391,30 @@ U8 execute_cmd(U8 *cmd) {
       CPURep(tf);
     }
   }
-  else if (h == 3076014) { //date
+  else if (h == 8517) { //date
     if (err_check) {
       "%D\n", Now;
     }
   }
-  else if (h == 3202) { //df
+  else if (h == 502) { //df
     if (err_check) {
       DrvRep;
     }
   }
-  else if (h == 3231) { //ed
+  else if (h == 504) { //ed
     if (err_check(2,2,TRUE)) {
       Ed(chain_pop);
     }
   }
-  else if (h == 3127582) { //exit
+  else if (h == 8920) { //exit
     if (err_check) {
       return 1;
     }
   }
-  else if (h == 3271 || h == 3568542) { //fm & tree
+  else if (h == 517 || h == 9753) { //fm & tree
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_pop,1497)) { //-f
+        if (tf = flag_eq(chain_pop,282)) { //-f
         }
         else {
           return 0;
@@ -424,12 +424,12 @@ U8 execute_cmd(U8 *cmd) {
       MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
     }
   }
-  else if (h == 3181270) { //grep
+  else if (h == 8932) { //grep
     if (err_check(2,2,TRUE)) {
       F(chain_pop);
     }
   }
-  else if (h == 3198785) { //help
+  else if (h == 8816) { //help
     if (err_check) {
       if (FileFind(help_file)) {
         Type(help_file);
@@ -439,24 +439,24 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-  else if (h == 3463) { //ls
+  else if (h == 547) { //ls
     if (err_check(,2,TRUE)) {
       "\n";
 
       Dir(ternary_str(tc == 1,".",chain_peek));
     }
   }
-  else if (h == 107866) { //man
+  else if (h == 2242) { //man
     if (err_check(2,2)) {
       Man(chain_pop);
     }
   }
-  else if (h == 107989) { //mem
+  else if (h == 2257) { //mem
     if (err_check) {
       MemRep;
     }
   }
-  else if (h == 103950895) { //mkdir
+  else if (h == 36886) { //mkdir
     if (err_check(2,2)) {
       //TODO: Add an already exists check.
 
@@ -470,12 +470,12 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-  else if (h == 3497) { //mv
+  else if (h == 554) { //mv
       if (err_check(3,3,TRUE)) {
         Move(chain_pop, chain_pop);
       }
   }
-  else if (h == 109270) { //now
+  else if (h == 2323) { //now
     if (err_check) {
       CDateStruct ds;
       Date2Struct(&ds, Now + local_time_offset);
@@ -487,10 +487,10 @@ U8 execute_cmd(U8 *cmd) {
       Now;
     }
   }
-  else if ((h == 3643) || h == 3634 || h == 108628082) { //rm, rd, rmdir
+  else if ((h == 565) || h == 556 || h == 38294) { //rm, rd, rmdir
     if (err_check(2,2,TRUE,,1)) {
       if (fc == 1) {
-        if (flag_eq(chain_pop,1495)) { //-d
+        if (flag_eq(chain_pop,280)) { //-d
           DelTree(chain_pop);
         }
 
@@ -500,17 +500,17 @@ U8 execute_cmd(U8 *cmd) {
       Del(chain_pop);
     }
   }
-  else if (h == 113291) { //run
+  else if (h == 2402) { //run
     if (err_check(2,2,TRUE)) {
       ExeFile(chain_pop);
     }
   }
-  else if (h == 3560141) { //time
+  else if (h == 9641) { //time
     if (err_check) {
       "%T\n", Now;
     }
   }
-  else if (h == 110550847) { //touch
+  else if (h == 39172) { //touch
     if (err_check(2,2)) {
       // Creates an empty file, if it doesn't exist.
       if (!FileFind(chain_peek)) {
@@ -523,7 +523,7 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
-  else if (h == 116947) { //vol
+  else if (h == 2440) { //vol
     if (err_check) {
       "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
       "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
@@ -555,6 +555,8 @@ U0 TempleDOS() {
   while (1)
   {
     chain_clean;
+
+    DocBottom;
 
     "\n%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
 

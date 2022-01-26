@@ -28,7 +28,7 @@ cp	Copy files and directories.
 		 -d,	Directory copy
 
 cpu	Display cpu info.
-	$FG,2$usage$FG$: cpu [option]
+	$FG,2$usage$FG$: cpu [option]
 
 	$FG,2$Options$FG$:
 		 -f,	Detailed cpu info
@@ -80,12 +80,21 @@ mv	Move (rename) files.
 now	Display the current date and time.
 	$FG,2$usage$FG$: now
 
+rd	Remove a directory.
+	$FG,2$usage$FG$: rd [dir]
+
 rm	Remove files or directories.
 	$FG,2$usage$FG$: rm [filename]
 	       rm [option] [dir]
 
 	$FG,2$Options$FG$:
-		-d	Directory remove
+		 -d	Directory remove
+
+rmdir	Remove a directory.
+	$FG,2$usage$FG$: rd [dir]
+
+run	Execute source code files.
+	$FG,2$usage$FG$: run [filename]
 
 time	Display the current time.
 	$FG,2$usage$FG$: time
@@ -101,3 +110,6 @@ tree	File Manager which displays treeview of the
 
 	$FG,2$Options$FG$:
 		 -f	Full details
+
+vol	Displays volume information of the current drive.
+	$FG,2$usage$FG$: time
