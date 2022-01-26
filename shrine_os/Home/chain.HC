@@ -31,7 +31,7 @@ U64 links = 0,
 U64 tc = 0,
     fc = 0;
 
-U8 ternary(Bool condition, U8 *first, U8 *second) {
+U8 ternary_str(Bool condition, U8 *first, U8 *second) {
   if (condition) return first;
 
   return second;
@@ -70,44 +70,14 @@ U8 chain_pop(Bool rock_bottom=TRUE)
    U64 idx = begin;
 
    if (!rock_bottom) {
-
-
-   /* We're making the chain bi-directional. 
-
-      * You can take links, from the begining and end.
-      * You can't go pass the "beginning" link.
-      * Ater, the "beginning" link is grabbed, links
-        should be getting set to 0.
-
-      EVERYTHING NEEDS TESTED. BUT, SHOULD WORK FINE.
-
-      0 1 2
-     [a|b|c] <- 3 elements
-      ^ ^
-      | |                  
-      ------ : begin = 0 : elements - (begin == 0) = <--- 2
-        |
-        ---- : begin = 1 : elements - (begin == 0) = <--- 2
-
-    */
-
-     "links %d - (begin == 0) %d\n",links,(begin == 0);
-     idx = links - (begin == 0);
+     idx = begin + links - 1;
    }
 
-   "\n\n";
-   "idx %d\n",idx;
-
-   "rock_bottom %d\n",rock_bottom;
-   "begin %d links %d\n",begin,links;
-   U8 *result = ternary(rock_bottom, chain[begin], chain[idx]);
+   U8 *result = ternary_str(rock_bottom, chain[begin], chain[idx]);
    
    begin += rock_bottom;
 
-   "result %s\n",result;
-
    links--;
-   "begin %d links %d\n",begin,links;
 
    return result;
  }
@@ -272,7 +242,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-U0 external(U8 *cmd) {
+U0 shell_execute(U8 *cmd) {
   "\n"; ExePutS(cmd);
 }
 
@@ -355,7 +325,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (h == 98262) { //cat
     if (err_check(2,2,TRUE)) {
-      "\n"; Type(chain_pop());
+      "\n"; Type(chain_pop);
     }
   }
   else if (h == 3169 || h == 98339) { //cd & cdd
@@ -370,7 +340,7 @@ U8 execute_cmd(U8 *cmd) {
       }
 
       if (h == 98339) {
-        external("Dir;");
+        shell_execute("Dir;");
       }
     }
   }
@@ -380,17 +350,14 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3181) { //cp
-    if (err_check(3,4,TRUE,,1)) {
-      if (at == 3) {
-        "Copy(%s,%s)\n",chain_pop,chain_pop(FALSE);
-//        Copy(chain_pop, chain_pop(FALSE));
+    if (err_check(3,3,TRUE,,1)) {
+      if (fc == 1) {
+        if (flag_eq(chain_pop,1495)) { // "-d"
+          CopyTree(chain_pop,chain_pop(FALSE));
+        }
       }
       else {
-        if (flag_eq(chain_pop,1495)) { // "-d"
-          "CopyTree(%s,%s)\n",chain_pop,chain_pop(FALSE);
-//          "CopyTree(%s,%s)\n",chain_pop,chain_pop(FALSE);
-//          CopyTree(chain_pop, chain_pop(FALSE));
-        }
+        Copy(chain_pop,chain_pop(FALSE));
       }
     }
   }
@@ -418,7 +385,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3231) { //ed
-    if (err_check(,2,TRUE)) {
+    if (err_check(2,2,TRUE)) {
       Ed(chain_pop);
     }
   }
@@ -428,7 +395,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 3271 || h == 3568542) { //fm & tree
-    if (err_check(,3,TRUE,,1)) {
+    if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
         if (tf = flag_eq(chain_pop,1497)) { //-f
         }
@@ -437,7 +404,7 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-      MiniFM(ternary(tc == 1,".",chain_peek),,tf);
+      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
     }
   }
   else if (h == 3181270) { //grep
@@ -459,7 +426,7 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(,2,TRUE)) {
       "\n";
 
-      Dir(ternary(tc == 1,".",chain_peek));
+      Dir(ternary_str(tc == 1,".",chain_peek));
     }
   }
   else if (h == 107866) { //man
@@ -479,11 +446,10 @@ U8 execute_cmd(U8 *cmd) {
       if (DirMk(chain_pop)) {
       }
       else {
-        buffer = ternary(FileFind(chain_peek),
-                         "Directory already exists",
-                         "Unable to create directory");
-
-        err_print(buffer,chain_pop);
+        err_print(ternary_str(FileFind(chain_peek),
+                  "Directory already exists",
+                  "Unable to create directory"),
+                  chain_pop);
       }
     }
   }
@@ -504,22 +470,22 @@ U8 execute_cmd(U8 *cmd) {
       Now;
     }
   }
-  else if (h == 3643) { //rm
-    if (err_check(2,3,TRUE,,1)) {
+  else if ((h == 3643) || h == 3634 || h == 108628082) { //rm, rd, rmdir
+    if (err_check(2,2,TRUE,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_pop,1495)) { //-d
+        if (flag_eq(chain_pop,1495)) { //-d
+          DelTree(chain_pop);
         }
-        else {
-          return 0;
-        }
+
+        return 0;
       }
 
-      if (at == 2) {
-        Del(chain_pop);
-      }
-      else {
-        DelTree(chain_pop);
-      }
+      Del(chain_pop);
+    }
+  }
+  else if (h == 113291) { //run
+    if (err_check(2,2,TRUE)) {
+      ExeFile(chain_pop);
     }
   }
   else if (h == 3560141) { //time
@@ -529,24 +495,25 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 110550847) { //touch
     if (err_check(2,2)) {
-      // Currently only creates an empty file, if
-      // it doesn't exist already.
+      // Creates an empty file, if it doesn't exist.
       if (!FileFind(chain_peek)) {
         // Off-hand, looks like Touch() doesn't create
         // files. I'll look more at it and touchfile().
         FileWrite(chain_pop, NULL, 0);
       }
       else {
-        Touch(chain_pop,"");
+        Touch(chain_pop,""); //Updates the time & date.
       }
     }
   }
   else if (h == 116947) { //vol
-    "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
-    "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+    if (err_check) {
+      "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
+      "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+    }
   }
   else {
-    external(orig_cmd); //User is trying to normally run a OS command?
+    shell_execute(orig_cmd); //User is trying to normally run a OS command?
   }
 
   return 0;
@@ -565,6 +532,8 @@ U0 TempleDOS() {
 
   U8 *input;
   U64 result = 0;
+
+  //"HashCodeFor(\"run\") : [%d]\n",HashCodeFor("run");
 
   while (1)
   {
