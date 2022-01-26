@@ -188,14 +188,19 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
                Bool existance_check=FALSE,
                U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
-  if ((tc < tcmin || tc > tcmax) ||
-      (fc < fcmin || fc > fcmax)) {
+  if (tc < tcmin || tc > tcmax) {
     err_print("Invalid number of arguments provided");
     return FALSE;
   }
 
-  if (existance_check) {//Make sure all files & directories exist.
-    U64 i = begin, //begin should be 1, from prev chain_pop.
+  if (fc < fcmin || fc > fcmax) {
+    err_print("Invalid number of options provided");
+    return FALSE;
+  }
+
+  if (existance_check && tcmax > 1) //Added tcmax check. Probably not needed.
+  {//Make sure all files & directories exist.
+    U64 i = begin, //begin should already be 1.
         l = 0,
         h = 0;
 
@@ -250,7 +255,7 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
 {
   if (!(HashCodeFor(flag) == eq)) {
     if (err_disp) {
-      err_print("Invalid flag provided",flag);
+      err_print("Invalid option provided",flag);
     }
 
     return FALSE;
@@ -484,7 +489,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 113291) { //run
-    if (err_check(2,2,TRUE)) {
+    if (err_check(2,2,TRUE)) {
       ExeFile(chain_pop);
     }
   }
