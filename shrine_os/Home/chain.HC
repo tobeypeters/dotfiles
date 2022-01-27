@@ -19,15 +19,14 @@ U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu", "-d", "-f",
                          "date", "df", "ed", "exit", "fm", "tree", "grep",
                          "help", "ls", "man", "mem", "mkdir", "mv", "now",
                          "rm", "rd", "rmdir", "run", "time", "touch", "vol" };
-*/
+*/
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
-//I use this chain system, like a stack. Kinda ...
-//But, one major difference, Ipull from the bottom.
-//Also, really, in the future ... might as well remove
-//the popping logic.  All I'm really doing is incrementing
-//a number, which tells us where the start of the chain is.
+//I use this memory chain system, like a stack. Kinda ...
+//One major difference, Ican pull from the either end.
+//Doing a POP, ONLY, increments the begin pointer and 
+//decrements the links count.
 #define MAX_LINKS 256
 #define LINK_LEN  256
 
@@ -44,38 +43,42 @@ U8 ternary_str(Bool condition, U8 *first, U8 *second) {
   return second;
 }
 
-U64 chain_push(U8 *si, I64 link_num=-1, U8 delim = ' ')
-{//Weld a link, onto the chain.
-  U64 i = 0,
-    pos = links;
+U8 chain_push(U8 *si, I64 link_num=-1, U8 delim=' ')
+{//Push a value, into the memory chain.
+  if (StrLen(si) > 0) {
+    U64 i = 0,
+      pos = links;
 
-  //Another example, of why this really a stack.
-  //I need to replace values.
-  if (link_num > -1) {
-    pos = link_num;
-    links--;
+    //Another example, of why this really isn't a stack.
+    //I allow you to replace values.
+    if (link_num > -1) {
+      pos = link_num;
+      links--;
+    }
+
+    while (si[0] != '\0' && si[0] != delim) {
+      chain[pos][i] = si[0];
+      si++; i++;
+    }
+    if (i > 0) {
+      chain[pos][i] = '\0';
+    }
+
+    links++;
+
+    while (*si == delim) si++;
   }
 
-  while (si[0] != '\0' && si[0] != delim) {
-    chain[pos][i] = si[0];
-    si++; i++;
-  }
-  if (i > 0) chain[pos][i] = '\0';
-
-  links++;
-
-  while (*si == delim) si++;
-
-  return si;
+  return si; //Return the updated pointer position.
 }
 
 U8 chain_pop(Bool rock_bottom=TRUE)
-{//Pop a link, off the chain. Here we're not removing
- //anything from the chain. So, this is another big
- //difference from a normal stack.
+{//Pop a value, from the memory chain. We don't remove
+ //anything from the chain. So, this is a big
+ //difference from using a normal stack.
  if (links > 0) {
    U64 idx = begin;
-
+ 
    if (!rock_bottom) {
      idx = begin + links - 1;
    }
@@ -89,10 +92,10 @@ U8 chain_pop(Bool rock_bottom=TRUE)
    return result;
  }
 
- return "";
+ return NULL;
 }
 
- U8 chain_peek(I64 idx=-1)
+U8 chain_peek(I64 idx=-1)
 {//Peek at a link on the chain.
  if (idx == -1) idx = begin;
 
@@ -100,20 +103,19 @@ U8 chain_pop(Bool rock_bottom=TRUE)
    return chain[idx];
  }
 
- return "";
+ return NULL;
 }
 
 U0 chain_clean()
-{//Clear the chain.
+{//Clear the memory chain.
   MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
 
   links = begin = 0;
 }
 
-U64 link_count(U8 *in_chain, Bool count_links = TRUE, U8 delim = ' ')
-{//Count either links or occurrences of a specific delimeter,
- //for example, from our user input.
-  U64 l = StrLen(in_chain);
+U64 link_count(U8 *chain, Bool count_links = TRUE, U8 delim = ' ')
+{//Count either links or occurrences of a specific delimeter.
+  U64 l = StrLen(chain);
 
   if (l == 0) return 0;
 
@@ -121,7 +123,7 @@ U64 link_count(U8 *in_chain, Bool count_links = TRUE, U8 delim = ' ')
   count = 0;
 
   while (i < l) {
-    if (in_chain[i] == delim) {
+    if (chain[i] == delim) {
       count++;
     }
 
@@ -346,8 +348,12 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 496 || h == 2084) { //cd & cdd
-    //TODO: Add -m to allow cd to make directories,
-    //      if they don't exist.
+    //TODO: 
+    //      * Add -m to allow cd to make directories,
+    //        if they don't exist.
+    //
+    //      * In linux, you can do "cd -" and it'll take
+    //        to the directory, you were previously in.
     if (err_check(,2,TRUE)) {
       if (tc == 2) {
         Cd(chain_pop);
@@ -412,6 +418,9 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 517 || h == 9753) { //fm & tree
+
+    //FIX : fm -f /Demo is doing current directory
+
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
         if (tf = flag_eq(chain_pop,282)) { //-f
@@ -421,7 +430,9 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
+      "chain_peek %s\n", chain_peek;
+
+//      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
     }
   }
   else if (h == 8932) { //grep
@@ -533,10 +544,17 @@ U8 execute_cmd(U8 *cmd) {
     shell_execute(orig_cmd); //User is trying to normally run a OS command?
   }
 
+  "%s\n", buffer;
+
   return 0;
 }
 
-U0 TempleDOS() {
+//Adam error displayed:
+//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$WARNING:$FG$$BK,0$ Assign U0 in fun 'templeDOS'.
+//
+//  I have not been able to figure out what cause this.
+//  So, I tell Adam to clear itself.
+U0 templeDOS() {
   DocClear;
 
   //Perhaps, I'll get rid of this:
@@ -550,9 +568,7 @@ U0 TempleDOS() {
   U8 *input;
   U64 result = 0;
 
-  //"HashCodeFor(\"run\") : [%d]\n",HashCodeFor("run");
-
-  while (1)
+  while (TRUE)
   {
     chain_clean;
 
@@ -573,6 +589,8 @@ U0 TempleDOS() {
   }
 }
 
+Adam("DocClear;");
+
 //Adam("\"\nStarting templeDOS...\n\";");
 
-TempleDOS;
+templeDOS;

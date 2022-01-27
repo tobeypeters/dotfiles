@@ -1,4 +1,4 @@
-Bool drv_valid(U8 *drv)
+/*Bool drv_valid(U8 *drv)
 {//Valid mounted drive?
   CDrv *dv;
   CBlkDev *bd;
@@ -28,4 +28,11 @@ else {
   "nope\n";
 }
 
-"DrvSerialNum %s\n",DrvSerialNum(Drv2Let(Fs->cur_dv));
+"DrvSerialNum %s\n",DrvSerialNum(Drv2Let(Fs->cur_dv));
+*/
+
+U0 _() {
+ "hello\n";
+}
+
+_;
