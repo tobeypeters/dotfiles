@@ -25,6 +25,6 @@ from my_helper import process_exec
 #updates = int(process_exec('apt list --upgradable | wc -l'))
 updates = process_exec('apt list --upgradable | wc -l')
 
-if not updates == 1:
+if updates:
     process_exec('polybar-msg cmd show.updater')
     print('')
