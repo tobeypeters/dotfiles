@@ -74,36 +74,30 @@ U8 chain_push(U8 *si, I64 link_num=-1, U8 delim=' ')
 
 U8 chain_pop(Bool rock_bottom=TRUE)
 {//Pop a value, from the memory chain. We don't remove
- //anything from the chain. So, this is a big
- //difference from using a normal stack.
- if (links > 0) {
-   U64 idx = begin;
+  //anything from the chain. So, this is a big
+  //difference from using a normal stack.
+  if (links == 0) return NULL;
+
+  U64 idx = begin;
  
-   if (!rock_bottom) {
-     idx = begin + links - 1;
-   }
+  if (!rock_bottom) {
+    idx = begin + links - 1;
+  }
 
-   U8 *result = ternary_str(rock_bottom, chain[begin], chain[idx]);
+  U8 *result = ternary_str(rock_bottom, chain[begin], chain[idx]);
 
-   begin += rock_bottom;
+  begin += rock_bottom;
 
-   links--;
+  links--;
 
-   return result;
- }
-
- return NULL;
+  return result;
 }
 
 U8 chain_peek(I64 idx=-1)
 {//Peek at a link on the chain.
  if (idx == -1) idx = begin;
 
- if (idx <= links) {
-   return chain[idx];
- }
-
- return NULL;
+ return chain[idx];
 }
 
 U0 chain_clean()
@@ -225,7 +219,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         if (l == 2 && chain[i][1] == ':') {
           h = HashCodeFor(chain[i]);
 
-          if (3064<h<3841 || 2072<h<2849) { //a:..z: or A:..Z:
+          if (445<h<547 || 317<h<419) { //a:..z: or A:..Z:
             if (!drv_valid(chain[i][0])) {
               goto drv_error;
             }
@@ -430,9 +424,7 @@ U8 execute_cmd(U8 *cmd) {
         }
       }
 
-      "chain_peek %s\n", chain_peek;
-
-//      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
+      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
     }
   }
   else if (h == 8932) { //grep
@@ -563,7 +555,7 @@ U0 templeDOS() {
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n\n";
 
   U8 *input;
   U64 result = 0;
@@ -574,7 +566,7 @@ U0 templeDOS() {
 
     DocBottom;
 
-    "\n%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
+    "%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
     input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
