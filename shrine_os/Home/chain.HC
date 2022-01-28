@@ -255,7 +255,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 }
 
 U0 shell_execute(U8 *cmd) {
-  "\n"; ExePutS(cmd);
+  "\n"; ExePutS(cmd); "\n";
 }
 
 Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
@@ -283,6 +283,9 @@ U8 execute_cmd(U8 *cmd) {
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
 
+  U8 *orig_cmd = cmd,
+       *buffer = ""; //General purpose buffer.
+
   if (tc > 0) {
     for (i=0; i < at; i++) {
       link_trim(cmd,FALSE,TRUE);
@@ -295,10 +298,6 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   U64 h = 0;
-
-  U8 *orig_cmd = cmd,
-       *buffer = ""; //General purpose buffer.
-
 
   Bool tf = FALSE; //Scratch flag I can use for true/false.
 
@@ -328,11 +327,11 @@ U8 execute_cmd(U8 *cmd) {
   //Seems like HolyC evals right to left ...
   //Sometimes or always?
   //
-  //For example:  [straa,strb]
-  //              "Example strings: [%s,%s]\n",chain_pop,chain_pop;
+  //For example:  [stra,strb]
+  //             "Example strings: [%s,%s]\n",chain_pop,chain_pop;
   //
   //    I'd get:  Example strings: [strb,stra]
-  // Instead of:  Example strings: [stra,strbb]
+  // Instead of:  Example strings: [stra,strb]
   //
   //I'll look at it more.  Pretty sure, it's not my code.
 
@@ -341,11 +340,8 @@ U8 execute_cmd(U8 *cmd) {
       "\n"; Type(chain_pop);
     }
   }
-  else if (h == 496 || h == 2084) { //cd & cdd
+  else if (h == 496 || h == 2084) { //cd, cdd
     //TODO: 
-    //      * Add -m to allow cd to make directories,
-    //        if they don't exist.
-    //
     //      * In linux, you can do "cd -" and it'll take
     //        to the directory, you were previously in.
     if (err_check(,2,TRUE)) {
@@ -411,10 +407,7 @@ U8 execute_cmd(U8 *cmd) {
       return 1;
     }
   }
-  else if (h == 517 || h == 9753) { //fm & tree
-
-    //FIX : fm -f /Demo is doing current directory
-
+  else if (h == 517 || h == 9753) { //fm, tree
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
         if (tf = flag_eq(chain_pop,282)) { //-f
@@ -459,17 +452,13 @@ U8 execute_cmd(U8 *cmd) {
       MemRep;
     }
   }
-  else if (h == 36886) { //mkdir
+  else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
-      //TODO: Add an already exists check.
-
-      if (DirMk(chain_pop)) {
+      if (!FileFind(chain_peek)) {
+        DirMk(chain_pop);
       }
       else {
-        err_print(ternary_str(FileFind(chain_peek),
-                  "Directory already exists",
-                  "Unable to create directory"),
-                  chain_pop);
+        err_print("Directory already exists","info");
       }
     }
   }
@@ -492,15 +481,18 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if ((h == 565) || h == 556 || h == 38294) { //rm, rd, rmdir
     if (err_check(2,2,TRUE,,1)) {
-      if (fc == 1) {
-        if (flag_eq(chain_pop,280)) { //-d
-          DelTree(chain_pop);
+      if (fc == 1 || h == 556 || h == 38294) {
+        if (fc == 1) { //No short circuiting in this language is killing me.
+          if (!flag_eq(chain_pop,280)) { //-d
+            return 0;
+          }
         }
 
-        return 0;
+        DelTree(chain_pop);
       }
-
-      Del(chain_pop);
+      else {
+        Del(chain_pop);
+      }
     }
   }
   else if (h == 2402) { //run
@@ -536,8 +528,6 @@ U8 execute_cmd(U8 *cmd) {
     shell_execute(orig_cmd); //User is trying to normally run a OS command?
   }
 
-  "%s\n", buffer;
-
   return 0;
 }
 
@@ -555,10 +545,12 @@ U0 templeDOS() {
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n\n";
 
   U8 *input;
   U64 result = 0;
+
+  //"HashCodeFor(\"md\") %d\n",HashCodeFor("md");
 
   while (TRUE)
   {
