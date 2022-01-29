@@ -37,7 +37,7 @@ U64 links = 0,
 U64 tc = 0,
     fc = 0;
 
-U8 ternary_str(Bool condition, U8 *first, U8 *second) {
+U8 tern(Bool condition, U64 *first, U64 *second) {
   if (condition) return first;
 
   return second;
@@ -84,7 +84,7 @@ U8 chain_pop(Bool rock_bottom=TRUE)
     idx = begin + links - 1;
   }
 
-  U8 *result = ternary_str(rock_bottom, chain[begin], chain[idx]);
+  U8 *result = tern(rock_bottom, chain[begin], chain[idx]);
 
   begin += rock_bottom;
 
@@ -93,9 +93,10 @@ U8 chain_pop(Bool rock_bottom=TRUE)
   return result;
 }
 
-U8 chain_peek(I64 idx=-1)
+U8 chain_peek(I64 idx=-1, Bool rock_bottom=TRUE)
 {//Peek at a link on the chain.
  if (idx == -1) idx = begin;
+ if (!rock_bottom) idx = begin + links - 1;
 
  return chain[idx];
 }
@@ -116,7 +117,7 @@ U64 link_count(U8 *chain, Bool count_links = TRUE, U8 delim = ' ')
   U64 i = 0,
   count = 0;
 
-  while (i < l) {
+  while (i < l) {
     if (chain[i] == delim) {
       count++;
     }
@@ -192,8 +193,8 @@ U0 err_print(U8 *msg, U8 *link="Usage")
 }
 
 Bool err_check(U64 tcmin=1, U64 tcmax=1,
-               Bool existance_check=FALSE,
-               U64 fcmin=0, U64 fcmax=0)
+	       Bool existance_check=FALSE,
+	       U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
   if (tc < tcmin || tc > tcmax) {
     err_print("Invalid number of arguments provided");
@@ -255,7 +256,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 }
 
 U0 shell_execute(U8 *cmd) {
-  "\n"; ExePutS(cmd); "\n";
+  "\n"; ExePutS(cmd); "\n";
 }
 
 Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
@@ -337,7 +338,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (h == 2088) { //cat
     if (err_check(2,2,TRUE)) {
-      "\n"; Type(chain_pop);
+      "\n"; Type(chain_peek);
     }
   }
   else if (h == 496 || h == 2084) { //cd, cdd
@@ -345,16 +346,9 @@ U8 execute_cmd(U8 *cmd) {
     //      * In linux, you can do "cd -" and it'll take
     //        to the directory, you were previously in.
     if (err_check(,2,TRUE)) {
-      if (tc == 2) {
-        Cd(chain_pop);
-      }
-      else {
-        Cd;
-      }
+      Cd(tern(tc == 2,chain_peek, "~"));
 
-      if (h == 2084) {
-        shell_execute("Dir;");
-      }
+      if (h == 2084) shell_execute("Dir;");
     }
   }
   else if (h == 34374) { //clear
@@ -399,7 +393,7 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 504) { //ed
     if (err_check(2,2,TRUE)) {
-      Ed(chain_pop);
+      Ed(chain_peek);
     }
   }
   else if (h == 8920) { //exit
@@ -410,19 +404,17 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 517 || h == 9753) { //fm, tree
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_pop,282)) { //-f
-        }
-        else {
+        if (!(tf = flag_eq(chain_pop,282))) { //-f
           return 0;
         }
       }
 
-      MiniFM(ternary_str(tc == 1,".",chain_peek),,tf);
+      MiniFM(tern(tc == 1,".",chain_peek),,tf);
     }
   }
   else if (h == 8932) { //grep
-    if (err_check(2,2,TRUE)) {
-      F(chain_pop);
+    if (err_check(2,2)) {
+      F(chain_peek);
     }
   }
   else if (h == 8816) { //help
@@ -438,19 +430,14 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 547) { //ls
     if (err_check(,2,TRUE)) {
       "\n";
-
-      Dir(ternary_str(tc == 1,".",chain_peek));
+      Dir(tern(tc == 1,".",chain_peek));
     }
   }
   else if (h == 2242) { //man
-    if (err_check(2,2)) {
-      Man(chain_pop);
-    }
+    if (err_check(2,2)) Man(chain_peek);
   }
   else if (h == 2257) { //mem
-    if (err_check) {
-      MemRep;
-    }
+    if (err_check) MemRep;
   }
   else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
@@ -463,9 +450,17 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 554) { //mv
-      if (err_check(3,3,TRUE)) {
-        Move(chain_pop, chain_pop);
+    if (err_check(3,3)) {
+      "begin %d chain %s\n",begin,chain[1];
+      "no thanks %s\n",chain_peek;
+
+      if (FileFind(chain_peek)) {
+//        Move(chain_pop, chain_pop(FALSE));
       }
+      else {
+//        err_print("Doesn't exist",chain_peek);
+      }
+    }
   }
   else if (h == 2323) { //now
     if (err_check) {
@@ -488,16 +483,16 @@ U8 execute_cmd(U8 *cmd) {
           }
         }
 
-        DelTree(chain_pop);
+        DelTree(chain_peek);
       }
       else {
-        Del(chain_pop);
+        Del(chain_peek);
       }
     }
   }
   else if (h == 2402) { //run
     if (err_check(2,2,TRUE)) {
-      ExeFile(chain_pop);
+      ExeFile(chain_peek);
     }
   }
   else if (h == 9641) { //time
@@ -511,10 +506,10 @@ U8 execute_cmd(U8 *cmd) {
       if (!FileFind(chain_peek)) {
         // Off-hand, looks like Touch() doesn't create
         // files. I'll look more at it and touchfile().
-        FileWrite(chain_pop, NULL, 0);
+        FileWrite(chain_peek, NULL, 0);
       }
       else {
-        Touch(chain_pop,""); //Updates the time & date.
+        Touch(chain_peek,""); //Updates the time & date.
       }
     }
   }
@@ -545,7 +540,7 @@ U0 templeDOS() {
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n\n";
+  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U8 *input;
   U64 result = 0;
@@ -558,7 +553,7 @@ U0 templeDOS() {
 
     DocBottom;
 
-    "%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
+    "\n%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
     input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
