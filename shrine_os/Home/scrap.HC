@@ -13,18 +13,10 @@ U0 More(U8 *filename)
   "size %d\n",size;
 
   for (;i < size; i++) {
-    "%c",buffer[i];
+    "%c",buffer[i];
   }
-
-//  "buffer : %s\n",buffer;
-
-//  for (;i < (Fs->win_bottom - Fs->win_top); i++) {
-//    while (buffer[j] != '\0' && buffer[j] != '\n') {
-//      '%c',buffer[j];
-//    }
-//    j++; 
-//  }
-
+//PutChars(CH_CTRLY);
+
   MemSet(buffer, '\0', sizeof(U8)*size);
 
 }

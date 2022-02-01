@@ -14,11 +14,11 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*#define HASH_CNT 29
+/*#define HASH_CNT 30
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu", "-d", "-f",
                          "date", "df", "ed", "exit", "fm", "tree", "grep",
                          "help", "ls", "man", "mem", "mkdir", "mv", "now",
-                         "rm", "rd", "rmdir", "run", "time", "touch", "vol" };
+                         "rm", "rd", "rmdir", "run", "time", "touch", "view", "vol" };
 */
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
@@ -392,7 +392,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 504) { //ed
-    if (err_check(2,2)) {
+    if (err_check(2,2)) {
       Ed(chain_peek);
     }
   }
@@ -513,6 +513,15 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
   }
+  else if (h == 9755) { //view
+    if (err_check(2,2,TRUE)) {
+      DocClear; DocTop;
+      Type(chain_peek);
+      "$FG,3$PRESS ESC TO EXIT ...$FG$";
+      View; 
+      PutChars(CH_CTRLY);
+    }
+  }
   else if (h == 2440) { //vol
     if (err_check) {
       "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
@@ -545,7 +554,7 @@ U0 templeDOS() {
   U8 *input;
   U64 result = 0;
 
-  //"HashCodeFor(\"md\") %d\n",HashCodeFor("md");
+//  "HashCodeFor(\"view\") %d\n",HashCodeFor("view");
 
   while (TRUE)
   {
