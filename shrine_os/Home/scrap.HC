@@ -1,38 +1,32 @@
-/*Bool drv_valid(U8 *drv)
-{//Valid mounted drive?
-  CDrv *dv;
-  CBlkDev *bd;
+U0 More(U8 *filename)
+{//Output txt or graphic file to the command line,
+ //one screen at a time.
+  I64 size = 0;
 
-  I64 i,drv_let;
+  U64 i = 0,
+      j = 0;
 
-  drv = ToUpper(drv);
+  U8 *buffer;
 
-  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
-    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
-      bd=dv->bd;
-      drv_let=Drv2Let(dv);
-      "%c\n",drv_let;
-      if (drv_let == drv) {
-        return TRUE;
-      }
-    }
+  buffer = FileRead(filename,&size);
+
+  "size %d\n",size;
+
+  for (;i < size; i++) {
+    "%c",buffer[i];
   }
 
-  return FALSE;
+//  "buffer : %s\n",buffer;
+
+//  for (;i < (Fs->win_bottom - Fs->win_top); i++) {
+//    while (buffer[j] != '\0' && buffer[j] != '\n') {
+//      '%c',buffer[j];
+//    }
+//    j++; 
+//  }
+
+  MemSet(buffer, '\0', sizeof(U8)*size);
+
 }
 
-if (drv_valid('c')) {
-  "yeppers\n";
-}
-else {
-  "nope\n";
-}
-
-"DrvSerialNum %s\n",DrvSerialNum(Drv2Let(Fs->cur_dv));
-*/
-
-U0 _() {
- "hello\n";
-}
-
-_;
+More("./chain.HC");

@@ -108,7 +108,7 @@ U0 chain_clean()
   links = begin = 0;
 }
 
-U64 link_count(U8 *chain, Bool count_links = TRUE, U8 delim = ' ')
+U64 link_count(U8 *chain, Bool count_links=TRUE, U8 delim=32)
 {//Count either links or occurrences of a specific delimeter.
   U64 l = StrLen(chain);
 
@@ -117,7 +117,7 @@ U64 link_count(U8 *chain, Bool count_links = TRUE, U8 delim = ' ')
   U64 i = 0,
   count = 0;
 
-  while (i < l) {
+  while (i < l) {
     if (chain[i] == delim) {
       count++;
     }
@@ -128,7 +128,7 @@ U64 link_count(U8 *chain, Bool count_links = TRUE, U8 delim = ' ')
   return count + count_links;
 }
 
-U0 link_trim(U8 *link, Bool left = TRUE, Bool both = FALSE)
+U0 link_trim(U8 *link, Bool left=TRUE, Bool both=FALSE)
 {//Trims leading or trailing spaces from a link.
  //left = TRUE : left trim
  //left = FALSE : right trim
@@ -392,7 +392,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 504) { //ed
-    if (err_check(2,2,TRUE)) {
+    if (err_check(2,2)) {
       Ed(chain_peek);
     }
   }
