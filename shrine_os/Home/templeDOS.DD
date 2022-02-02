@@ -1,15 +1,15 @@
 
 Command	Description
 ---------------------------
-cat	Concatenate FILE to standard output.
+cat	Display a FILE to standard output.
 	$FG,2$usage$FG$: cat [filename]
 
 cd,	Change the current working directory, to
 cdd	your HOME directory, a specified directory,
 	or to a different mounted drive.
 
-	cdd will also display the contents of the
-	current directory.
+	Issuing cdd, instead of cd, will also display
+	the contents of the current directory.
 
 	$FG,2$usage$FG$: cd
 	       cd [option]
@@ -42,7 +42,7 @@ cpu	Display cpu info.
 	$FG,2$Options$FG$:
 	   -f	    Detailed cpu info
 
-date	Display the current date.
+date	Display the current date.
 	$FG,2$usage$FG$: date
 
 df	Display currently mounted drives.
@@ -70,7 +70,7 @@ grep	Recursively search files and print any lines
 	which contain the specified string.
 	$FG,2$usage$FG$: grep [filename]
 
-help	Displays this list of TempleShell commands.
+help	Displays this list of TempleDOS commands.
 	$FG,2$usage$FG$: help
 
 ls	List directory contents.
@@ -89,6 +89,9 @@ mem	Display a memory representation.
 mkdir	Make directories.
 	$FG,2$usage$FG$: mkdir [dir]
 
+more	Display a FILE to stdout, one screen at a time.
+	$FG,2$usage$FG$: more [filename]
+
 mv	Move (rename) files.
 	$FG,2$usage$FG$: mv [source] [destination]
 
@@ -98,7 +101,7 @@ now	Display the current date and time.
 rd, 	Remove a directory.
 rmdir	$FG,2$usage$FG$: rd [dir]
 	$FG,2$usage$FG$: rmdir [dir]
-
+
 rm	Remove files or directories.
 	$FG,2$usage$FG$: rm [filename]
 	       rm [option] [dir]
@@ -116,5 +119,8 @@ touch	Create an empty file. TempleOS also has a
 	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
 	$FG,2$usage$FG$: touch [filename]
 
+view	Display a FILE to stdout, in a viewing window.
+	$FG,2$usage$FG$: view [filename]
+
 vol	Displays volume information of the current drive.
-	$FG,2$usage$FG$: time
+	$FG,2$usage$FG$: vol

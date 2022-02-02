@@ -14,12 +14,12 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*#define HASH_CNT 30
+/*#define HASH_CNT 31
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu", "-d", "-f",
                          "date", "df", "ed", "exit", "fm", "tree", "grep",
-                         "help", "ls", "man", "mem", "mkdir", "mv", "now",
+                         "help", "ls", "man", "mem", "mkdir", "more", "mv", "now",
                          "rm", "rd", "rmdir", "run", "time", "touch", "view", "vol" };
-*/
+*/
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
@@ -360,18 +360,18 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(3,3,TRUE,,1)) {
       if (fc == 1) {
         if (flag_eq(chain_pop,280)) { // "-d"
-          CopyTree(chain_pop,chain_pop(FALSE));
+          CopyTree(chain_peek,chain_peek(FALSE));
         }
       }
       else {
-        Copy(chain_pop,chain_pop(FALSE));
+        Copy(chain_peek,chain_peek(FALSE));
       }
     }
   }
   else if (h == 2149) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_pop,282)) { //-f
+        if (tf = flag_eq(chain_peek,282)) { //-f
         }
         else {
           return 0;
@@ -442,23 +442,25 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
       if (!FileFind(chain_peek)) {
-        DirMk(chain_pop);
+        DirMk(chain_peek);
       }
       else {
         err_print("Directory already exists","info");
       }
     }
   }
+  else if (h == 9309) { //more
+    if (err_check(2,2,TRUE)) {
+      More(chain_peek);
+    }
+  }
   else if (h == 554) { //mv
     if (err_check(3,3)) {
-      "begin %d chain %s\n",begin,chain[1];
-      "no thanks %s\n",chain_peek;
-
       if (FileFind(chain_peek)) {
-//        Move(chain_pop, chain_pop(FALSE));
+        Move(chain_peek, chain_peek(FALSE));
       }
       else {
-//        err_print("Doesn't exist",chain_peek);
+        err_print("Doesn't exist",chain_peek);
       }
     }
   }
@@ -516,9 +518,10 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 9755) { //view
     if (err_check(2,2,TRUE)) {
       DocClear; DocTop;
-      Type(chain_peek);
-      "$FG,3$PRESS ESC TO EXIT ...$FG$";
-      View; 
+      Type(chain_peek);
+      "$$BK,1$$Press ESC to exit ...$$BK,0$$";
+      View;
+      DocBottom;
       PutChars(CH_CTRLY);
     }
   }
