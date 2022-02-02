@@ -516,11 +516,11 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 9755) { //view
     if (err_check(2,2,TRUE)) {
       DocClear; DocTop;
-      Type(chain_peek);
+      Type(chain_peek);
       "$FG,3$PRESS ESC TO EXIT ...$FG$";
       View; 
       PutChars(CH_CTRLY);
-    }
+    }
   }
   else if (h == 2440) { //vol
     if (err_check) {
