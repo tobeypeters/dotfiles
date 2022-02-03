@@ -19,6 +19,8 @@
       Command-line interpreter for TempleOS.
 */
 
+#include "shared.HC"
+
 /*#define HASH_CNT 32
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
                          "-d", "-f", "date", "df", "ed", "exit",
@@ -292,7 +294,11 @@ U8 execute_cmd(U8 *cmd) {
   tc = at - fc;
 
   U8 *orig_cmd = cmd,
-       *buffer = ""; //General purpose buffer.
+       *buffer = "";
+  
+  U8 *buffera = '\0',
+     *bufferb = '\0',
+     *bufferc = '\0';
 
   if (tc > 0) {
     for (i=0; i < at; i++) {
@@ -341,12 +347,10 @@ U8 execute_cmd(U8 *cmd) {
   //    I'd get:  Example strings: [strb,stra]
   // Instead of:  Example strings: [stra,strb]
   //
-  //I'll look at it more.  Pretty sure, it's not my code.
+  //I'll look at it more.  Pretty sure, it's not my code.
 
   if (h == 2088) { //cat
-    if (err_check(2,2,TRUE)) {
-      Type(chain_peek);
-    }
+    if (err_check(2,2,TRUE)) Type(chain_peek);
   }
   else if (h == 496 || h == 2084) { //cd, cdd
     //TODO: 
@@ -359,9 +363,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 34374) { //clear
-    if (err_check) {
-      DocClear;
-    }
+    if (err_check) DocClear;
   }
   else if (h == 508) { //cp
     if (err_check(3,3,TRUE,,1)) {
@@ -378,9 +380,7 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 2149) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
-        if (tf = flag_eq(chain_peek,282)) { //-f
-        }
-        else {
+        if (!(tf = flag_eq(chain_peek,282))) { //-f
           return 0;
         }
       }
@@ -389,19 +389,13 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 8517) { //date
-    if (err_check) {
-      "%D\n", Now;
-    }
+    if (err_check) "%D\n", Now;
   }
   else if (h == 502) { //df
-    if (err_check) {
-      DrvRep;
-    }
+    if (err_check) DrvRep;
   }
   else if (h == 504) { //ed
-    if (err_check(2,2)) {
-      Ed(chain_peek);
-    }
+    if (err_check(2,2)) Ed(chain_peek);
   }
   else if (h == 8920) { //exit
     if (err_check) {
@@ -424,14 +418,12 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 8932) { //grep
-    if (err_check(2,2)) {
-      F(chain_peek);
-    }
+    if (err_check(2,2)) F(chain_peek);
   }
   else if (h == 8816) { //help
     if (err_check) {
       if (FileFind(help_file)) {
-        More(help_file);
+        More(help_file);
       }
       else {
         err_print("File not found",help_file);
@@ -445,14 +437,10 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 2242) { //man
-    if (err_check(2,2)) {
-      Man(chain_peek);
-    }
+    if (err_check(2,2)) Man(chain_peek);
   }
   else if (h == 2257) { //mem
-    if (err_check) {
-      MemRep;
-    }
+    if (err_check) MemRep;
   }
   else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
@@ -465,25 +453,23 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 9309) { //more
-    if (err_check(2,2,TRUE)) {
-      More(chain_peek);
-    }
+    if (err_check(2,2,TRUE)) More(chain_peek);
   }
   else if (h == 554) { //mv
     if (err_check(3,3)) {
-      if (FileFind(chain_peek)) { //It's a file or dir.
-        if (buffer = FileFind(chain_peek(FALSE)))
+      if (FileFind(buffer = chain_peek)) { //It's a file or dir.
+        if (FileFind(buffer = chain_peek(FALSE)))
         { //File or dir already exists.
           //I don't allow overriding now.
           err_print("Already exists",buffer);
         }
         else {
-          if (IsDir(chain_peek)) {
-            CopyTree(chain_peek,chain_peek(FALSE));
-            DelTree(chain_peek);
+          if (IsDir(buffer = chain_peek)) {
+            CopyTree(buffer,chain_peek(FALSE));
+            DelTree(buffer);
           }
           else {
-            Move(chain_peek, chain_peek(FALSE));
+            Move(buffer, chain_peek(FALSE));
           }
         }
       }
@@ -505,9 +491,7 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 9640) { //quit
-    if (err_check) {
-      return 1;
-    }
+    if (err_check) return 1;
   }
   else if ((h == 565) || h == 556 || h == 38294) { //rm, rd, rmdir
     if (err_check(2,2,TRUE,,1)) {
@@ -525,14 +509,10 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 2402) { //run
-    if (err_check(2,2,TRUE)) {
-      ExeFile(chain_peek);
-    }
+    if (err_check(2,2,TRUE)) ExeFile(chain_peek);
   }
   else if (h == 9641) { //time
-    if (err_check) {
-      "%T\n", Now;
-    }
+    if (err_check) "%T\n", Now;
   }
   else if (h == 39172) { //touch
     if (err_check(2,2)) {
