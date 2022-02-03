@@ -1,4 +1,4 @@
-U0 More(U8 *filename)
+/*U0 More(U8 *filename)
 {//Output txt or graphic file to the command line,
  //one screen at a time.
   I64 size = 0;
@@ -17,7 +17,7 @@ U0 More(U8 *filename)
   for (;i < size; i++) {
     "%c",buffer[i];
 
-    if (buffer[i] == '\n') cl++;
+    if (buffer[i] == '\n') cl++;
 
     if (cl == max_lines) {
       KeyAndCont;
@@ -31,3 +31,6 @@ U0 More(U8 *filename)
 }
 
 More("./chain.HC");
+*/
+
+"Well, hello there !!!\n";

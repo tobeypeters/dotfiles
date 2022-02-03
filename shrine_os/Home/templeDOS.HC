@@ -14,12 +14,19 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*#define HASH_CNT 31
-U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu", "-d", "-f",
-                         "date", "df", "ed", "exit", "fm", "tree", "grep",
-                         "help", "ls", "man", "mem", "mkdir", "more", "mv", "now",
-                         "rm", "rd", "rmdir", "run", "time", "touch", "view", "vol" };
-*/
+/*templeDOS.HC
+  Description:
+      Command-line interpreter for TempleOS.
+*/
+
+/*#define HASH_CNT 32
+U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
+                         "-d", "-f", "date", "df", "ed", "exit",
+                         "fm", "tree", "grep", "help", "ls", "man",
+                         "mem", "mkdir", "more", "mv", "now", "quit",
+                         "rm", "rd", "rmdir", "run", "time", "touch",
+                         "view", "vol" };
+*/
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
@@ -93,7 +100,7 @@ U8 chain_pop(Bool rock_bottom=TRUE)
   return result;
 }
 
-U8 chain_peek(I64 idx=-1, Bool rock_bottom=TRUE)
+U8 chain_peek(Bool rock_bottom=TRUE,I64 idx=-1)
 {//Peek at a link on the chain.
  if (idx == -1) idx = begin;
  if (!rock_bottom) idx = begin + links - 1;
@@ -240,7 +247,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         if (l == 1 && chain[i][0] == 47) { //FileFInd doesn't "/"
         }
         else {
-          if (!FileFind(chain_peek(i))) {
+          if (!FileFind(chain_peek(,i))) {
             err_print("does not exist",chain[i]);
             return FALSE;
           }
@@ -300,7 +307,7 @@ U8 execute_cmd(U8 *cmd) {
 
   U64 h = 0;
 
-  Bool tf = FALSE; //Scratch flag I can use for true/false.
+  Bool tf = FALSE; //General use true/false flag.
 
   //Switch seems broke.
   //  switch (h) {
@@ -338,7 +345,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (h == 2088) { //cat
     if (err_check(2,2,TRUE)) {
-      "\n"; Type(chain_peek);
+      Type(chain_peek);
     }
   }
   else if (h == 496 || h == 2084) { //cd, cdd
@@ -398,7 +405,11 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 8920) { //exit
     if (err_check) {
-      return 1;
+      //Don't need to worrry about aborting.
+      //OS reclaims all the memory, when the
+      //window is closed and what else is there 
+      //to worrry about?
+      Exit;
     }
   }
   else if (h == 517 || h == 9753) { //fm, tree
@@ -420,7 +431,7 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 8816) { //help
     if (err_check) {
       if (FileFind(help_file)) {
-        Type(help_file);
+        More(help_file);
       }
       else {
         err_print("File not found",help_file);
@@ -434,10 +445,14 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 2242) { //man
-    if (err_check(2,2)) Man(chain_peek);
+    if (err_check(2,2)) {
+      Man(chain_peek);
+    }
   }
   else if (h == 2257) { //mem
-    if (err_check) MemRep;
+    if (err_check) {
+      MemRep;
+    }
   }
   else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
@@ -456,11 +471,24 @@ U8 execute_cmd(U8 *cmd) {
   }
   else if (h == 554) { //mv
     if (err_check(3,3)) {
-      if (FileFind(chain_peek)) {
-        Move(chain_peek, chain_peek(FALSE));
+      if (FileFind(chain_peek)) { //It's a file or dir.
+        if (buffer = FileFind(chain_peek(FALSE)))
+        { //File or dir already exists.
+          //I don't allow overriding now.
+          err_print("Already exists",buffer);
+        }
+        else {
+          if (IsDir(chain_peek)) {
+            CopyTree(chain_peek,chain_peek(FALSE));
+            DelTree(chain_peek);
+          }
+          else {
+            Move(chain_peek, chain_peek(FALSE));
+          }
+        }
       }
       else {
-        err_print("Doesn't exist",chain_peek);
+        err_print("Doesn't exist",buffer);        
       }
     }
   }
@@ -476,6 +504,11 @@ U8 execute_cmd(U8 *cmd) {
       Now;
     }
   }
+  else if (h == 9640) { //quit
+    if (err_check) {
+      return 1;
+    }
+  }
   else if ((h == 565) || h == 556 || h == 38294) { //rm, rd, rmdir
     if (err_check(2,2,TRUE,,1)) {
       if (fc == 1 || h == 556 || h == 38294) {
@@ -484,7 +517,6 @@ U8 execute_cmd(U8 *cmd) {
             return 0;
           }
         }
-
         DelTree(chain_peek);
       }
       else {
@@ -520,8 +552,7 @@ U8 execute_cmd(U8 *cmd) {
       DocClear; DocTop;
       Type(chain_peek);
       "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-      View;
-      DocBottom;
+      View; DocBottom;
       PutChars(CH_CTRLY);
     }
   }
@@ -554,10 +585,10 @@ U0 templeDOS() {
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  U8 *input;
   U64 result = 0;
+  U8 *input;
 
-//  "HashCodeFor(\"view\") %d\n",HashCodeFor("view");
+  //"HashCodeFor(\"exit\") %d\n",HashCodeFor("exit");
 
   while (TRUE)
   {
@@ -565,7 +596,7 @@ U0 templeDOS() {
 
     DocBottom;
 
-    "\n%c:%s> ",cur_drv,Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
     input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
@@ -580,8 +611,18 @@ U0 templeDOS() {
   }
 }
 
+SettingsPush;
+
+MenuPush(
+  "File {"
+  "  Exit(,CH_SHIFT_ESC);"
+  "}"
+);
+
 Adam("DocClear;");
 
 //Adam("\"\nStarting templeDOS...\n\";");
 
 templeDOS;
+
+SettingsPop;

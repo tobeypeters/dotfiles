@@ -51,7 +51,7 @@ df	Display currently mounted drives.
 ed	Edit / Create text files.
 	$FG,2$usage$FG$: ed [filename]
 
-exit	Cause normal process termination of templeDOS.
+exit	Close the current task window.
 	$FG,2$usage$FG$: exit
 
 fm,	File Manager which displays treeview of the
@@ -98,10 +98,13 @@ mv	Move (rename) files.
 now	Display the current date and time.
 	$FG,2$usage$FG$: now
 
+quit	Cause normal process termination of templeDOS.
+	$FG,2$usage$FG$: quit
+
 rd, 	Remove a directory.
 rmdir	$FG,2$usage$FG$: rd [dir]
 	$FG,2$usage$FG$: rmdir [dir]
-
+
 rm	Remove files or directories.
 	$FG,2$usage$FG$: rm [filename]
 	       rm [option] [dir]
