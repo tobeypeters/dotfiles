@@ -18,9 +18,7 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-
-#include "shared.HC"
-
+
 /*#define HASH_CNT 32
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
                          "-d", "-f", "date", "df", "ed", "exit",
@@ -172,9 +170,9 @@ U64 HashCodeFor(U8 *str)
 
 Bool drv_valid(U8 *drv)
 {//Valid mounted drive?
-  //I cannot find any built-in functions,
-  //which didn't throw exceptions if I tested
-  //for a unmounted/non existant drive ... like 'z:'
+ //I cannot find any built-in functions, which didn't
+ //throw exceptions if I tested a unmounted / non 
+ //existent drive ... like 'z:'
   CDrv *dv;
   CBlkDev *bd;
 
@@ -222,6 +220,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         h = 0;
 
     while (i <= links) {
+
       if (!(chain[i][0] == '-')) {
         l = StrLen(chain[i]);
 
@@ -264,12 +263,13 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-U0 shell_execute(U8 *cmd) {
+U0 shell_execute(U8 *cmd)
+{//Execute a templeOS shell command.
   "\n"; ExePutS(cmd); "\n";
 }
 
 Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
-{
+{//Validate a flag.
   if (!(HashCodeFor(flag) == eq)) {
     if (err_disp) {
       err_print("Invalid option provided",flag);
@@ -347,17 +347,21 @@ U8 execute_cmd(U8 *cmd) {
   //    I'd get:  Example strings: [strb,stra]
   // Instead of:  Example strings: [stra,strb]
   //
-  //I'll look at it more.  Pretty sure, it's not my code.
+  //I'll look at it more.  Pretty sure, it's not my code.
+
+  if (at > 1) buffera = chain_peek(,1);
+  if (at > 2) bufferb = chain_peek(,2);
+  if (at > 3) bufferc = chain_peek(,3);
 
   if (h == 2088) { //cat
-    if (err_check(2,2,TRUE)) Type(chain_peek);
+    if (err_check(2,2,TRUE)) Type(buffera);
   }
   else if (h == 496 || h == 2084) { //cd, cdd
     //TODO: 
     //      * In linux, you can do "cd -" and it'll take
     //        to the directory, you were previously in.
     if (err_check(,2,TRUE)) {
-      Cd(tern(tc == 2,chain_peek, "~"));
+      Cd(tern(tc==2,buffera,"~"));
 
       if (h == 2084) shell_execute("Dir;");
     }
@@ -368,19 +372,19 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 508) { //cp
     if (err_check(3,3,TRUE,,1)) {
       if (fc == 1) {
-        if (flag_eq(chain_pop,280)) { // "-d"
-          CopyTree(chain_peek,chain_peek(FALSE));
+        if (flag_eq(buffera,280)) { // "-d"
+          CopyTree(bufferb,bufferc);
         }
       }
       else {
-        Copy(chain_peek,chain_peek(FALSE));
+        Copy(buffera,bufferb);
       }
     }
   }
   else if (h == 2149) { //cpu
     if (err_check(,,,,1)) {
       if (fc == 1) {
-        if (!(tf = flag_eq(chain_peek,282))) { //-f
+        if (!(tf = flag_eq(buffera,282))) { //-f
           return 0;
         }
       }
@@ -395,30 +399,29 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check) DrvRep;
   }
   else if (h == 504) { //ed
-    if (err_check(2,2)) Ed(chain_peek);
+    if (err_check(2,2)) Ed(buffera);
   }
   else if (h == 8920) { //exit
-    if (err_check) {
-      //Don't need to worrry about aborting.
-      //OS reclaims all the memory, when the
-      //window is closed and what else is there 
-      //to worrry about?
-      Exit;
-    }
+    //Don't need to worrry about aborting.  OS reclaims
+    //all the memory, when the window is closed
+    //and what else is there to worrry about?
+    if (err_check) Exit;
   }
   else if (h == 517 || h == 9753) { //fm, tree
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
-        if (!(tf = flag_eq(chain_pop,282))) { //-f
+        if (!(tf = flag_eq(buffera,282))) { //-f
           return 0;
         }
       }
 
-      MiniFM(tern(tc == 1,".",chain_peek),,tf);
+      buffer = tern(fc==0,buffera,bufferb);
+
+      MiniFM(tern(tc == 1,".",buffer),,tf);
     }
   }
   else if (h == 8932) { //grep
-    if (err_check(2,2)) F(chain_peek);
+    if (err_check(2,2)) F(buffera);
   }
   else if (h == 8816) { //help
     if (err_check) {
@@ -433,19 +436,19 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 547) { //ls
     if (err_check(,2,TRUE)) {
       "\n";
-      Dir(tern(tc == 1,".",chain_peek));
+      Dir(tern(tc==1,".",buffera));
     }
   }
   else if (h == 2242) { //man
-    if (err_check(2,2)) Man(chain_peek);
+    if (err_check(2,2)) Man(buffera);
   }
   else if (h == 2257) { //mem
     if (err_check) MemRep;
   }
   else if (h == 36886 || h == 536) { //mkdir
     if (err_check(2,2)) {
-      if (!FileFind(chain_peek)) {
-        DirMk(chain_peek);
+      if (!FileFind(buffera)) {
+        DirMk(buffera);
       }
       else {
         err_print("Directory already exists","info");
@@ -453,28 +456,28 @@ U8 execute_cmd(U8 *cmd) {
     }
   }
   else if (h == 9309) { //more
-    if (err_check(2,2,TRUE)) More(chain_peek);
+    if (err_check(2,2,TRUE)) More(buffera);
   }
   else if (h == 554) { //mv
     if (err_check(3,3)) {
-      if (FileFind(buffer = chain_peek)) { //It's a file or dir.
-        if (FileFind(buffer = chain_peek(FALSE)))
+      if (FileFind(buffera)) { //It's a file or dir.
+        if (FileFind(bufferb))
         { //File or dir already exists.
           //I don't allow overriding now.
-          err_print("Already exists",buffer);
+          err_print("Already exists",bufferb);
         }
         else {
-          if (IsDir(buffer = chain_peek)) {
-            CopyTree(buffer,chain_peek(FALSE));
-            DelTree(buffer);
+          if (IsDir(buffera)) {
+            CopyTree(buffera,bufferb);
+            DelTree(buffera);
           }
           else {
-            Move(buffer, chain_peek(FALSE));
+            Move(buffera,bufferb);
           }
         }
       }
       else {
-        err_print("Doesn't exist",buffer);        
+        err_print("Doesn't exist",buffera);        
       }
     }
   }
@@ -497,19 +500,22 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(2,2,TRUE,,1)) {
       if (fc == 1 || h == 556 || h == 38294) {
         if (fc == 1) { //No short circuiting in this language is killing me.
-          if (!flag_eq(chain_pop,280)) { //-d
+          if (!flag_eq(buffera,280)) { //-d
             return 0;
           }
         }
-        DelTree(chain_peek);
+
+        buffer = tern(fc==0,buffera,bufferb);
+
+        DelTree(buffer);
       }
       else {
-        Del(chain_peek);
+        Del(buffera);
       }
     }
   }
   else if (h == 2402) { //run
-    if (err_check(2,2,TRUE)) ExeFile(chain_peek);
+    if (err_check(2,2,TRUE)) ExeFile(buffera);
   }
   else if (h == 9641) { //time
     if (err_check) "%T\n", Now;
@@ -517,13 +523,13 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 39172) { //touch
     if (err_check(2,2)) {
       // Creates an empty file, if it doesn't exist.
-      if (!FileFind(chain_peek)) {
+      if (!FileFind(buffera)) {
         // Off-hand, looks like Touch() doesn't create
         // files. I'll look more at it and touchfile().
-        FileWrite(chain_peek, NULL, 0);
+        FileWrite(buffera,NULL,0);
       }
       else {
-        Touch(chain_peek,""); //Updates the time & date.
+        Touch(buffera,""); //Updates the time & date.
       }
     }
   }
