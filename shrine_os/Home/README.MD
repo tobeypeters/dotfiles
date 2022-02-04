@@ -24,7 +24,7 @@
  * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
    compositor. Right now it overrides the
    mouse cursor color.
- * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$ : Terminal command app.
+ * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
 <b>C:/Once.HC.Z:</b>
@@ -73,4 +73,3 @@
  * Added KeyAndCont().
    It displays "Press any key to continue ...". without any newline
    characters and "clears" the line after you press a key.
-
