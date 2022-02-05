@@ -19,6 +19,8 @@
       Command-line interpreter for TempleOS.
 */
 
+#include "./shared.HC"
+
 /*#define HASH_CNT 32
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
                          "-d", "-f", "date", "df", "ed", "exit",
@@ -43,12 +45,6 @@ U64 links = 0,
 
 U64 tc = 0,
     fc = 0;
-
-U8 tern(Bool condition, U64 *first, U64 *second) {
-  if (condition) return first;
-
-  return second;
-}
 
 U8 chain_push(U8 *si, I64 link_num=-1, U8 delim=' ')
 {//Push a value, into the memory chain.
@@ -149,48 +145,6 @@ U0 link_trim(U8 *link, Bool left=TRUE, Bool both=FALSE)
   if (!left || both) {
     StrUtil(link, SUF_REM_TRAILING);
   }
-}
-
-U64 HashCodeFor(U8 *str)
-{//Hash code generator for strings.
- //This is a pretty weak one. I don't need much.
- //CRC16 would've been perfect for me. But, you
- //have to use big lookup table.
-  U64 i = 0,
-//  U64 g = 31, //Magic generator <- odd prime
-   hash = 0;
-
-  for (; i < StrLen(str); i++) {
-    hash =  (hash << 2) + str[i];
-//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
-  }
-
-  return hash;
-}
-
-Bool drv_valid(U8 *drv)
-{//Valid mounted drive?
- //I cannot find any built-in functions, which didn't
- //throw exceptions if I tested a unmounted / non 
- //existent drive ... like 'z:'
-  CDrv *dv;
-  CBlkDev *bd;
-
-  I64 i,drv_let;
-
-  drv = ToUpper(drv);
-
-  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
-    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
-      bd=dv->bd;
-      drv_let=Drv2Let(dv);
-      if (drv_let == drv) {
-        return TRUE;
-      }
-    }
-  }
-
-  return FALSE;
 }
 
 //Yes, I'm handing error checking and validation HORRIBLY.
@@ -301,7 +255,7 @@ U8 execute_cmd(U8 *cmd) {
 //TaskRep;
 //UnusedSpaceRep; //Demo
 
-//dump;
+//dump;
 
   U64 at = link_count(cmd),
        i = 0;

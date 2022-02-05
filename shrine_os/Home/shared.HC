@@ -1,0 +1,84 @@
+/*
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+/*shared.HC
+  Description:
+      Shared code file.
+*/
+
+//NOTE; MIGHT MOVE SOME OF THESE INTOTHEOS FILES.
+
+Bool drv_valid(U8 *drv)
+{//Valid mounted drive?
+ //I cannot find any built-in functions, which didn't
+ //throw exceptions if I tested a unmounted / non 
+ //existent drive ... like 'z:'
+  CDrv *dv;
+  CBlkDev *bd;
+
+  I64 i,drv_let;
+
+  drv = ToUpper(drv);
+
+  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
+    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
+      bd=dv->bd;
+      drv_let=Drv2Let(dv);
+      if (drv_let == drv) {
+        return TRUE;
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+U64 drv_free(U8 *drv)
+{//Get a drives free space.
+  CDrv *dv;
+  I64 i;
+
+  for (i=0;i<26;i++) {
+    if (dv=Let2Drv(i+drv,FALSE) && (dv->fs_type==FSt_FAT32 ||
+        dv->fs_type==FSt_REDSEA)) {
+      return Drv2Let(dv),DrvUnused(Drv2Let(dv))*100.0/(dv->size*BLK_SIZE);
+    }
+  }
+}
+
+U64 HashCodeFor(U8 *str)
+{//Hash code generator for strings.
+ //This is a pretty weak one. I don't need much.
+ //CRC16 would've been perfect for me. But, you
+ //have to use big lookup table.
+  U64 i = 0,
+//  U64 g = 31, //Magic generator <- odd prime
+   hash = 0;
+
+  for (; i < StrLen(str); i++) {
+    hash =  (hash << 2) + str[i];
+//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
+  }
+
+  return hash;
+}
+
+U8 tern(Bool condition, U64 *first, U64 *second)
+{//Ternary operator like function.
+  if (condition) return first;
+
+  return second;
+}
