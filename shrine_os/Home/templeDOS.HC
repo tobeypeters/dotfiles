@@ -18,7 +18,7 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-
+
 /*#define HASH_CNT 32
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
                          "-d", "-f", "date", "df", "ed", "exit",
@@ -220,7 +220,6 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         h = 0;
 
     while (i <= links) {
-
       if (!(chain[i][0] == '-')) {
         l = StrLen(chain[i]);
 
@@ -287,6 +286,23 @@ U8 cur_drv()
 }
 
 U8 execute_cmd(U8 *cmd) {
+//CallerRep;
+//PassTrace;
+//Trace;
+//PCIRep;
+//MemBIOSRep;
+//MemPageRep;
+//MemRep;
+//ZipRep;
+//ProfRep;
+//HeapLogSizeRep;
+//ATARep;
+//DrvRep;
+//TaskRep;
+//UnusedSpaceRep; //Demo
+
+//dump;
+
   U64 at = link_count(cmd),
        i = 0;
 
