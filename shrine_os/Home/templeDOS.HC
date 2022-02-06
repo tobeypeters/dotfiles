@@ -21,16 +21,16 @@
 
 #include "./shared.HC"
 
-/*#define HASH_CNT 32
+/*#define HASH_CNT 33
 U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
-                         "-d", "-f", "date", "df", "ed", "exit",
+                         "-d", "-f", "date", "df", "dump", "ed", "exit",
                          "fm", "tree", "grep", "help", "ls", "man",
                          "mem", "mkdir", "more", "mv", "now", "quit",
                          "rm", "rd", "rmdir", "run", "time", "touch",
                          "view", "vol" };
 */
 
-U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
+ U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
 //I use this memory chain system, like a stack. Kinda ...
 //One major difference, Ican pull from the either end.
@@ -368,6 +368,10 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 502) { //df
     if (err_check) DrvRep;
   }
+  else if (h == 8820) { //dump
+    if (err_check(2,2,TRUE)) Dump(buffera);
+  }
+
   else if (h == 504) { //ed
     if (err_check(2,2)) Ed(buffera);
   }
@@ -491,6 +495,10 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check) "%T\n", Now;
   }
   else if (h == 39172) { //touch
+    //OK ... Angry. I made an attrib command that lets you
+    //set file attributes. But, the system ignores them.
+    //I can set a file READONLY and still edit/delete it.
+    //Verified on FAT32 and RedSea. Killing me.
     if (err_check(2,2)) {
       // Creates an empty file, if it doesn't exist.
       if (!FileFind(buffera)) {
@@ -544,7 +552,7 @@ U0 templeDOS() {
   U64 result = 0;
   U8 *input;
 
-  //"HashCodeFor(\"exit\") %d\n",HashCodeFor("exit");
+  //"HashCodeFor(\"dump\") %d\n",HashCodeFor("dump");
 
   while (TRUE)
   {

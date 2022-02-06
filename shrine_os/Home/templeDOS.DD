@@ -1,9 +1,9 @@
-$GREEN$templeDOS$FG$	$IV,1$  General Commands Manual  $IV,0$
+$FG,2$templeDOS$FG$	$IV,1$  General Commands Manual  $IV,0$
 
 Command	Description
 ---------------------------
 cat	Display a FILE to standard output.
-	$GREEN$usage$FG$: cat [filename]
+	$FG,2$usage$FG$: cat [filename]
 
 cd,	Change the current working directory, to
 cdd	your HOME directory, a specified directory,
@@ -12,119 +12,122 @@ cdd	your HOME directory, a specified directory,
 	Issuing cdd, instead of cd, will also display
 	the contents of the current directory.
 
-	$GREEN$usage$FG$: cd
+	$FG,2$usage$FG$: cd
 	       cd [option]
 	       cd [dir]
 	       cd [drive:]
 
-	$GREEN$usage$FG$: cdd
+	$FG,2$usage$FG$: cdd
 	       cdd [option]
 	       cdd [dir]
 	       cdd [drive:]
 
-	$CYAN$Options:$FG$
+	$FG,3$Options:$FG$
 	   ~	    Causes the same effects as
 		    providing no options. It will 
 		    change the working directory,
 		    to your HOME directory.
 
 clear	Clear the terminal screen.
-	$GREEN$usage$FG$: clear
+	$FG,2$usage$FG$: clear
 
 cp	Copy files and directories.
-	$GREEN$usage$FG$: cp [option] [source] [destination]
+	$FG,2$usage$FG$: cp [option] [source] [destination]
 
-	$CYAN$Options:$FG$
+	$FG,3$Options:$FG$
 	   -d	    Directory copy
 
 cpu	Display cpu info.
-	$GREEN$usage$FG$: cpu [option]
+	$FG,2$usage$FG$: cpu [option]
 
-	$GREEN$Options$FG$:
+	$FG,2$Options$FG$:
 	   -f	    Detailed cpu info
 
 date	Display the current date.
-	$GREEN$usage$FG$: date
+	$FG,2$usage$FG$: date
 
 df	Display currently mounted drives.
-	$GREEN$usage$FG$: df
+	$FG,2$usage$FG$: df
+
+dump	Display the disassembly "hex dump" of a file.
+	$FG,2$usage$FG$: dump [filename]
 
 ed	Edit / Create text files.
-	$GREEN$usage$FG$: ed [filename]
+	$FG,2$usage$FG$: ed [filename]
 
 exit	Close the current task window.
-	$GREEN$usage$FG$: exit
+	$FG,2$usage$FG$: exit
 
 fm,	File Manager which displays treeview of the
 tree	current or specified directory.
-	$GREEN$usage$FG$: fm
+	$FG,2$usage$FG$: fm
 	       fm [option] [dir]
-	$GREEN$usage$FG$: tree
+	$FG,2$usage$FG$: tree
 	       tree [option] [dir]
 
-	$GREEN$Options$FG$:
+	$FG,2$Options$FG$:
 	   -f	    Full details
 
-	$GREEN$DEFAULT$FG$: current directory
+	$FG,2$DEFAULT$FG$: current directory
 
 grep	Recursively search files and print any lines
 	which contain the specified string.
-	$GREEN$usage$FG$: grep [filename]
+	$FG,2$usage$FG$: grep [filename]
 
 help	Displays this list of TempleDOS commands.
-	$GREEN$usage$FG$: help
+	$FG,2$usage$FG$: help
 
 ls	List directory contents.
-	$GREEN$usage$FG$: ls
+	$FG,2$usage$FG$: ls
 	       ls [dir]
 
-	$GREEN$DEFAULT$FG$: current directory
+	$FG,2$DEFAULT$FG$: current directory
 
 man	Display the source code for a specified 
-	internal TempleOS command. Like $GREEN$Dir;$FG$ - $GREEN$DrvRep;, etc.
-	$GREEN$usage$FG$: man [command]
+	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
+	$FG,2$usage$FG$: man [command]
 
 mem	Display a memory representation.
-	$GREEN$usage$FG$: mem
+	$FG,2$usage$FG$: mem
 
 mkdir	Make directories.
-	$GREEN$usage$FG$: mkdir [dir]
+	$FG,2$usage$FG$: mkdir [dir]
 
 more	Display a FILE to stdout, one screen at a time.
-	$GREEN$usage$FG$: more [filename]
+	$FG,2$usage$FG$: more [filename]
 
 mv	Move (rename) files.
-	$GREEN$usage$FG$: mv [source] [destination]
+	$FG,2$usage$FG$: mv [source] [destination]
 
 now	Display the current date and time.
-	$GREEN$usage$FG$: now
+	$FG,2$usage$FG$: now
 
 quit	Cause normal process termination of templeDOS.
-	$GREEN$usage$FG$: quit
+	$FG,2$usage$FG$: quit
 
 rd, 	Remove a directory.
-rmdir	$GREEN$usage$FG$: rd [dir]
-	$GREEN$usage$FG$: rmdir [dir]
+rmdir	$FG,2$usage$FG$: rd [dir]
+	$FG,2$usage$FG$: rmdir [dir]
 
 rm	Remove files or directories.
-	$GREEN$usage$FG$: rm [filename]
+	$FG,2$usage$FG$: rm [filename]
 	       rm [option] [dir]
 
-	$GREEN$Options$FG$:
+	$FG,2$Options$FG$:
 		 -d	Directory remove
 
 run	Execute source code files.
-	$GREEN$usage$FG$: run [filename]
+	$FG,2$usage$FG$: run [filename]
 
 time	Display the current time.
-	$GREEN$usage$FG$: time
+	$FG,2$usage$FG$: time
 
 touch	Create an empty file. TempleOS also has a
-	<$FG$$GREEN$touch$FG$> command which can update the date & file attributes.
-	$GREEN$usage$FG$: touch [filename]
+	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
+	$FG,2$usage$FG$: touch [filename]
 
 view	Display a FILE to stdout, in a viewing window.
-	$GREEN$usage$FG$: view [filename]
+	$FG,2$usage$FG$: view [filename]
 
 vol	Displays volume information of the current drive.
-	$GREEN$usage$FG$: vol
+	$FG,2$usage$FG$: vol
