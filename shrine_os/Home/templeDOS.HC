@@ -342,7 +342,7 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 508) { //cp
     if (err_check(3,3,TRUE,,1)) {
       if (fc == 1) {
-        if (flag_eq(buffera,280)) { // "-d"
+        if (flag_eq(buffera,280)) { // "-d"
           CopyTree(bufferb,bufferc);
         }
       }
@@ -366,12 +366,14 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check) "%D\n", Now;
   }
   else if (h == 502) { //df
-    if (err_check) DrvRep;
+    if (err_check) {
+      DrvRep; "\n";
+      drv_free;
+    }
   }
   else if (h == 8820) { //dump
-    if (err_check(2,2,TRUE)) Dump(buffera);
+    if (err_check(2,2,TRUE)) Dump(buffera);
   }
-
   else if (h == 504) { //ed
     if (err_check(2,2)) Ed(buffera);
   }

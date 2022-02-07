@@ -19,12 +19,11 @@
               distribution of Shrine/TempleOS.
 
 <b>General:</b>
- * Added $LK,"common.HC",A="FI:C:/Home/Common.HC"$ : Holy C include file,
-   for common shared code.
- * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
+ * Added $LK,"shared.HC",A="FI:C:/Home/shared.HC"$ : Shared HolyC source file.
+ * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
    compositor. Right now it overrides the
    mouse cursor color.
- * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
+ * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
 <b>C:/Once.HC.Z:</b>

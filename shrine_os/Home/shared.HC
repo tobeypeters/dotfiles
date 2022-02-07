@@ -19,8 +19,8 @@
       Shared code file.
 */
 
-//NOTE; MIGHT MOVE SOME OF THESE INTOTHEOS FILES.
-
+//NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
+
 Bool drv_valid(U8 *drv)
 {//Valid mounted drive?
  //I cannot find any built-in functions, which didn't
@@ -46,15 +46,32 @@ Bool drv_valid(U8 *drv)
   return FALSE;
 }
 
-U64 drv_free(U8 *drv)
-{//Get a drives free space.
+F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
+{//Display free space for each mounted drive
+ //or a specified mounted drive
+ //Or reeturn the free space, for a specific mounted drive.
   CDrv *dv;
-  I64 i;
+  I64 c = 0,
+      i = 0;
+  F64 s = 0;
 
   for (i=0;i<26;i++) {
-    if (dv=Let2Drv(i+drv,FALSE) && (dv->fs_type==FSt_FAT32 ||
-        dv->fs_type==FSt_REDSEA)) {
-      return Drv2Let(dv),DrvUnused(Drv2Let(dv))*100.0/(dv->size*BLK_SIZE);
+    if ((dv=Let2Drv(i+'A',FALSE)) &&
+	  (dv->fs_type==FSt_FAT32 || dv->fs_type==FSt_REDSEA)) {
+      c = Drv2Let(dv);
+      s = DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
+
+      if (drv == '' && !ret_free) {
+        "%C: %7.2f%% Free\n",c,s;
+      }
+      else {
+        if (drv == c) {
+          if (drv == c && ret_free) return s;
+
+         "%C: %7.2f%% Free\n",c,s;
+          return 0;
+        }
+      }      
     }
   }
 }
