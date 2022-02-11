@@ -49,7 +49,7 @@ date	Display the current date.
 df	Display currently mounted drives.
 	$FG,2$usage$FG$: df
 
-dump	Display the disassembly "hex dump" of a file.
+dump	Display the disassembly "hex dump" of a file.
 	$FG,2$usage$FG$: dump [filename]
 
 ed	Edit / Create text files.
@@ -131,3 +131,5 @@ view	Display a FILE to stdout, in a viewing window.
 
 vol	Displays volume information of the current drive.
 	$FG,2$usage$FG$: vol
+
+command [OPTIONS] {option1|option2}
