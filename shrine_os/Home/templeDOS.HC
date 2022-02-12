@@ -221,7 +221,7 @@ U0 shell_execute(U8 *cmd)
   "\n"; ExePutS(cmd); "\n";
 }
 
-Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
+Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
 {//Validate a flag.
   if (!(HashCodeFor(flag) == eq)) {
     if (err_disp) {
@@ -236,7 +236,7 @@ Bool flag_eq(U8 *flag, U64 eq, Bool err_disp = TRUE)
 
 U8 cur_drv()
 {//Return the current drive letter.
-  return Drv2Let(Fs->cur_dv);
+    return Drv2Let(Fs->cur_dv);
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -263,13 +263,6 @@ U8 execute_cmd(U8 *cmd) {
   fc = link_count(cmd,FALSE,'-');
   tc = at - fc;
 
-  U8 *orig_cmd = cmd,
-       *buffer = "";
-  
-  U8 *buffera = '\0',
-     *bufferb = '\0',
-     *bufferc = '\0';
-
   if (tc > 0) {
     for (i=0; i < at; i++) {
       link_trim(cmd,FALSE,TRUE);
@@ -280,6 +273,12 @@ U8 execute_cmd(U8 *cmd) {
   else {
     return 0;
   }
+
+  U8 *orig_cmd = cmd,
+       *buffer = '\0',
+     *buffera,
+     *bufferb,
+     *bufferc;
 
   U64 h = 0;
 
@@ -296,9 +295,17 @@ U8 execute_cmd(U8 *cmd) {
   //    default:
   //  }
 
-  //I'm using pre-calculated hash codes, for comparison.
-  //My opinion ... This is faster and better, than
-  //using 100 StrCmp() calls.
+  //I'm using pre-calculated hash codes, for comparison checks.
+  //My opinion ... This is faster and better, than using 100
+  // StrCmp() calls.
+
+  //Guess, readability is destroyed.
+
+  //Trying to come up with a different simple solution, with doesn't have
+  //a thousand StrCmp() calls, doesn't need to waste a bunch of memory, etc...
+  //I MAY HAVE A SOLTION. LET ME SIT AND THINK ABOUT IT.
+
+  //Until then ... we'll be using these hashcodes.
   h = HashCodeFor(chain_pop);
 
   /*for (i=0;i < HASH_CNT; i++) {
@@ -319,9 +326,9 @@ U8 execute_cmd(U8 *cmd) {
   //
   //I'll look at it more.  Pretty sure, it's not my code.
 
-  if (at > 1) buffera = chain_peek(,1);
-  if (at > 2) bufferb = chain_peek(,2);
-  if (at > 3) bufferc = chain_peek(,3);
+  buffera = tern(at>1,chain_peek(,1),'\0');
+  bufferb = tern(at>2,chain_peek(,2),'\0');
+  bufferc = tern(at>3,chain_peek(,3),'\0');
 
   if (h == 2088) { //cat
     if (err_check(2,2,TRUE)) Type(buffera);
@@ -342,7 +349,7 @@ U8 execute_cmd(U8 *cmd) {
   else if (h == 508) { //cp
     if (err_check(3,3,TRUE,,1)) {
       if (fc == 1) {
-        if (flag_eq(buffera,280)) { // "-d"
+        if (flag_eq(buffera,280)) { // "-d"
           CopyTree(bufferb,bufferc);
         }
       }
@@ -355,7 +362,7 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(,,,,1)) {
       if (fc == 1) {
         if (!(tf = flag_eq(buffera,282))) { //-f
-          return 0;
+          goto done;
         }
       }
 
@@ -387,7 +394,7 @@ U8 execute_cmd(U8 *cmd) {
     if (err_check(,2,TRUE,,1)) {
       if (fc == 1) {
         if (!(tf = flag_eq(buffera,282))) { //-f
-          return 0;
+          goto done;
         }
       }
 
@@ -477,7 +484,7 @@ U8 execute_cmd(U8 *cmd) {
       if (fc == 1 || h == 556 || h == 38294) {
         if (fc == 1) { //No short circuiting in this language is killing me.
           if (!flag_eq(buffera,280)) { //-d
-            return 0;
+            goto done;
           }
         }
 
@@ -532,6 +539,13 @@ U8 execute_cmd(U8 *cmd) {
     shell_execute(orig_cmd); //User is trying to normally run a OS command?
   }
 
+done:
+//  Free(orig_cmd);
+//  Free(buffer);
+//  Free(buffera);
+//  Free(bufferb);
+//  Free(bufferc);
+
   return 0;
 }
 
@@ -575,6 +589,8 @@ U0 templeDOS() {
 
     if (result) break;
   }
+
+  Free(input);
 }
 
 SettingsPush;

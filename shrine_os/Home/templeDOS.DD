@@ -13,14 +13,14 @@ cdd	your HOME directory, a specified directory,
 	the contents of the current directory.
 
 	$FG,2$usage$FG$: cd
-	       cd [option]
-	       cd [dir]
-	       cd [drive:]
+	       cd [OPTION] {~}
+	       cd [DIR]
+	       cd [DRIVE]: {b|c|d| etc...}
 
 	$FG,2$usage$FG$: cdd
-	       cdd [option]
-	       cdd [dir]
-	       cdd [drive:]
+	       cdd [OPTION] {~}
+	       cdd [DIR]
+	       cdd [DRIVE:] {b|c|d| etc...}
 
 	$FG,3$Options:$FG$
 	   ~	    Causes the same effects as
@@ -32,13 +32,13 @@ clear	Clear the terminal screen.
 	$FG,2$usage$FG$: clear
 
 cp	Copy files and directories.
-	$FG,2$usage$FG$: cp [option] [source] [destination]
+	$FG,2$usage$FG$: cp [OPTION] {-d} [SOURCE] [DESTINATION]
 
 	$FG,3$Options:$FG$
 	   -d	    Directory copy
 
 cpu	Display cpu info.
-	$FG,2$usage$FG$: cpu [option]
+	$FG,2$usage$FG$: cpu [OPTION] {-f}
 
 	$FG,2$Options$FG$:
 	   -f	    Detailed cpu info
@@ -50,10 +50,10 @@ df	Display currently mounted drives.
 	$FG,2$usage$FG$: df
 
 dump	Display the disassembly "hex dump" of a file.
-	$FG,2$usage$FG$: dump [filename]
+	$FG,2$usage$FG$: dump [FILENAME]
 
 ed	Edit / Create text files.
-	$FG,2$usage$FG$: ed [filename]
+	$FG,2$usage$FG$: ed [FILENAME]
 
 exit	Close the current task window.
 	$FG,2$usage$FG$: exit
@@ -61,9 +61,9 @@ exit	Close the current task window.
 fm,	File Manager which displays treeview of the
 tree	current or specified directory.
 	$FG,2$usage$FG$: fm
-	       fm [option] [dir]
+	       fm [OPTION] {-f} [DIR]
 	$FG,2$usage$FG$: tree
-	       tree [option] [dir]
+	       tree [OPTION] {-f} [DIR]
 
 	$FG,2$Options$FG$:
 	   -f	    Full details
@@ -72,32 +72,32 @@ tree	current or specified directory.
 
 grep	Recursively search files and print any lines
 	which contain the specified string.
-	$FG,2$usage$FG$: grep [filename]
+	$FG,2$usage$FG$: grep [FILENAME]
 
 help	Displays this list of TempleDOS commands.
 	$FG,2$usage$FG$: help
 
 ls	List directory contents.
 	$FG,2$usage$FG$: ls
-	       ls [dir]
+	       ls [DIR]
 
 	$FG,2$DEFAULT$FG$: current directory
 
 man	Display the source code for a specified 
 	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
-	$FG,2$usage$FG$: man [command]
+	$FG,2$usage$FG$: man [COMMAND]
 
 mem	Display a memory representation.
 	$FG,2$usage$FG$: mem
 
 mkdir	Make directories.
-	$FG,2$usage$FG$: mkdir [dir]
+	$FG,2$usage$FG$: mkdir [DIR]
 
 more	Display a FILE to stdout, one screen at a time.
-	$FG,2$usage$FG$: more [filename]
+	$FG,2$usage$FG$: more [FILENAME]
 
 mv	Move (rename) files.
-	$FG,2$usage$FG$: mv [source] [destination]
+	$FG,2$usage$FG$: mv [SOURCE] [DESTINATION]
 
 now	Display the current date and time.
 	$FG,2$usage$FG$: now
@@ -106,30 +106,31 @@ quit	Cause normal process termination of templeDOS.
 	$FG,2$usage$FG$: quit
 
 rd, 	Remove a directory.
-rmdir	$FG,2$usage$FG$: rd [dir]
-	$FG,2$usage$FG$: rmdir [dir]
+rmdir	$FG,2$usage$FG$: rd [DIR]
+	$FG,2$usage$FG$: rmdir [DIR]
 
 rm	Remove files or directories.
-	$FG,2$usage$FG$: rm [filename]
-	       rm [option] [dir]
+	$FG,2$usage$FG$: rm [FILENAME]
+	       rm [OPTION] {-d} [DIR]
 
 	$FG,2$Options$FG$:
 		 -d	Directory remove
 
 run	Execute source code files.
-	$FG,2$usage$FG$: run [filename]
+	$FG,2$usage$FG$: run [FILENAME]
 
 time	Display the current time.
 	$FG,2$usage$FG$: time
 
 touch	Create an empty file. TempleOS also has a
 	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
-	$FG,2$usage$FG$: touch [filename]
+	$FG,2$usage$FG$: touch [FILENAME]
 
 view	Display a FILE to stdout, in a viewing window.
-	$FG,2$usage$FG$: view [filename]
+	$FG,2$usage$FG$: view [FILENAME]
 
 vol	Displays volume information of the current drive.
 	$FG,2$usage$FG$: vol
 
-command [OPTIONS] {option1|option2}
+command [OPTIONS] {option1|option2}
+
