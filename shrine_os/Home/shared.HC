@@ -21,6 +21,11 @@
 
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
+U8 cur_drv()
+{//Return the current drive letter.
+    return Drv2Let(Fs->cur_dv);
+}
+
 Bool drv_valid(U8 *drv)
 {//Valid mounted drive?
  //I cannot find any built-in functions, which didn't
@@ -61,7 +66,7 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
       c = Drv2Let(dv);
       s = DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
 
-      if (drv == '' && !ret_free) {
+      if (drv == '' && !ret_free) {
         "%C: %7.2f%% Free\n",c,s;
       }
       else {
