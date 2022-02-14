@@ -25,7 +25,7 @@ U8 cur_drv()
 {//Return the current drive letter.
     return Drv2Let(Fs->cur_dv);
 }
-
+
 Bool drv_valid(U8 *drv)
 {//Valid mounted drive?
  //I cannot find any built-in functions, which didn't
@@ -104,3 +104,10 @@ U8 tern(Bool condition, U64 *first, U64 *second)
 
   return second;
 }
+
+
+U0 shell_execute(U8 *cmd)
+{//Execute a templeOS shell command.
+  "\n"; ExePutS(cmd); "\n";
+}
+

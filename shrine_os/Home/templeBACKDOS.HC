@@ -21,8 +21,9 @@
 
 #include "./shared.HC"
 
-#define HASH_CNT 31
-U8 *hashes[HASH_CNT][8] =
+
+#define REC_CNT 31
+U8 *VSAM[REC_CNT][8] =
 {
 /*ID, token count min, token count max,
 file / dir validator, flag count min,
@@ -69,8 +70,8 @@ I64 indexOf(U8 *cmd) {
 
   h = HashCodeFor(cmd);
 
-  for (;i<HASH_CNT;i++) {
-    if (hashes[i][0] == h) {
+  for (;i<REC_CNT;i++) {
+    if (VSAM[i][0] == h) {
       return i;
     }
   }
@@ -78,132 +79,88 @@ I64 indexOf(U8 *cmd) {
   return -1;
 }
 
+U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
-/*#define HASH_CNT 33
-U8 *hashes[HASH_CNT] = { "cat", "cd", "cdd", "clear", "cp", "cpu",
-                         "-d", "-f", "date", "df", "dump", "ed", "exit",
-                         "fm", "tree", "grep", "help", "ls", "man",
-                         "mem", "mkdir", "more", "mv", "now", "quit",
-                         "rm", "rd", "rmdir", "run", "time", "touch",
-                         "view", "vol" };
-*/
+#define SEG_CNT 256
+#define SEG_LEN 256
+U8 data[SEG_CNT][SEG_LEN];
 
- U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
+U64 seg_beg = 0,
+       segs = 0;
 
-//I use this memory chain system, like a stack. Kinda ...
-//One major difference, Ican pull from the either end.
-//Doing a POP, ONLY, increments the begin pointer and 
-//decrements the links count.
-#define MAX_LINKS 256
-#define LINK_LEN  256
-
-U8 chain[MAX_LINKS][LINK_LEN];
-U64 links = 0,
-    begin = 0;
-
-U64 tc = 0,
-    fc = 0;
-
-U8 chain_push(U8 *si, I64 link_num=-1, U8 delim=' ')
-{//Push a value, into the memory chain.
+U8 seg_push(U8 *si, U8 delim=' ')
+{//Push a segment into the data stack.
   if (StrLen(si) > 0) {
     U64 i = 0,
-      pos = links;
-
-    //Another example, of why this really isn't a stack.
-    //I allow you to replace values.
-    if (link_num > -1) {
-      pos = link_num;
-      links--;
-    }
+      pos = segs;
 
     while (si[0] != '\0' && si[0] != delim) {
-      chain[pos][i] = si[0];
+      data[pos][i] = si[0];
       si++; i++;
     }
     if (i > 0) {
-      chain[pos][i] = '\0';
+      data[pos][i] = '\0';
     }
 
-    links++;
+    segs++;
 
     while (*si == delim) si++;
   }
 
-  return si; //Return the updated pointer position.
+  return si; //Updated pointer position.
 }
 
-U8 chain_pop(Bool rock_bottom=TRUE)
-{//Pop a value, from the memory chain. We don't remove
-  //anything from the chain. So, this is a big
-  //difference from using a normal stack.
-  if (links == 0) return NULL;
+U8 seg_peek(I64 idx=-1)
+{//Peek at a segment from the data stack.
+ if (idx >= SEG_CNT) return NULL;
 
-  U64 idx = begin;
- 
-  if (!rock_bottom) {
-    idx = begin + links - 1;
-  }
-
-  U8 *result = tern(rock_bottom, chain[begin], chain[idx]);
-
-  begin += rock_bottom;
-
-  links--;
-
-  return result;
+ return data[tern(idx == -1, seg_beg, idx)];
 }
 
-U8 chain_peek(Bool rock_bottom=TRUE,I64 idx=-1)
-{//Peek at a link on the chain.
- if (idx == -1) idx = begin;
- if (!rock_bottom) idx = begin + links - 1;
+U0 seg_clean()
+{
+  MemSet(data, '\0', sizeof(U8)*SEG_CNT*SEG_LEN);
 
- return chain[idx];
+  segs = seg_beg = 0;
 }
 
-U0 chain_clean()
-{//Clear the memory chain.
-  MemSet(chain, '\0', sizeof(U8)*MAX_LINKS*LINK_LEN);
-
-  links = begin = 0;
-}
-
-U64 link_count(U8 *chain, Bool count_links=TRUE, U8 delim=32)
-{//Count either links or occurrences of a specific delimeter.
-  U64 l = StrLen(chain);
+U64 seg_count(U8 *seg_buf, Bool count_segs=TRUE, U8 delim=32)
+{//Count either data segments or occurrences of a specific delimeter.
+  U64 l = StrLen(seg_buf);
 
   if (l == 0) return 0;
 
-  U64 i = 0,
-  count = 0;
+  U64 count = 0,
+          i = 0;
 
   while (i < l) {
-    if (chain[i] == delim) {
-      count++;
-    }
+    if (seg_buf[i] == delim) count++;
 
     i++;
   }
 
-  return count + count_links;
+  return count + count_segs;
 }
 
-U0 link_trim(U8 *link, Bool left=TRUE, Bool both=FALSE)
-{//Trims leading or trailing spaces from a link.
+
+U0 seg_trim(U8 *seg, Bool left=TRUE, Bool both=FALSE)
+{//Trims leading or trailing spaces from a data segment.
  //left = TRUE : left trim
  //left = FALSE : right trim
  //both = TRUE : left &right trim
-  if (StrLen(link) == 0) return;
+  if (StrLen(seg) == 0) return;
 
   if (left || both) {
-    StrUtil(link, SUF_REM_LEADING);
+    StrUtil(seg, SUF_REM_LEADING);
   }
 
   if (!left || both) {
-    StrUtil(link, SUF_REM_TRAILING);
+    StrUtil(seg, SUF_REM_TRAILING);
   }
 }
+
+U64 tc = 0,
+    fc = 0;
 
 //Yes, I'm handing error checking and validation HORRIBLY.
 U0 err_print(U8 *msg, U8 *link="Usage")
@@ -212,7 +169,7 @@ U0 err_print(U8 *msg, U8 *link="Usage")
 }
 
 Bool err_check(U64 tcmin=1, U64 tcmax=1,
-	       Bool existance_check=FALSE,
+	       Bool fd_check=FALSE,
 	       U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
   if (tc < tcmin || tc > tcmax) {
@@ -225,22 +182,18 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
     return FALSE;
   }
 
-  if (existance_check && tcmax > 1) //Added tcmax check. Probably not needed.
-  {//Make sure all files & directories exist.
-    U64 i = begin, //begin should already be 1.
-        l = 0,
-        h = 0;
+  if (fd_check && tc > 1) { //Make sure all files & directories exist.
+    U64 i = 1,
+        l = 0;
 
-    while (i <= links) {
-      if (!(chain[i][0] == '-')) {
-        l = StrLen(chain[i]);
+    while (i < segs) {
+      if (!(data[i][0] == '-')) {
+        l = StrLen(data[i]);
 
         //Are we changing to another mounted drive?
-        if (l == 2 && chain[i][1] == ':') {
-          h = HashCodeFor(chain[i]);
-
-          if (445<h<547 || 317<h<419) { //a:..z: or A:..Z:
-            if (!drv_valid(chain[i][0])) {
+        if (l == 2 && data[i][1] == ':') {
+          if (96<data[i]<123 || 64<data[i]<91) { //a:..z: or A:..Z:
+            if (!drv_valid(data[i][0])) {
               goto drv_error;
             }
             goto drv_change;
@@ -250,17 +203,17 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
           }
 
           drv_error:
-            err_print("invalid drive specified or drive is currently not mounted",chain[i]);
+            err_print("invalid drive specified or drive is currently not mounted",data[i]);
             return FALSE;
 
           goto drv_change;
         }
 
-        if (l == 1 && chain[i][0] == 47) { //FileFInd doesn't "/"
+        if (l == 1 && data[i][0] == 47) { //FileFInd doesn't "/"
         }
         else {
-          if (!FileFind(chain_peek(,i))) {
-            err_print("does not exist",chain[i]);
+          if (!FileFind(seg_peek(i))) {
+            err_print("does not exist",data[i]);
             return FALSE;
           }
         }
@@ -274,19 +227,13 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-U0 shell_execute(U8 *cmd)
-{//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
-}
-
 Bool flag_eq(U8 *flag, Bool err_disp = TRUE)
-{//Flag is equal to *flag ...
+{//Validate command flag?
   if (cur_IDX > -1) {
-    if (!(hashes[cur_IDX][2] == flag)) {
-      if (err_disp) {
+    if (!(VSAM[cur_IDX][2] == flag)) {
+      if (err_disp)
         err_print("Invalid option provided",flag);
-      }
-      return FALSE;
+      return FALSE;
     }
   }
 
@@ -311,17 +258,17 @@ U8 execute_cmd(U8 *cmd) {
 
 //dump;
 
-  U64 at = link_count(cmd),
+  U64 at = seg_count(cmd),
        i = 0;
 
-  fc = link_count(cmd,FALSE,'-');
+  fc = seg_count(cmd,FALSE,'-');
   tc = at - fc;
 
   if (tc > 0) {
     for (i=0; i < at; i++) {
-      link_trim(cmd,FALSE,TRUE);
+      seg_trim(cmd,FALSE,TRUE);
 
-      cmd = chain_push(cmd);
+      cmd = seg_push(cmd);
     }
   }
   else {
@@ -329,20 +276,12 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   U8 *orig_cmd = cmd,
-       *buffer = '\0',
+     *buffer,
      *buffera,
      *bufferb,
      *bufferc;
 
-  U64 h = 0;
-
   Bool tf = FALSE; //General use true/false flag.
-
-  //I'm using pre-calculated hash codes, for comparison checks.
-  //My opinion ... This is faster and better, than using 100
-  // StrCmp() calls.
-
-  //Guess, readability is destroyed.
 
   //NOTE:
   //Seems like HolyC evals right to left ...
@@ -356,18 +295,23 @@ U8 execute_cmd(U8 *cmd) {
   //
   //I'll look at it more.  Pretty sure, it's not my code.
 
-  cur_IDX = indexOf(chain_pop);
+  cur_IDX = indexOf(seg_peek);
 
-  buffera = tern(at>1,chain_peek(,1),'\0');
-  bufferb = tern(at>2,chain_peek(,2),'\0');
-  bufferc = tern(at>3,chain_peek(,3),'\0');
+   buffer = seg_peek;
+  buffera = tern(at>1,seg_peek(1),'\0');
+  bufferb = tern(at>2,seg_peek(2),'\0');
+  bufferc = tern(at>3,seg_peek(3),'\0');
 
-  if (cur_IDX > 0) {
-  if (err_check(hashes[3],hashes[4],hashes[5],
-                hashes[6],hashes[7])) {
+"cur_IDX %d\n",cur_IDX;
+
+  if (cur_IDX > -1) {
+  if (err_check(VSAM[cur_IDX][3],VSAM[cur_IDX][4],
+                VSAM[cur_IDX][5],
+                VSAM[cur_IDX][6],VSAM[cur_IDX][7])) {
     switch (cur_IDX) {
       case 0: //cd
       case 9: //cdd
+        "here\n";
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
@@ -412,7 +356,6 @@ U8 execute_cmd(U8 *cmd) {
       case 5: //ls
         "\n";
         Dir(tern(tc==1,".",buffera));
-
         break;
       case 6: //mv
         if (FileFind(buffera)) { //It's a file or dir.
@@ -538,7 +481,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 26: //view
         DocClear; DocTop;
-        Type(chain_peek);
+        Type(seg_peek);
         "$$BK,1$$Press ESC to exit ...$$BK,0$$";
         View; DocBottom;
         PutChars(CH_CTRLY);
@@ -581,13 +524,8 @@ U8 execute_cmd(U8 *cmd) {
   else {
     shell_execute(orig_cmd); //User is trying to normally run a OS command?
   }
-done:
-//  Free(orig_cmd);
-//  Free(buffer);
-//  Free(buffera);
-//  Free(bufferb);
-//  Free(bufferc);
 
+done:
   return 0;
 }
 
@@ -610,18 +548,16 @@ U0 templeDOS() {
   U64 result = 0;
   U8 *input;
 
-  //"HashCodeFor(\"dump\") %d\n",HashCodeFor("dump");
-
   while (TRUE)
   {
-    chain_clean;
+    seg_clean;
 
     DocBottom;
 
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
-    input = link_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
+    input = seg_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
 
     if (StrLen(input) > 0) {
       result = execute_cmd(input);
@@ -649,6 +585,6 @@ Adam("DocClear;");
 
 templeDOS;
 
-Free(hashes);
+Free(VSAM);
 
 SettingsPop;
