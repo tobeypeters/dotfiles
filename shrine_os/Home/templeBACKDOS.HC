@@ -302,16 +302,13 @@ U8 execute_cmd(U8 *cmd) {
   bufferb = tern(at>2,seg_peek(2),'\0');
   bufferc = tern(at>3,seg_peek(3),'\0');
 
-"cur_IDX %d\n",cur_IDX;
-
-  if (cur_IDX > -1) {
+  if (cur_IDX > -1) {
   if (err_check(VSAM[cur_IDX][3],VSAM[cur_IDX][4],
                 VSAM[cur_IDX][5],
                 VSAM[cur_IDX][6],VSAM[cur_IDX][7])) {
     switch (cur_IDX) {
       case 0: //cd
       case 9: //cdd
-        "here\n";
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
@@ -544,7 +541,7 @@ U0 templeDOS() {
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
-
+
   U64 result = 0;
   U8 *input;
 
