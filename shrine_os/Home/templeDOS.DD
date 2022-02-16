@@ -122,7 +122,7 @@ run	Execute source code files.
 time	Display the current time.
 	$FG,2$usage$FG$: time
 
-touch	Create an empty file. TempleOS also has a
+touch	Create an empty file. TempleOS also has a
 	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
 	$FG,2$usage$FG$: touch [FILENAME]
 
@@ -133,4 +133,4 @@ vol	Displays volume information of the current drive.
 	$FG,2$usage$FG$: vol
 
 command [OPTIONS] {option1|option2}
-
+7
