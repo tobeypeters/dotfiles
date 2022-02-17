@@ -29,37 +29,37 @@ U8 *VSAM[REC_CNT][8] =
 file / dir validator, flag count min,
 flag count max*/
 
-{496,   "cd",    "~", 1, 2,  TRUE, 0, 0},
-{502,   "df",     "", 1, 1, FALSE, 0, 0},
-{504,   "ed",     "", 2, 2, FALSE, 0, 0},
-{508,   "cp",   "-d", 3, 3,  FALSE, 0, 1},
-{517,   "fm",   "-f", 1, 2,  TRUE, 0, 0},
-{547,   "ls",     "", 1, 2,  TRUE, 0, 0},
-{554,   "mv",     "", 3, 3, FALSE, 0, 0},
-{556,   "rd",     "", 2, 2,  TRUE, 0, 1},
-{565,   "rm",     "", 2, 2,  TRUE, 0, 1},
-{2084,  "cdd",   "~", 1, 2,  TRUE, 0, 0},
-{2088,  "cat",    "", 2, 2,  TRUE, 0, 0},
-{2149,  "cpu",  "-f", 1, 1, FALSE, 0, 1},
-{2242,  "man",    "", 2, 2, FALSE, 0, 0},
-{2257,  "mem",    "", 1, 1, FALSE, 0, 0},
-{2323,  "now",    "", 1, 1, FALSE, 0, 0},
-{2402,  "run",    "", 2, 2,  TRUE, 0, 0},
-{2440,  "vol",    "", 1, 1, FALSE, 0, 0},
-{8517,  "date",   "", 1, 1, FALSE, 0, 0},
-{8816,  "help",   "", 1, 1, FALSE, 0, 0},
-{8820,  "dump",   "", 2, 2,  TRUE, 0, 0},
-{8920,  "exit",   "", 1, 1, FALSE, 0, 0},
-{8932,  "grep",   "", 2, 2, FALSE, 0, 0},
-{9309,  "more",   "", 2, 2,  TRUE, 0, 0},
-{9640,  "quit",   "", 1, 1, FALSE, 0, 0},
-{9641,  "time",   "", 1, 1, FALSE, 0, 0},
-{9753,  "tree", "-f", 1, 2,  TRUE, 0, 1},
-{9755,  "view",   "", 2, 2,  TRUE, 0, 0},
-{34374, "clear",  "", 1, 1, FALSE, 0, 0},
-{36886, "mkdir",  "", 2, 2, FALSE, 0, 0},
-{38294, "rmdir",  "", 2, 2,  TRUE, 0, 1},
-{39172, "touch",  "", 2, 2, FALSE, 0, 0}
+{496,   "cd",   "~", 1, 2,  TRUE, 0, 0},
+{502,   "df",    "", 1, 1, FALSE, 0, 0},
+{504,   "ed",    "", 2, 2, FALSE, 0, 0},
+{508,   "cp",   "d", 3, 3,  FALSE, 0, 1},
+{517,   "fm",   "f", 1, 3,  TRUE, 0, 1},
+{547,   "ls",    "", 1, 2,  TRUE, 0, 0},
+{554,   "mv",    "", 3, 3, FALSE, 0, 0},
+{556,   "rd",    "", 2, 2,  TRUE, 0, 1},
+{565,   "rm",    "", 2, 2,  TRUE, 0, 1},
+{2084,  "cdd",  "~", 1, 2,  TRUE, 0, 0},
+{2088,  "cat",   "", 2, 2,  TRUE, 0, 0},
+{2149,  "cpu",  "f", 1, 1, FALSE, 0, 1},
+{2242,  "man",   "", 2, 2, FALSE, 0, 0},
+{2257,  "mem",   "", 1, 1, FALSE, 0, 0},
+{2323,  "now",   "", 1, 1, FALSE, 0, 0},
+{2402,  "run",   "", 2, 2,  TRUE, 0, 0},
+{2440,  "vol",   "", 1, 1, FALSE, 0, 0},
+{8517,  "date",  "", 1, 1, FALSE, 0, 0},
+{8816,  "help",  "", 1, 1, FALSE, 0, 0},
+{8820,  "dump",  "", 2, 2,  TRUE, 0, 0},
+{8920,  "exit",  "", 1, 1, FALSE, 0, 0},
+{8932,  "grep",  "", 2, 2, FALSE, 0, 0},
+{9309,  "more",  "", 2, 2,  TRUE, 0, 0},
+{9640,  "quit",  "", 1, 1, FALSE, 0, 0},
+{9641,  "time",  "", 1, 1, FALSE, 0, 0},
+{9753,  "tree", "f", 1, 3,  TRUE, 0, 1},
+{9755,  "view",  "", 2, 2,  TRUE, 0, 0},
+{34374, "clear", "", 1, 1, FALSE, 0, 0},
+{36886, "mkdir", "", 2, 2, FALSE, 0, 0},
+{38294, "rmdir", "", 2, 2,  TRUE, 0, 1},
+{39172, "touch", "", 2, 2, FALSE, 0, 0}
 
 };
 I64 cur_IDX = -1;
@@ -230,7 +230,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 Bool flag_eq(U8 *flag, Bool err_disp = TRUE)
 {//Validate command flag?
   if (cur_IDX > -1) {
-    if (!(VSAM[cur_IDX][2] == flag)) {
+    if (!(VSAM[cur_IDX][2][0] == flag[1])) {
       if (err_disp)
         err_print("Invalid option provided",flag);
       return FALSE;
@@ -261,6 +261,8 @@ U8 execute_cmd(U8 *cmd) {
   U64 at = seg_count(cmd),
        i = 0;
 
+  U8 *orig_cmd = cmd;
+
   fc = seg_count(cmd,FALSE,'-');
   tc = at - fc;
 
@@ -275,8 +277,7 @@ U8 execute_cmd(U8 *cmd) {
     return 0;
   }
 
-  U8 *orig_cmd = cmd,
-     *buffer,
+  U8 *buffer,
      *buffera,
      *bufferb,
      *bufferc;
@@ -315,14 +316,12 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 3: //cp
-Bool err_check(U64 tcmin=1, U64 tcmax=1,
-	       Bool fd_check=FALSE,
-	       U64 fcmin=0, U64 fcmax=0)
-
-
+//Bool err_check(U64 tcmin=1, U64 tcmax=1,
+//	       Bool fd_check=FALSE,
+//	       U64 fcmin=0, U64 fcmax=0)
 
         if (fc == 1) {
-          if (flag_eq(buffera,280)) { // "-d"
+          if (flag_eq(buffera,TRUE)) { // "-d"
             CopyTree(bufferb,bufferc);
           }
         }
@@ -334,7 +333,7 @@ U8 execute_cmd(U8 *cmd) {
       case 4: //fm
       case 25: //tree
         if (fc == 1) {
-          if (!(tf = flag_eq(buffera,282))) { //-f
+          if (!(tf = flag_eq(buffera,TRUE))) { //-f
             goto done;
           }
         }
@@ -375,7 +374,7 @@ U8 execute_cmd(U8 *cmd) {
       case 29: //rmdir
         if (fc == 1 || cur_IDX == 7 || cur_IDX == 29) {
           if (fc == 1) { //No short circuiting in this language is killing me.
-            if (!flag_eq(buffera,280)) { //-d
+            if (!flag_eq(buffera,TRUE)) { //-d
               goto done;
             }
           }
@@ -394,7 +393,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 11: //cpu
         if (fc == 1) {
-          if (!(tf = flag_eq(buffera,282))) { //-f
+          if (!(tf = flag_eq(buffera,TRUE))) { //-f
             goto done;
           }
         }
@@ -494,7 +493,8 @@ U8 execute_cmd(U8 *cmd) {
         //OK ... Angry. I made an attrib command that lets you
         //set file attributes. But, the system ignores them.
         //I can set a file READONLY and still edit/delete it.
-        //Verified on FAT32 and RedSea. Killing me.
+        //Verified on FAT32 and RedSea. Killing me. I'll further,
+        //validate this and try to figure out if it's me or something.
 
         // Creates an empty file, if it doesn't exist.
         if (!FileFind(buffera)) {
