@@ -21,6 +21,13 @@
 
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
+#define ERR_ARGC "Invalid number of arguments provided"
+#define ERR_FLGC "Invalid number of options provided"
+#define ERR_FLGI "Invalid option provided"
+#define ERR_FILEFF "File / Directory found"
+#define ERR_FILENF "File / Directory not found"
+#define ERR_DRVIM "invalid drive specified or drive is not mounted"
+
 U8 cur_drv()
 {//Return the current drive letter.
     return Drv2Let(Fs->cur_dv);
@@ -81,6 +88,39 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
   }
 }
 
+Bool IsDirChr(U8 *chr) {
+  return (chr == '/' || chr == '~');
+}
+
+I64 ValidFiles(U8 *mask="11111111",...) 
+{//Validate argv list of files & directories.
+ //It uses a mask to determine, whether you want
+ //to know, if it exists <1> or doesn't <0>.
+ //
+ //Usage: 
+ //        ValidFiles("10",buffera,bufferb)
+ //                    ^^
+ //     buffera exists-||
+ //                     -- bufferb doesn't 
+ //
+
+
+
+/*  U64 i = argc - 1;
+
+  for (;i>=0;i--) {
+    "%s %d\n",argv[i],FileFind(argv[i]) && mask[i];
+    if (!(FileFind(argv[i]) && mask[i])) { //Is it a file?
+      if (IsDir(argv[i]) && mask[i])  { //No, is it a directory?
+        return FALSE;                   //Nope, non-valid
+      }
+    }
+  }
+*/
+
+  return 1;
+}
+
 U64 HashCodeFor(U8 *str)
 {//Hash code generator for strings.
  //This is a pretty weak one. I don't need much.
@@ -110,4 +150,3 @@ U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
   "\n"; ExePutS(cmd); "\n";
 }
-

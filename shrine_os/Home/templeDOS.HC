@@ -32,7 +32,7 @@ flag count max*/
 {496,   "cd",   "~", 1, 2,  TRUE, 0, 0},
 {502,   "df",    "", 1, 1, FALSE, 0, 0},
 {504,   "ed",    "", 2, 2, FALSE, 0, 0},
-{508,   "cp",   "d", 3, 3,  FALSE, 0, 1},
+{508,   "cp",   "d", 3, 3, FALSE, 0, 1},
 {517,   "fm",   "f", 1, 3,  TRUE, 0, 1},
 {547,   "ls",    "", 1, 2,  TRUE, 0, 0},
 {554,   "mv",    "", 3, 3, FALSE, 0, 0},
@@ -54,7 +54,7 @@ flag count max*/
 {9309,  "more",  "", 2, 2,  TRUE, 0, 0},
 {9640,  "quit",  "", 1, 1, FALSE, 0, 0},
 {9641,  "time",  "", 1, 1, FALSE, 0, 0},
-{9753,  "tree", "f", 1, 3,  TRUE, 0, 1},
+{9753,  "tree", "f", 1, 3,  TRUE, 0, 1},
 {9755,  "view",  "", 2, 2,  TRUE, 0, 0},
 {34374, "clear", "", 1, 1, FALSE, 0, 0},
 {36886, "mkdir", "", 2, 2, FALSE, 0, 0},
@@ -173,12 +173,12 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 	       U64 fcmin=0, U64 fcmax=0)
 {//Cheap error checker.
   if (tc < tcmin || tc > tcmax) {
-    err_print("Invalid number of arguments provided");
+    err_print(ERR_ARGC);
     return FALSE;
   }
 
   if (fc < fcmin || fc > fcmax) {
-    err_print("Invalid number of options provided");
+    err_print(ERR_FLGC);
     return FALSE;
   }
 
@@ -203,17 +203,17 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
           }
 
           drv_error:
-            err_print("invalid drive specified or drive is currently not mounted",data[i]);
+            err_print(ERR_DRVIM,data[i]);
             return FALSE;
 
           goto drv_change;
         }
 
-        if (l == 1 && data[i][0] == 47) { //FileFInd doesn't "/"
+        if (l == 1 && IsDirChr(data[i][0])) {
         }
         else {
-          if (!FileFind(seg_peek(i))) {
-            err_print("does not exist",data[i]);
+          if (ValidFiles("0",seg_peek(i))) {
+            err_print(ERR_FILENF,data[i]);
             return FALSE;
           }
         }
@@ -232,7 +232,7 @@ Bool flag_eq(U8 *flag, Bool err_disp = TRUE)
   if (cur_IDX > -1) {
     if (!(VSAM[cur_IDX][2][0] == flag[1])) {
       if (err_disp)
-        err_print("Invalid option provided",flag);
+        err_print(ERR_FLGI,flag);
       return FALSE;
     }
   }
@@ -266,16 +266,15 @@ U8 execute_cmd(U8 *cmd) {
   fc = seg_count(cmd,FALSE,'-');
   tc = at - fc;
 
-  if (tc > 0) {
-    for (i=0; i < at; i++) {
-      seg_trim(cmd,FALSE,TRUE);
+  if (tc == 0) return 0;
 
-      cmd = seg_push(cmd);
-    }
+  for (i=0; i < at; i++) {
+    seg_trim(cmd,FALSE,TRUE);
+
+    cmd = seg_push(cmd);
   }
-  else {
-    return 0;
-  }
+
+  i = 0;
 
   U8 *buffer,
      *buffera,
@@ -316,17 +315,19 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 3: //cp
-//Bool err_check(U64 tcmin=1, U64 tcmax=1,
-//	       Bool fd_check=FALSE,
-//	       U64 fcmin=0, U64 fcmax=0)
-
-        if (fc == 1) {
-          if (flag_eq(buffera,TRUE)) { // "-d"
-            CopyTree(bufferb,bufferc);
+        buffer = tern(fc==1,bufferb,buffera);
+        if (ValidFiles(buffer)) {
+          if (fc == 1) {
+            if (flag_eq(buffera,TRUE)) { // "-d"
+              CopyTree(buffer,bufferc);
+            }
+          }
+          else {
+            Copy(buffer,bufferb);
           }
         }
         else {
-          Copy(buffera,bufferb);
+          err_print(ERR_FILENF,buffer);
         }
 
         break;
@@ -348,25 +349,39 @@ U8 execute_cmd(U8 *cmd) {
         Dir(tern(tc==1,".",buffera));
         break;
       case 6: //mv
-        if (FileFind(buffera)) { //It's a file or dir.
-          if (FileFind(bufferb))
-          { //File or dir already exists.
-            //I don't allow overriding now.
-            err_print("Already exists",bufferb);
+        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+          if (IsDir(buffera)) {
+            CopyTree(buffera,bufferb);
+            DelTree(buffera);
           }
           else {
+            Move(buffera,bufferb);
+          }
+        }
+        else {
+         buffer = tern(i==0,ERR_FILEFF,ERR_FILENF);
+         err_print(buffer,tern(i==0,bufferb,buffera)); 
+        }
+
+        /*if (ValidFiles(buffera)) {
+          if (ValidFiles("0",bufferb)) { //Don't allow override.
             if (IsDir(buffera)) {
-              CopyTree(buffera,bufferb);
-              DelTree(buffera);
+              if (ValidFiles(bufferb)) {
+                CopyTree(buffera,bufferb);
+                DelTree(buffera);
+              }
             }
             else {
               Move(buffera,bufferb);
             }
           }
+          else {
+            err_print(ERR_FILEFF,bufferb);
+          }
         }
         else {
-          err_print("Doesn't exist",buffera);        
-        }
+          err_print(ERR_FILENF,buffera);
+        }*/
 
         break;
       case 7: //rd
@@ -438,7 +453,7 @@ U8 execute_cmd(U8 *cmd) {
           More(help_file);
         }
         else {
-          err_print("File not found",help_file);
+          err_print(ERR_FILENF,help_file);
         }
 
         break;
@@ -481,11 +496,11 @@ U8 execute_cmd(U8 *cmd) {
         DocClear;
         break;
       case 28: //mkdir
-        if (!FileFind(buffera)) {
+        if (ValidFiles("0",buffera)) {
           DirMk(buffera);
         }
         else {
-          err_print("Directory already exists","info");
+          err_print(ERR_FILEFF,"info");
         }
 
         break;
@@ -497,7 +512,7 @@ U8 execute_cmd(U8 *cmd) {
         //validate this and try to figure out if it's me or something.
 
         // Creates an empty file, if it doesn't exist.
-        if (!FileFind(buffera)) {
+        if (ValidFiles("0",buffera)) {
           // Off-hand, looks like Touch() doesn't create
           // files. I'll look more at it and touchfile().
           FileWrite(buffera,NULL,0);
