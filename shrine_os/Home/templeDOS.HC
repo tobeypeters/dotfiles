@@ -349,39 +349,20 @@ U8 execute_cmd(U8 *cmd) {
         Dir(tern(tc==1,".",buffera));
         break;
       case 6: //mv
-        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
-          if (IsDir(buffera)) {
+        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+/*          if (IsDir(buffera)) {
             CopyTree(buffera,bufferb);
             DelTree(buffera);
           }
           else {
             Move(buffera,bufferb);
-          }
+          }*/
         }
         else {
-         buffer = tern(i==0,ERR_FILEFF,ERR_FILENF);
-         err_print(buffer,tern(i==0,bufferb,buffera)); 
+/*          buffer = tern(i==0,ERR_FILENF,ERR_FILEFF);
+          err_print(buffer,tern(i==0,buffera,bufferb));*/
         }
 
-        /*if (ValidFiles(buffera)) {
-          if (ValidFiles("0",bufferb)) { //Don't allow override.
-            if (IsDir(buffera)) {
-              if (ValidFiles(bufferb)) {
-                CopyTree(buffera,bufferb);
-                DelTree(buffera);
-              }
-            }
-            else {
-              Move(buffera,bufferb);
-            }
-          }
-          else {
-            err_print(ERR_FILEFF,bufferb);
-          }
-        }
-        else {
-          err_print(ERR_FILENF,buffera);
-        }*/
 
         break;
       case 7: //rd

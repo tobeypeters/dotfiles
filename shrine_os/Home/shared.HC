@@ -88,8 +88,24 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
   }
 }
 
+Bool IsDrv(U8 *chr)
+{//Horrible ... horrible function ...
+ //Maybe I can do something better in
+ //ValidFiles.
+  U64 l = StrLen(chr);
+
+  if (1<l<4) { //Shot in the dark we got a: or a:/
+    if (96<*chr<123) {
+      return drv_valid(chr[0]);
+    }
+  }
+
+  return FALSE;
+}
+
 Bool IsDirChr(U8 *chr) {
-  return (chr == '/' || chr == '~');
+  if (IsDrv(chr)) return TRUE; //Wrong place to be doing this.
+  return (*chr == '/' || *chr == '~');
 }
 
 I64 ValidFiles(U8 *mask="11111111",...) 
@@ -97,28 +113,33 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //It uses a mask to determine, whether you want
  //to know, if it exists <1> or doesn't <0>.
  //
+ //YES, this needs to be replaced with code
+ //which directory iteration and checks attributes.
+ //
  //Usage: 
  //        ValidFiles("10",buffera,bufferb)
  //                    ^^
  //     buffera exists-||
  //                     -- bufferb doesn't 
  //
-
-
-
-/*  U64 i = argc - 1;
-
-  for (;i>=0;i--) {
-    "%s %d\n",argv[i],FileFind(argv[i]) && mask[i];
-    if (!(FileFind(argv[i]) && mask[i])) { //Is it a file?
-      if (IsDir(argv[i]) && mask[i])  { //No, is it a directory?
-        return FALSE;                   //Nope, non-valid
+ //returns:
+ //         1	All files are valid
+ //      -IDX	IDX where it failed in negative form.
+ //          	0 & under is FALSE. So, If it fails,
+ //          	you can easily tell which one was invalid.
+ //
+  U64 i = 0;
+ 
+  for (;i<argc;i++) {
+    if (!IsDirChr(argv[i])) {
+      if ((FileFind(argv[i]) ||
+           IsDir(argv[i])) != mask[i]-48) {
+        return 0 - i;
       }
     }
-  }
-*/
+  }  
 
-  return 1;
+  return 1;
 }
 
 U64 HashCodeFor(U8 *str)
