@@ -33,7 +33,7 @@ U8 cur_drv()
     return Drv2Let(Fs->cur_dv);
 }
 
-Bool drv_valid(U8 *drv)
+Bool drv_mounted(U8 *drv)
 {//Valid mounted drive?
  //I cannot find any built-in functions, which didn't
  //throw exceptions if I tested a unmounted / non 
@@ -89,23 +89,16 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
 }
 
 Bool IsDrv(U8 *chr)
-{//Horrible ... horrible function ...
- //Maybe I can do something better in
- //ValidFiles.
+{
   U64 l = StrLen(chr);
 
-  if (1<l<4) { //Shot in the dark we got a: or a:/
-    if (96<*chr<123) {
-      return drv_valid(chr[0]);
+  if (1<l<3) {
+    if (96<*chr<123) { //a: ... z:
+      return drv_mounted(chr[0]);
     }
   }
 
   return FALSE;
-}
-
-Bool IsDirChr(U8 *chr) {
-  if (IsDrv(chr)) return TRUE; //Wrong place to be doing this.
-  return (*chr == '/' || *chr == '~');
 }
 
 I64 ValidFiles(U8 *mask="11111111",...) 
@@ -129,15 +122,19 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //          	you can easily tell which one was invalid.
  //
   U64 i = 0;
+
+  //We have exceptions ...
+  Silent(ON);
+  //No we don't ...
  
   for (;i<argc;i++) {
-    if (!IsDirChr(argv[i])) {
-      if ((FileFind(argv[i]) ||
-           IsDir(argv[i])) != mask[i]-48) {
-        return 0 - i;
-      }
+    if ((FileFind(argv[i]) ||
+         IsDir(argv[i])) != mask[i]-48) {
+      return 0 - i;
     }
-  }  
+  }
+
+  Silent(OFF);
 
   return 1;
 }

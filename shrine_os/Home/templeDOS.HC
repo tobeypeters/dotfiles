@@ -193,7 +193,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
         //Are we changing to another mounted drive?
         if (l == 2 && data[i][1] == ':') {
           if (96<data[i][0]<123 || 64<data[i][0]<91) { //a:..z: or A:..Z:
-            if (!drv_valid(data[i][0])) {
+            if (!drv_mounted(data[i][0])) {
               goto drv_error;
             }
             goto drv_change;
@@ -217,7 +217,8 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
             return FALSE;
           }
         }
-        drv_change:
+
+        done:
       }
 
       i++;
@@ -349,7 +350,7 @@ U8 execute_cmd(U8 *cmd) {
         Dir(tern(tc==1,".",buffera));
         break;
       case 6: //mv
-        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
 /*          if (IsDir(buffera)) {
             CopyTree(buffera,bufferb);
             DelTree(buffera);

@@ -20,13 +20,34 @@ DocClear;
 //$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 "FileFind(\"\Demo\"): %d\n",FileFind("/Demo");*/
 
-//Watch this:
+/*//Watch this:
 "%d %d\n",'a','z'; //97 .. 122 
 "%d %d\n",*"a",*"z"; //97 .. 122 
 "%d %d\n",*"a:",*"z:"; //97 .. 122 
-"%d %d\n",*"a:/",*"z:/"; //97 .. 122 
+"%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
 
-
+
+U0 IsDrive(U8 *drv)
+{//Checks for drives & drive "chars".
+
+  //We got exceptions ...
+  Silent(ON);
+  //Now we don't ...
+
+  FileFind(drv);
+
+  Silent(OFF);
+}
+
+
+"dir %d\n",IsDir("b:");
+"file %\n",FileFind("b:");
+
+
+
+//IsDrive("::");
+
+
 "\n";
 
 KeyAndCont;
