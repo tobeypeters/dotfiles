@@ -182,43 +182,27 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
     return FALSE;
   }
 
-  if (fd_check && tc > 1) { //Make sure all files & directories exist.
-    U64 i = 1,
-        l = 0;
+  //Make sure all files & directories exist and
+  //any specified drives are mounted.
+  if (fd_check && tc > 1) {
+    I64 i = 1,
+        x = -1;
 
     while (i < segs) {
       if (!(data[i][0] == '-')) {
-        l = StrLen(data[i]);
-
-        //Are we changing to another mounted drive?
-        if (l == 2 && data[i][1] == ':') {
-          if (96<data[i][0]<123 || 64<data[i][0]<91) { //a:..z: or A:..Z:
-            if (!drv_mounted(data[i][0])) {
-              goto drv_error;
-            }
-            goto drv_change;
-          }
-          else {
-            goto drv_error;
-          }
-
-          drv_error:
+        //Are we changing to another drive?
+        x = is_drv(data[i]);
+        if (x == 0 || x == -2) {
             err_print(ERR_DRVIM,data[i]);
             return FALSE;
-
-          goto drv_change;
         }
 
-        if (l == 1 && IsDirChr(data[i][0])) {
-        }
-        else {
+        if (x == -1) {
           if (ValidFiles("0",seg_peek(i))) {
             err_print(ERR_FILENF,data[i]);
             return FALSE;
           }
         }
-
-        done:
       }
 
       i++;
@@ -317,7 +301,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 3: //cp
         buffer = tern(fc==1,bufferb,buffera);
-        if (ValidFiles(buffer)) {
+        if (ValidFiles(,buffer)) {
           if (fc == 1) {
             if (flag_eq(buffera,TRUE)) { // "-d"
               CopyTree(buffer,bufferc);
@@ -327,9 +311,12 @@ U8 execute_cmd(U8 *cmd) {
             Copy(buffer,bufferb);
           }
         }
-        else {
-          err_print(ERR_FILENF,buffer);
-        }
+/*        else {
+          "is_drv: %d\n",is_drv(buffer);
+
+          err_print(tern(is_drv(buffer)<0,
+                    ERR_FILENF,ERR_DRVIM),buffer);
+        }*/
 
         break;
       case 4: //fm

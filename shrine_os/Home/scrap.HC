@@ -26,27 +26,55 @@ DocClear;
 "%d %d\n",*"a:",*"z:"; //97 .. 122 
 "%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
 
+/*Bool drv_mounted(U8 *drv)
+{//Valid mounted drive?
+ //Better than using a built-in like 
+ // DrvIsWritable()? IDK ... Prob not.
+  CDrv *dv;
 
-U0 IsDrive(U8 *drv)
-{//Checks for drives & drive "chars".
+  U64 i;
 
-  //We got exceptions ...
-  Silent(ON);
-  //Now we don't ...
+  drv = ToUpper(drv);
 
-  FileFind(drv);
+  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
+    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
+      if (Drv2Let(dv) == drv) {
+        return TRUE;
+      }
+    }
+  }
 
-  Silent(OFF);
+  return FALSE;
 }
 
+I64 is_drv(U8 *drv)
+{//Checks to see if drv points to a valid drive.
+ //
+ //Returns:
+ //          -1 Not a valid drive.
+ //           0 Drive is valid. But, not mounted.
+ //           1 Drive is valid & mounted.
+  U64 l = StrLen(drv);
 
-"dir %d\n",IsDir("b:");
-"file %\n",FileFind("b:");
+  if (l == 2) {
+    if (drv[1] == ':') {
+      if (96<drv[0]<123 || 64<drv[0]<91) {
+        return drv_mounted(drv[0]);
+      }
+    }
+  }
 
+  return -1;
+}
+"%d\n",is_drv("9:");
+"%d\n",is_drv("Q:");
+"%d\n",is_drv("B:");*/
 
+#include "shared"
 
-//IsDrive("::");
-
+if (0) {
+  "yeppers\n";
+}
 
 "\n";
 

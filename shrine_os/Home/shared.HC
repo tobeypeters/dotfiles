@@ -28,34 +28,16 @@
 #define ERR_FILENF "File / Directory not found"
 #define ERR_DRVIM "invalid drive specified or drive is not mounted"
 
-U8 cur_drv()
-{//Return the current drive letter.
-    return Drv2Let(Fs->cur_dv);
+U8 tern(Bool condition, U64 *first, U64 *second)
+{//Ternary operator like function.
+  if (condition) return first;
+
+  return second;
 }
 
-Bool drv_mounted(U8 *drv)
-{//Valid mounted drive?
- //I cannot find any built-in functions, which didn't
- //throw exceptions if I tested a unmounted / non 
- //existent drive ... like 'z:'
-  CDrv *dv;
-  CBlkDev *bd;
-
-  I64 i,drv_let;
-
-  drv = ToUpper(drv);
-
-  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
-    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
-      bd=dv->bd;
-      drv_let=Drv2Let(dv);
-      if (drv_let == drv) {
-        return TRUE;
-      }
-    }
-  }
-
-  return FALSE;
+U8 cur_drv()
+{//Return the current drive letter.
+  return Drv2Let(Fs->cur_dv);
 }
 
 F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
@@ -88,26 +70,55 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
   }
 }
 
-Bool IsDrv(U8 *chr)
-{
-  U64 l = StrLen(chr);
+Bool drv_mounted(U8 *drv)
+{//Valid mounted drive?
+ //Better than using a built-in like 
+ // DrvIsWritable()? IDK ... Prob not.
+  CDrv *dv;
 
-  if (1<l<3) {
-    if (96<*chr<123) { //a: ... z:
-      return drv_mounted(chr[0]);
+  U64 i;
+
+  drv = ToUpper(drv);
+
+  for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
+    if (dv->dv_signature==DRV_SIGNATURE_VAL) {
+      if (Drv2Let(dv) == drv) {
+        return TRUE;
+      }
     }
   }
 
   return FALSE;
 }
 
+I64 is_drv(U8 *drv)
+{//Checks to see if drv points to a valid drive.
+ //
+ //Returns:
+ //          -2 Right format, not a drive. Like ... 9:
+ //          -1 Wrong format. File or Directory name probably provided.
+ //           0 Drive is valid. But, not mounted.
+ //           1 Drive is valid & mounted.
+  U64 l = StrLen(drv);
+
+  if (l == 2) {
+    if (drv[1] == ':') {
+      if (96<drv[0]<123 || 64<drv[0]<91) {
+        return drv_mounted(drv[0]);
+      }
+      else {
+        return -2;
+      }
+    }
+  }
+
+  return -1;
+}
+
 I64 ValidFiles(U8 *mask="11111111",...) 
-{//Validate argv list of files & directories.
+{//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
  //to know, if it exists <1> or doesn't <0>.
- //
- //YES, this needs to be replaced with code
- //which directory iteration and checks attributes.
  //
  //Usage: 
  //        ValidFiles("10",buffera,bufferb)
@@ -121,20 +132,22 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //          	0 & under is FALSE. So, If it fails,
  //          	you can easily tell which one was invalid.
  //
-  U64 i = 0;
+  I64 i = 0,
+      x = -1;
 
   //We have exceptions ...
-  Silent(ON);
+//  Silent(ON);
   //No we don't ...
- 
+
   for (;i<argc;i++) {
-    if ((FileFind(argv[i]) ||
-         IsDir(argv[i])) != mask[i]-48) {
-      return 0 - i;
+    x = is_drv(argv[i]);
+    if (((x + tern(x==-1,1,0)) || FileFind(argv[i]) ||
+        IsDir(argv[i])) != mask[i]-48) {
+        return 0 - i;
     }
   }
 
-  Silent(OFF);
+//  Silent(OFF);
 
   return 1;
 }
@@ -155,14 +168,6 @@ U64 HashCodeFor(U8 *str)
 
   return hash;
 }
-
-U8 tern(Bool condition, U64 *first, U64 *second)
-{//Ternary operator like function.
-  if (condition) return first;
-
-  return second;
-}
-
 
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.

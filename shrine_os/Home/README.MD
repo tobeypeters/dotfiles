@@ -20,7 +20,7 @@
 
 <b>General:</b>
  * Added $LK,"shared.HC",A="FI:C:/Home/shared.HC"$ : Shared HolyC source file.
- * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
+ * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
    compositor. Right now it overrides the
    mouse cursor color.
  * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
@@ -68,7 +68,13 @@
 <b>C:/Adam/Opt/Utils/LineRep.HC.Z:</b>
  * Added in-line file manager. Refactored SizeRep;
 
+<b>C:/Kernel/BlkDev/DskDirB.HC.Z:</b>
+ * Added Hack to IsDir(). It was hanging on doing checks
+   for things like 9: ... Pretty sure that was the culprit.
+   Cause, my app doesn't hang anymore.
+
 <b>C:/Kernel/StrB.HC.Z:</b>
  * Added KeyAndCont().
    It displays "Press any key to continue ...". without any newline
    characters and "clears" the line after you press a key.
+
