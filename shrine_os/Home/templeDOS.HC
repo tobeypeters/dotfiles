@@ -243,7 +243,7 @@ U8 execute_cmd(U8 *cmd) {
 
 //dump;
 
-  U64 at = seg_count(cmd),
+  I64 at = seg_count(cmd),
        i = 0;
 
   U8 *orig_cmd = cmd;
@@ -301,22 +301,23 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 3: //cp
         buffer = tern(fc==1,bufferb,buffera);
-        if (ValidFiles(,buffer)) {
+        if (i = ValidFiles(,buffer)) {
           if (fc == 1) {
             if (flag_eq(buffera,TRUE)) { // "-d"
-              CopyTree(buffer,bufferc);
+              if (is_dir(buffer) {
+                CopyTree(buffer,bufferc);
+                goto done;
+              }
             }
           }
           else {
-            Copy(buffer,bufferb);
+            Copy(buffer,bufferb);
+            goto done;
           }
         }
-/*        else {
-          "is_drv: %d\n",is_drv(buffer);
 
-          err_print(tern(is_drv(buffer)<0,
-                    ERR_FILENF,ERR_DRVIM),buffer);
-        }*/
+        err_print(tern(is_drv(buffer)<0,
+                  ERR_FILENF,ERR_DRVIM),buffer);
 
         break;
       case 4: //fm
