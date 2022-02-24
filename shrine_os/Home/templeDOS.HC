@@ -214,13 +214,14 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 
 Bool flag_eq(U8 *flag, Bool err_disp = TRUE)
 {//Validate command flag?
+  if (fc > 0) { //Make sure we had parsed atleast one flag.
   if (cur_IDX > -1) {
     if (!(VSAM[cur_IDX][2][0] == flag[1])) {
       if (err_disp)
         err_print(ERR_FLGI,flag);
       return FALSE;
     }
-  }
+  }}
 
   return TRUE;
 }
@@ -301,31 +302,29 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 3: //cp
         buffer = tern(fc==1,bufferb,buffera);
-        if (i = ValidFiles(,buffer)) {
-          if (fc == 1) {
-            if (flag_eq(buffera,TRUE)) { // "-d"
-              if (is_dir(buffer) {
-                CopyTree(buffer,bufferc);
-                goto done;
-              }
+
+        if (ValidFiles(,buffer)) {
+          if (flag_eq(buffera,TRUE)) { // "-d"
+            if (IsDir(buffer)) {
+              CopyTree(buffer,bufferc);
+              goto done;
             }
           }
           else {
-            Copy(buffer,bufferb);
+            Copy(buffer,bufferb);
             goto done;
           }
+
         }
 
-        err_print(tern(is_drv(buffer)<0,
+        err_print(tern(is_drv(buffer)==-1,
                   ERR_FILENF,ERR_DRVIM),buffer);
 
         break;
       case 4: //fm
       case 25: //tree
-        if (fc == 1) {
-          if (!(tf = flag_eq(buffera,TRUE))) { //-f
-            goto done;
-          }
+        if (!(tf = flag_eq(buffera,TRUE))) { //-f
+          goto done;
         }
 
         buffer = tern(fc==0,buffera,bufferb);
@@ -338,27 +337,22 @@ U8 execute_cmd(U8 *cmd) {
         Dir(tern(tc==1,".",buffera));
         break;
       case 6: //mv
-        if (i = ValidFiles("10",buffera,bufferb)) { //Don't allow override.
-/*          if (IsDir(buffera)) {
+        if (ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+          if (IsDir(buffera)) {
             CopyTree(buffera,bufferb);
             DelTree(buffera);
           }
           else {
             Move(buffera,bufferb);
-          }*/
+          }
         }
-        else {
-/*          buffer = tern(i==0,ERR_FILENF,ERR_FILEFF);
-          err_print(buffer,tern(i==0,buffera,bufferb));*/
-        }
-
 
         break;
       case 7: //rd
       case 8: //rm
       case 29: //rmdir
-        if (fc == 1 || cur_IDX == 7 || cur_IDX == 29) {
-          if (fc == 1) { //No short circuiting in this language is killing me.
+        if (fc == 1) {
+          if (fc == 1 && cur_IDX == 8) {
             if (!flag_eq(buffera,TRUE)) { //-d
               goto done;
             }

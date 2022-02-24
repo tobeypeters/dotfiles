@@ -70,11 +70,36 @@ I64 is_drv(U8 *drv)
 "%d\n",is_drv("Q:");
 "%d\n",is_drv("B:");*/
 
-#include "shared"
+//#include "shared"
 
-if (0) {
-  "yeppers\n";
-}
+/*if (-2) "-2 yeppers\n";
+if (-1) "-1 yeppers\n";
+if (-0) "-0 yeppers\n";
+if (1)  "1 yeppers\n";
+"%d\n",AbsI64(-1);
+"%d\n",AbsI64(1);*/
+
+#define BIT_File 63
+#define BIT_Dir  62
+#define BIT_Drv  61
+#define BIT_File 63
+#define BIT_File 63
+#define BIT_File 63
+
+U64 *viper = "test";
+
+"Before: %s\n",viper;
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+Bts(viper,63);
+"After: %s\n",viper;
+
+
 
 "\n";
 
