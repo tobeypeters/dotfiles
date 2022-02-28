@@ -21,6 +21,11 @@
 
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
+#define HAS_File 1
+#define HAS_Dir  2
+#define HAS_Drv  4
+
+
 #define ERR_ARGC "Invalid number of arguments provided"
 #define ERR_FLGC "Invalid number of options provided"
 #define ERR_FLGI "Invalid option provided"
@@ -96,7 +101,7 @@ I64 is_drv(U8 *drv)
  //
  //Returns:
  //          -2 Right format, not a drive. Like ... 9:
- //          -1 Wrong format. File or Directory name probably provided.
+ //          -1 Wrong format. File or Directory name probably provided.
  //           0 Drive is valid. But, not mounted.
  //           1 Drive is valid & mounted.
   U64 l = StrLen(drv);

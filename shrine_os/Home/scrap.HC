@@ -79,27 +79,38 @@ if (1)  "1 yeppers\n";
 "%d\n",AbsI64(-1);
 "%d\n",AbsI64(1);*/
 
-#define BIT_File 63
-#define BIT_Dir  62
-#define BIT_Drv  61
-#define BIT_File 63
-#define BIT_File 63
-#define BIT_File 63
+/*#define HAS_File 1
+#define HAS_Dir  2
+#define HAS_Drv  4
 
-U64 *viper = "test";
+U64 f = 0;
+U64 *buffer = "viper armed";
 
-"Before: %s\n",viper;
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-Bts(viper,63);
-"After: %s\n",viper;
+f = HAS_Dir | HAS_File;
 
+if (f&HAS_File) {
+  "File yeppers\n";
+}
+if (f&HAS_Dir) {
+  "Dir yeppers\n";
+}
+if (f&HAS_Drv) {
+  "Drv yeppers\n";
+}
 
+buffer[1] = buffer[1] | HAS_File;
+"%s\n",buffer[0];
+
+if (buffer[1] & HAS_File) {
+  "buffer[0] file yeppers\n";
+}*/
+
+U64 *buffer = "viper armed";
+
+U64 test = 124;
+
+//"%s\n",buffer.u8[0]; //Sad I can't do this.
+"%d\n",test.u8[0];     //Can do this.  guess, only works on numbers.
 
 "\n";
 

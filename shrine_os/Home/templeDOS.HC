@@ -267,6 +267,8 @@ U8 execute_cmd(U8 *cmd) {
      *bufferb,
      *bufferc;
 
+  U64 bf = 0;
+
   Bool tf = FALSE; //General use true/false flag.
 
   cur_IDX = indexOf(seg_peek);
@@ -352,7 +354,7 @@ U8 execute_cmd(U8 *cmd) {
       case 8: //rm
       case 29: //rmdir
         if (fc == 1) {
-          if (fc == 1 && cur_IDX == 8) {
+          if (fc == 1 && cur_IDX == 8) {
             if (!flag_eq(buffera,TRUE)) { //-d
               goto done;
             }
