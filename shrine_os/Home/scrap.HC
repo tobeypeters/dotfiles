@@ -13,7 +13,6 @@ DocClear;
 
 /*"IsDir(): %d %d %d %d\n",'-','~',IsDir("/"),IsDir("~");
 "FileFind(): %d %d %d %d\n",'-','~',FileFind('/'),FileFind("~");
-
 //And before you say duh ... you CAN use FileFind on
 //MOST directories in TempleOS.  Unless, you set the appropriate flag.
 //Things can always be overrided.  This was his grep function.
@@ -25,17 +24,13 @@ DocClear;
 "%d %d\n",*"a",*"z"; //97 .. 122 
 "%d %d\n",*"a:",*"z:"; //97 .. 122 
 "%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
-
 /*Bool drv_mounted(U8 *drv)
 {//Valid mounted drive?
  //Better than using a built-in like 
  // DrvIsWritable()? IDK ... Prob not.
   CDrv *dv;
-
   U64 i;
-
   drv = ToUpper(drv);
-
   for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
     if (dv->dv_signature==DRV_SIGNATURE_VAL) {
       if (Drv2Let(dv) == drv) {
@@ -43,10 +38,8 @@ DocClear;
       }
     }
   }
-
   return FALSE;
 }
-
 I64 is_drv(U8 *drv)
 {//Checks to see if drv points to a valid drive.
  //
@@ -63,7 +56,6 @@ I64 is_drv(U8 *drv)
       }
     }
   }
-
   return -1;
 }
 "%d\n",is_drv("9:");
@@ -82,12 +74,9 @@ if (1)  "1 yeppers\n";
 /*#define HAS_File 1
 #define HAS_Dir  2
 #define HAS_Drv  4
-
 U64 f = 0;
 U64 *buffer = "viper armed";
-
 f = HAS_Dir | HAS_File;
-
 if (f&HAS_File) {
   "File yeppers\n";
 }
@@ -97,21 +86,17 @@ if (f&HAS_Dir) {
 if (f&HAS_Drv) {
   "Drv yeppers\n";
 }
-
 buffer[1] = buffer[1] | HAS_File;
 "%s\n",buffer[0];
-
 if (buffer[1] & HAS_File) {
   "buffer[0] file yeppers\n";
 }*/
 
-U64 *buffer = "viper armed";
-
+/*U64 *buffer = "viper armed";
 U64 test = 124;
-
 //"%s\n",buffer.u8[0]; //Sad I can't do this.
-"%d\n",test.u8[0];     //Can do this.  guess, only works on numbers.
-
+"%d\n",test.u8[0];     //Can do this.  guess, only works on numbers.*/
+
 "\n";
 
 KeyAndCont;

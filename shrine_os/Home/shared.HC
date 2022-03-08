@@ -21,7 +21,7 @@
 
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
-#define HAS_File 1
+#define HAS_File 1
 #define HAS_Dir  2
 #define HAS_Drv  4
 
@@ -126,33 +126,35 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //to know, if it exists <1> or doesn't <0>.
  //
  //Usage: 
- //        ValidFiles("10",buffera,bufferb)
+ //        ValidFiles("10",buffera,bufferb);
  //                    ^^
  //     buffera exists-||
  //                     -- bufferb doesn't 
  //
+ //        if (ValidFiles(blah,blah) == 1) {}
+ //
  //returns:
  //         1	All files are valid
  //      -IDX	IDX where it failed in negative form.
- //          	0 & under is FALSE. So, If it fails,
- //          	you can easily tell which one was invalid.
+ //
+ //         When you check the return value in an if,
+ //         you need to make sure you do:
+ //
  //
   I64 i = 0,
-      x = -1;
-
-  //We have exceptions ...
-//  Silent(ON);
-  //No we don't ...
+      x = 0;
 
   for (;i<argc;i++) {
-    x = is_drv(argv[i]);
-    if (((x + tern(x==-1,1,0)) || FileFind(argv[i]) ||
-        IsDir(argv[i])) != mask[i]-48) {
-        return 0 - i;
+    x.u16[0] = is_drv(argv[i])==1;
+    
+    if (!(x.u16[1] = IsDir(argv[i]))) {
+      x.u16[2] = FileFind(argv[i]);
+    }
+
+    if ((x.u16[0] || x.u16[1] || x.u16[2]) != mask[i]-48) {
+      return 0 - i;
     }
   }
-
-//  Silent(OFF);
 
   return 1;
 }
@@ -177,4 +179,12 @@ U64 HashCodeFor(U8 *str)
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
   "\n"; ExePutS(cmd); "\n";
+}
+
+U0 viewer(U8 *cmd) {
+  DocClear; DocTop;
+  ExePutS(cmd);
+  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
+  DocTop;View; DocBottom;
+  PutChars(CH_CTRLY);
 }

@@ -87,7 +87,7 @@ man	Display the source code for a specified
 	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
 	$FG,2$usage$FG$: man [COMMAND]
 
-mem	Display a memory representation.
+mem	Display a "detailed" memory representation.
 	$FG,2$usage$FG$: mem
 
 mkdir	Make directories.
@@ -119,6 +119,9 @@ rm	Remove files or directories.
 run	Execute source code files.
 	$FG,2$usage$FG$: run [FILENAME]
 
+tasks	Report current tasks on all cores.
+	$FG,2$usage$FG$: tasks
+
 time	Display the current time.
 	$FG,2$usage$FG$: time
 
@@ -131,4 +134,3 @@ view	Display a FILE to stdout, in a viewing window.
 
 vol	Displays volume information of the current drive.
 	$FG,2$usage$FG$: vol
-

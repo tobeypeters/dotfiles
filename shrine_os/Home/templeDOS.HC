@@ -22,7 +22,7 @@
 #include "./shared.HC"
 
 
-#define REC_CNT 31
+#define REC_CNT 32
 U8 *VSAM[REC_CNT][8] =
 {
 /*ID, token count min, token count max,
@@ -59,7 +59,8 @@ flag count max*/
 {34374, "clear", "", 1, 1, FALSE, 0, 0},
 {36886, "mkdir", "", 2, 2, FALSE, 0, 0},
 {38294, "rmdir", "", 2, 2,  TRUE, 0, 1},
-{39172, "touch", "", 2, 2, FALSE, 0, 0}
+{39172, "touch", "", 2, 2, FALSE, 0, 0},
+{38287, "tasks", "", 1, 1, FALSE, 0, 0}
 
 };
 I64 cur_IDX = -1;
@@ -71,9 +72,7 @@ I64 indexOf(U8 *cmd) {
   h = HashCodeFor(cmd);
 
   for (;i<REC_CNT;i++) {
-    if (VSAM[i][0] == h) {
-      return i;
-    }
+    if (VSAM[i][0] == h) return i;
   }
 
   return -1;
@@ -91,15 +90,14 @@ U64 seg_beg = 0,
 U8 seg_push(U8 *si, U8 delim=' ')
 {//Push a segment into the data stack.
   if (StrLen(si) > 0) {
-    U64 i = 0,
-      pos = segs;
+    U64 i = 0;
 
     while (si[0] != '\0' && si[0] != delim) {
-      data[pos][i] = si[0];
+      data[segs][i] = si[0];
       si++; i++;
     }
     if (i > 0) {
-      data[pos][i] = '\0';
+      data[segs][i] = '\0';
     }
 
     segs++;
@@ -125,18 +123,17 @@ U0 seg_clean()
 }
 
 U64 seg_count(U8 *seg_buf, Bool count_segs=TRUE, U8 delim=32)
-{//Count either data segments or occurrences of a specific delimeter.
-  U64 l = StrLen(seg_buf);
+{//Parse and count either the number of data segments or
+ //occurrences of a specific delimeter.
+  I64 q = StrLen(seg_buf)-1;
 
-  if (l == 0) return 0;
+  if (q < 1) return 0;
 
-  U64 count = 0,
-          i = 0;
+  U64 count = 0;
 
-  while (i < l) {
-    if (seg_buf[i] == delim) count++;
-
-    i++;
+  while (q > -1) {
+    if (seg_buf[q] == delim) count++;
+    q--;
   }
 
   return count + count_segs;
@@ -196,8 +193,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
             err_print(ERR_DRVIM,data[i]);
             return FALSE;
         }
-
-        if (x == -1) {
+        else if (x == -1) {
           if (ValidFiles("0",seg_peek(i))) {
             err_print(ERR_FILENF,data[i]);
             return FALSE;
@@ -258,16 +254,12 @@ U8 execute_cmd(U8 *cmd) {
     seg_trim(cmd,FALSE,TRUE);
 
     cmd = seg_push(cmd);
-  }
-
-  i = 0;
+  } i = 0;
 
   U8 *buffer,
      *buffera,
      *bufferb,
      *bufferc;
-
-  U64 bf = 0;
 
   Bool tf = FALSE; //General use true/false flag.
 
@@ -288,7 +280,8 @@ U8 execute_cmd(U8 *cmd) {
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
-        Cd(tern(tc==2,buffera,"~"));
+//        Cd(tern(tc==2,buffera,"~"));
+        Cd(buffera);
 
         if (cur_IDX == 9) shell_execute("Dir;");
 
@@ -304,10 +297,11 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 3: //cp
         buffer = tern(fc==1,bufferb,buffera);
+        tf = IsDir(buffer);
 
         if (ValidFiles(,buffer)) {
-          if (flag_eq(buffera,TRUE)) { // "-d"
-            if (IsDir(buffer)) {
+          if (tf) {
+            if (flag_eq(buffera,TRUE)) { // "-d"
               CopyTree(buffer,bufferc);
               goto done;
             }
@@ -387,7 +381,9 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 13: //mem
-        MemRep;
+        viewer("MemRep;\"\n\";
+                MemPageRep;\"\n\";
+               ");
 
         break;
       case 14: //now
@@ -417,6 +413,7 @@ U8 execute_cmd(U8 *cmd) {
       case 18: //help
         if (FileFind(help_file)) {
           More(help_file);
+          viewer(help_file);
         }
         else {
           err_print(ERR_FILENF,help_file);
@@ -451,11 +448,12 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 26: //view
-        DocClear; DocTop;
-        Type(seg_peek);
-        "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-        View; DocBottom;
-        PutChars(CH_CTRLY);
+        *buffer = 0;
+Make a string builder with argc/argv
+        CatPrint(buffer,"Type(\"");
+        CatPrint(buffer,buffera);
+        CatPrint(buffer,"\");");
+        viewer(buffer);
 
         break;
       case 27: //clear
@@ -488,6 +486,9 @@ U8 execute_cmd(U8 *cmd) {
         }
 
         break;
+      case 31:
+        TaskRep;
+        break;
       default:
         break;
     }
@@ -516,6 +517,8 @@ U0 templeDOS() {
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+
+  "HashCodeFor(\"tasks\"): %d\n",HashCodeFor("tasks");
 
   U64 result = 0;
   U8 *input;
