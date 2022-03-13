@@ -21,7 +21,6 @@
 
 #include "./shared.HC"
 
-
 #define REC_CNT 32
 U8 *VSAM[REC_CNT][8] =
 {
@@ -37,7 +36,7 @@ flag count max*/
 {547,   "ls",    "", 1, 2,  TRUE, 0, 0},
 {554,   "mv",    "", 3, 3, FALSE, 0, 0},
 {556,   "rd",    "", 2, 2,  TRUE, 0, 1},
-{565,   "rm",    "", 2, 2,  TRUE, 0, 1},
+{565,   "rm",   "d", 2, 2,  TRUE, 0, 1},
 {2084,  "cdd",  "~", 1, 2,  TRUE, 0, 0},
 {2088,  "cat",   "", 2, 2,  TRUE, 0, 0},
 {2149,  "cpu",  "f", 1, 1, FALSE, 0, 1},
@@ -208,18 +207,29 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   return TRUE;
 }
 
-Bool flag_eq(U8 *flag, Bool err_disp = TRUE)
-{//Validate command flag?
-  if (fc > 0) { //Make sure we had parsed atleast one flag.
-  if (cur_IDX > -1) {
-    if (!(VSAM[cur_IDX][2][0] == flag[1])) {
-      if (err_disp)
-        err_print(ERR_FLGI,flag);
-      return FALSE;
-    }
-  }}
+//Think, this is how Terry does it.  I'm looking at another
+//implementation, which might be simpplier. Not sure.
+DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0");
+U8 *defined_flags = Define("ST_TEMPLEDOS_FLAGS")$WW,1$;
 
-  return TRUE;
+#define FLG_D	0
+#define FLG_F	1
+
+Bool got_flag(U8 *flag_got=NULL, I64 flag_want, Bool err_disp=TRUE)
+{//Validate command flag?
+  //Make sure we had parsed atleast one flag
+  //and we previously found a valid command.
+  if (fc == 0 || cur_IDX < 0)  return FALSE;
+
+  I64 f = 0;
+
+  my_scanflags(&f,defined_flags,flag_got);
+  if (Bt(&f,flag_want)) return TRUE;
+
+  if (err_disp) err_print(ERR_FLGI,flag_got);
+
+
+  return FALSE;
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -256,6 +266,8 @@ U8 execute_cmd(U8 *cmd) {
     cmd = seg_push(cmd);
   } i = 0;
 
+  I64 f = 0;
+
   U8 *buffer,
      *buffera,
      *bufferb,
@@ -280,13 +292,15 @@ U8 execute_cmd(U8 *cmd) {
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
-//        Cd(tern(tc==2,buffera,"~"));
         Cd(buffera);
 
         if (cur_IDX == 9) shell_execute("Dir;");
 
         break;
       case 1: //df
+//        viewer("DrvRep;\"\n\";
+//               drv_free;\"\n\";");
+
         DrvRep; "\n";
         drv_free;
 
@@ -296,32 +310,34 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 3: //cp
-        buffer = tern(fc==1,bufferb,buffera);
-        tf = IsDir(buffer);
+        buffer = tern(fc==0,buffera,bufferb);
 
         if (ValidFiles(,buffer)) {
-          if (tf) {
-            if (flag_eq(buffera,TRUE)) { // "-d"
+          tf = IsDir(buffer);
+
+          if (got_flag(buffera,FLG_D)) { // "-d"
+            if (tf) {
               CopyTree(buffer,bufferc);
               goto done;
             }
           }
           else {
-            Copy(buffer,bufferb);
-            goto done;
+            if (!tf) {
+              Copy(buffer,bufferb);
+              goto done;
+            }
           }
 
+          err_print(tern(tf,ERR_DIRIFILE,ERR_FILEIDIR),buffer);
         }
-
-        err_print(tern(is_drv(buffer)==-1,
-                  ERR_FILENF,ERR_DRVIM),buffer);
 
         break;
       case 4: //fm
       case 25: //tree
-        if (!(tf = flag_eq(buffera,TRUE))) { //-f
+        if (fc > 0) {
+        if (!(tf = got_flag(buffera,FLG_F))) { //-f
           goto done;
-        }
+        }}
 
         buffer = tern(fc==0,buffera,bufferb);
 
@@ -329,8 +345,8 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 5: //ls
-        "\n";
-        Dir(tern(tc==1,".",buffera));
+        "\n"; Dir(tern(tc==1,".",buffera));
+
         break;
       case 6: //mv
         if (ValidFiles("10",buffera,bufferb)) { //Don't allow override.
@@ -347,28 +363,31 @@ U8 execute_cmd(U8 *cmd) {
       case 7: //rd
       case 8: //rm
       case 29: //rmdir
-        if (fc == 1) {
-          if (fc == 1 && cur_IDX == 8) {
-            if (!flag_eq(buffera,TRUE)) { //-d
-              goto done;
-            }
+        if (I64_IN(cur_IDX,7,29) ||
+            (cur_IDX == 8 && fc == 1)) {
+          if (!got_flag(buffera,FLG_D)) { //-d
+            goto done;
           }
 
-          buffer = tern(fc==0,buffera,bufferb);
-
-          DelTree(buffer);
+          DelTree(tern(fc==0,buffera,bufferb));
         }
         else {
-          Del(buffera);
+          if (IsDir(buffera)) {
+            err_print(ERR_DIRIFILE,buffera);
+          }
+          else {
+            Del(buffera);
+          }
         }
 
         break;
       case 10: //cat
         Type(buffera);
+
         break;
       case 11: //cpu
         if (fc == 1) {
-          if (!(tf = flag_eq(buffera,TRUE))) { //-f
+          if (!(tf = got_flag(buffera,FLG_F))) { //-f
             goto done;
           }
         }
@@ -402,7 +421,8 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 16: //vol
-        "Volume in drive %c: has no label.\n",cur_drv;//Don't think drives have labels in this OS.
+        //Don't think drives have labels in this OS.
+        "Volume in drive %c: has no label.\n",cur_drv;
         "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
 
         break;
@@ -412,8 +432,8 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 18: //help
         if (FileFind(help_file)) {
-          More(help_file);
-          viewer(help_file);
+          viewer(strcat(buffer,"Type(\"",
+                        help_file,"\");"));
         }
         else {
           err_print(ERR_FILENF,help_file);
@@ -444,16 +464,12 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 24: //time
-        "%T\n", Now;
+        "%T\n",Now;
 
         break;
       case 26: //view
-        *buffer = 0;
-Make a string builder with argc/argv
-        CatPrint(buffer,"Type(\"");
-        CatPrint(buffer,buffera);
-        CatPrint(buffer,"\");");
-        viewer(buffer);
+        viewer(strcat(buffer,"Type(\"",
+                      buffera,"\");"));
 
         break;
       case 27: //clear
@@ -464,7 +480,7 @@ Make a string builder with argc/argv
           DirMk(buffera);
         }
         else {
-          err_print(ERR_FILEFF,"info");
+          err_print(ERR_FILEAF,"info");
         }
 
         break;
@@ -488,6 +504,7 @@ Make a string builder with argc/argv
         break;
       case 31:
         TaskRep;
+
         break;
       default:
         break;
@@ -518,7 +535,7 @@ U0 templeDOS() {
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  "HashCodeFor(\"tasks\"): %d\n",HashCodeFor("tasks");
+//  "HashCodeFor(\"tasks\"): %d\n",HashCodeFor("tasks");
 
   U64 result = 0;
   U8 *input;

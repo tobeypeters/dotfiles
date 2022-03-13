@@ -96,7 +96,43 @@ if (buffer[1] & HAS_File) {
 U64 test = 124;
 //"%s\n",buffer.u8[0]; //Sad I can't do this.
 "%d\n",test.u8[0];     //Can do this.  guess, only works on numbers.*/
-
+
+#define TDf_D	0
+#define TDf_F	1
+
+DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0");
+
+Bool got_flag(U8 *flag_got, U64 flag_want, Bool err_disp = TRUE)
+{
+  I64 f = 0;
+
+  //Think, this is how Terry does it.
+  ScanFlags(&f,Define("ST_TEMPLEDOS_FLAGS"),flag_got);
+
+  if (Bt(&f,flag_want)) {
+    "yeppers\n";
+  }
+  else {
+    "nope\n";
+  }
+
+  if (Bt(&f,flag_want)) return TRUE;
+
+  if (err_disp) {
+  }
+  return FALSE;
+}
+
+U8 *testflag = "-f";
+testflag[0]='+';
+got_flag(testflag, TDf_F);
+
+/*got_flag("+f", TDf_F);
+got_flag("+f", TDf_D);
+got_flag("+d", TDf_D);
+got_flag("+d", TDf_F);*/
+
+
 "\n";
 
 KeyAndCont;

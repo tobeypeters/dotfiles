@@ -25,13 +25,28 @@
 #define HAS_Dir  2
 #define HAS_Drv  4
 
-
 #define ERR_ARGC "Invalid number of arguments provided"
 #define ERR_FLGC "Invalid number of options provided"
 #define ERR_FLGI "Invalid option provided"
+#define ERR_FILEAF "File / Directory already exists"
 #define ERR_FILEFF "File / Directory found"
 #define ERR_FILENF "File / Directory not found"
-#define ERR_DRVIM "invalid drive specified or drive is not mounted"
+#define ERR_DRVIM "Invalid drive specified or drive is not mounted"
+#define ERR_DIRIFILE "Directory provided instead of a file"
+#define ERR_FILEIDIR "File provided instead of a directory"
+
+Bool I64_IN(I64 inval,...)
+{//Check to see if an I64 is in a given argv list.
+  U64 i = 0;
+
+  for (;i<argc;i++) {
+    if (inval == argv[i]) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
 
 U8 tern(Bool condition, U64 *first, U64 *second)
 {//Ternary operator like function.
@@ -168,7 +183,7 @@ U64 HashCodeFor(U8 *str)
 //  U64 g = 31, //Magic generator <- odd prime
    hash = 0;
 
-  for (; i < StrLen(str); i++) {
+  for (;i < StrLen(str); i++) {
     hash =  (hash << 2) + str[i];
 //    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
   }
@@ -181,10 +196,50 @@ U0 shell_execute(U8 *cmd)
   "\n"; ExePutS(cmd); "\n";
 }
 
-U0 viewer(U8 *cmd) {
+U0 viewer(U8 *cmd)
+{//Execute a specified command and examine the results
+ //in "view" mode.
   DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
+  DocTop;View; DocBottom;
   PutChars(CH_CTRLY);
+}
+
+U0 strcat(U8 **buffer,...)
+{//Build a str, from strings stored in argv.
+  U64 i = 0;
+  
+  *buffer = 0;
+
+  for (;i<argc;i++) {
+    CatPrint(buffer,argv[i]);
+  }
+}
+
+U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
+{ //Stripped down version, of ScanFlags.
+  I64 i;
+  U8 *buf,*ptr;
+  if (src) {
+    buf=MAlloc(StrLen(src)+1);
+    while (*src) {
+      while (*src && *src!='-')
+	src++;
+      if (*src=='-') {
+	src++;
+	if (*src) {
+	  ptr=buf;
+	  while (*src && *src!='+' && *src!='-' &&
+		*src!=CH_SPACE && *src!=CH_SHIFT_SPACE)
+	    *ptr++=*src++;
+	  *ptr=0;
+	  i=LstMatch(buf,lst);
+	  if (i>=0)
+	    LBts(_dst_flags,i);
+	}
+      }
+    }
+    Free(buf);
+  }
 }
