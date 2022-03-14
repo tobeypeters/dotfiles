@@ -22,51 +22,52 @@
 #include "./shared.HC"
 
 #define REC_CNT 32
-U8 *VSAM[REC_CNT][8] =
+U8 *VSAM[REC_CNT][7] =
 {
+//HASH Table ... partially ...
 /*ID, token count min, token count max,
 file / dir validator, flag count min,
 flag count max*/
 
-{496,   "cd",   "~", 1, 2,  TRUE, 0, 0},
-{502,   "df",    "", 1, 1, FALSE, 0, 0},
-{504,   "ed",    "", 2, 2, FALSE, 0, 0},
-{508,   "cp",   "d", 3, 3, FALSE, 0, 1},
-{517,   "fm",   "f", 1, 3,  TRUE, 0, 1},
-{547,   "ls",    "", 1, 2,  TRUE, 0, 0},
-{554,   "mv",    "", 3, 3, FALSE, 0, 0},
-{556,   "rd",    "", 2, 2,  TRUE, 0, 1},
-{565,   "rm",   "d", 2, 2,  TRUE, 0, 1},
-{2084,  "cdd",  "~", 1, 2,  TRUE, 0, 0},
-{2088,  "cat",   "", 2, 2,  TRUE, 0, 0},
-{2149,  "cpu",  "f", 1, 1, FALSE, 0, 1},
-{2242,  "man",   "", 2, 2, FALSE, 0, 0},
-{2257,  "mem",   "", 1, 1, FALSE, 0, 0},
-{2323,  "now",   "", 1, 1, FALSE, 0, 0},
-{2402,  "run",   "", 2, 2,  TRUE, 0, 0},
-{2440,  "vol",   "", 1, 1, FALSE, 0, 0},
-{8517,  "date",  "", 1, 1, FALSE, 0, 0},
-{8816,  "help",  "", 1, 1, FALSE, 0, 0},
-{8820,  "dump",  "", 2, 2,  TRUE, 0, 0},
-{8920,  "exit",  "", 1, 1, FALSE, 0, 0},
-{8932,  "grep",  "", 2, 2, FALSE, 0, 0},
-{9309,  "more",  "", 2, 2,  TRUE, 0, 0},
-{9640,  "quit",  "", 1, 1, FALSE, 0, 0},
-{9641,  "time",  "", 1, 1, FALSE, 0, 0},
-{9753,  "tree", "f", 1, 3,  TRUE, 0, 1},
-{9755,  "view",  "", 2, 2,  TRUE, 0, 0},
-{34374, "clear", "", 1, 1, FALSE, 0, 0},
-{36886, "mkdir", "", 2, 2, FALSE, 0, 0},
-{38294, "rmdir", "", 2, 2,  TRUE, 0, 1},
-{39172, "touch", "", 2, 2, FALSE, 0, 0},
-{38287, "tasks", "", 1, 1, FALSE, 0, 0}
+{496,   "cd",    1, 2,  TRUE, 0, 0},
+{502,   "df",    1, 1, FALSE, 0, 0},
+{504,   "ed",    2, 2, FALSE, 0, 0},
+{508,   "cp",    3, 3, FALSE, 0, 1},
+{517,   "fm",    1, 3,  TRUE, 0, 1},
+{547,   "ls",    1, 2,  TRUE, 0, 0},
+{554,   "mv",    3, 3, FALSE, 0, 0},
+{556,   "rd",    2, 2,  TRUE, 0, 1},
+{565,   "rm",    2, 2,  TRUE, 0, 1},
+{2084,  "cdd",   1, 2,  TRUE, 0, 0},
+{2088,  "cat",   2, 2,  TRUE, 0, 0},
+{2149,  "cpu",   1, 1, FALSE, 0, 1},
+{2242,  "man",   2, 2, FALSE, 0, 0},
+{2257,  "mem",   1, 1, FALSE, 0, 0},
+{2323,  "now",   1, 1, FALSE, 0, 0},
+{2402,  "run",   2, 2,  TRUE, 0, 0},
+{2440,  "vol",   1, 1, FALSE, 0, 0},
+{8517,  "date",  1, 1, FALSE, 0, 0},
+{8816,  "help",  1, 1, FALSE, 0, 0},
+{8820,  "dump",  2, 2,  TRUE, 0, 0},
+{8920,  "exit",  1, 1, FALSE, 0, 0},
+{8932,  "grep",  2, 2, FALSE, 0, 0},
+{9309,  "more",  2, 2,  TRUE, 0, 0},
+{9640,  "quit",  1, 1, FALSE, 0, 0},
+{9641,  "time",  1, 1, FALSE, 0, 0},
+{9753,  "tree",  1, 3,  TRUE, 0, 1},
+{9755,  "view",  2, 2,  TRUE, 0, 0},
+{34374, "clear", 1, 1, FALSE, 0, 0},
+{36886, "mkdir", 2, 2, FALSE, 0, 0},
+{38294, "rmdir", 2, 2,  TRUE, 0, 1},
+{39172, "touch", 2, 2, FALSE, 0, 0},
+{38287, "tasks", 1, 1, FALSE, 0, 0}
 
 };
 I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {
   U64 i = 0,
-      h = 0;
+      h = 0;
 
   h = HashCodeFor(cmd);
 
@@ -208,7 +209,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
 }
 
 //Think, this is how Terry does it.  I'm looking at another
-//implementation, which might be simpplier. Not sure.
+//implementation, which might be simpplier. Not sure.
 DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0");
 U8 *defined_flags = Define("ST_TEMPLEDOS_FLAGS")$WW,1$;
 
@@ -283,9 +284,9 @@ U8 execute_cmd(U8 *cmd) {
   bufferc = tern(at>3,seg_peek(3),'\0');
 
   if (cur_IDX > -1) {
-  if (err_check(VSAM[cur_IDX][3],VSAM[cur_IDX][4],
-                VSAM[cur_IDX][5],
-                VSAM[cur_IDX][6],VSAM[cur_IDX][7])) {
+  if (err_check(VSAM[cur_IDX][2],VSAM[cur_IDX][3],
+                VSAM[cur_IDX][4],
+                VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch (cur_IDX) {
       case 0: //cd
       case 9: //cdd
