@@ -7,7 +7,7 @@
 //
 //"\n";
 
-DocClear;
+//DocClear;
 
 "\n";
 
@@ -97,7 +97,7 @@ U64 test = 124;
 //"%s\n",buffer.u8[0]; //Sad I can't do this.
 "%d\n",test.u8[0];     //Can do this.  guess, only works on numbers.*/
 
-#define TDf_D	0
+/*#define TDf_D	0
 #define TDf_F	1
 
 DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0");
@@ -124,16 +124,70 @@ Bool got_flag(U8 *flag_got, U64 flag_want, Bool err_disp = TRUE)
 }
 
 U8 *testflag = "-f";
-testflag[0]='+';
+testflag[0]='+';
 got_flag(testflag, TDf_F);
 
-/*got_flag("+f", TDf_F);
+got_flag("+f", TDf_F);
 got_flag("+f", TDf_D);
 got_flag("+d", TDf_D);
 got_flag("+d", TDf_F);*/
 
 
+U64 sc = 32;
+
+U64 HashSpotFor(U8 *str,U64 spots)
+{//Hash code generator for strings.
+ //This is a pretty weak one. I don't need much.
+ //CRC16 would've been perfect for me. But, you
+ //have to use big lookup table.
+  U64 i = 0,
+//  U64 g = 31, //Magic generator <- odd prime
+   hash = 0;
+
+  for (;i < StrLen(str); i++) {
+    hash =  (hash << 2) + str[i];
+//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
+  }
+
+  return hash % spots;
+}
+
+"cd    %d\n",HashSpotFor("cd",sc);
+"df    %d\n",HashSpotFor("df",sc);
+"ed    %d\n",HashSpotFor("ed",sc);
+"cp    %d\n",HashSpotFor("cp",sc);
+"fm    %d\n",HashSpotFor("fm",sc);
+"ls    %d\n",HashSpotFor("ls",sc);
+"mv    %d\n",HashSpotFor("mv",sc);
+"rd    %d\n",HashSpotFor("rd",sc);
+"rm    %d\n",HashSpotFor("rm",sc);
+"cdd   %d\n",HashSpotFor("cdd",sc);
+"cat   %d\n",HashSpotFor("cat",sc);
+"cpu   %d\n",HashSpotFor("cpu",sc);
+"man   %d\n",HashSpotFor("man",sc);
+"mem   %d\n",HashSpotFor("mem",sc);
+"now   %d\n",HashSpotFor("now",sc);
+"run   %d\n",HashSpotFor("run",sc);
+"vol   %d\n",HashSpotFor("vol",sc);
+"date  %d\n",HashSpotFor("date",sc);
+"help  %d\n",HashSpotFor("help",sc);
+"dump  %d\n",HashSpotFor("dump",sc);
+"exit  %d\n",HashSpotFor("exit",sc);
+"grep  %d\n",HashSpotFor("grep",sc);
+"more  %d\n",HashSpotFor("more",sc);
+"quit  %d\n",HashSpotFor("quit",sc);
+"time  %d\n",HashSpotFor("time",sc);
+"tree  %d\n",HashSpotFor("tree",sc);
+"view  %d\n",HashSpotFor("view",sc);
+"clear %d\n",HashSpotFor("clear",sc);
+"mkdir %d\n",HashSpotFor("mkdir",sc);
+"rmdir %d\n",HashSpotFor("rmdir",sc);
+"touch %d\n",HashSpotFor("touch",sc);
+"tasks %d\n",HashSpotFor("tasks",sc);
+
+
 "\n";
 
-KeyAndCont;
-Exit;
+//KeyAndCont;
+
+//Exit;

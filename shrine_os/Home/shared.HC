@@ -102,9 +102,9 @@ Bool drv_mounted(U8 *drv)
 
   for (i=0,dv=blkdev.drvs;i<DRVS_NUM;i++,dv++) {
     if (dv->dv_signature==DRV_SIGNATURE_VAL) {
-      if (Drv2Let(dv) == drv) {
-        return TRUE;
-      }
+    if (Drv2Let(dv) == drv) {
+      return TRUE;
+    }
     }
   }
 
@@ -122,14 +122,14 @@ I64 is_drv(U8 *drv)
   U64 l = StrLen(drv);
 
   if (l == 2) {
-    if (drv[1] == ':') {
-      if (96<drv[0]<123 || 64<drv[0]<91) {
-        return drv_mounted(drv[0]);
-      }
-      else {
-        return -2;
-      }
+  if (drv[1] == ':') {
+    if (96<drv[0]<123 || 64<drv[0]<91) {
+      return drv_mounted(drv[0]);
     }
+    else {
+      return -2;
+    }
+  }
   }
 
   return -1;
@@ -166,6 +166,8 @@ I64 ValidFiles(U8 *mask="11111111",...)
       x.u16[2] = FileFind(argv[i]);
     }
 
+
+    "validfiles: %d %d\n",mask[i],mask[i]-48;
     if ((x.u16[0] || x.u16[1] || x.u16[2]) != mask[i]-48) {
       return 0 - i;
     }
@@ -174,7 +176,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
   return 1;
 }
 
-U64 HashCodeFor(U8 *str)
+U64 HashCodeFor(U8 *str)
 {//Hash code generator for strings.
  //This is a pretty weak one. I don't need much.
  //CRC16 would've been perfect for me. But, you
@@ -217,7 +219,7 @@ U0 strcat(U8 **buffer,...)
   }
 }
 
-U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
+U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
 { //Stripped down version, of ScanFlags.
   I64 i;
   U8 *buf,*ptr;
