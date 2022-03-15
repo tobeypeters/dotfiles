@@ -56,6 +56,11 @@ def process_exec(p_cmd: str, capture_output=False, capture_errors=False) -> Opti
 	p = Popen(p_cmd, **args)
 	output, errors = p.communicate()
 
+	"""
+	print(f'p_cmd: {p_cmd} {args}')
+	print(f'output: {output} errors: {errors}')
+	"""
+
 	decode_args: dict[str, str] = {'encoding': 'utf-8', 'errors' : 'ignore'}
 
 	if capture_output:
