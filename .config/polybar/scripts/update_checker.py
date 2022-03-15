@@ -21,9 +21,9 @@
 """
 
 from my_helper import process_exec
+from sys import exit
 
-#updates = int(process_exec('apt list --upgradable | wc -l'))
-updates = process_exec('apt list --upgradable | wc -l')
+updates = process_exec('apt list --upgradable 2> /dev/null | wc -l',True)
 
 if updates:
     process_exec('polybar-msg cmd show.updater')
