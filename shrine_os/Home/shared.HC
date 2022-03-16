@@ -176,7 +176,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
   return 1;
 }
 
-U64 HashCodeFor(U8 *str)
+U64 HashCodeFor(U8 *str)
 {//Hash code generator for strings.
  //This is a pretty weak one. I don't need much.
  //CRC16 would've been perfect for me. But, you
@@ -244,4 +244,9 @@ U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
     }
     Free(buf);
   }
+}
+
+I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+{//Map one range to another range.
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

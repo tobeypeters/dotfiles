@@ -60,10 +60,10 @@ flag count max*/
 {36886, "mkdir", 2, 2, FALSE, 0, 0},
 {38294, "rmdir", 2, 2,  TRUE, 0, 1},
 {39172, "touch", 2, 2, FALSE, 0, 0},
-{38287, "tasks", 1, 1, FALSE, 0, 0}
+{38287, "tasks", 1, 1, FALSE, 0, 0}
 
 };
-
+
 I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {

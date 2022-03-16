@@ -7,7 +7,7 @@
 //
 //"\n";
 
-//DocClear;
+DocClear;
 
 "\n";
 
@@ -133,7 +133,13 @@ got_flag("+d", TDf_D);
 got_flag("+d", TDf_F);*/
 
 
-U64 sc = 32;
+/*U64 sc = 32,
+    scm = 255;
+
+I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 U64 HashSpotFor(U8 *str,U64 spots)
 {//Hash code generator for strings.
@@ -145,11 +151,12 @@ U64 HashSpotFor(U8 *str,U64 spots)
    hash = 0;
 
   for (;i < StrLen(str); i++) {
-    hash =  (hash << 2) + str[i];
+    hash =  (hash << 5) + str[i];
 //    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
   }
 
-  return hash % spots;
+//  return hash % spots;
+  return MapValue(hash % scm,0,scm,0,sc-1);
 }
 
 "cd    %d\n",HashSpotFor("cd",sc);
@@ -183,11 +190,11 @@ U64 HashSpotFor(U8 *str,U64 spots)
 "mkdir %d\n",HashSpotFor("mkdir",sc);
 "rmdir %d\n",HashSpotFor("rmdir",sc);
 "touch %d\n",HashSpotFor("touch",sc);
-"tasks %d\n",HashSpotFor("tasks",sc);
+"tasks %d\n",HashSpotFor("tasks",sc);*/
 
 
 "\n";
 
-//KeyAndCont;
+KeyAndCont;
 
-//Exit;
+Exit;
