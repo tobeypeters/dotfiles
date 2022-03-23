@@ -152,7 +152,7 @@ U64 HashSpotFor(U8 *str,U64 spots)
 
   for (;i < StrLen(str); i++) {
     hash =  (hash << 5) + str[i];
-//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
+//    hash =  ((hash << 5) - hash) + str[i]; //hogash = g * hash + str[i];
   }
 
 //  return hash % spots;
@@ -192,9 +192,17 @@ U64 HashSpotFor(U8 *str,U64 spots)
 "touch %d\n",HashSpotFor("touch",sc);
 "tasks %d\n",HashSpotFor("tasks",sc);*/
 
+/*#include "shared"
+
+F64 test = 123456789;
+I64 test2 = Ceil(Log10(test));
+
+"length of test: %d\n",test2;*/
+
+my_dir;
 
 "\n";
 
 KeyAndCont;
 
-Exit;
+Exit;

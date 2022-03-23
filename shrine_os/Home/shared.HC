@@ -247,6 +247,80 @@ U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
 }
 
 I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-{//Map one range to another range.
+{//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+I64 my_dir(U8 *files_find_mask='*')
+{//Linux'ish style directory listing.
+  CDirEntry *tmpde1=NULL,*tmpde2;
+  U8 *st;
+  CDateStruct ds, dsc;
+  I64 csize=0xFFFF,c=0xFFFF,res=0,idc;
+  Bool id=FALSE;
+
+  tmpde1=FilesFind(files_find_mask);
+  if (!(st=DirCur))
+    PrintErr("Invalid Drive\n");
+  else {
+    if (tmpde1) {
+      Free(st);
+      st=MAllocIdent(tmpde1->full_name);
+      StrLastRem(st,"/");
+      if (!st[2])
+	StrCpy(st+2,"/");
+//Find max columns
+      tmpde2=tmpde1;
+      while (tmpde2) {
+	if (tmpde2->size>csize)
+	  csize=tmpde2->size;
+	if (tmpde2->clus>c)
+	  c=tmpde2->clus;
+	tmpde2=tmpde2->next;
+      }
+      csize=Bsr(csize)/4+1;
+      c=Bsr(c)/4+1;
+
+//      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
+//      "Listing: %s\n",st;
+
+//      "DATE_TIME_%*ts\n",csize,"SIZE";
+
+      Date2Struct(&dsc,Now+local_time_offset);
+
+      while (tmpde1) {
+	tmpde2=tmpde1->next;
+	res++;
+
+	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
+
+        id = IsDir(tmpde1->name);
+        idc = tern(id,'d','-');
+
+        if (ds.year != dsc.year) {
+	  "%c%12d %03tZ %03tZ %5d ",
+	  idc, tmpde1->size,
+	  ds.day_of_week, "ST_DAYS_OF_WEEK",
+	  ds.mon-1, "ST_MONTHS", ds.year;
+        }
+        else {
+	  "%c%12d %03tZ %03tZ %02d:%02d ",
+	  idc, tmpde1->size,
+	  ds.day_of_week, "ST_DAYS_OF_WEEK",
+	  ds.mon-1, "ST_MONTHS",ds.hour,ds.min;
+        }
+
+	if (tmpde1->attr & RS_ATTR_DIR)
+	  PutDirLink(tmpde1->name,tmpde1->full_name);
+	else
+	  PutFileLink(tmpde1->name,tmpde1->full_name);
+	'\n';
+	DirEntryDel(tmpde1);
+	tmpde1=tmpde2;
+      }
+    } else
+      "No matching entries\n";
+    Free(st);
+  }
+  return res;
 }

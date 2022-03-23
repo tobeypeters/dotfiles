@@ -60,7 +60,7 @@ flag count max*/
 {36886, "mkdir", 2, 2, FALSE, 0, 0},
 {38294, "rmdir", 2, 2,  TRUE, 0, 1},
 {39172, "touch", 2, 2, FALSE, 0, 0},
-{38287, "tasks", 1, 1, FALSE, 0, 0}
+{38287, "tasks", 1, 1, FALSE, 0, 0}
 
 };
 
@@ -408,14 +408,8 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 14: //now
-        CDateStruct ds;
-        Date2Struct(&ds, Now + local_time_offset);
-
-        "%03tZ %03tZ %03d %T\n",
-        ds.day_of_week, "ST_DAYS_OF_WEEK",
-        ds.mon-1, "ST_MONTHS",
-        ds.day_of_week,
-        Now;
+        "%D %T\n",
+        Now, Now;
 
         break;
       case 15: //run
