@@ -63,14 +63,14 @@ flag count max*/
 {38287, "tasks", 1, 1, FALSE, 0, 0}
 
 };
-
+
 I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {
   U64 i = 0,
       h = 0;
 
-  h = HashCodeFor(cmd);
+  h = HashCodeFor(cmd);
 
   for (;i<REC_CNT;i++) {
     if (VSAM[i][0] == h) return i;

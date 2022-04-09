@@ -167,7 +167,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
     }
 
 
-    "validfiles: %d %d\n",mask[i],mask[i]-48;
+    //"validfiles: %d %d\n",mask[i],mask[i]-48;
     if ((x.u16[0] || x.u16[1] || x.u16[2]) != mask[i]-48) {
       return 0 - i;
     }
@@ -177,7 +177,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
 }
 
 //U64 HashCodeFor(U8 *str, U64 spots)
-U64 HashCodeFor(U8 *str)
+U64 HashCodeFor(U8 *str)
 /*{
   U64 hash = 5381,
       i = 0;
