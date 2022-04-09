@@ -70,7 +70,7 @@ I64 indexOf(U8 *cmd) {
   U64 i = 0,
       h = 0;
 
-  h = HashCodeFor(cmd);
+  h = HashCodeFor(cmd);
 
   for (;i<REC_CNT;i++) {
     if (VSAM[i][0] == h) return i;
@@ -409,7 +409,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 14: //now
         "%D %T\n",
-        Now, Now;
+        Now, Now;
 
         break;
       case 15: //run

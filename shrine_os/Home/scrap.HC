@@ -20,13 +20,13 @@ DocClear;
 "FileFind(\"\Demo\"): %d\n",FileFind("/Demo");*/
 
 /*//Watch this:
-"%d %d\n",'a','z'; //97 .. 122 
-"%d %d\n",*"a",*"z"; //97 .. 122 
-"%d %d\n",*"a:",*"z:"; //97 .. 122 
+"%d %d\n",'a','z'; //97 .. 122
+"%d %d\n",*"a",*"z"; //97 .. 122
+"%d %d\n",*"a:",*"z:"; //97 .. 122
 "%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
 /*Bool drv_mounted(U8 *drv)
 {//Valid mounted drive?
- //Better than using a built-in like 
+ //Better than using a built-in like
  // DrvIsWritable()? IDK ... Prob not.
   CDrv *dv;
   U64 i;
@@ -146,6 +146,16 @@ U64 HashSpotFor(U8 *str,U64 spots)
  //This is a pretty weak one. I don't need much.
  //CRC16 would've been perfect for me. But, you
  //have to use big lookup table.
+
+const int p = 31;
+    const int m = 1e9 + 9;
+    long long hash_value = 0;
+    long long p_pow = 1;
+    for (char c : s) {
+        hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
+        p_pow = (p_pow * p) % m;
+    }
+
   U64 i = 0,
 //  U64 g = 31, //Magic generator <- odd prime
    hash = 0;
@@ -197,12 +207,67 @@ U64 HashSpotFor(U8 *str,U64 spots)
 F64 test = 123456789;
 I64 test2 = Ceil(Log10(test));
 
-"length of test: %d\n",test2;*/
+"length of test: %d\n",test2;*/
 
-my_dir;
+//my_dir;
+
+U64 sc = 512,
+    scm = 255;
+
+I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+U64 HashSpotFor(U8 *str,U64 spots)
+{
+  U64 hash = 5381,
+      c = 0,
+      i = 0;
+  
+  for (;i < StrLen(str); i++) {
+    hash = ((hash << 5) + hash) + str[i];
+  }
+
+  return (hash % sc) % 32;
+}
+
+"cd    %d\n",HashSpotFor("cd",sc);
+"df    %d\n",HashSpotFor("df",sc);
+"ed    %d\n",HashSpotFor("ed",sc);
+"cp    %d\n",HashSpotFor("cp",sc);
+"fm    %d\n",HashSpotFor("fm",sc);
+"ls    %d\n",HashSpotFor("ls",sc);
+"mv    %d\n",HashSpotFor("mv",sc);
+"rd    %d\n",HashSpotFor("rd",sc);
+"rm    %d\n",HashSpotFor("rm",sc);
+"cdd   %d\n",HashSpotFor("cdd",sc);
+"cat   %d\n",HashSpotFor("cat",sc);
+"cpu   %d\n",HashSpotFor("cpu",sc);
+"man   %d\n",HashSpotFor("man",sc);
+"mem   %d\n",HashSpotFor("mem",sc);
+"now   %d\n",HashSpotFor("now",sc);
+"run   %d\n",HashSpotFor("run",sc);
+"vol   %d\n",HashSpotFor("vol",sc);
+"date  %d\n",HashSpotFor("date",sc);
+"help  %d\n",HashSpotFor("help",sc);
+"dump  %d\n",HashSpotFor("dump",sc);
+"exit  %d\n",HashSpotFor("exit",sc);
+"grep  %d\n",HashSpotFor("grep",sc);
+"more  %d\n",HashSpotFor("more",sc);
+"quit  %d\n",HashSpotFor("quit",sc);
+"time  %d\n",HashSpotFor("time",sc);
+"tree  %d\n",HashSpotFor("tree",sc);
+"view  %d\n",HashSpotFor("view",sc);
+"clear %d\n",HashSpotFor("clear",sc);
+"mkdir %d\n",HashSpotFor("mkdir",sc);
+"rmdir %d\n",HashSpotFor("rmdir",sc);
+"touch %d\n",HashSpotFor("touch",sc);
+"tasks %d\n",HashSpotFor("tasks",sc);
+
 
 "\n";
 
-KeyAndCont;
+//KeyAndCont;
 
-Exit;
+//Exit;

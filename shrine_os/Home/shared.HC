@@ -176,7 +176,18 @@ I64 ValidFiles(U8 *mask="11111111",...)
   return 1;
 }
 
-U64 HashCodeFor(U8 *str)
+//U64 HashCodeFor(U8 *str, U64 spots)
+U64 HashCodeFor(U8 *str)
+/*{
+  U64 hash = 5381,
+      i = 0;
+  
+  for (;i < StrLen(str); i++) {
+    hash = ((hash << 5) + hash) + str[i];
+  }
+
+  return hash % spots;
+}*/
 {//Hash code generator for strings.
  //This is a pretty weak one. I don't need much.
  //CRC16 would've been perfect for me. But, you
@@ -298,7 +309,7 @@ I64 my_dir(U8 *files_find_mask='*')
         idc = tern(id,'d','-');
 
         if (ds.year != dsc.year) {
-	  "%c%12d %03tZ %03tZ %5d ",
+	  "%c%12d %03tZ %03tZ %5d ",
 	  idc, tmpde1->size,
 	  ds.day_of_week, "ST_DAYS_OF_WEEK",
 	  ds.mon-1, "ST_MONTHS", ds.year;
