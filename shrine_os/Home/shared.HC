@@ -34,6 +34,7 @@
 #define ERR_DRVIM "Invalid drive specified or drive is not mounted"
 #define ERR_DIRIFILE "Directory provided instead of a file"
 #define ERR_FILEIDIR "File provided instead of a directory"
+#define ERR_UNKNOWN "Unrecognized command provided"
 
 Bool I64_IN(I64 inval,...)
 {//Check to see if an I64 is in a given argv list.
@@ -167,7 +168,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
     }
 
 
-    //"validfiles: %d %d\n",mask[i],mask[i]-48;
+    //"validfiles: %d %d\n",mask[i],mask[i]-48;
     if ((x.u16[0] || x.u16[1] || x.u16[2]) != mask[i]-48) {
       return 0 - i;
     }
@@ -178,6 +179,17 @@ I64 ValidFiles(U8 *mask="11111111",...)
 
 //U64 HashCodeFor(U8 *str, U64 spots)
 U64 HashCodeFor(U8 *str)
+{
+  U64 hash = 5381,
+//      c = 0,
+      i = 0;
+  
+  for (;i < StrLen(str); i++) {
+    hash = ((hash << 5) + hash) + str[i];
+  }
+
+  return (hash % 512) % 32;
+}
 /*{
   U64 hash = 5381,
       i = 0;
@@ -187,7 +199,7 @@ U64 HashCodeFor(U8 *str)
   }
 
   return hash % spots;
-}*/
+}
 {//Hash code generator for strings.
  //This is a pretty weak one. I don't need much.
  //CRC16 would've been perfect for me. But, you
@@ -202,11 +214,11 @@ U64 HashCodeFor(U8 *str)
   }
 
   return hash;
-}
+}*/
 
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
+  "\n"; ExePutS(cmd); "\n";
 }
 
 U0 viewer(U8 *cmd)

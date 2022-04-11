@@ -211,7 +211,7 @@ I64 test2 = Ceil(Log10(test));
 
 //my_dir;
 
-U64 sc = 512,
+/*U64 sc = 512,
     scm = 255;
 
 I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
@@ -229,7 +229,7 @@ U64 HashSpotFor(U8 *str,U64 spots)
     hash = ((hash << 5) + hash) + str[i];
   }
 
-  return (hash % sc) % 32;
+  return (hash % sc) % 32;
 }
 
 "cd    %d\n",HashSpotFor("cd",sc);
@@ -263,8 +263,91 @@ U64 HashSpotFor(U8 *str,U64 spots)
 "mkdir %d\n",HashSpotFor("mkdir",sc);
 "rmdir %d\n",HashSpotFor("rmdir",sc);
 "touch %d\n",HashSpotFor("touch",sc);
-"tasks %d\n",HashSpotFor("tasks",sc);
+"tasks %d\n",HashSpotFor("tasks",sc);*/
 
+#define REC_CNT 32
+#define REC_OVR 10
+#define REC_TOT REC_CNT+REC_OVR
+U8 *VSAM[REC_TOT][7] =
+{
+/*
+  Very poor implementation, of a hashtable.
+  See how I waste memory & stuff.
+  HASH, command, token min, token max,
+  validate file(s) / dir{s}, flag min,
+  flag max
+*/
+
+{  0,  "view", 2, 2,  TRUE, 0, 0},
+{  1,   "man", 2, 2, FALSE, 0, 0},
+{  2,      "", 0, 0, FALSE, 0, 0},
+{  3,  "date", 1, 1, FALSE, 0, 0},
+{  4,    "ls", 1, 2,  TRUE, 0, 0},
+{  5,      "", 0, 0, FALSE, 0, 0},
+{  6,      "", 0, 0, FALSE, 0, 0},
+{  7,      "", 0, 0, FALSE, 0, 0},
+{  8,    "mv", 1, 1, FALSE, 0, 0},
+{  9,      "", 0, 0, FALSE, 0, 0},
+{ 10,      "", 0, 0, FALSE, 0, 0},
+{ 11, "tasks", 1, 1, FALSE, 0, 0},
+{ 12,    "cd", 1, 2,  TRUE, 0, 0},
+{ 13,   "cpu", 1, 1, FALSE, 0, 1},
+{ 14,    "ed", 2, 2, FALSE, 0, 0},
+{ 15,    "df", 1, 1, FALSE, 0, 0},
+{ 16,   "cdd", 1, 2,  TRUE, 0, 0},
+{ 17,      "", 0, 0, FALSE, 0, 0},
+{ 18,      "", 0, 0, FALSE, 0, 0},
+{ 19,  "grep", 2, 2, FALSE, 0, 0},
+{ 20,  "time", 1, 1, FALSE, 0, 0},
+{ 21,  "tree", 1, 3,  TRUE, 0, 1},
+{ 22,   "vol", 1, 1, FALSE, 0, 0},
+{ 23,      "", 0, 0, FALSE, 0, 0},
+{ 24,    "cp", 3, 3, FALSE, 0, 1},
+{ 25,   "now", 1, 1, FALSE, 0, 0},
+{ 26,   "run", 2, 2,  TRUE, 0, 0},
+{ 27,    "rd", 2, 2,  TRUE, 0, 1},
+{ 28, "mkdir", 2, 2, FALSE, 0, 0},
+{ 29,   "cat", 2, 2,  TRUE, 0, 0},
+{ 30,      "", 0, 0, FALSE, 0, 0},
+{ 31,  "exit", 1, 1, FALSE, 0, 0},
+
+{  3, "rmdir", 2, 2,  TRUE, 0, 1},
+{  4,   "mem", 1, 1, FALSE, 0, 0},
+{  4,    "rm", 2, 2,  TRUE, 0, 1},
+{  8,  "quit", 1, 1, FALSE, 0, 0},
+{  8, "touch", 2, 2, FALSE, 0, 0},
+{ 12, "clear", 1, 1, FALSE, 0, 0},
+{ 14,  "help", 1, 1, FALSE, 0, 0},
+{ 24,    "fm", 1, 3,  TRUE, 0, 1},
+{ 24,  "more", 2, 2,  TRUE, 0, 0},
+{ 27,  "dump", 2, 2,  TRUE, 0, 0}
+
+};
+
+
+U64 sum_str(U8 *sum_of)
+{//Iterate over each char of a string and
+ //return the numeric sum of all the chars.
+
+  U64 sum = 0,
+        l = 0,
+        i = 0;
+
+  if ((l = StrLen(sum_of)) == 0) return 0;
+
+  for (;i<l;i++) {
+    sum += sum_of[i];
+  }
+
+  return sum;
+}
+
+U64 i = 0;
+
+"\n";
+for (;i<REC_TOT;i++) {
+  "sum of [%s]: %d\n", VSAM[i][1], sum_str(VSAM[i][1]);
+}
 
 "\n";
 

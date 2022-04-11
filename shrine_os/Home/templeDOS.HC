@@ -22,58 +22,85 @@
 #include "./shared.HC"
 
 #define REC_CNT 32
-U8 *VSAM[REC_CNT][7] =
+#define REC_OVR 10
+#define REC_TOT REC_CNT+REC_OVR
+U8 *VSAM[REC_TOT][7] =
 {
-//HASH Table ... partially ...
-/*ID, token count min, token count max,
-file / dir validator, flag count min,
-flag count max*/
+/*
+  Very poor implementation, of a hashtable.
+  See how I waste memory & stuff.
+  HASH, command, token min, token max,
+  validate file(s) / dir{s}, flag min,
+  flag max
+*/
 
-{496,   "cd",    1, 2,  TRUE, 0, 0},
-{502,   "df",    1, 1, FALSE, 0, 0},
-{504,   "ed",    2, 2, FALSE, 0, 0},
-{508,   "cp",    3, 3, FALSE, 0, 1},
-{517,   "fm",    1, 3,  TRUE, 0, 1},
-{547,   "ls",    1, 2,  TRUE, 0, 0},
-{554,   "mv",    3, 3, FALSE, 0, 0},
-{556,   "rd",    2, 2,  TRUE, 0, 1},
-{565,   "rm",    2, 2,  TRUE, 0, 1},
-{2084,  "cdd",   1, 2,  TRUE, 0, 0},
-{2088,  "cat",   2, 2,  TRUE, 0, 0},
-{2149,  "cpu",   1, 1, FALSE, 0, 1},
-{2242,  "man",   2, 2, FALSE, 0, 0},
-{2257,  "mem",   1, 1, FALSE, 0, 0},
-{2323,  "now",   1, 1, FALSE, 0, 0},
-{2402,  "run",   2, 2,  TRUE, 0, 0},
-{2440,  "vol",   1, 1, FALSE, 0, 0},
-{8517,  "date",  1, 1, FALSE, 0, 0},
-{8816,  "help",  1, 1, FALSE, 0, 0},
-{8820,  "dump",  2, 2,  TRUE, 0, 0},
-{8920,  "exit",  1, 1, FALSE, 0, 0},
-{8932,  "grep",  2, 2, FALSE, 0, 0},
-{9309,  "more",  2, 2,  TRUE, 0, 0},
-{9640,  "quit",  1, 1, FALSE, 0, 0},
-{9641,  "time",  1, 1, FALSE, 0, 0},
-{9753,  "tree",  1, 3,  TRUE, 0, 1},
-{9755,  "view",  2, 2,  TRUE, 0, 0},
-{34374, "clear", 1, 1, FALSE, 0, 0},
-{36886, "mkdir", 2, 2, FALSE, 0, 0},
-{38294, "rmdir", 2, 2,  TRUE, 0, 1},
-{39172, "touch", 2, 2, FALSE, 0, 0},
-{38287, "tasks", 1, 1, FALSE, 0, 0}
+{  0,  "view", 2, 2,  TRUE, 0, 0},
+{  1,   "man", 2, 2, FALSE, 0, 0},
+{  2,      "", 0, 0, FALSE, 0, 0},
+{  3,  "date", 1, 1, FALSE, 0, 0},
+{  4,    "ls", 1, 2,  TRUE, 0, 0},
+{  5,      "", 0, 0, FALSE, 0, 0},
+{  6,      "", 0, 0, FALSE, 0, 0},
+{  7,      "", 0, 0, FALSE, 0, 0},
+{  8,    "mv", 1, 1, FALSE, 0, 0},
+{  9,      "", 0, 0, FALSE, 0, 0},
+{ 10,      "", 0, 0, FALSE, 0, 0},
+{ 11, "tasks", 1, 1, FALSE, 0, 0},
+{ 12,    "cd", 1, 2,  TRUE, 0, 0},
+{ 13,   "cpu", 1, 1, FALSE, 0, 1},
+{ 14,    "ed", 2, 2, FALSE, 0, 0},
+{ 15,    "df", 1, 1, FALSE, 0, 0},
+{ 16,   "cdd", 1, 2,  TRUE, 0, 0},
+{ 17,      "", 0, 0, FALSE, 0, 0},
+{ 18,      "", 0, 0, FALSE, 0, 0},
+{ 19,  "grep", 2, 2, FALSE, 0, 0},
+{ 20,  "time", 1, 1, FALSE, 0, 0},
+{ 21,  "tree", 1, 3,  TRUE, 0, 1},
+{ 22,   "vol", 1, 1, FALSE, 0, 0},
+{ 23,      "", 0, 0, FALSE, 0, 0},
+{ 24,    "cp", 3, 3, FALSE, 0, 1},
+{ 25,   "now", 1, 1, FALSE, 0, 0},
+{ 26,   "run", 2, 2,  TRUE, 0, 0},
+{ 27,    "rd", 2, 2,  TRUE, 0, 1},
+{ 28, "mkdir", 2, 2, FALSE, 0, 0},
+{ 29,   "cat", 2, 2,  TRUE, 0, 0},
+{ 30,      "", 0, 0, FALSE, 0, 0},
+{ 31,  "exit", 1, 1, FALSE, 0, 0},
+
+{  3, "rmdir", 2, 2,  TRUE, 0, 1},
+{  4,   "mem", 1, 1, FALSE, 0, 0},
+{  4,    "rm", 2, 2,  TRUE, 0, 1},
+{  8,  "quit", 1, 1, FALSE, 0, 0},
+{  8, "touch", 2, 2, FALSE, 0, 0},
+{ 12, "clear", 1, 1, FALSE, 0, 0},
+{ 14,  "help", 1, 1, FALSE, 0, 0},
+{ 24,    "fm", 1, 3,  TRUE, 0, 1},
+{ 24,  "more", 2, 2,  TRUE, 0, 0},
+{ 27,  "dump", 2, 2,  TRUE, 0, 0}
 
 };
 
 I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {
-  U64 i = 0,
+  U64 i = REC_CNT,
       h = 0;
 
   h = HashCodeFor(cmd);
 
-  for (;i<REC_CNT;i++) {
-    if (VSAM[i][0] == h) return i;
+  //My whole thing was ... I wanted to not iterate
+  //over the array & do a StrCmp for every item.
+  //Hash table was suppose to help me do that.
+  //Right now, the hit stats are 22/10.
+  //The collisions are caused from mapping the HASHES,
+  //down to the 0-REC_CNT range.  Before the mapping,
+  //i don't generate ANY collisionstion ... YET ...
+  if (!StrCmp(VSAM[h][1],cmd)) return h;
+
+  for (;i<REC_TOT;i++) {
+    if (!StrCmp(VSAM[i][1],cmd)) {
+      return i;
+    }
   }
 
   return -1;
@@ -289,17 +316,66 @@ U8 execute_cmd(U8 *cmd) {
                 VSAM[cur_IDX][4],
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch (cur_IDX) {
-      case 0: //cd
-      case 9: //cdd
+      case -1: //unrecognized command
+        err_print(ERR_UNKNOWN);
+      case 0: //view
+        viewer(strcat(buffer,"Type(\"",
+                      buffera,"\");"));
+
+        break;
+      case 1: //man
+        Man(buffera);
+
+        break;
+      case 3: //date
+        "%D\n", Now;
+
+        break;
+      case 4: //ls
+        "\n"; Dir(tern(tc==1,".",buffera));
+
+        break;
+      case 8: //mv
+        if (ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+          if (IsDir(buffera)) {
+            CopyTree(buffera,bufferb);
+            DelTree(buffera);
+          }
+          else {
+            Move(buffera,bufferb);
+          }
+        }
+
+        break;
+      case 11: //tasks
+        TaskRep;
+
+        break;
+      case 12: //cd
+      case 16: //cdd
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
         Cd(buffera);
 
-        if (cur_IDX == 9) shell_execute("Dir;");
+        if (cur_IDX == 16) shell_execute("Dir;");
 
         break;
-      case 1: //df
+      case 13: //cpu
+        if (fc == 1) {
+          if (!(tf = got_flag(buffera,FLG_F))) { //-f
+            goto done;
+          }
+        }
+
+        CPURep(tf);
+
+        break;
+      case 14: //ed
+        Ed(buffera);
+
+        break;
+      case 15: //df
 //        viewer("DrvRep;\"\n\";
 //               drv_free;\"\n\";");
 
@@ -307,11 +383,33 @@ U8 execute_cmd(U8 *cmd) {
         drv_free;
 
         break;
-      case 2: //ed
-        Ed(buffera);
+      case 19: //grep
+        F(buffera);
 
         break;
-      case 3: //cp
+      case 20: //time
+        "%T\n",Now;
+
+        break;
+      case 39: //fm
+      case 21: //tree
+        if (fc > 0) {
+        if (!(tf = got_flag(buffera,FLG_F))) { //-f
+          goto done;
+        }}
+
+        buffer = tern(fc==0,buffera,bufferb);
+
+        MiniFM(tern(tc == 1,".",buffer),,tf);
+
+        break;
+      case 22: //vol
+        //Don't think drives have labels in this OS.
+        "Volume in drive %c: has no label.\n",cur_drv;
+        "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+
+        break;
+      case 24: //cp
         buffer = tern(fc==0,buffera,bufferb);
 
         if (ValidFiles(,buffer)) {
@@ -334,39 +432,20 @@ U8 execute_cmd(U8 *cmd) {
         }
 
         break;
-      case 4: //fm
-      case 25: //tree
-        if (fc > 0) {
-        if (!(tf = got_flag(buffera,FLG_F))) { //-f
-          goto done;
-        }}
-
-        buffer = tern(fc==0,buffera,bufferb);
-
-        MiniFM(tern(tc == 1,".",buffer),,tf);
+      case 25: //now
+        "%D %T\n",
+        Now, Now;
 
         break;
-      case 5: //ls
-        "\n"; Dir(tern(tc==1,".",buffera));
+      case 26: //run
+        ExeFile(buffera);
 
         break;
-      case 6: //mv
-        if (ValidFiles("10",buffera,bufferb)) { //Don't allow override.
-          if (IsDir(buffera)) {
-            CopyTree(buffera,bufferb);
-            DelTree(buffera);
-          }
-          else {
-            Move(buffera,bufferb);
-          }
-        }
-
-        break;
-      case 7: //rd
-      case 8: //rm
-      case 29: //rmdir
-        if (I64_IN(cur_IDX,7,29) ||
-            (cur_IDX == 8 && fc == 1)) {
+      case 27: //rd
+      case 34: //rm
+      case 32: //rmdir
+        if (I64_IN(cur_IDX,27,32) ||
+            (cur_IDX == 34 && fc == 1)) {
           if (!got_flag(buffera,FLG_D)) { //-d
             goto done;
           }
@@ -383,94 +462,6 @@ U8 execute_cmd(U8 *cmd) {
         }
 
         break;
-      case 10: //cat
-        Type(buffera);
-
-        break;
-      case 11: //cpu
-        if (fc == 1) {
-          if (!(tf = got_flag(buffera,FLG_F))) { //-f
-            goto done;
-          }
-        }
-
-        CPURep(tf);
-
-        break;
-      case 12: //man
-        Man(buffera);
-
-        break;
-      case 13: //mem
-        viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
-               ");
-
-        break;
-      case 14: //now
-        "%D %T\n",
-        Now, Now;
-
-        break;
-      case 15: //run
-        ExeFile(buffera);
-
-        break;
-      case 16: //vol
-        //Don't think drives have labels in this OS.
-        "Volume in drive %c: has no label.\n",cur_drv;
-        "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
-
-        break;
-      case 17: //date
-        "%D\n", Now;
-
-        break;
-      case 18: //help
-        if (FileFind(help_file)) {
-          viewer(strcat(buffer,"Type(\"",
-                        help_file,"\");"));
-        }
-        else {
-          err_print(ERR_FILENF,help_file);
-        }
-
-        break;
-      case 19: //dump
-        Dump(buffera);
-
-        break;
-      case 20: //exit
-        //Don't need to worrry about aborting.  OS reclaims
-        //all the memory, when the window is closed
-        //and what else is there to worrry about?
-        Exit;
-
-        break;
-      case 21: //grep
-        F(buffera);
-
-        break;
-      case 22: //more
-        More(buffera);
-
-        break;
-      case 23: //quit
-        return 1;
-
-        break;
-      case 24: //time
-        "%T\n",Now;
-
-        break;
-      case 26: //view
-        viewer(strcat(buffer,"Type(\"",
-                      buffera,"\");"));
-
-        break;
-      case 27: //clear
-        DocClear;
-        break;
       case 28: //mkdir
         if (ValidFiles("0",buffera)) {
           DirMk(buffera);
@@ -480,7 +471,28 @@ U8 execute_cmd(U8 *cmd) {
         }
 
         break;
-      case 30: //touch
+      case 29: //cat
+        Type(buffera);
+
+        break;
+      case 31: //exit
+        //Don't need to worrry about aborting.  OS reclaims
+        //all the memory, when the window is closed
+        //and what else is there to worrry about?
+        Exit;
+
+        break;
+      case 33: //mem
+        viewer("MemRep;\"\n\";
+                MemPageRep;\"\n\";
+               ");
+
+        break;
+      case 35: //quit
+        return 1;
+
+        break;
+      case 36: //touch
         //OK ... Angry. I made an attrib command that lets you
         //set file attributes. But, the system ignores them.
         //I can set a file READONLY and still edit/delete it.
@@ -498,8 +510,26 @@ U8 execute_cmd(U8 *cmd) {
         }
 
         break;
-      case 31:
-        TaskRep;
+      case 37: //clear
+        DocClear;
+
+        break;
+      case 38: //help
+        if (FileFind(help_file)) {
+          viewer(strcat(buffer,"Type(\"",
+                        help_file,"\");"));
+        }
+        else {
+          err_print(ERR_FILENF,help_file);
+        }
+
+        break;
+      case 40: //more
+        More(buffera);
+
+        break;
+      case 41: //dump
+        Dump(buffera);
 
         break;
       default:
