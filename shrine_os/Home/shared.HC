@@ -164,7 +164,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
     x.u16[0] = is_drv(argv[i])==1;
     
     if (!(x.u16[1] = IsDir(argv[i]))) {
-      x.u16[2] = FileFind(argv[i]);
+      x.u16[2] = FileFind(argv[i]);
     }
 
 
@@ -177,44 +177,17 @@ I64 ValidFiles(U8 *mask="11111111",...)
   return 1;
 }
 
-//U64 HashCodeFor(U8 *str, U64 spots)
 U64 HashCodeFor(U8 *str)
-{
+{//Hash code generator for strings.
   U64 hash = 5381,
-//      c = 0,
       i = 0;
   
   for (;i < StrLen(str); i++) {
     hash = ((hash << 5) + hash) + str[i];
-  }
+  }
 
   return (hash % 512) % 32;
 }
-/*{
-  U64 hash = 5381,
-      i = 0;
-  
-  for (;i < StrLen(str); i++) {
-    hash = ((hash << 5) + hash) + str[i];
-  }
-
-  return hash % spots;
-}
-{//Hash code generator for strings.
- //This is a pretty weak one. I don't need much.
- //CRC16 would've been perfect for me. But, you
- //have to use big lookup table.
-  U64 i = 0,
-//  U64 g = 31, //Magic generator <- odd prime
-   hash = 0;
-
-  for (;i < StrLen(str); i++) {
-    hash =  (hash << 2) + str[i];
-//    hash =  ((hash << 5) - hash) + str[i]; //hash = g * hash + str[i];
-  }
-
-  return hash;
-}*/
 
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
@@ -273,6 +246,32 @@ I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+Bool str_cmp(U8 *stra, U8 *strb)
+{//StrCmp replacement which returns TRUE & FALSE.
+ //Saying !StrCmp() for TRUE, erks me ...
+/*Bool str_cmp(U8 *stra, U8 *strb) {
+  if (StrLen(stra) != StrLen(strb)) return FALSE;
+ 
+  U8 *sp1 = stra, *sp2 = strb;
+  Bool ret_val = TRUE;
+ 
+  while (stra && stra[0] != '\0') {
+    if (!(stra[0] == strb[0])) ret_val = FALSE;
+ 
+    stra++; strb++;
+  }
+ 
+  stra = sp1; strb = sp2;
+
+  return ret_val;
+}*/
+
+  if (!(StrCmp(stra,strb))) return TRUE;
+
+  return FALSE;
+}
+
 
 I64 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.

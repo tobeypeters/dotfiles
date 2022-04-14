@@ -367,8 +367,8 @@ U8 *a = "car", *b = "caro", *c = "";
 
 if (str_cmp(a,b)) {
   "yes\n";
-}*/
-
+}*/
+
 
 "\n";
 

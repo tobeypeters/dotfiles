@@ -91,10 +91,10 @@ I64 indexOf(U8 *cmd) {
   //down to the 0-REC_CNT range.  Before the mapping,
   //i don't generate ANY collisionstion ... YET ...
 
-  if (!StrCmp(VSAM[h][1],cmd)) return h;
+  if (str_cmp(VSAM[h][1],cmd)) return h;
 
   for (;i<REC_TOT;i++) {
-    if (!StrCmp(VSAM[i][1],cmd)) return i;
+    if (str_cmp(VSAM[i][1],cmd)) return i;
   }
 
   return -1;
@@ -105,44 +105,24 @@ U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 #define SEG_CNT 256
 #define SEG_LEN 256
 U8 data[SEG_CNT][SEG_LEN];
+U0 data_clean()
+{
+  MemSet(data, '\0', sizeof(U8)*SEG_CNT*SEG_LEN);
+
+  segs = seg_beg = 0;
+}
 
 U64 seg_beg = 0,
        segs = 0;
 
-Bool str_cmp(U8 *stra, U8 *strb)
-{
-  if (StrLen(stra) != StrLen(strb)) return FALSE;
-
-  "1 stra: %s",stra;
-
-  U8 *sp1 = stra, *sp2 = strb;
-  while (stra && stra[0] != '\0') {
-    if (!(stra[0] == strb[0])) {
-      *stra = *sp1;
-      *strb = *sp2;
-      "2 stra: %s",stra;
-      return FALSE;
-    }
-    stra++; strb++;
-  }
-
-  "3 stra: %s",stra;
-  
-  return TRUE;
-}
-
 U8 seg_push(U8 *si, U8 delim=' ')
-{//Push a segment into the data stack.
+{//Push a segment into the data stack.
   if (StrLen(si) > 0) {
     U64 i = 0;
 
     while (si[0] != '\0' && si[0] != delim) {
       data[segs][i] = si[0];
       si++; i++;
-    }
-
-    if (i > 0) {
-      data[segs][i] = '\0';
     }
 
     segs++;
@@ -156,15 +136,8 @@ U8 seg_push(U8 *si, U8 delim=' ')
 U8 seg_peek(I64 idx=-1)
 {//Peek at a segment from the data stack.
  if (idx >= SEG_CNT) return NULL;
-
+
  return data[tern(idx == -1, seg_beg, idx)];
-}
-
-U0 seg_clean()
-{
-  MemSet(data, '\0', sizeof(U8)*SEG_CNT*SEG_LEN);
-
-  segs = seg_beg = 0;
 }
 
 U64 seg_count(U8 *seg_buf, Bool count_segs=TRUE, U8 delim=32)
@@ -582,7 +555,7 @@ U0 templeDOS() {
 
   while (TRUE)
   {
-    seg_clean;
+    data_clean;
 
     DocBottom;
 
