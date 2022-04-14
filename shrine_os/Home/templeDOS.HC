@@ -85,7 +85,7 @@ I64 cur_IDX = -1;
 I64 indexOf(U8 *cmd) {
   U64 i = REC_CNT,
       h = HashCodeFor(cmd);
-
+
   //Right now, the HASH hit stats are 22/10.
   //The collisions are caused from mapping the HASHES,
   //down to the 0-REC_CNT range.  Before the mapping,
@@ -132,7 +132,7 @@ Bool str_cmp(U8 *stra, U8 *strb)
 }
 
 U8 seg_push(U8 *si, U8 delim=' ')
-{//Push a segment into the data stack.
+{//Push a segment into the data stack.
   if (StrLen(si) > 0) {
     U64 i = 0;
 
