@@ -1,0 +1,4 @@
+animal
+dictionary
+zebra
+mayonaise
