@@ -164,7 +164,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
     x.u16[0] = is_drv(argv[i])==1;
     
     if (!(x.u16[1] = IsDir(argv[i]))) {
-      x.u16[2] = FileFind(argv[i]);
+      x.u16[2] = FileFind(argv[i]);
     }
 
 
@@ -218,7 +218,7 @@ U64 HashCodeFor(U8 *str)
 
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
+  "\n"; ExePutS(cmd); "\n";
 }
 
 U0 viewer(U8 *cmd)

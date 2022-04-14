@@ -42,7 +42,7 @@ U8 *VSAM[REC_TOT][7] =
 {  5,      "", 0, 0, FALSE, 0, 0},
 {  6,      "", 0, 0, FALSE, 0, 0},
 {  7,      "", 0, 0, FALSE, 0, 0},
-{  8,    "mv", 1, 1, FALSE, 0, 0},
+{  8,    "mv", 3, 3, FALSE, 0, 0},
 {  9,      "", 0, 0, FALSE, 0, 0},
 { 10,      "", 0, 0, FALSE, 0, 0},
 { 11, "tasks", 1, 1, FALSE, 0, 0},
@@ -79,28 +79,22 @@ U8 *VSAM[REC_TOT][7] =
 { 27,  "dump", 2, 2,  TRUE, 0, 0}
 
 };
-
+
 I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {
   U64 i = REC_CNT,
-      h = 0;
-
-  h = HashCodeFor(cmd);
-
-  //My whole thing was ... I wanted to not iterate
-  //over the array & do a StrCmp for every item.
-  //Hash table was suppose to help me do that.
-  //Right now, the hit stats are 22/10.
+      h = HashCodeFor(cmd);
+
+  //Right now, the HASH hit stats are 22/10.
   //The collisions are caused from mapping the HASHES,
   //down to the 0-REC_CNT range.  Before the mapping,
   //i don't generate ANY collisionstion ... YET ...
+
   if (!StrCmp(VSAM[h][1],cmd)) return h;
 
   for (;i<REC_TOT;i++) {
-    if (!StrCmp(VSAM[i][1],cmd)) {
-      return i;
-    }
+    if (!StrCmp(VSAM[i][1],cmd)) return i;
   }
 
   return -1;
@@ -115,6 +109,28 @@ U8 data[SEG_CNT][SEG_LEN];
 U64 seg_beg = 0,
        segs = 0;
 
+Bool str_cmp(U8 *stra, U8 *strb)
+{
+  if (StrLen(stra) != StrLen(strb)) return FALSE;
+
+  "1 stra: %s",stra;
+
+  U8 *sp1 = stra, *sp2 = strb;
+  while (stra && stra[0] != '\0') {
+    if (!(stra[0] == strb[0])) {
+      *stra = *sp1;
+      *strb = *sp2;
+      "2 stra: %s",stra;
+      return FALSE;
+    }
+    stra++; strb++;
+  }
+
+  "3 stra: %s",stra;
+  
+  return TRUE;
+}
+
 U8 seg_push(U8 *si, U8 delim=' ')
 {//Push a segment into the data stack.
   if (StrLen(si) > 0) {
@@ -124,6 +140,7 @@ U8 seg_push(U8 *si, U8 delim=' ')
       data[segs][i] = si[0];
       si++; i++;
     }
+
     if (i > 0) {
       data[segs][i] = '\0';
     }
@@ -285,11 +302,10 @@ U8 execute_cmd(U8 *cmd) {
   U8 *orig_cmd = cmd;
 
   fc = seg_count(cmd,FALSE,'-');
-  tc = at - fc;
 
-  if (tc == 0) return 0;
+  if ((tc = at - fc) == 0) return 0;
 
-  for (i=0; i < at; i++) {
+  for (; i < at; i++) {
     seg_trim(cmd,FALSE,TRUE);
 
     cmd = seg_push(cmd);
@@ -297,27 +313,25 @@ U8 execute_cmd(U8 *cmd) {
 
   I64 f = 0;
 
-  U8 *buffer,
-     *buffera,
-     *bufferb,
-     *bufferc;
+//  U8 *buffer,
+//     *buffera,
+//     *bufferb,
+//     *bufferc;
 
   Bool tf = FALSE; //General use true/false flag.
 
   cur_IDX = indexOf(seg_peek);
 
-   buffer = seg_peek;
-  buffera = tern(at>1,seg_peek(1),'\0');
-  bufferb = tern(at>2,seg_peek(2),'\0');
-  bufferc = tern(at>3,seg_peek(3),'\0');
+  U8  *buffer = seg_peek,
+     *buffera = tern(at>1,seg_peek(1),'\0'),
+     *bufferb = tern(at>2,seg_peek(2),'\0'),
+     *bufferc = tern(at>3,seg_peek(3),'\0');
 
   if (cur_IDX > -1) {
   if (err_check(VSAM[cur_IDX][2],VSAM[cur_IDX][3],
                 VSAM[cur_IDX][4],
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch (cur_IDX) {
-      case -1: //unrecognized command
-        err_print(ERR_UNKNOWN);
       case 0: //view
         viewer(strcat(buffer,"Type(\"",
                       buffera,"\");"));

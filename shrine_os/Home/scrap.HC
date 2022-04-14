@@ -1,3 +1,5 @@
+#include "shared"
+
 //"\n";
 //
 //drv_free;
@@ -202,8 +204,7 @@ const int p = 31;
 "touch %d\n",HashSpotFor("touch",sc);
 "tasks %d\n",HashSpotFor("tasks",sc);*/
 
-/*#include "shared"
-
+/*
 F64 test = 123456789;
 I64 test2 = Ceil(Log10(test));
 
@@ -265,7 +266,7 @@ U64 HashSpotFor(U8 *str,U64 spots)
 "touch %d\n",HashSpotFor("touch",sc);
 "tasks %d\n",HashSpotFor("tasks",sc);*/
 
-#define REC_CNT 32
+/*#define REC_CNT 32
 #define REC_OVR 10
 #define REC_TOT REC_CNT+REC_OVR
 U8 *VSAM[REC_TOT][7] =
@@ -333,7 +334,7 @@ U64 sum_str(U8 *sum_of)
         l = 0,
         i = 0;
 
-  if ((l = StrLen(sum_of)) == 0) return 0;
+  if ((l = StrLen(sum_of)) == 0) return 0;
 
   for (;i<l;i++) {
     sum += sum_of[i];
@@ -346,11 +347,31 @@ U64 i = 0;
 
 "\n";
 for (;i<REC_TOT;i++) {
-  "sum of [%s]: %d\n", VSAM[i][1], sum_str(VSAM[i][1]);
+//  "sum of [%s]: %d\n", VSAM[i][1], sum_str(VSAM[i][1]);
+  "%d %s\n",sum_str(VSAM[i][1]),VSAM[i][1];
+}*/
+
+
+/*I64 str_cmp(U8 *stra, U8 *strb) {
+  while ((*stra && *strb) && (*stra == *strb))  {
+    stra++; strb++;
+  }
+
+  return tern((*stra - *strb) == 0,1,0);
 }
+
+
+U8 *a = "car", *b = "caro", *c = "";
+
+"%d\n",str_cmp(a,b);
+
+if (str_cmp(a,b)) {
+  "yes\n";
+}*/
+
 
 "\n";
 
-//KeyAndCont;
+KeyAndCont;
 
-//Exit;
+Exit;
