@@ -102,6 +102,9 @@ I64 indexOf(U8 *cmd) {
 
 U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
 
+U64 seg_beg = 0,
+       segs = 0;
+
 #define SEG_CNT 256
 #define SEG_LEN 256
 U8 data[SEG_CNT][SEG_LEN];
@@ -111,9 +114,6 @@ U0 data_clean()
 
   segs = seg_beg = 0;
 }
-
-U64 seg_beg = 0,
-       segs = 0;
 
 U8 seg_push(U8 *si, U8 delim=' ')
 {//Push a segment into the data stack.
@@ -136,7 +136,7 @@ U8 seg_push(U8 *si, U8 delim=' ')
 U8 seg_peek(I64 idx=-1)
 {//Peek at a segment from the data stack.
  if (idx >= SEG_CNT) return NULL;
-
+
  return data[tern(idx == -1, seg_beg, idx)];
 }
 
@@ -306,7 +306,7 @@ U8 execute_cmd(U8 *cmd) {
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch (cur_IDX) {
       case 0: //view
-        viewer(strcat(buffer,"Type(\"",
+        viewer(strcat(buffer,,"Type(\"",
                       buffera,"\");"));
 
         break;
@@ -503,8 +503,11 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 38: //help
         if (FileFind(help_file)) {
-          viewer(strcat(buffer,"Type(\"",
-                        help_file,"\");"));
+          strcat(buffer,,"Type(\"",
+                        help_file,"\");");
+          "help buffer: %s\n",buffer;
+          /*viewer(strcat(buffer,,"Type(\"",
+                        help_file,"\");"));*/
         }
         else {
           err_print(ERR_FILENF,help_file);
@@ -569,7 +572,7 @@ U0 templeDOS() {
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
-
+
     if (result) break;
   }
 

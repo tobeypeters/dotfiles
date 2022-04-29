@@ -184,7 +184,7 @@ U64 HashCodeFor(U8 *str)
   
   for (;i < StrLen(str); i++) {
     hash = ((hash << 5) + hash) + str[i];
-  }
+  }
 
   return (hash % 512) % 32;
 }
@@ -204,11 +204,12 @@ U0 viewer(U8 *cmd)
   PutChars(CH_CTRLY);
 }
 
-U0 strcat(U8 **buffer,...)
+U0 strcat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
+ //flush=TRUE ... buffer will be cleared first.
   U64 i = 0;
-  
-  *buffer = 0;
+
+  if (flush) *buffer = '\0';
 
   for (;i<argc;i++) {
     CatPrint(buffer,argv[i]);
@@ -272,9 +273,77 @@ Bool str_cmp(U8 *stra, U8 *strb)
   return FALSE;
 }
 
+U0 zero_mem(U8 *region, U64 size)
+{//Zero out a memory range.
+  MemSet(region, '\0', sizeof(U8)*size);
+}
+
+#define REVBUF_CNT 64
+U8 num_str(U64 number)
+{//Convert a number to a string.
+  U64 tmp = 0,
+        i = 0,
+        j = 0;
+
+  U8 *buffer[REVBUF_CNT];
+  zero_mem(buffer,REVBUF_CNT);
+
+  i = REVBUF_CNT - 1;
+
+  while (number>0) {
+    tmp = number % 10;
+
+    buffer[i] = tmp;
+    number /= 10;
+
+    i--;
+  }
+
+  i++;
+
+  while (i < REVBUF_CNT) {
+    buffer[j] = 48 + buffer[i];
+    i++; j++;
+  }
+
+  return buffer;
+}
+
+#define gigabyte 1073741824
+U8 fmt_size(U64 size)
+{//Return a formatted size string for my_dir
+ //Anything a gig or larger is return in
+ //the format x.xxG.
+  U8 *buffer,
+     *bufferb,
+     *bufferc;
+
+  U64 holda = 0,
+      holdb = 0;
+
+  F64 retval = size;
+
+  if (retval >= gigabyte) {
+    holda = retval/gigabyte;
+    holdb = (retval - (holda * gigabyte)) / 100000000;
+
+    strcat(buffer,,"tango",num_str(holdb),".",num_str(holdb));
+
+    "size: %d.%dgig\n",holda,holdb;
+//    "size: %c.%cgig\n",48 + holda, 48 + holdb;
+    "buffer: %s\n",buffer;
+  }
+  else {
+  }
+
+  return buffer;
+}
 
 I64 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
+
+  fmt_size(1073741824);
+
   CDirEntry *tmpde1=NULL,*tmpde2;
   U8 *st;
   CDateStruct ds, dsc;

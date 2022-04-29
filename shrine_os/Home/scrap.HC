@@ -210,8 +210,6 @@ I64 test2 = Ceil(Log10(test));
 
 "length of test: %d\n",test2;*/
 
-//my_dir;
-
 /*U64 sc = 512,
     scm = 255;
 
@@ -347,7 +345,7 @@ U64 i = 0;
 
 "\n";
 for (;i<REC_TOT;i++) {
-//  "sum of [%s]: %d\n", VSAM[i][1], sum_str(VSAM[i][1]);
+//  "sum of [%s]: %d\n", VSAM[i][1],5 sum_str(VSAM[i][1]);
   "%d %s\n",sum_str(VSAM[i][1]),VSAM[i][1];
 }*/
 
@@ -368,10 +366,23 @@ U8 *a = "car", *b = "caro", *c = "";
 if (str_cmp(a,b)) {
   "yes\n";
 }*/
-
+
+fmt_size(1073741825);
+fmt_size(1395864371);
+
+
+//U8 *parts[3][64];
+
+//parts[0][0] = num_str(123456789);
+
+//"%s\n",*parts[0];
+
+
+//my_dir;
 
 "\n";
 
 KeyAndCont;
 
 Exit;
+
