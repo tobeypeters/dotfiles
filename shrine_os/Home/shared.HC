@@ -309,14 +309,12 @@ U8 num_str(U64 number)
   return buffer;
 }
 
-#define gigabyte 1073741824
-U8 fmt_size(U64 size)
+/*U8 fmt_size(U64 size)
 {//Return a formatted size string for my_dir
  //Anything a gig or larger is return in
  //the format x.xxG.
   U8 *buffer,
-     *bufferb,
-     *bufferc;
+     *bufferb;
 
   U64 holda = 0,
       holdb = 0;
@@ -327,9 +325,10 @@ U8 fmt_size(U64 size)
     holda = retval/gigabyte;
     holdb = (retval - (holda * gigabyte)) / 100000000;
 
-    strcat(buffer,,"tango",num_str(holdb),".",num_str(holdb));
-
     "size: %d.%dgig\n",holda,holdb;
+    strcat(buffer,,"tango",num_str(holda),".",num_str(holdb));
+
+//    "size: %d.%dgig\n",holda,holdb;
 //    "size: %c.%cgig\n",48 + holda, 48 + holdb;
     "buffer: %s\n",buffer;
   }
@@ -337,18 +336,19 @@ U8 fmt_size(U64 size)
   }
 
   return buffer;
-}
+}*/
+
+#define gigabyte 1073741824
+#define STD "ST_DAYS_OF_WEEK"
+#define STM "ST_MONTHS"
 
 I64 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
-
-  fmt_size(1073741824);
-
   CDirEntry *tmpde1=NULL,*tmpde2;
   U8 *st;
   CDateStruct ds, dsc;
   I64 csize=0xFFFF,c=0xFFFF,res=0,idc;
-  Bool id=FALSE;
+//  Bool id=FALSE;
 
   tmpde1=FilesFind(files_find_mask);
   if (!(st=DirCur))
@@ -379,27 +379,37 @@ I64 my_dir(U8 *files_find_mask='*')
 
       Date2Struct(&dsc,Now+local_time_offset);
 
+      U64 holda = 0,
+          holdb = 0;
+
+      Bool gig = FALSE;
+
       while (tmpde1) {
 	tmpde2=tmpde1->next;
 	res++;
 
 	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
 
-        id = IsDir(tmpde1->name);
-        idc = tern(id,'d','-');
+//	idc = tern(IsDir(tmpde1->name),'d','-');
+	idc = IsDir(tmpde1->name)*100;
+
+	gig = tmpde1->size >= gigabyte;
 
-        if (ds.year != dsc.year) {
-	  "%c%12d %03tZ %03tZ %5d ",
-	  idc, tmpde1->size,
-	  ds.day_of_week, "ST_DAYS_OF_WEEK",
-	  ds.mon-1, "ST_MONTHS", ds.year;
-        }
-        else {
-	  "%c%12d %03tZ %03tZ %02d:%02d ",
-	  idc, tmpde1->size,
-	  ds.day_of_week, "ST_DAYS_OF_WEEK",
-	  ds.mon-1, "ST_MONTHS",ds.hour,ds.min;
-        }
+	if (gig) {
+	  holda = tmpde1->size/gigabyte;
+	  holdb = (tmpde1->size-(holda*gigabyte))/100000000;
+	}
+
+	if (gig) {
+	  "%c%9d %03tZ %03tZ %02d:%02d ",
+	  idc,tmpde1->size,ds.day_of_week,
+	  STD,ds.mon-1,STM,ds.hour,ds.min;
+	}
+	else {          
+	  "%c%9d %03tZ %03tZ %02d:%02d ",
+	  idc,tmpde1->size,ds.day_of_week,
+	  STD,ds.mon-1,STM,ds.hour,ds.min;
+	}
 
 	if (tmpde1->attr & RS_ATTR_DIR)
 	  PutDirLink(tmpde1->name,tmpde1->full_name);
