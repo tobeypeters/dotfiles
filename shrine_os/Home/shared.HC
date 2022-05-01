@@ -309,35 +309,6 @@ U8 num_str(U64 number)
   return buffer;
 }
 
-/*U8 fmt_size(U64 size)
-{//Return a formatted size string for my_dir
- //Anything a gig or larger is return in
- //the format x.xxG.
-  U8 *buffer,
-     *bufferb;
-
-  U64 holda = 0,
-      holdb = 0;
-
-  F64 retval = size;
-
-  if (retval >= gigabyte) {
-    holda = retval/gigabyte;
-    holdb = (retval - (holda * gigabyte)) / 100000000;
-
-    "size: %d.%dgig\n",holda,holdb;
-    strcat(buffer,,"tango",num_str(holda),".",num_str(holdb));
-
-//    "size: %d.%dgig\n",holda,holdb;
-//    "size: %c.%cgig\n",48 + holda, 48 + holdb;
-    "buffer: %s\n",buffer;
-  }
-  else {
-  }
-
-  return buffer;
-}*/
-
 #define gigabyte 1073741824
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
@@ -345,38 +316,26 @@ U8 num_str(U64 number)
 I64 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   CDirEntry *tmpde1=NULL,*tmpde2;
-  U8 *st;
   CDateStruct ds, dsc;
-  I64 csize=0xFFFF,c=0xFFFF,res=0,idc;
-//  Bool id=FALSE;
+
+  I64 res=0,idc;
+
+  U8 *st;
 
   tmpde1=FilesFind(files_find_mask);
   if (!(st=DirCur))
     PrintErr("Invalid Drive\n");
   else {
     if (tmpde1) {
-      Free(st);
+//      Free(st);
       st=MAllocIdent(tmpde1->full_name);
       StrLastRem(st,"/");
-      if (!st[2])
-	StrCpy(st+2,"/");
-//Find max columns
-      tmpde2=tmpde1;
-      while (tmpde2) {
-	if (tmpde2->size>csize)
-	  csize=tmpde2->size;
-	if (tmpde2->clus>c)
-	  c=tmpde2->clus;
-	tmpde2=tmpde2->next;
-      }
-      csize=Bsr(csize)/4+1;
-      c=Bsr(c)/4+1;
+
+      if (!st[2]) StrCpy(st+2,"/");
 
 //      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-//      "Listing: %s\n",st;
-
-//      "DATE_TIME_%*ts\n",csize,"SIZE";
-
+      "Listing: %s\n",st;
+$WW,1$
       Date2Struct(&dsc,Now+local_time_offset);
 
       U64 holda = 0,
@@ -390,9 +349,8 @@ I64 my_dir(U8 *files_find_mask='*')
 
 	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
 
-//	idc = tern(IsDir(tmpde1->name),'d','-');
-	idc = IsDir(tmpde1->name)*100;
-
+	idc = IsDir(tmpde1->name)*100;
+
 	gig = tmpde1->size >= gigabyte;
 
 	if (gig) {

@@ -178,7 +178,7 @@ U64 tc = 0,
     fc = 0;
 
 //Yes, I'm handing error checking and validation HORRIBLY.
-U0 err_print(U8 *msg, U8 *link="Usage")
+U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
   "`$FG,3$%s$FG$`: %s ...\n", link, msg;
 }
@@ -572,7 +572,7 @@ U0 templeDOS() {
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
-
+
     if (result) break;
   }
 
