@@ -173,7 +173,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
       return 0 - i;
     }
   }
-
+
   return 1;
 }
 
@@ -310,15 +310,17 @@ U8 num_str(U64 number)
 }
 
 #define gigabyte 1073741824
+#define gigatenth gigabyte / 10
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-I64 my_dir(U8 *files_find_mask='*')
+U0 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   CDirEntry *tmpde1=NULL,*tmpde2;
   CDateStruct ds, dsc;
 
-  I64 res=0,idc;
+  U64 idc;
+  Bool id=FALSE;
 
   U8 *st;
 
@@ -327,40 +329,41 @@ I64 my_dir(U8 *files_find_mask='*')
     PrintErr("Invalid Drive\n");
   else {
     if (tmpde1) {
-//      Free(st);
       st=MAllocIdent(tmpde1->full_name);
       StrLastRem(st,"/");
 
       if (!st[2]) StrCpy(st+2,"/");
 
+      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
+//      "$$MA,T=\"%s\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st,st;
+
 //      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-      "Listing: %s\n",st;
-$WW,1$
+//      " Listing: %s\n",st;
+
       Date2Struct(&dsc,Now+local_time_offset);
 
-      U64 holda = 0,
-          holdb = 0;
-
-      Bool gig = FALSE;
-
+      U64 gt = gigatenth,
+           g = gigabyte,
+       holda = 0,
+       holdb = 0;
+             
       while (tmpde1) {
 	tmpde2=tmpde1->next;
-	res++;
 
 	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
 
-	idc = IsDir(tmpde1->name)*100;
+	id =tmpde1->attr & RS_ATTR_DIR;
+	idc = 100-(!id*55);
 
-	gig = tmpde1->size >= gigabyte;
 
-	if (gig) {
-	  holda = tmpde1->size/gigabyte;
-	  holdb = (tmpde1->size-(holda*gigabyte))/100000000;
-	}
+	if (tmpde1->size >= gigabyte) {
+	  holda = tmpde1->size/g;
+	  //sometimes #defines not working?
+	  // "/ gigatenth" gives me 0
+	  holdb = (tmpde1->size-(holda*g))/gt;  
 
-	if (gig) {
-	  "%c%9d %03tZ %03tZ %02d:%02d ",
-	  idc,tmpde1->size,ds.day_of_week,
+	  "%c%9d.%dg %03tZ %03tZ %02d:%02d ",
+	  idc,holda,holdb,ds.day_of_week,
 	  STD,ds.mon-1,STM,ds.hour,ds.min;
 	}
 	else {          
@@ -369,7 +372,7 @@ $WW,1$
 	  STD,ds.mon-1,STM,ds.hour,ds.min;
 	}
 
-	if (tmpde1->attr & RS_ATTR_DIR)
+	if (id)
 	  PutDirLink(tmpde1->name,tmpde1->full_name);
 	else
 	  PutFileLink(tmpde1->name,tmpde1->full_name);
@@ -381,5 +384,4 @@ $WW,1$
       "No matching entries\n";
     Free(st);
   }
-  return res;
 }

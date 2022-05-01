@@ -21,7 +21,7 @@
 
 #include "./shared.HC"
 
-#define REC_CNT 32
+#define REC_CNT 33
 #define REC_OVR 10
 #define REC_TOT REC_CNT+REC_OVR
 U8 *VSAM[REC_TOT][7] =
@@ -76,7 +76,8 @@ U8 *VSAM[REC_TOT][7] =
 { 14,  "help", 1, 1, FALSE, 0, 0},
 { 24,    "fm", 1, 3,  TRUE, 0, 1},
 { 24,  "more", 2, 2,  TRUE, 0, 0},
-{ 27,  "dump", 2, 2,  TRUE, 0, 0}
+{ 27,  "dump", 2, 2,  TRUE, 0, 0},
+{ 29,  "term", 1, 1, FALSE, 0, 0}
 
 };
 
@@ -178,7 +179,7 @@ U64 tc = 0,
     fc = 0;
 
 //Yes, I'm handing error checking and validation HORRIBLY.
-U0 err_print(U8 *msg, U8 *link="Usage")
+U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
   "`$FG,3$%s$FG$`: %s ...\n", link, msg;
 }
@@ -286,11 +287,6 @@ U8 execute_cmd(U8 *cmd) {
 
   I64 f = 0;
 
-//  U8 *buffer,
-//     *buffera,
-//     *bufferb,
-//     *bufferc;
-
   Bool tf = FALSE; //General use true/false flag.
 
   cur_IDX = indexOf(seg_peek);
@@ -319,7 +315,7 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 4: //ls
-        "\n"; Dir(tern(tc==1,".",buffera));
+        "\n"; my_dir(tern(tc==1,".",buffera));
 
         break;
       case 8: //mv
@@ -503,11 +499,8 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 38: //help
         if (FileFind(help_file)) {
-          strcat(buffer,,"Type(\"",
-                        help_file,"\");");
-          "help buffer: %s\n",buffer;
-          /*viewer(strcat(buffer,,"Type(\"",
-                        help_file,"\");"));*/
+          viewer(strcat(buffer,,"Type(\"",
+                        help_file,"\");"));
         }
         else {
           err_print(ERR_FILENF,help_file);
@@ -520,6 +513,10 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 41: //dump
         Dump(buffera);
+
+        break;
+      case 42: //term
+        User;
 
         break;
       default:
@@ -551,7 +548,7 @@ U0 templeDOS() {
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-//  "HashCodeFor(\"tasks\"): %d\n",HashCodeFor("tasks");
+  //"term: %d\n",HashCodeFor("term");
 
   U64 result = 0;
   U8 *input;

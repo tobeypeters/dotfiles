@@ -133,7 +133,7 @@ got_flag("+f", TDf_F);
 got_flag("+f", TDf_D);
 got_flag("+d", TDf_D);
 got_flag("+d", TDf_F);*/
-
+
 
 /*U64 sc = 32,
     scm = 255;
@@ -368,7 +368,7 @@ if (str_cmp(a,b)) {
 }*/
 
 //fmt_size(1073741825);
-//fmt_size(1395864371);
+//fmt_size(1395864371);
 
 my_dir;
 
