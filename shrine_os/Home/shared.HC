@@ -173,7 +173,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
       return 0 - i;
     }
   }
-
+
   return 1;
 }
 
@@ -362,14 +362,14 @@ U0 my_dir(U8 *files_find_mask='*')
 	  // "/ gigatenth" gives me 0
 	  holdb = (tmpde1->size-(holda*g))/gt;  
 
-	  "%c%9d.%dg %03tZ %03tZ %02d:%02d ",
-	  idc,holda,holdb,ds.day_of_week,
-	  STD,ds.mon-1,STM,ds.hour,ds.min;
+	  "%c %9d.%dg %03tZ %03tZ %02d:%02d %d %d %d ",
+	  idc,holda,holdb,ds.day_of_week,
+	  STD,ds.mon-1,STM,ds.hour,ds.min,ds.mon,ds.day_of_week,ds.year;
 	}
 	else {          
-	  "%c%9d %03tZ %03tZ %02d:%02d ",
+	  "%c %9d %03tZ %03tZ %02d:%02d %d %d %d ",
 	  idc,tmpde1->size,ds.day_of_week,
-	  STD,ds.mon-1,STM,ds.hour,ds.min;
+	  STD,ds.mon-1,STM,ds.hour,ds.min,ds.mon,ds.day_of_week,ds.year;
 	}
 
 	if (id)
