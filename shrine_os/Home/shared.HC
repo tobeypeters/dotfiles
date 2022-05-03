@@ -317,14 +317,10 @@ U8 num_str(U64 number)
 U0 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   CDirEntry *tmpde1=NULL,*tmpde2;
-  CDateStruct ds, dsc;
-
-  U64 idc;
-  Bool id=FALSE;
+  tmpde1=FilesFind(files_find_mask);
 
   U8 *st;
 
-  tmpde1=FilesFind(files_find_mask);
   if (!(st=DirCur))
     PrintErr("Invalid Drive\n");
   else {
@@ -335,17 +331,16 @@ U0 my_dir(U8 *files_find_mask='*')
       if (!st[2]) StrCpy(st+2,"/");
 
       "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
-//      "$$MA,T=\"%s\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st,st;
 
 //      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-//      " Listing: %s\n",st;
 
+      CDateStruct ds, dsc;
       Date2Struct(&dsc,Now+local_time_offset);
 
       U64 gt = gigatenth,
-           g = gigabyte,
-       holda = 0,
-       holdb = 0;
+           g = gigabyte;
+
+      Bool id = FALSE;
              
       while (tmpde1) {
 	tmpde2=tmpde1->next;
@@ -353,32 +348,33 @@ U0 my_dir(U8 *files_find_mask='*')
 	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
 
 	id =tmpde1->attr & RS_ATTR_DIR;
-	idc = 100-(!id*55);
 
+	"%c ",100-(!id*55);
 
-	if (tmpde1->size >= gigabyte) {
-	  holda = tmpde1->size/g;
-	  //sometimes #defines not working?
-	  // "/ gigatenth" gives me 0
-	  holdb = (tmpde1->size-(holda*g))/gt;  
-
-	  "%c %9d.%dg %03tZ %03tZ %02d:%02d %d %d %d ",
-	  idc,holda,holdb,ds.day_of_week,
-	  STD,ds.mon-1,STM,ds.hour,ds.min,ds.mon,ds.day_of_week,ds.year;
-	}
-	else {          
-	  "%c %9d %03tZ %03tZ %02d:%02d %d %d %d ",
-	  idc,tmpde1->size,ds.day_of_week,
-	  STD,ds.mon-1,STM,ds.hour,ds.min,ds.mon,ds.day_of_week,ds.year;
+	if (id) {
+	  "%9s",""; goto dir;
 	}
 
-	if (id)
-	  PutDirLink(tmpde1->name,tmpde1->full_name);
-	else
-	  PutFileLink(tmpde1->name,tmpde1->full_name);
-	'\n';
-	DirEntryDel(tmpde1);
-	tmpde1=tmpde2;
+	if (tmpde1->size >= gigabyte)
+	  "%9d.%dg",tmpde1->size/g,
+		    (tmpde1->size-((tmpde1->size/g)*g))/gt;
+	else "%9d",tmpde1->size;
+
+	dir:
+	  " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
+
+	  if (ds.year<dsc.year) "%5d",ds.year;
+	  else "%02d:%02d",ds.hour,ds.min;
+
+	  " ";
+
+	  if (id)
+	    PutDirLink(tmpde1->name,tmpde1->full_name);
+	  else
+	    PutFileLink(tmpde1->name,tmpde1->full_name);
+	  "\n";
+	  DirEntryDel(tmpde1);
+	  tmpde1=tmpde2;
       }
     } else
       "No matching entries\n";
