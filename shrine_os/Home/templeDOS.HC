@@ -21,8 +21,8 @@
 
 #include "./shared.HC"
 
-#define REC_CNT 33
-#define REC_OVR 10
+#define REC_CNT 32
+#define REC_OVR 11
 #define REC_TOT REC_CNT+REC_OVR
 U8 *VSAM[REC_TOT][7] =
 {
@@ -225,15 +225,43 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
   }
 
   return TRUE;
-}
+}
 
 //Think, this is how Terry does it.  I'm looking at another
 //implementation, which might be simpplier. Not sure.
-DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0");
+//DefineLstLoad("ST_TEMPLEDOS_FLAGS","d\0f\0b\0");
+//DefineLstLoad("ST_TEMPLEDOS_FLAGS","a\0b\0c\0d\0\e\0f\0");
+
+DefineLstLoad("ST_TEMPLEDOS_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
+
 U8 *defined_flags = Define("ST_TEMPLEDOS_FLAGS")$WW,1$;
 
-#define FLG_D	0
-#define FLG_F	1
+#define FLG_A 0x0000001 //a
+#define FLG_B 0x0000002 //b
+#define FLG_C 0x0000004 //c
+#define FLG_D 0x0000008 //d
+#define FLG_E 0x0000010 //e
+#define FLG_F 0x0000020 //f
+#define FLG_G 0x0000040 //g
+#define FLG_H 0x0000080 //h
+#define FLG_I 0x0000100 //i
+#define FLG_J 0x0000200 //j
+#define FLG_K 0x0000400 //k
+#define FLG_L 0x0000800 //l
+#define FLG_M 0x0001000 //m
+#define FLG_N 0x0002000 //n
+#define FLG_O 0x0004000 //o
+#define FLG_P 0x0008000 //p
+#define FLG_Q 0x0010000 //q
+#define FLG_R 0x0020000 //r
+#define FLG_S 0x0040000 //s
+#define FLG_T 0x0080000 //t
+#define FLG_U 0x0100000 //u
+#define FLG_V 0x0200000 //v
+#define FLG_W 0x0400000 //w
+#define FLG_X 0x0800000 //x
+#define FLG_Y 0x1000000 //y
+#define FLG_Z 0x2000000 //z
 
 Bool got_flag(U8 *flag_got=NULL, I64 flag_want, Bool err_disp=TRUE)
 {//Validate command flag?
@@ -244,12 +272,8 @@ Bool got_flag(U8 *flag_got=NULL, I64 flag_want, Bool err_disp=TRUE)
   I64 f = 0;
 
   my_scanflags(&f,defined_flags,flag_got);
-  if (Bt(&f,flag_want)) return TRUE;
 
-  if (err_disp) err_print(ERR_FLGI,flag_got);
-
-
-  return FALSE;
+  return (f&flag_want);
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -443,7 +467,7 @@ U8 execute_cmd(U8 *cmd) {
             Del(buffera);
           }
         }
-
+
         break;
       case 28: //mkdir
         if (ValidFiles("0",buffera)) {
