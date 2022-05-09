@@ -379,8 +379,8 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 14: //ed
-        Ed(buffera);
-
+	PopUpEd(buffera);
+
         break;
       case 15: //df
 //        viewer("DrvRep;\"\n\";
@@ -419,7 +419,7 @@ U8 execute_cmd(U8 *cmd) {
       case 24: //cp
         buffer = tern(fc==0,buffera,bufferb);
 
-        if (ValidFiles(,buffer)) {
+        if (ValidFiles(,buffer) || (buffer[StrLen(buffer)-1]=='*')) {
           tf = IsDir(buffer);
 
           if (got_flag(buffera,FLG_D)) { // "-d"
@@ -467,7 +467,7 @@ U8 execute_cmd(U8 *cmd) {
             Del(buffera);
           }
         }
-
+
         break;
       case 28: //mkdir
         if (ValidFiles("0",buffera)) {

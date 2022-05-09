@@ -147,7 +147,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //     buffera exists-||
  //                     -- bufferb doesn't 
  //
- //        if (ValidFiles(blah,blah) == 1) {}
+ //        if (ValidFiles(blah,blah) == 1) {}
  //
  //returns:
  //         1	All files are valid
@@ -167,8 +167,10 @@ I64 ValidFiles(U8 *mask="11111111",...)
       x.u16[2] = FileFind(argv[i]);
     }
 
+//    "x.u16[0]: %d x.u16[1]: %d x.u16[2]: %d mask[i]-48: %d\n",
+//    x.u16[0],x.u16[1],x.u16[2], mask[i]-48;
 
-    //"validfiles: %d %d\n",mask[i],mask[i]-48;
+
     if ((x.u16[0] || x.u16[1] || x.u16[2]) != mask[i]-48) {
       return 0 - i;
     }
@@ -368,7 +370,7 @@ U0 my_dir(U8 *files_find_mask='*')
 
 	  " ";
 
-	  if (id)
+	  if (id)
 	    PutDirLink(tmpde1->name,tmpde1->full_name);
 	  else
 	    PutFileLink(tmpde1->name,tmpde1->full_name);
