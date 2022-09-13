@@ -161,6 +161,10 @@ bindsym --whole-window $mod+button2 kill
 # bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
 # bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
 
+# Display the system menu, defined in polybar. So, polybar must be running obviously ...
+bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "#FFFFFF" "#000000" "#000000" "#FFFFFF"
+
+
 # Spawn Nemo file manager
 bindsym $mod+n exec nemo
 
