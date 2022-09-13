@@ -18,8 +18,7 @@
 <i>super + Shift + Tab</i> : prev window<br>
 <i>super + Ctrl + Tab</i> : display the switcher popup menu<br>
 <i>super + Shift + a</i> : swap the current window "container" with a target window "container"<br>
-<i>super + m</i> : display the polybar menu module"<br>
-<br>
+<i>super + m</i> : display the system menu"<br>
 
 [window_info.py](.config/polybar/scripts/window_info.py)  - i3IPC python script - Designed with polybar in mind, this script displays the active foreground windows title, classname, or both.  You can supply color values, to format the displayed output.<br>
 [window_info.conf](.config/polybar/scripts/window_info.conf)  - optional configuration file - Contains classnames you want completely ignored by window_info.py and those you want excluded during the title formatting process.
