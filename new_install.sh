@@ -174,3 +174,10 @@ sudo snap install auto-cpufreq
 # ACTIVATE Windows 10 : https://www.reneelab.com/win10-activation-crack-free.html
 
 # Share files with Samba : https://www.youtube.com/watch?v=LRh82RgD-Fc
+
+#NPM permisions
+https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+npm install -g firebase-tools
+
+#node -v
+#npm install npm -global
