@@ -181,3 +181,4 @@ npm install -g firebase-tools
 
 #node -v
 #npm install npm -global
+#sudo npm i -g expo
