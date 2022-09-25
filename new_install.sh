@@ -179,6 +179,9 @@ sudo snap install auto-cpufreq
 https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
 npm install -g firebase-tools
 
-#node -v
-#npm install npm -global
+#Upgrade nodejs to the latest version:
+#    sudo npm cache clean -f
+#    sudo npm install -g n
+#    sudo n stable
+
 #sudo npm i -g expo
