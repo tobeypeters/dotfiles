@@ -185,3 +185,8 @@ npm install -g firebase-tools
 #    sudo n stable
 
 #sudo npm i -g expo
+
+# VSCode extensions:
+#   Simple React Snippets
+#   Reactive Native Tools
+#   Reactive Redux Snippets
