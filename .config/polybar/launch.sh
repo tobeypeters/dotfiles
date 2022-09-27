@@ -19,4 +19,7 @@ polybar-msg cmd quit >/dev/null 2>&1
 while pgrep -x polybar >/dev/null; do sleep 1; done
 
 # Launch bar1 and bar2
-polybar -c ~/.config/polybar/config.ini main-i3 &
+
+#polybar main-i3 2>1 | tee -a /tmp/polybar.log & disown
+
+polybar -c ~/.config/polybar/config.ini main-i3 & disown
