@@ -20,6 +20,7 @@ while pgrep -x polybar >/dev/null; do sleep 1; done
 
 # Launch bar1 and bar2
 
-#polybar main-i3 2>1 | tee -a /tmp/polybar.log & disown
+#polybar main-i3 2>&1 | tee -a /tmp/polybar.log & disown
 
-polybar -c ~/.config/polybar/config.ini main-i3 & disown
+#polybar -c ~/.config/polybar/config.ini main-i3 & disown
+polybar -c ~/.config/polybar/config.ini main-i3 2>&1 | tee -a /mnt/ram_disk/polybar.log & disown
