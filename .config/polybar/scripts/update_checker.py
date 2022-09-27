@@ -26,5 +26,5 @@ from sys import exit
 updates = int(process_exec('apt list --upgradable 2> /dev/null | wc -l',True))
 
 if updates > 1: #You'll always have [1]: "Listing... Done"
-    process_exec('polybar-msg cmd show.updater')
+    process_exec('polybar-msg action updater module_show')
     print('')
