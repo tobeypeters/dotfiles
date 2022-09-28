@@ -25,4 +25,4 @@ echo ''
 # update-manager;
 sudo apt dist-upgrade -y
 echo ''
-polybar-msg action updater module_show
+polybar-msg action updater module_hide
