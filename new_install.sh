@@ -176,17 +176,21 @@ sudo snap install auto-cpufreq
 # Share files with Samba : https://www.youtube.com/watch?v=LRh82RgD-Fc
 
 #NPM permisions
-https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
-npm install -g firebase-tools
+#https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally
+#npm install -g firebase-tools
 
 #Upgrade nodejs to the latest version:
 #    sudo npm cache clean -f
 #    sudo npm install -g n
 #    sudo n stable
 
-#sudo npm i -g expo
+#npm i -g expo
+#npm i uuid
 
 # VSCode extensions:
 #   Simple React Snippets
 #   Reactive Native Tools
 #   Reactive Redux Snippets
+
+#https://css-tricks.com/fetching-data-in-react-using-react-async/
+#npm install react-async --save
