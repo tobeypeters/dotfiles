@@ -1,0 +1,65 @@
+Type.registerNamespace('WebServices');
+WebServices.ReportServices=function() {
+WebServices.ReportServices.initializeBase(this);
+this._timeout = 0;
+this._userContext = null;
+this._succeeded = null;
+this._failed = null;
+}
+WebServices.ReportServices.prototype={
+_get_path:function() {
+ var p = this.get_path();
+ if (p) return p;
+ else return WebServices.ReportServices._staticInstance.get_path();},
+GetInvoiceDetails:function(invoiceNumber,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetInvoiceDetails',false,{invoiceNumber:invoiceNumber},succeededCallback,failedCallback,userContext); },
+GetInvoiceList:function(succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetInvoiceList',false,{},succeededCallback,failedCallback,userContext); },
+InvoiceDownloadSearchAutoSearch:function(succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'InvoiceDownloadSearchAutoSearch',false,{},succeededCallback,failedCallback,userContext); },
+GetCounties:function(succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetCounties',false,{},succeededCallback,failedCallback,userContext); },
+LoadContactTypes:function(succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'LoadContactTypes',false,{},succeededCallback,failedCallback,userContext); },
+GetServiceAreaContactsByStateAndCountyAndContactType:function(state,county,contactType,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetServiceAreaContactsByStateAndCountyAndContactType',false,{state:state,county:county,contactType:contactType},succeededCallback,failedCallback,userContext); }}
+WebServices.ReportServices.registerClass('WebServices.ReportServices',Sys.Net.WebServiceProxy);
+WebServices.ReportServices._staticInstance = new WebServices.ReportServices();
+WebServices.ReportServices.set_path = function(value) { WebServices.ReportServices._staticInstance.set_path(value); }
+WebServices.ReportServices.get_path = function() { return WebServices.ReportServices._staticInstance.get_path(); }
+WebServices.ReportServices.set_timeout = function(value) { WebServices.ReportServices._staticInstance.set_timeout(value); }
+WebServices.ReportServices.get_timeout = function() { return WebServices.ReportServices._staticInstance.get_timeout(); }
+WebServices.ReportServices.set_defaultUserContext = function(value) { WebServices.ReportServices._staticInstance.set_defaultUserContext(value); }
+WebServices.ReportServices.get_defaultUserContext = function() { return WebServices.ReportServices._staticInstance.get_defaultUserContext(); }
+WebServices.ReportServices.set_defaultSucceededCallback = function(value) { WebServices.ReportServices._staticInstance.set_defaultSucceededCallback(value); }
+WebServices.ReportServices.get_defaultSucceededCallback = function() { return WebServices.ReportServices._staticInstance.get_defaultSucceededCallback(); }
+WebServices.ReportServices.set_defaultFailedCallback = function(value) { WebServices.ReportServices._staticInstance.set_defaultFailedCallback(value); }
+WebServices.ReportServices.get_defaultFailedCallback = function() { return WebServices.ReportServices._staticInstance.get_defaultFailedCallback(); }
+WebServices.ReportServices.set_enableJsonp = function(value) { WebServices.ReportServices._staticInstance.set_enableJsonp(value); }
+WebServices.ReportServices.get_enableJsonp = function() { return WebServices.ReportServices._staticInstance.get_enableJsonp(); }
+WebServices.ReportServices.set_jsonpCallbackParameter = function(value) { WebServices.ReportServices._staticInstance.set_jsonpCallbackParameter(value); }
+WebServices.ReportServices.get_jsonpCallbackParameter = function() { return WebServices.ReportServices._staticInstance.get_jsonpCallbackParameter(); }
+WebServices.ReportServices.set_path("/IRTHOneCall/WebServices/ReportServices.asmx");
+WebServices.ReportServices.GetInvoiceDetails= function(invoiceNumber,onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.GetInvoiceDetails(invoiceNumber,onSuccess,onFailed,userContext); }
+WebServices.ReportServices.GetInvoiceList= function(onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.GetInvoiceList(onSuccess,onFailed,userContext); }
+WebServices.ReportServices.InvoiceDownloadSearchAutoSearch= function(onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.InvoiceDownloadSearchAutoSearch(onSuccess,onFailed,userContext); }
+WebServices.ReportServices.GetCounties= function(onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.GetCounties(onSuccess,onFailed,userContext); }
+WebServices.ReportServices.LoadContactTypes= function(onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.LoadContactTypes(onSuccess,onFailed,userContext); }
+WebServices.ReportServices.GetServiceAreaContactsByStateAndCountyAndContactType= function(state,county,contactType,onSuccess,onFailed,userContext) {WebServices.ReportServices._staticInstance.GetServiceAreaContactsByStateAndCountyAndContactType(state,county,contactType,onSuccess,onFailed,userContext); }
+var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;
+if (typeof(WebServices.Invoice) === 'undefined') {
+WebServices.Invoice=gtc("WebServices.Invoice");
+WebServices.Invoice.registerClass('WebServices.Invoice');
+}
+if (typeof(WebServices.InvoiceAutoSearchResults) === 'undefined') {
+WebServices.InvoiceAutoSearchResults=gtc("WebServices.InvoiceAutoSearchResults");
+WebServices.InvoiceAutoSearchResults.registerClass('WebServices.InvoiceAutoSearchResults');
+}
+if (typeof(WebServices.DropDownOptions) === 'undefined') {
+WebServices.DropDownOptions=gtc("WebServices.DropDownOptions");
+WebServices.DropDownOptions.registerClass('WebServices.DropDownOptions');
+}
+if (typeof(WebServices.Contacts) === 'undefined') {
+WebServices.Contacts=gtc("WebServices.Contacts");
+WebServices.Contacts.registerClass('WebServices.Contacts');
+}

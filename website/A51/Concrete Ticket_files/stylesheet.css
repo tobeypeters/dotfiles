@@ -1,0 +1,179 @@
+﻿@import url('../../stylesheet.css');
+
+.confirmationDisclaimer
+{
+	color : Navy;
+	font-size : larger;
+}
+.editFieldHeader 
+{
+	FONT-WEIGHT:normal; COLOR: #000000;
+	white-space:nowrap;
+	text-align:left;
+}
+.groupHeader
+{
+	text-align:center;
+	font-weight:bold;
+	font-style:italic;
+	white-space:nowrap;
+	color:#004990;
+}
+.groupHeaderDisabled
+{
+	text-align:center;
+	font-weight:bold;
+	font-style:italic;
+	white-space:nowrap;
+	color:#C0C0C0;
+}
+.fieldLabel
+{
+	text-align:left;
+	white-space:nowrap;
+	color:#004990;
+}
+.fieldLabelDisabled
+{
+	text-align:left;
+	white-space:nowrap;
+	color:#C0C0C0;
+}
+/***************                Dropdown Box                      ************/
+.dropdown
+{
+	border: solid 1px #7F9DB9;
+	width:150px
+}
+.dropdown:hover
+{
+	border-color: #507CD1
+}
+.dropdown:focus
+{
+	border-color: #507CD1
+}
+.disabledDropdown
+{
+	background-color: #F5F5F5;
+	border-color: #C0C0C0;
+	width:150px;
+}
+/***************                  Text Box                        ************/
+.textboxSmall
+{
+	width: 60px;
+	border: solid 1px #7F9DB9
+}
+.textboxSmall:hover
+{
+	background-color: #D6E7FF
+}
+.textboxSmall:focus
+{
+	background-color: #D6E7FF
+}
+.textboxDisabledSmall
+{
+	width: 60px;
+	background-color: #F5F5F5;
+	border-color: #C0C0C0;
+}
+.textboxStreet
+{
+	width: 200px;
+	border: solid 1px #7F9DB9
+}
+.textboxStreet:hover
+{
+	background-color: #D6E7FF
+}
+.textboxStreet:focus
+{
+	background-color: #D6E7FF
+}
+.textbox
+{
+	border: solid 1px #7F9DB9;
+}
+.textbox:hover
+{
+	background-color: #D6E7FF
+}
+.textbox:focus
+{
+	background-color: #D6E7FF
+}
+
+/***************                Button                           ************/
+.button
+{
+	width: 100px;
+	padding:2px;
+	color:#004990;
+	background-color:White;
+	border-color:#507CD1;
+	border-width:1px;
+	border-style:Solid;
+	font-family:Verdana;
+	font-size:1em
+}
+.button:hover
+{
+	background-color:#004990;
+	color:White;
+	cursor:pointer
+}
+.buttonDisabled
+{
+	width: 100px;
+	padding:2px;
+	color:Silver;
+	background-color:White;
+	border-color:Silver;
+	border-width:1px;
+	border-style:Solid;
+	font-family:Verdana;
+	font-size:1em
+}
+.buttonDisabled:hover
+{
+	cursor:default
+}
+
+/***************                  Data Grid                       ************/
+.datagrid
+{
+	border:solid 1px #004990;
+}
+.datagridHeader
+{
+	background: none url(../../../images/background_header.png) repeat;
+	height:30px
+}
+.datagridHeader td
+{
+	text-align:center;
+	color:#004990;
+	font-weight:bold;
+}
+.datagridCell td
+{
+	border-right:solid 1px #7D99DB;
+}
+
+/*****************************************************************************/
+
+/***************                  HOMEOWNER STYLES                       ************/
+.fieldMessageRed
+{
+   color: Red; 
+}
+
+.confirmationCheck
+{
+	color : Navy;
+	font-size : medium;
+}
+
+/*****************************************************************************/
