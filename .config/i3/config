@@ -244,6 +244,7 @@ for_window [class="Netflix"] move container to workspace 9
 for_window [class="krunner"] move position 1450 20
 
 # windows we want to stay visible, even if you switch workspaces.
+for_window [class="mpv"] sticky enable
 for_window [class="vlc"] sticky enable
 
 # enable titlebar icons
