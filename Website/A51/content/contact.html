@@ -1,0 +1,43 @@
+<!doctype html>
+<html class="document" lang="en">
+<head>
+  <title>Contact</title>
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" type="text/css" href="../manager.css">
+
+  <script src="../manager.js"></script>
+</head>
+<body oncontextmenu="return false;">
+  <h2>Contact Info</h2>
+  <p>Looking for a way to not use tables, for all my input boxes.</p>
+  <h2>Examples of dynamically built email addresses, with cheap Anti-Spambot logic:</h2>
+  <span id="decode1"></span><br>
+  <span id="decode2"></span><br>
+  <span id="decode3"></span><br>
+  <p>In the previous example, just scanning the html logic works.  But, if it's scanning the rendered output ... Well, failure ...</p>
+
+  <script>
+    //Decode email links
+  
+    //Obviously, you wouldn't keep a "public" list of the emails like this
+    //tobeypeters@hotmail.com : gborlcrgref@ubgznvy.pbz
+    //support@hotmail.com : fhccbeg@ubgznvy.pbz
+    //webmaster@hotmail.com : jroznfgre@ubgznvy.pbz
+
+    var a = '<a href="' + decode('znvygb:');
+    var b = decode('@ubgznvy.pbz');
+    var c = '">';
+    var d = '</a>';
+
+    //The logic for this needs to be redone.  
+    var e1 = decode('gborlcrgref');
+    var e2 = decode('fhccbeg');
+    var e3 = decode('jroznfgre');
+
+    document.getElementById('decode1').innerHTML = (a + e1 + b + c + e1 + b + d);
+    document.getElementById('decode2').innerHTML = (a + e2 + b + c + e2 + b + d);
+    document.getElementById('decode3').innerHTML = (a + e3 + b + c + e3 + b + d);
+  </script>
+</body>
+</html>

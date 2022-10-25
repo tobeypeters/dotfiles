@@ -1,0 +1,188 @@
+html.manager {
+  background-color: rgb(160, 160, 160);
+  font-size: 16px;
+}
+
+html.document {
+  background-color: rgb(60, 60, 60);
+  font-size: 14px;
+}
+
+header,
+.profiler {
+  background-color: rgb(43, 91, 132);
+}
+
+img {
+  vertical-align: middle;
+}
+
+main,
+.navtop,
+.footL,
+.footR {
+  background-color: rgb(255, 255, 255);
+}
+
+iframe {
+  border: none;
+  /* height: 300px; */
+}
+
+button,
+.imgsocial {
+  cursor: pointer;
+}
+
+/* Link order : link, visited, hover, active */
+a,
+.footL,
+.footR,
+.debugKey {
+  color: rgb(0, 0, 0);
+}
+
+html.manager,
+html.document,
+html.document a,
+.alertbox,
+.container a {
+  color: rgb(255, 255, 255);
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.alertbox{
+  background-color: rgb(31, 237, 118); 
+  padding: 10px 10px 10px 10px;
+}
+
+.container,
+.containerL,
+.containerR {
+  height: 20px;  
+}
+
+iframe,
+.container {
+  width: 100%;
+}
+
+.containerL {
+  float: left;
+}
+
+.containerR {
+  float: right;
+  text-align: right;
+}
+
+.footL,
+.footR {
+  padding: 3px 0px 3px 0px;
+}
+
+.footL {
+  border-bottom-right-radius: 8px;
+  float: left;
+}
+
+.footR {
+  border-bottom-left-radius: 8px;
+  float: right;
+}
+
+.profiler {
+  padding: 10px 10px 10px 10px;
+}
+
+.profiler,
+.governed {
+  border-top: 5px solid rgb(255, 255, 255); 
+}
+
+.governed {
+  background-color: rgb(170, 170, 170);
+  padding: 5px 5px 5px 5px;
+  font-size: 12px;
+}
+
+.imgsocial {
+  filter: alpha(opacity=50);
+  opacity: 0.5;
+  width: 16px;
+  height: 16px;
+}
+
+.imgsocial:hover {
+  filter: alpha(opacity=100);
+  opacity: 1;
+}
+
+.navbottom,
+.profiler {
+  display: none;
+}
+
+.navtop {
+  padding: 0px 0px 0px 5px;
+}
+
+.debugVal {
+  color: rgb(255, 255, 0);
+}
+
+input[type=submit] {
+  border-radius: 2px;
+  height: 22px;
+  border: 1px solid rgb(40, 40, 40);
+  color: rgb(255, 255, 255);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(170, 170, 170)), to(rgb(60, 60, 60)));
+  background-image: -moz-linear-gradient(top left 90deg, rgb(170, 170, 170) 0%, rgb(60, 60, 60) 100%);
+  background-image: linear-gradient(top left 90deg, rgb(170, 170, 170) 0%, rgb(60, 60, 60) 100%);
+  cursor: pointer;
+}
+
+/* Hamburger menu styles */
+.hamburger-icon-container {
+  color: rgb(43, 91, 132);
+  height: 20px;
+  width: 25px;
+  position: relative;
+  background: currentColor;
+  border: 5px solid;
+}
+
+.hamburger-icon,
+.hamburger-icon:before,
+.hamburger-icon:after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  width: 15px;
+  left: 0;
+  background: rgb(255, 255, 255);
+}
+
+ .hamburger-icon {
+  top: 0px;
+}
+
+.hamburger-icon:before {
+  top: 4px;
+}
+
+.hamburger-icon:after {
+  top: 8px;
+}
+
+.hamburger-active .hamburger-icon,
+.hamburger-active .hamburger-icon:before {
+  top: 8px;
+}
