@@ -1,0 +1,127 @@
+// pokeAPI library : npm install pokedex-promise-v2 --save
+import React, { useEffect, useState } from 'react';
+
+import Logo from './Logo';
+
+import PokemonList from './PokemonList';
+
+function App() {
+  const pokeURL = 'https://pokeapi.co/api/v2/pokemon-species?limit=5000';
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    //Right now, only get data once
+    const getData = async () => {
+      try {
+        let response = await fetch(pokeURL);
+        if (response.ok) { // response.ok
+          let result = await response.json();
+
+          const promises = [];
+          for (let i = 1; i <= result.results.length; i++) {
+            promises.push( // push
+            fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
+            .catch(err => { console.log(`catch err : ${err}`) })
+              .then(res => { // res
+                if (res.status >= 200 && res.status <= 299) {
+                 return res.json(); }
+              } // res
+              ) // then
+            ); // push
+          }; // for
+
+/*  abilities, base_experience
+    forms, game_indices
+    height, held_items
+    id, is_default
+    location_area_encounters, moves
+    name, order
+    past_types, species,
+    sprites, stats,
+    types,weight
+*/
+
+// https://assets.pokemon.com/assets/cms2/img/pokedex/full/905.png
+
+          Promise.allSettled(promises)
+            .then(results => {
+              let buffer = [];
+
+              results.forEach(res => {
+                if (res.status === "fulfilled") {
+                  const pokemon = Array(res.value).map(p => ({
+                    id: p.id,
+                    is_default: p.is_default,
+                    name: p.name,
+                    height: p.height,
+                    weight: p.weight,
+
+                    /* https://assets.pokemon.com/assets/cms2/img/pokedex/detail/012.png */
+                    sprites: [
+                      [p.sprites['front_default'], 'Front Default'],
+                      [p.sprites['back_default'], 'Back Default' ],
+                      [p.sprites['front_shiny'], 'Front Shiny' ],
+                      [p.sprites['back_shiny'], 'Back Shiny' ],
+
+                      /*
+                      [p.sprites['front_female'], 'Front Female' ],
+                      [p.sprites['back_female'], 'Back Female' ],
+                      [p.sprites['front_shiny_female'], 'Front Shiny Female' ],
+                      [p.sprites['back_shiny_female'], 'Back Shiny Female' ],
+                      */
+                    ],
+
+                    abilities: p.abilities,
+                    base_experience: p.base_experience,
+                    forms: p.forms,
+                    game_indices: p.game_indices,
+                    held_items: p.held_items,
+                    types: p.types.map((type) => type.type.name).join(', '),
+                    location_area_encounters: p.location_area_encounters,
+                    moves: p.moves,
+                    order: p.order,
+                    past_types: p.past_types,
+                    species: p.species,
+                    stats: p.stats,
+                  }));
+
+                  buffer.push(pokemon);
+
+                } // if
+              }); // forEach
+
+              if (buffer.length) {
+                setData(buffer);
+                buffer.splice(0, buffer.length);
+              }
+
+            }) // .then
+
+        } // response.ok
+      } catch (err) {
+          console.log(`Root catch error: ${err}`);
+      }
+
+}; //getData
+    getData();
+},[]); //useEffect
+
+  return (
+    <div className="App">
+      <Logo />
+      <br />
+
+      <div className='pokeContainer'>
+        {data.length ? (
+          <PokemonList pokemon={data}/>
+        ) : (
+       <div>loading...</div>)}
+
+      </div>
+    </div> // App
+ )
+
+}
+
+export default App;
