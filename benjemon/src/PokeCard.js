@@ -60,6 +60,7 @@ export default function PokeCard({pokechar}) {
   const cardID = 'card_' + el.name;
   const cardImageID = 'cardImage_' + el.name;
   const cardNameID = 'cardName_' + el.name;
+  const cardInfoID = 'cardInfo_' + el.name;
 
   const charTypes = el.types.split(', ');
 
@@ -92,6 +93,7 @@ export default function PokeCard({pokechar}) {
  */
     const elm = getElm(cardImageID);
     const elmName = getElm(cardNameID);
+    const elmInfo = getElm(cardInfoID);
 
     if (ev.target instanceof HTMLDivElement ||
         ev.target.id === cardNameID ) {
@@ -100,10 +102,12 @@ export default function PokeCard({pokechar}) {
         elm.style.height = minImagePX;
         elm.style.objectFit = 'contain';
         elmName.style.display = 'none';
+        elmInfo.style.display = 'block';
       } else {
         elm.style.height = maxImagePX;
         elm.style.objectFit = 'fill';
         elmName.style.display = 'block';
+        elmInfo.style.display = 'none';
       }
     }
   }
@@ -112,21 +116,19 @@ export default function PokeCard({pokechar}) {
     <>
       <div id={cardID} className={styles.card} key={el.name} style={{background: colors[charTypes[0]] }}
        onClick={ showPokeDetail } >
-
         <img id={cardImageID} className={styles.cardimage} src={el.sprites[0][0]} alt='0'
          onClick={ imageClick } title={el.sprites[0][1]} />
 
-        <span id={cardNameID} className={styles.pokeName} >#{el.id.toString().padStart(3,'0')}&nbsp;:&nbsp;
+        <span id={cardNameID} className={styles.pokeName} title='Click here for more detail...' >#{el.id.toString().padStart(3,'0')}&nbsp;:&nbsp;
         {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
         </span>
 
-        <div className={styles.pokeInfo} >
+        <div id={cardInfoID} className={styles.pokeInfo} >
+        <br />Weight: {el.weight/10}kg
+        <br />Height: {el.height/10}m
+        <br />Base Experience: {el.base_experience}
         <br />{el.types}
-        <br />Weight: {el.weight}
-        <br />Height: {el.height}
         </div>
-
-        <br />
 
       </div>
     </>

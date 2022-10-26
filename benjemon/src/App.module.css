@@ -38,7 +38,7 @@
     background: lightgrey;
     height: 180px;
     width: 180px;
-    margin: 10px;
+    margin: 10px 10px 0px 10px;
     border-radius: 10px;
 }
 
@@ -54,6 +54,10 @@
 
 .pokeName {
     display: block;
+    background-color: lightgrey;
+    padding: 2px 0px 2px 0px;
+    border-radius: 6px;
+    margin: 10px;
 }
 
 @keyframes bounce {
