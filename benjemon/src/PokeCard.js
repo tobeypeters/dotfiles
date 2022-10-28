@@ -57,23 +57,17 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar[0];
 
+  console.log(el.forms)
+
   const cardID = 'card_' + el.name;
   const cardImageID = 'cardImage_' + el.name;
+  const cardMiniImageID = 'cardMiniImage_' + el.name;
   const cardNameID = 'cardName_' + el.name;
   const cardInfoID = 'cardInfo_' + el.name;
 
   const charTypes = el.types.split(', ');
 
-  const minImagePX = '20px';
-  const maxImagePX = '180px';
-
   const getElm = eID => document.getElementById(eID);
-
-/*   test.forEach(element => {
-    console.log(element);
-    element.style.display = 'none';
-  });
- */
 
   const imageClick = () => {
     const elm = getElm(cardImageID);
@@ -81,35 +75,31 @@ export default function PokeCard({pokechar}) {
     let idx = parseInt(elm.alt);
 
     idx = idx + (idx < 3 ? 1 : -idx);
+
     elm.alt = idx;
     elm.src = el.sprites[idx][0];
     elm.title = el.sprites[idx][1];
   }
 
   const showPokeDetail = function (ev) {
-/*     const test = Array.from(
-      document.getElementsByClassName(styles.pokeName)
-    );
- */
-    const elm = getElm(cardImageID);
-    const elmName = getElm(cardNameID);
-    const elmInfo = getElm(cardInfoID);
+    const elImgLarge = getElm(cardImageID);
+    const elImgMini = getElm(cardMiniImageID);
+    const elInfo = getElm(cardInfoID);
 
     if (ev.target instanceof HTMLDivElement ||
-        ev.target.id === cardNameID ) {
+      ev.target.id === cardNameID ) {
 
-      if ((elm.clientHeight+'px') === maxImagePX) {
-        elm.style.height = minImagePX;
-        elm.style.objectFit = 'contain';
-        elmName.style.display = 'none';
-        elmInfo.style.display = 'block';
+      if (window.getComputedStyle(elImgLarge).display === 'block') {
+        elImgLarge.style.display = 'none';
+        elInfo.style.display = 'block';
+        elImgMini.style.display = 'block';
       } else {
-        elm.style.height = maxImagePX;
-        elm.style.objectFit = 'fill';
-        elmName.style.display = 'block';
-        elmInfo.style.display = 'none';
+        elImgLarge.style.display = 'block';
+        elInfo.style.display = 'none';
+        elImgMini.style.display = 'none';
       }
     }
+
   }
 
   return (
@@ -119,15 +109,21 @@ export default function PokeCard({pokechar}) {
         <img id={cardImageID} className={styles.cardimage} src={el.sprites[0][0]} alt='0'
          onClick={ imageClick } title={el.sprites[0][1]} />
 
-        <span id={cardNameID} className={styles.pokeName} title='Click here for more detail...' >#{el.id.toString().padStart(3,'0')}&nbsp;:&nbsp;
+        <span id={cardNameID} className={styles.pokeName} title='Click here for more detail...' >
+        <img id={cardMiniImageID} className={styles.cardMiniImage} src={el.sprites[0][0]} alt='0' />
+          {/* #{el.id.toString().padStart(3,'0')}&nbsp;:&nbsp; */}
         {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
         </span>
 
         <div id={cardInfoID} className={styles.pokeInfo} >
-        <br />Weight: {el.weight/10}kg
+        Weight: {el.weight/10}kg
         <br />Height: {el.height/10}m
-        <br />Base Experience: {el.base_experience}
+        <br />{el.base_experience}XP
         <br />{el.types}
+        <br />{el.abilities}
+        <br />{el.is_default}
+        <br />{el.order}
+
         </div>
 
       </div>

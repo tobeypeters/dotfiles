@@ -72,7 +72,11 @@ function App() {
                       */
                     ],
 
-                    abilities: p.abilities,
+//                    abilities: p.abilities,
+                    abilities: p.abilities
+                                .filter(a => !a.is_hidden)
+                                .map(a => a.ability.name).join(', '),
+
                     base_experience: p.base_experience,
                     forms: p.forms,
                     game_indices: p.game_indices,

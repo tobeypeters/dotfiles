@@ -34,22 +34,28 @@
 	box-shadow: 0 3px 15px rgba(255, 69, 0, 0.3);
 }
 
-.cardimage {
+.cardimage, .cardMiniImage {
     background: lightgrey;
+    border-radius: 10px;
+    float: left;
+}
+.cardimage {
     height: 180px;
     width: 180px;
     margin: 10px 10px 0px 10px;
-    border-radius: 10px;
+}
+.cardMiniImage {
+    height: 20px;
+    width: 20px;
+    margin: 0px 2px 0px 0px;
+
+    display: none;
 }
 
 .pokeInfo {
     display: none;
-}
-
-.top-left {
-    position: absolute;
-    top: 8px;
-    left: 16px;
+    text-align: left;
+    margin-left: 10px;
 }
 
 .pokeName {
@@ -58,6 +64,7 @@
     padding: 2px 0px 2px 0px;
     border-radius: 6px;
     margin: 10px;
+    width: 180px;
 }
 
 @keyframes bounce {
