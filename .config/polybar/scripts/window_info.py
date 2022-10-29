@@ -15,7 +15,7 @@
 	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-""" window_inf  o.py
+""" window_info.py
     Description:
         Gets the foreground windows' Application/classname, Title or both <default> of them and
         returns it to our polybar module.
