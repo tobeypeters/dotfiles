@@ -2,6 +2,8 @@ import React from 'react'
 
 import styles from './App.module.css'
 
+import placeholder from './assets/Placeholder.png'
+
 /*
 const pokemon = Array(res.value).map(p => ({
   id: p.id,
@@ -36,7 +38,6 @@ const pokemon = Array(res.value).map(p => ({
 }));
 */
 
-/* https://codepen.io/FlorinPop17/pen/gOYZxyE */
 const colors = {
   fire: '#FDDFDF',
   grass: '#DEFDE0',
@@ -57,7 +58,12 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar[0];
 
-  console.log(el.forms)
+  if (el.sprites[1][0] === null) { // Validate images
+  //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
+     el.sprites[1][0] = placeholder;
+     el.sprites[2][0] = placeholder;
+     el.sprites[3][0] = placeholder;
+  }
 
   const cardID = 'card_' + el.name;
   const cardImageID = 'cardImage_' + el.name;
@@ -106,11 +112,11 @@ export default function PokeCard({pokechar}) {
     <>
       <div id={cardID} className={styles.card} key={el.name} style={{background: colors[charTypes[0]] }}
        onClick={ showPokeDetail } >
-        <img id={cardImageID} className={styles.cardimage} src={el.sprites[0][0]} alt='0'
+        <img id={cardImageID} className={styles.cardimage} loading='lazy' src={el.sprites[0][0]} alt='0'
          onClick={ imageClick } title={el.sprites[0][1]} />
 
         <span id={cardNameID} className={styles.pokeName} title='Click here for more detail...' >
-        <img id={cardMiniImageID} className={styles.cardMiniImage} src={el.sprites[0][0]} alt='0' />
+        <img id={cardMiniImageID} className={styles.cardMiniImage} loading='lazy' src={el.sprites[0][0]} alt='0' />
           {/* #{el.id.toString().padStart(3,'0')}&nbsp;:&nbsp; */}
         {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
         </span>
