@@ -133,7 +133,7 @@ export default function PokeCard({pokechar}) {
         <br />{el.base_experience}XP
         <br />
 
-        <span style={{ backgroundImage: charTypeBG }}>{el.types}</span>
+        <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
 
         <br />{el.abilities}
         <br />{el.is_default}
