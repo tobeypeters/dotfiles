@@ -39,24 +39,24 @@ const pokemon = Array(res.value).map(p => ({
 */
 
 const colors = {
-  bug: '#f8d5a3',
+  bug: '#83a751',
   dragon: '#97b3e6',
-  electric: '#fcf7de',
-  dark: 'ffffff',
+  dark: '#36454f',
+  electric: '#f2d57a',
   fairy: '#fceaff',
   fighting: '#e6e0d4',
-  fire: '#fddfdf',
+  fire: '#dd563b',
   flying: '#f5f5f5',
-  ghost: 'ffffff',
-  grass: '#defde0',
-  ground: '#f4e7da',
-  ice: 'dBf1fd',
+  ghost: '#f8f8ff',
+  grass: '#5f8473',
+  ground: '#c9b2a2',
+  ice: '#fcfbfc',
   normal: '#f5f5f5',
-  poison: '#98d7a5',
+  poison: '#885f7e',
   psychic: '#eaeda1',
-  rock: '#d5d5d4',
-  steel: 'ffffff',
-  water: '#def3fd',
+  rock: '#55524e',
+  steel: '#708090',
+  water: '#8ec3cf'
 };
 
 export default function PokeCard({pokechar}) {
@@ -77,7 +77,8 @@ export default function PokeCard({pokechar}) {
 
   const charTypes = el.types.split(', ');
 
-  const charTypeBG = `linear-gradient(135deg,${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
+  const charBG = `linear-gradient(${colors[charTypes[0]]},lightgrey)`;
+  const charTypeBG = `linear-gradient(90deg,${colors[charTypes[0]]},lightgrey,${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
 
   const getElm = eID => document.getElementById(eID);
 
@@ -116,8 +117,8 @@ export default function PokeCard({pokechar}) {
 
   return (
     <>
-      <div id={cardID} className={styles.card} key={el.name} style={{background: colors[charTypes[0]] }}
-       onClick={ showPokeDetail } >
+      <div id={cardID} className={styles.card} key={el.name} style={{ backgroundImage: charBG }}
+      onClick={ showPokeDetail } >
         <img id={cardImageID} className={styles.cardimage} loading='lazy' src={el.sprites[0][0]} alt='0'
          onClick={ imageClick } title={el.sprites[0][1]} />
 
@@ -131,13 +132,10 @@ export default function PokeCard({pokechar}) {
         Weight: {el.weight/10}kg
         <br />Height: {el.height/10}m
         <br />{el.base_experience}XP
-        <br />
-
-        <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
-
         <br />{el.abilities}
         <br />{el.is_default}
         <br />{el.order}
+        <br />Types: <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
 
         </div>
 
