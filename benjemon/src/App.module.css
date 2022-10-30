@@ -53,6 +53,7 @@
 }
 
 .pokeInfo {
+    background: lightgrey;
     display: none;
     text-align: left;
     margin-left: 10px;
@@ -65,6 +66,10 @@
     border-radius: 6px;
     margin: 10px;
     width: 180px;
+}
+
+.pokeType {
+    background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
 }
 
 @keyframes bounce {

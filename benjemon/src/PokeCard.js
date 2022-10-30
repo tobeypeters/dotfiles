@@ -39,20 +39,24 @@ const pokemon = Array(res.value).map(p => ({
 */
 
 const colors = {
-  fire: '#FDDFDF',
-  grass: '#DEFDE0',
-  electric: '#FCF7DE',
-  water: '#DEF3FD',
-  ground: '#f4e7da',
-  rock: '#d5d5d4',
-  fairy: '#fceaff',
-  poison: '#98d7a5',
   bug: '#f8d5a3',
   dragon: '#97b3e6',
+  electric: '#fcf7de',
+  dark: 'ffffff',
+  fairy: '#fceaff',
+  fighting: '#e6e0d4',
+  fire: '#fddfdf',
+  flying: '#f5f5f5',
+  ghost: 'ffffff',
+  grass: '#defde0',
+  ground: '#f4e7da',
+  ice: 'dBf1fd',
+  normal: '#f5f5f5',
+  poison: '#98d7a5',
   psychic: '#eaeda1',
-  flying: '#F5F5F5',
-  fighting: '#E6E0D4',
-  normal: '#F5F5F5'
+  rock: '#d5d5d4',
+  steel: 'ffffff',
+  water: '#def3fd',
 };
 
 export default function PokeCard({pokechar}) {
@@ -72,6 +76,8 @@ export default function PokeCard({pokechar}) {
   const cardInfoID = 'cardInfo_' + el.name;
 
   const charTypes = el.types.split(', ');
+
+  const charTypeBG = `linear-gradient(135deg,${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
 
   const getElm = eID => document.getElementById(eID);
 
@@ -125,7 +131,10 @@ export default function PokeCard({pokechar}) {
         Weight: {el.weight/10}kg
         <br />Height: {el.height/10}m
         <br />{el.base_experience}XP
-        <br />{el.types}
+        <br />
+
+        <span style={{ backgroundImage: charTypeBG }}>{el.types}</span>
+
         <br />{el.abilities}
         <br />{el.is_default}
         <br />{el.order}
