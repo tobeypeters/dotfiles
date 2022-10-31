@@ -44,7 +44,7 @@ const colors = {
   dark: '#36454f',
   electric: '#f2d57a',
   fairy: '#fceaff',
-  fighting: '#e6e0d4',
+  fighting: '#792a2e',
   fire: '#dd563b',
   flying: '#f5f5f5',
   ghost: '#f8f8ff',
@@ -78,9 +78,16 @@ export default function PokeCard({pokechar}) {
   const charTypes = el.types.split(', ');
 
   const charBG = `linear-gradient(${colors[charTypes[0]]},lightgrey)`;
-  const charTypeBG = `linear-gradient(90deg,${colors[charTypes[0]]},lightgrey,${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
+  const charTypeBG = `linear-gradient(${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
 
   const getElm = eID => document.getElementById(eID);
+
+  const getDetailInfo = async (url) => {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      return data;
+  }
 
   const imageClick = () => {
     const elm = getElm(cardImageID);
@@ -94,7 +101,7 @@ export default function PokeCard({pokechar}) {
     elm.title = el.sprites[idx][1];
   }
 
-  const showPokeDetail = function (ev) {
+  const showPokeDetail = async function (ev) {
     const elImgLarge = getElm(cardImageID);
     const elImgMini = getElm(cardMiniImageID);
     const elInfo = getElm(cardInfoID);
@@ -103,6 +110,14 @@ export default function PokeCard({pokechar}) {
       ev.target.id === cardNameID ) {
 
       if (window.getComputedStyle(elImgLarge).display === 'block') {
+        const pokeForm = await getDetailInfo(el.forms[0].url);
+
+        if (pokeForm) {
+          el.formName = pokeForm.version_group.name;
+
+          console.log(el.formName);
+        }
+
         elImgLarge.style.display = 'none';
         elInfo.style.display = 'block';
         elImgMini.style.display = 'block';
@@ -111,6 +126,9 @@ export default function PokeCard({pokechar}) {
         elInfo.style.display = 'none';
         elImgMini.style.display = 'none';
       }
+
+
+      //forceUpdate();
     }
 
   }
@@ -133,8 +151,7 @@ export default function PokeCard({pokechar}) {
         <br />Height: {el.height/10}m
         <br />{el.base_experience}XP
         <br />{el.abilities}
-        <br />{el.is_default}
-        <br />{el.order}
+        <br />{el.formName}
         <br />Types: <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
 
         </div>
