@@ -33,13 +33,17 @@
           pokeApi provides sprites, but are lower quality. They are good, don't get me wrong.
           Official (Hi-Res) : https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png
                               https://assets.pokemon.com/assets/cms2/img/pokedex/detail/012.png
+
+        Misc:
+          https://stackoverflow.com/questions/26736209/how-do-i-stop-animation-in-html-and-css
+          https://loading.io/css/
 */
 
 import React, { useEffect, useState } from 'react';
 
 import Logo from './Logo';
-
 import PokemonList from './PokemonList';
+import Spinner from './Spinner'
 
 function App() {
   const pokeURL = 'https://pokeapi.co/api/v2/pokemon-species?limit=5000';
@@ -57,13 +61,13 @@ function App() {
           const promises = [];
           for (let i = 1; i <= result.results.length; i++) {
             promises.push( // push
-            fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
-            .catch(err => { console.log(`catch err : ${err}`) })
-              .then(res => { // res
-                if (res.status >= 200 && res.status <= 299) {
-                 return res.json(); }
-              } // res
-              ) // then
+              fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
+              .catch(err => { console.log(`catch err : ${err}`) })
+                .then(res => { // res
+                  if (res.status >= 200 && res.status <= 299) {
+                  return res.json(); }
+                } // res
+                ) // then
             ); // push
           }; // for
 
@@ -113,6 +117,7 @@ function App() {
 
                     base_experience: p.base_experience,
                     forms: p.forms,
+                    formName: '',
                     game_indices: p.game_indices,
                     held_items: p.held_items,
                     types: p.types.map((type) => type.type.name).join(', '),
@@ -134,6 +139,8 @@ function App() {
                 buffer.splice(0, buffer.length);
               }
 
+
+
             }) // .then
 
         } // response.ok
@@ -154,7 +161,8 @@ function App() {
         {data.length ? (
           <PokemonList pokemon={data}/>
         ) : (
-       <div>loading...</div>)}
+          <Spinner />)}
+       {/* <div>loading...</div>)} */}
 
       </div>
     </div> // App

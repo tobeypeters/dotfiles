@@ -14,21 +14,21 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  Logo.js
+/*  Spinner.js
     Description:
-        Logo component
-
-    Resources:
-        https://textcraft.net/style/Textcraft/pokemon
+        Loading animation.
 */
+
 import React from 'react'
 
-import styles from './App.module.css'
+import styles from './Spinner.module.css'
 
-export default function Logo() {
+export default function Spinner() {
   return (
-    <div className={styles.logo}>
-      <img src={process.env.PUBLIC_URL + 'images/benjemonlogo.png'} alt='logo'/>
-    </div>
-  )
+    <>
+        <div class={styles.ldsripple}><div></div><div></div></div>
+    </>
+   )
 }
+
+
