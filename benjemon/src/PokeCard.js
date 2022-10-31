@@ -147,8 +147,6 @@ export default function PokeCard({pokechar}) {
         elImgMini.style.display = 'none';
       }
 
-
-      //forceUpdate();
     }
 
   }
