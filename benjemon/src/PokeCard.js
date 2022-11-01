@@ -103,6 +103,7 @@ export default function PokeCard({pokechar}) {
   const getElm = eID => document.getElementById(eID);
 
   const getDetailInfo = async (url) => {
+      console.log(url);
       const response = await fetch(url);
       const data = await response.json();
 
@@ -167,10 +168,10 @@ export default function PokeCard({pokechar}) {
         <div id={cardInfoID} className={styles.pokeInfo} >
         Weight: {el.weight/10}kg
         <br />Height: {el.height/10}m
-        <br />{el.base_experience}XP
+        <br />Base XP: {el.base_experience}
         <br />{el.abilities}
         <br />{el.formName}
-        <br />Types: <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
+        <br />Type(s): <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
 
         </div>
 

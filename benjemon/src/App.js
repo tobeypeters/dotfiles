@@ -43,7 +43,7 @@ import React, { useEffect, useState } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
-import Spinner from './Spinner'
+import Spinner from './Spinner';
 
 function App() {
   const pokeURL = 'https://pokeapi.co/api/v2/pokemon-species?limit=5000';
@@ -58,18 +58,25 @@ function App() {
         if (response.ok) { // response.ok
           let result = await response.json();
 
+          const fillPromises = (buffer, url, count) => {
+            console.log(`${url} ${count}`);
+            for (let i = 1; i <= count; i++) {
+              buffer.push(
+                fetch(`${url}${i}`)
+                  .catch(err => { console.log(`catch err : ${err}`) })
+                  .then(res => { // res
+                    if (res.status >= 200 && res.status <= 299) {
+                      return res.json(); }
+                  } // res
+                  ) // then
+              )
+            } // for
+          }
+
           const promises = [];
-          for (let i = 1; i <= result.results.length; i++) {
-            promises.push( // push
-              fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
-              .catch(err => { console.log(`catch err : ${err}`) })
-                .then(res => { // res
-                  if (res.status >= 200 && res.status <= 299) {
-                  return res.json(); }
-                } // res
-                ) // then
-            ); // push
-          }; // for
+          fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
+          const forms = [];
+          // fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
 
 /*  abilities, base_experience
     forms, game_indices
@@ -134,14 +141,22 @@ function App() {
                 } // if
               }); // forEach
 
-              if (buffer.length) {
-                setData(buffer);
-                buffer.splice(0, buffer.length);
-              }
+              setData(buffer);
+              console.log('here');
+              buffer.splice(0, buffer.length);
+              promises.splice(0, promises.length);
+
+              fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
+            }) // then
+
+//             Promise.allSettled(forms)
+//             .then(results => {
+//               results.forEach(res => {
+// //                console.log(res[0].version_group);
+//               })
+//             }) // then
 
 
-
-            }) // .then
 
         } // response.ok
       } catch (err) {
