@@ -82,7 +82,7 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar[0];
 
-  console.log(`formName : ${el.formName}`);
+  //console.log(`formName : ${el.formName}`);
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
