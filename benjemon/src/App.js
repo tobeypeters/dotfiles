@@ -53,30 +53,36 @@ function App() {
   useEffect(() => {
     //Right now, only get data once
     const getData = async () => {
-      try {
-        let response = await fetch(pokeURL);
-        if (response.ok) { // response.ok
-          let result = await response.json();
 
-          const fillPromises = (buffer, url, count) => {
-            console.log(`${url} ${count}`);
-            for (let i = 1; i <= count; i++) {
-              buffer.push(
-                fetch(`${url}${i}`)
-                  .catch(err => { console.log(`catch err : ${err}`) })
-                  .then(res => { // res
-                    if (res.status >= 200 && res.status <= 299) {
-                      return res.json(); }
-                  } // res
-                  ) // then
-              )
-            } // for
-          }
+      const promises = [];
+      let bufferA = [];
 
-          const promises = [];
-          fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
-          const forms = [];
-          // fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
+      const fillPromises = (buffer, url, count) => {
+        for (let i = 1; i <= count; i++) {
+          buffer.push(
+            fetch(`${url}${i}`)
+              .catch(err => { console.log(`catch err : ${err}`) })
+              .then(res => {
+                if (res.status >= 200 && res.status <= 299)
+                  return res.json();
+              } // res
+              ) // then
+          )
+        } // for
+      }
+
+      const getDataItem = async (url) => {
+        const res = await fetch(url)
+        if (res.ok)
+          return await res.json();
+      }
+
+      let response = await fetch(pokeURL);
+      if (response.ok) {
+        let result = await response.json();
+
+        //fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
+        //fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
 
 /*  abilities, base_experience
     forms, game_indices
@@ -88,12 +94,9 @@ function App() {
     sprites, stats,
     types,weight
 */
-
-          Promise.allSettled(promises)
-            .then(results => {
-              let buffer = [];
-
-              const imgRep = 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/';
+        fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
+        Promise.allSettled(promises)
+          .then(results => {
               results.forEach(res => {
                 if (res.status === "fulfilled") {
                   const pokemon = Array(res.value).map(p => ({
@@ -104,7 +107,7 @@ function App() {
                     weight: p.weight,
 
                     sprites: [
-                      [`${imgRep}${p.id.toString().padStart(3,'0')}.png`, 'Front Default'],
+                      [`${'https://assets.pokemon.com/assets/cms2/img/pokedex/full/'}${p.id.toString().padStart(3,'0')}.png`, 'Front Default'],
                       // [p.sprites['front_default'], 'Front Default'],
                       [p.sprites['back_default'], 'Back Default' ],
                       [p.sprites['front_shiny'], 'Front Shiny' ],
@@ -124,7 +127,7 @@ function App() {
 
                     base_experience: p.base_experience,
                     forms: p.forms,
-                    formName: '',
+                    formName: 'none',
                     game_indices: p.game_indices,
                     held_items: p.held_items,
                     types: p.types.map((type) => type.type.name).join(', '),
@@ -134,34 +137,33 @@ function App() {
                     past_types: p.past_types,
                     species: p.species,
                     stats: p.stats,
+                    stir: 'big',
                   }));
 
-                  buffer.push(pokemon);
+                  bufferA.push(pokemon);
 
                 } // if
               }); // forEach
 
-              setData(buffer);
-              console.log('here');
-              buffer.splice(0, buffer.length);
-              promises.splice(0, promises.length);
+              bufferA.forEach(async (f, idx) => {
+                const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
+                f[0].formName = res.version_group.name.replace('-', ' & ');
+                console.log(`forEach: ${f[0].formName}`);
+              }
+              );
 
-              fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
-            }) // then
+               bufferA.forEach(f => {
+                  console.log(f[0].formName);
+               });
 
-//             Promise.allSettled(forms)
-//             .then(results => {
-//               results.forEach(res => {
-// //                console.log(res[0].version_group);
-//               })
-//             }) // then
+              setData(bufferA);
 
+              promises.slice(0, promises.length);
+              bufferA.splice(0, bufferA.length);
 
+          }) // then
 
-        } // response.ok
-      } catch (err) {
-          console.log(`Root catch error: ${err}`);
-      }
+      } // response.ok
 
 }; //getData
     getData();
@@ -172,13 +174,11 @@ function App() {
       <Logo />
       <br />
 
-      <div className='pokeContainer'>
+      <div>
         {data.length ? (
           <PokemonList pokemon={data}/>
         ) : (
           <Spinner />)}
-       {/* <div>loading...</div>)} */}
-
       </div>
     </div> // App
  )

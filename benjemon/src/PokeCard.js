@@ -82,6 +82,8 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar[0];
 
+  console.log(`formName : ${el.formName}`);
+
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
      el.sprites[1][0] = placeholder;
@@ -101,14 +103,6 @@ export default function PokeCard({pokechar}) {
   const charTypeBG = `linear-gradient(${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
 
   const getElm = eID => document.getElementById(eID);
-
-  const getDetailInfo = async (url) => {
-      console.log(url);
-      const response = await fetch(url);
-      const data = await response.json();
-
-      return data;
-  }
 
   const imageClick = () => {
     const elm = getElm(cardImageID);
@@ -131,14 +125,6 @@ export default function PokeCard({pokechar}) {
       ev.target.id === cardNameID ) {
 
       if (window.getComputedStyle(elImgLarge).display === 'block') {
-        const pokeForm = await getDetailInfo(el.forms[0].url);
-
-        if (pokeForm) {
-          el.formName = pokeForm.version_group.name;
-
-          console.log(el.formName);
-        }
-
         elImgLarge.style.display = 'none';
         elInfo.style.display = 'block';
         elImgMini.style.display = 'block';
