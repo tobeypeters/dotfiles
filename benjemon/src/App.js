@@ -148,11 +148,11 @@ function App() {
               bufferA.forEach(async (f, idx) => {
                 const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
                 f[0].formName = res.version_group.name.replace('-', ' & ');
-                console.log(`forEach: ${f[0].formName}`);
+                //console.log(`forEach: ${f[0].formName}`);
               }
               );
 
-               bufferA.forEach(f => {
+              bufferA.forEach(f => {
                   console.log(f[0].formName);
                });
 

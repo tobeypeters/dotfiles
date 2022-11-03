@@ -158,7 +158,7 @@ export default function PokeCard({pokechar}) {
         <br />{el.abilities}
         <br />{el.formName}
         <br />Type(s): <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
-
+        <br /><br />
         </div>
 
       </div>
