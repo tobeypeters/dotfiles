@@ -170,9 +170,8 @@ function App() {
             .then (results => {
               results.forEach(res => {
                 if (res.status === "fulfilled") {
-                  console.log(bufferA[res.value.id][0].name); //works - prints bulbasaur, pikachu, etc ...
-                              bufferA[res.value.id][0].name = 'whatever';
-//                  bufferA[res.value.id][0].formName = res.value.version_group.name;
+                  console.log(`${res.status} res.value.version_group : ${res.value.version_group}`);
+                  //bufferA[res.value.id - 1][0].formName = res.value.version_group.name;
                 }
               })
 
