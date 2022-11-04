@@ -55,6 +55,7 @@ function App() {
     const getData = async () => {
 
       const promises = [];
+      const forms = []
       let bufferA = [];
 
       const fillPromises = (buffer, url, count) => {
@@ -82,7 +83,7 @@ function App() {
         let result = await response.json();
 
         //fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
-        //fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
+        // fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
 
 /*  abilities, base_experience
     forms, game_indices
@@ -97,71 +98,96 @@ function App() {
         fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
         Promise.allSettled(promises)
           .then(results => {
-              results.forEach(res => {
-                if (res.status === "fulfilled") {
-                  const pokemon = Array(res.value).map(p => ({
-                    id: p.id,
-                    is_default: p.is_default,
-                    name: p.name,
-                    height: p.height,
-                    weight: p.weight,
+            results.forEach(res => {
+              if (res.status === "fulfilled") {
+                const pokemon = Array(res.value).map(p => ({
+                  id: p.id,
+                  is_default: p.is_default,
+                  name: p.name,
+                  height: p.height,
+                  weight: p.weight,
 
-                    sprites: [
-                      [`${'https://assets.pokemon.com/assets/cms2/img/pokedex/full/'}${p.id.toString().padStart(3,'0')}.png`, 'Front Default'],
-                      // [p.sprites['front_default'], 'Front Default'],
-                      [p.sprites['back_default'], 'Back Default' ],
-                      [p.sprites['front_shiny'], 'Front Shiny' ],
-                      [p.sprites['back_shiny'], 'Back Shiny' ],
+                  sprites: [
+                    [`${'https://assets.pokemon.com/assets/cms2/img/pokedex/full/'}${p.id.toString().padStart(3,'0')}.png`, 'Front Default'],
+                    // [p.sprites['front_default'], 'Front Default'],
+                    [p.sprites['back_default'], 'Back Default' ],
+                    [p.sprites['front_shiny'], 'Front Shiny' ],
+                    [p.sprites['back_shiny'], 'Back Shiny' ],
 
-                      /*
-                      [p.sprites['front_female'], 'Front Female' ],
-                      [p.sprites['back_female'], 'Back Female' ],
-                      [p.sprites['front_shiny_female'], 'Front Shiny Female' ],
-                      [p.sprites['back_shiny_female'], 'Back Shiny Female' ],
-                      */
-                    ],
+                    /*
+                    [p.sprites['front_female'], 'Front Female' ],
+                    [p.sprites['back_female'], 'Back Female' ],
+                    [p.sprites['front_shiny_female'], 'Front Shiny Female' ],
+                    [p.sprites['back_shiny_female'], 'Back Shiny Female' ],
+                    */
+                  ],
 
-                    abilities: p.abilities
-                                .filter(a => !a.is_hidden)
-                                .map(a => a.ability.name).join(', '),
+                  abilities: p.abilities
+                              .filter(a => !a.is_hidden)
+                              .map(a => a.ability.name).join(', '),
 
-                    base_experience: p.base_experience,
-                    forms: p.forms,
-                    formName: 'none',
-                    game_indices: p.game_indices,
-                    held_items: p.held_items,
-                    types: p.types.map((type) => type.type.name).join(', '),
-                    location_area_encounters: p.location_area_encounters,
-                    moves: p.moves,
-                    order: p.order,
-                    past_types: p.past_types,
-                    species: p.species,
-                    stats: p.stats,
-                    stir: 'big',
-                  }));
+                  base_experience: p.base_experience,
+                  forms: p.forms,
+                  formName: 'none',
+                  game_indices: p.game_indices,
+                  held_items: p.held_items,
+                  types: p.types.map((type) => type.type.name).join(', '),
+                  location_area_encounters: p.location_area_encounters,
+                  moves: p.moves,
+                  order: p.order,
+                  past_types: p.past_types,
+                  species: p.species,
+                  stats: p.stats,
+                  stir: 'big',
+                }));
 
-                  bufferA.push(pokemon);
+                bufferA.push(pokemon);
 
-                } // if
-              }); // forEach
+              } // if
+            }); // forEach
 
-              bufferA.forEach(async (f, idx) => {
-                const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
-                f[0].formName = res.version_group.name.replace('-', ' & ');
-                console.log(`forEach: ${f[0].formName}`);
-              }
-              );
+            // bufferA.forEach(async (f, idx) => {
+            //   const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
+            //   f[0].formName = res.version_group.name.replace('-', ' & ');
+            //   console.log(`forEach: ${f[0].formName}`);
+            // }
+            // );
+            // bufferA.forEach(f => {
+            //     console.log(f[0].formName);
+            //  });
 
-              bufferA.forEach(f => {
-                  console.log(f[0].formName);
-               });
+            // setData(bufferA);
 
-              setData(bufferA);
-
-              promises.slice(0, promises.length);
-              bufferA.splice(0, bufferA.length);
+            // promises.slice(0, promises.length);
+            // bufferA.slice(0, bufferA.length);
 
           }) // then
+          .then (res => {
+            promises.slice(0, promises.length);
+
+            fillPromises(promises,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
+            Promise.allSettled(promises)
+            .then (results => {
+              results.forEach(res => {
+                if (res.status === "fulfilled") {
+                  console.log(bufferA[res.value.id][0].name); //works - prints bulbasaur, pikachu, etc ...
+                              bufferA[res.value.id][0].name = 'whatever';
+//                  bufferA[res.value.id][0].formName = res.value.version_group.name;
+                }
+              })
+
+              setData(bufferA)
+            })
+
+            // results.forEach(async (f, idx) => {
+            //     const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
+            //     f[0].formName = res.version_group.name.replace('-', ' & ');
+            //     console.log(`forEach: ${f[0].formName}`);
+            // }); // forEach
+
+
+
+          }) // form then
 
       } // response.ok
 
