@@ -18,7 +18,6 @@
     Description:
         Pokémon Card component.
 */
-
 import React from 'react'
 
 import placeholder from './assets/Placeholder.png'
@@ -82,7 +81,17 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar[0];
 
-  //console.log(`formName : ${el.formName}`);
+  if (el.id === 1) {
+//    console.log(el.moves[0].move.url);
+//    console.log(el.moves[0].version_group_details);
+  }
+
+  //console.log(`moves : ${el.moves}`);
+
+  // el.moves[0].forEach(f => {
+  //   console.log(`f : ${f}`);
+  // }
+  //);
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
@@ -152,10 +161,10 @@ export default function PokeCard({pokechar}) {
         </span>
 
         <div id={cardInfoID} className={styles.pokeInfo} >
-        Weight: {el.weight/10}kg
-        <br />Height: {el.height/10}m
+        Height: {el.height/10}m
+        <br />Weight: {el.weight/10}kg
         <br />Base XP: {el.base_experience}
-        <br />{el.abilities}
+        <br />ability: {el.abilities}
         <br />{el.formName}
         <br />Type(s): <span style={{ backgroundImage: charTypeBG, padding: '0px 10px 0px 10px' }}>{el.types}</span>
         <br /><br />

@@ -33,6 +33,7 @@
           pokeApi provides sprites, but are lower quality. They are good, don't get me wrong.
           Official (Hi-Res) : https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png
                               https://assets.pokemon.com/assets/cms2/img/pokedex/detail/012.png
+          https://cardmavin.com/media-category/pokemon-set-symbols
 
         Misc:
           https://stackoverflow.com/questions/26736209/how-do-i-stop-animation-in-html-and-css
@@ -45,23 +46,27 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
+import { lowerCase, titleCase } from './utilities';
+
 function App() {
-  const pokeURL = 'https://pokeapi.co/api/v2/pokemon-species?limit=5000';
+  const baseURL = 'https://pokeapi.co/api/v2/';
+  //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
     //Right now, only get data once
     const getData = async () => {
-
-      const promises = [];
-      const forms = []
+      let promises = [];
       let bufferA = [];
 
-      const fillPromises = (buffer, url, count) => {
+      const fillPromises = (buffer , url = [], count = 0) => {
+        const singleURL = url.length === 1;
+
         for (let i = 1; i <= count; i++) {
+          const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
           buffer.push(
-            fetch(`${url}${i}`)
+            fetch(fetchPUSH)
               .catch(err => { console.log(`catch err : ${err}`) })
               .then(res => {
                 if (res.status >= 200 && res.status <= 299)
@@ -72,18 +77,9 @@ function App() {
         } // for
       }
 
-      const getDataItem = async (url) => {
-        const res = await fetch(url)
-        if (res.ok)
-          return await res.json();
-      }
-
-      let response = await fetch(pokeURL);
+      let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
         let result = await response.json();
-
-        //fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
-        // fillPromises(forms,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
 
 /*  abilities, base_experience
     forms, game_indices
@@ -95,7 +91,9 @@ function App() {
     sprites, stats,
     types,weight
 */
-        fillPromises(promises,'https://pokeapi.co/api/v2/pokemon/',result.results.length);
+
+//        fillPromises(promises,['https://pokeapi.co/api/v2/pokemon/'],result.results.length);
+        fillPromises(promises,[`${baseURL}pokemon/`],result.results.length);
         Promise.allSettled(promises)
           .then(results => {
             results.forEach(res => {
@@ -128,12 +126,12 @@ function App() {
 
                   base_experience: p.base_experience,
                   forms: p.forms,
-                  formName: 'none',
                   game_indices: p.game_indices,
                   held_items: p.held_items,
                   types: p.types.map((type) => type.type.name).join(', '),
                   location_area_encounters: p.location_area_encounters,
                   moves: p.moves,
+                  moveArr: [],
                   order: p.order,
                   past_types: p.past_types,
                   species: p.species,
@@ -146,46 +144,55 @@ function App() {
               } // if
             }); // forEach
 
-            // bufferA.forEach(async (f, idx) => {
-            //   const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
-            //   f[0].formName = res.version_group.name.replace('-', ' & ');
-            //   console.log(`forEach: ${f[0].formName}`);
-            // }
-            // );
-            // bufferA.forEach(f => {
-            //     console.log(f[0].formName);
-            //  });
-
-            // setData(bufferA);
-
-            // promises.slice(0, promises.length);
-            // bufferA.slice(0, bufferA.length);
-
           }) // then
           .then (res => {
             promises.slice(0, promises.length);
+            promises = [];
 
-            fillPromises(promises,'https://pokeapi.co/api/v2/pokemon-form/',result.results.length);
+//            fillPromises(promises,['https://pokeapi.co/api/v2/pokemon-form/'],result.results.length);
+            fillPromises(promises,[`${baseURL}pokemon-form/`],result.results.length);
             Promise.allSettled(promises)
             .then (results => {
               results.forEach(res => {
                 if (res.status === "fulfilled") {
-                  console.log(`${res.status} res.value.version_group : ${res.value.version_group}`);
-                  //bufferA[res.value.id - 1][0].formName = res.value.version_group.name;
+                  bufferA[res.value.id - 1][0].formName =
+                  titleCase(res.value.version_group.name.replace('-', ' & '));
                 }
-              })
-
-              setData(bufferA)
+              });
+              return results;
             })
+            .then (res => {
+              promises.slice(0, promises.length);
+              promises = [];
 
-            // results.forEach(async (f, idx) => {
-            //     const res = await getDataItem(`https://pokeapi.co/api/v2/pokemon-form/${f[0].id}`);
-            //     f[0].formName = res.version_group.name.replace('-', ' & ');
-            //     console.log(`forEach: ${f[0].formName}`);
-            // }); // forEach
+              let lookupURL = [];
 
+              bufferA.forEach(f => {
+                const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+                f[0].moves.forEach(ff => {
+                  ff.version_group_details.forEach(fff => {
+                    if ((fff.level_learned_at === 0) &&
+                        (fff.version_group.name === lookupVG))
+                      lookupURL.push(fff.version_group.url);
+                    });
+                }); // moves.forEach
 
+                // fillPromises(promises,lookupURL,lookupURL.length);
+                // Promise.allSettled(promises)
+                // .then(results => {
+                //   results.forEach(res => {
+                //     if (res.status === 'fulfilled') {
+                //       console.log(res.value);
+                //     }
+                //   })
+                // }); // then results
 
+              }); // bufferA.forEach
+            }) // res then
+            .then (() => setData(bufferA))
+
+            bufferA.slice(0, bufferA.length);
+            promises.slice(0, promises.length);
           }) // form then
 
       } // response.ok
