@@ -194,3 +194,4 @@ sudo snap install auto-cpufreq
 
 #https://css-tricks.com/fetching-data-in-react-using-react-async/
 #npm install react-async --save
+#npm install react react-dom
