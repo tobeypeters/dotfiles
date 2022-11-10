@@ -38,9 +38,10 @@
         Misc:
           https://stackoverflow.com/questions/26736209/how-do-i-stop-animation-in-html-and-css
           https://loading.io/css/
+          https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -53,29 +54,63 @@ function App() {
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
+  const [moves, setMoves] = useState([]);
 
   useEffect(() => {
     //Right now, only get data once
-    const getData = async () => {
+    const getPokeData = async () => {
       let promises = [];
       let bufferA = [];
 
       const fillPromises = (buffer , url = [], count = 0) => {
+        console.log(`url : ${url}`);
         const singleURL = url.length === 1;
 
         for (let i = 1; i <= count; i++) {
           const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
           buffer.push(
             fetch(fetchPUSH)
-              .catch(err => { console.log(`catch err : ${err}`) })
+              .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
               .then(res => {
-                if (res.status >= 200 && res.status <= 299)
-                  return res.json();
-              } // res
-              ) // then
+                return res.status === 200 ? res.json() : null;
+              })
           )
-        } // for
+        }
       }
+
+      const getData = await fetch(`${baseURL}move?limit=5000`)
+                     .then(async res => res.status === 200 ? await res.json() : null)
+                     .then(res => {
+
+                      let fdx = 0;
+                      res.results.forEach((el, idx) => {
+                        if (el.url.includes('10001')) fdx = idx;
+                      })
+                      res.results.splice(fdx,res.results.length);
+
+                        // fillPromises(promises,[`${baseURL}move/`],res.results.length)
+                        // Promise.allSettled(promises)
+                        // .then(res => {
+                        //   res.forEach(res => {
+                        //     if (res.status === 'fulfilled') {
+                        //       const move = Array(res.value).map(p => ({
+                        //         name: p.name,
+                        //       }));
+
+                        //       //console.log(move);
+                        //       bufferA.push(move);
+                        //     }
+                        //   })
+                        // })
+                        // promises.slice(0,promises.length);
+                        // promises = [];
+                     });
+
+      //console.log(bufferA);
+      bufferA.splice(0, bufferA.length);
+      bufferA = [];
+
+      //console.log(getData.results);
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
@@ -140,65 +175,68 @@ function App() {
                 }));
 
                 bufferA.push(pokemon);
-
               } // if
             }); // forEach
-
           }) // then
           .then (res => {
-            promises.slice(0, promises.length);
+            promises.splice(0, promises.length);
             promises = [];
 
-//            fillPromises(promises,['https://pokeapi.co/api/v2/pokemon-form/'],result.results.length);
+            // console.log(`bufferA : ${bufferA[5][0].name}`);
+
             fillPromises(promises,[`${baseURL}pokemon-form/`],result.results.length);
             Promise.allSettled(promises)
             .then (results => {
+              //console.log(`here : ${bufferA}`);
               results.forEach(res => {
                 if (res.status === "fulfilled") {
                   bufferA[res.value.id - 1][0].formName =
                   titleCase(res.value.version_group.name.replace('-', ' & '));
                 }
               });
-              return results;
+              // return results;
             })
-            .then (res => {
-              promises.slice(0, promises.length);
-              promises = [];
+            })
+            .then (() => {
+              // promises.splice(0, promises.length);
+              // promises = [];
 
-              let lookupURL = [];
+              //console.log(bufferA);
+
+              // let lookupURL = [];
+
+              console.log(bufferA[0]);
+              console.log('here');
+              console.log(bufferA[0].formName);
 
               bufferA.forEach(f => {
-                const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
-                f[0].moves.forEach(ff => {
-                  ff.version_group_details.forEach(fff => {
-                    if ((fff.level_learned_at === 0) &&
-                        (fff.version_group.name === lookupVG))
-                      lookupURL.push(fff.version_group.url);
-                    });
-                }); // moves.forEach
+                 //const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+                console.log(f);
 
-                // fillPromises(promises,lookupURL,lookupURL.length);
-                // Promise.allSettled(promises)
-                // .then(results => {
-                //   results.forEach(res => {
-                //     if (res.status === 'fulfilled') {
-                //       console.log(res.value);
-                //     }
-                //   })
-                // }); // then results
+                // lookupURL.splice(0,lookupURL.length);
+                // lookupURL = [];
 
+                //console.log(f[0]);
+
+                //f[0].moves.forEach(ff => {
+              //     ff.version_group_details.forEach(fff => {
+              //       if ((fff.level_learned_at === 0) &&
+              //           (fff.version_group.name === lookupVG))
+              //         lookupURL.push(fff.version_group.url);
+              //       });
+                //}); // moves.forEach
               }); // bufferA.forEach
             }) // res then
             .then (() => setData(bufferA))
 
-            bufferA.slice(0, bufferA.length);
-            promises.slice(0, promises.length);
-          }) // form then
+            // bufferA.splice(0, bufferA.length);
+            // promises.splice(0, promises.length);
+          // }) // form then
 
       } // response.ok
 
 }; //getData
-    getData();
+    getPokeData();
 },[]); //useEffect
 
   return (
