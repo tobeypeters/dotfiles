@@ -41,7 +41,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -54,16 +54,15 @@ function App() {
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
-  const [moves, setMoves] = useState([]);
+
+  let bufferA = [];
 
   useEffect(() => {
     //Right now, only get data once
     const getPokeData = async () => {
       let promises = [];
-      let bufferA = [];
 
       const fillPromises = (buffer , url = [], count = 0) => {
-        console.log(`url : ${url}`);
         const singleURL = url.length === 1;
 
         for (let i = 1; i <= count; i++) {
@@ -106,11 +105,8 @@ function App() {
                         // promises = [];
                      });
 
-      //console.log(bufferA);
-      bufferA.splice(0, bufferA.length);
-      bufferA = [];
-
-      //console.log(getData.results);
+//      bufferA.splice(0, bufferA.length);
+//      bufferA = [];
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
@@ -161,6 +157,7 @@ function App() {
 
                   base_experience: p.base_experience,
                   forms: p.forms,
+                  formName: '',
                   game_indices: p.game_indices,
                   held_items: p.held_items,
                   types: p.types.map((type) => type.type.name).join(', '),
@@ -181,47 +178,32 @@ function App() {
             promises.splice(0, promises.length);
             promises = [];
 
-            // console.log(`bufferA : ${bufferA[5][0].name}`);
-
             fillPromises(promises,[`${baseURL}pokemon-form/`],result.results.length);
             Promise.allSettled(promises)
             .then (results => {
-              //console.log(`here : ${bufferA}`);
               results.forEach(res => {
                 if (res.status === "fulfilled") {
                   bufferA[res.value.id - 1][0].formName =
                   titleCase(res.value.version_group.name.replace('-', ' & '));
+//                  console.log(bufferA[res.value.id - 1][0].formName); //works
                 }
               });
-              return results;
             })
             })
             .then (() => {
-              // promises.splice(0, promises.length);
-              // promises = [];
-
-              //console.log(bufferA);
+              promises.splice(0, promises.length);
+              promises = [];
 
               // let lookupURL = [];
 
-              console.log('bufferA test start ------------------')
               console.log(bufferA[0][0]);
               bufferA.forEach(f => {
-                if (f[0].id === 1) {
-                  console.log(f[0].name);
-                  console.log(f[0].formName);
-                }
-
-              console.log('bufferA test end ------------------')
-
-
-                //const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
-                //console.log(f);
+              //console.log(f[0]);
+              const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+              console.log(lookupVG);
 
                 // lookupURL.splice(0,lookupURL.length);
                 // lookupURL = [];
-
-                //console.log(f[0]);
 
                 //f[0].moves.forEach(ff => {
               //     ff.version_group_details.forEach(fff => {
@@ -233,9 +215,6 @@ function App() {
               }); // bufferA.forEach
             }) // res then
             .then (() => setData(bufferA))
-
-            // bufferA.splice(0, bufferA.length);
-            // promises.splice(0, promises.length);
           // }) // form then
 
       } // response.ok
