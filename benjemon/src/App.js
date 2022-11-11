@@ -171,7 +171,6 @@ function App() {
                   past_types: p.past_types,
                   species: p.species,
                   stats: p.stats,
-                  stir: 'big',
                 }));
 
                 bufferA.push(pokemon);
@@ -194,7 +193,7 @@ function App() {
                   titleCase(res.value.version_group.name.replace('-', ' & '));
                 }
               });
-              // return results;
+              return results;
             })
             })
             .then (() => {
@@ -205,13 +204,19 @@ function App() {
 
               // let lookupURL = [];
 
-              console.log(bufferA[0]);
-              console.log('here');
-              console.log(bufferA[0].formName);
-
+              console.log('bufferA test start ------------------')
+              console.log(bufferA[0][0]);
               bufferA.forEach(f => {
-                 //const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
-                console.log(f);
+                if (f[0].id === 1) {
+                  console.log(f[0].name);
+                  console.log(f[0].formName);
+                }
+
+              console.log('bufferA test end ------------------')
+
+
+                //const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+                //console.log(f);
 
                 // lookupURL.splice(0,lookupURL.length);
                 // lookupURL = [];
