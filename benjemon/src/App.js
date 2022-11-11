@@ -157,7 +157,6 @@ function App() {
 
                   base_experience: p.base_experience,
                   forms: p.forms,
-                  formName: '',
                   game_indices: p.game_indices,
                   held_items: p.held_items,
                   types: p.types.map((type) => type.type.name).join(', '),
@@ -196,11 +195,18 @@ function App() {
 
               // let lookupURL = [];
 
+              console.log('bufferA test start ------------------')
               console.log(bufferA[0][0]);
               bufferA.forEach(f => {
-              //console.log(f[0]);
-              const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
-              console.log(lookupVG);
+                if (f[0].id === 1) {
+                  console.log(f[0].name); // works
+                  console.log(f[0].formName); // doesn't work
+                }
+
+              console.log('bufferA test end ------------------')
+
+              // const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+              // console.log(lookupVG);
 
                 // lookupURL.splice(0,lookupURL.length);
                 // lookupURL = [];
