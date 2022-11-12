@@ -18,6 +18,8 @@
     Description:
         miscellaneous utility functions
 */
+const logObj = (obj) => console.log(`object [JSON]  : ${JSON.stringify(obj, undefined, 4)}`);
+
 const lowerCase = (str) => str.toLowerCase(str);
 
 const titleCase = (str) => {
@@ -26,4 +28,4 @@ const titleCase = (str) => {
     }).join(' ');
 }
 
-export { lowerCase, titleCase }
+export { logObj, lowerCase, titleCase }

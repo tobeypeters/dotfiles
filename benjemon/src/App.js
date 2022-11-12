@@ -41,7 +41,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -172,52 +172,49 @@ function App() {
                 bufferA.push(pokemon);
               } // if
             }); // forEach
+
           }) // then
-          .then (res => {
+          .then (async res => {
             promises.splice(0, promises.length);
-            promises = [];
 
             fillPromises(promises,[`${baseURL}pokemon-form/`],result.results.length);
-            Promise.allSettled(promises)
+            await Promise.allSettled(promises)
             .then (results => {
               results.forEach(res => {
                 if (res.status === "fulfilled") {
                   bufferA[res.value.id - 1][0].formName =
                   titleCase(res.value.version_group.name.replace('-', ' & '));
-//                  console.log(bufferA[res.value.id - 1][0].formName); //works
                 }
               });
             })
             })
-            .then (() => {
+            .then (res => {
               promises.splice(0, promises.length);
-              promises = [];
 
-              // let lookupURL = [];
+              let lookupURL = [];
 
               console.log('bufferA test start ------------------')
               console.log(bufferA[0][0]);
-              bufferA.forEach(f => {
+              bufferA.forEach((f) => {
                 if (f[0].id === 1) {
                   console.log(f[0].name); // works
                   console.log(f[0].formName); // doesn't work
                 }
 
-              console.log('bufferA test end ------------------')
+                console.log('bufferA test end ------------------')
 
-              // const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
-              // console.log(lookupVG);
+                const lookupVG = lowerCase(f[0].formName).replace(' & ', '-');
+                // console.log(lookupVG);
 
-                // lookupURL.splice(0,lookupURL.length);
-                // lookupURL = [];
+                lookupURL.splice(0,lookupURL.length);
 
-                //f[0].moves.forEach(ff => {
-              //     ff.version_group_details.forEach(fff => {
-              //       if ((fff.level_learned_at === 0) &&
-              //           (fff.version_group.name === lookupVG))
-              //         lookupURL.push(fff.version_group.url);
-              //       });
-                //}); // moves.forEach
+                f[0].moves.forEach(ff => {
+                  ff.version_group_details.forEach(fff => {
+                    if ((fff.level_learned_at === 0) &&
+                        (fff.version_group.name === lookupVG))
+                      lookupURL.push(fff.version_group.url);
+                    });
+                }); // moves.forEach
               }); // bufferA.forEach
             }) // res then
             .then (() => setData(bufferA))
