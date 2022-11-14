@@ -142,7 +142,7 @@ export default function PokeCard({pokechar}) {
 
   return (
     <>
-      <div id={cardID} className={styles.card} key={el.name} style={{ backgroundImage: charBG }}
+      <div id={cardID} className={styles.card} style={{ backgroundImage: charBG }}
       onClick={ showPokeDetail } >
         <img id={cardImageID} className={styles.cardimage} loading='lazy' src={el.sprites[0][0]} alt='0'
          onClick={ imageClick } title={el.sprites[0][1]} />

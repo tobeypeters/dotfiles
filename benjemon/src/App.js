@@ -91,9 +91,9 @@ console.log('four');
           })
         })
 
-//         fillPromises(promises,[`${baseURL}move/`],fdx);
-//         Promise.allSettled(promises)
-//         .then(res => {
+        fillPromises(promises,[`${baseURL}move/`],fdx);
+        Promise.allSettled(promises)
+        .then(res => {
 //           let bufferMove = [];
 //           res.forEach(res => {
 //             if (res.status === 'fulfilled') {
@@ -107,7 +107,7 @@ console.log('four');
 // //          console.log(`bufferMove: ${bufferMove}`);
 //           setDataMoves(bufferMove);
 //           cleanse(bufferMove);
-//         });
+        });
       }
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
@@ -209,7 +209,7 @@ console.log('three');
       <Logo />
       <br />
 
-      <div>
+      <div key='fake'>
         {data.length ? (
           <PokemonList pokemon={data}/>
         ) : (

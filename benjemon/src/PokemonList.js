@@ -26,9 +26,9 @@ import styles from './App.module.css'
 
 export default function PokemonList({ pokemon }) {
   return (
-    <div className={styles.pokeContainer}>
+    <div className={styles.pokeContainer} >
       {
-        (pokemon.map(p => ( <PokeCard pokechar={p} /> )))
+        (pokemon.map(p => ( <PokeCard pokechar={p} key={p[0].id} /> )))
       }
     </div>
   )
