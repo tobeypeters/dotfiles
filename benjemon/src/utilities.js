@@ -18,6 +18,12 @@
     Description:
         miscellaneous utility functions
 */
+const cleanse = (arr) => {
+    if (Array.isArray(arr)) {
+        arr.splice(0, arr.length);
+    }
+}
+
 const logObj = (obj) => console.log(`object [JSON]  : ${JSON.stringify(obj, undefined, 4)}`);
 
 const lowerCase = (str) => str.toLowerCase(str);
@@ -28,4 +34,4 @@ const titleCase = (str) => {
     }).join(' ');
 }
 
-export { logObj, lowerCase, titleCase }
+export { cleanse, logObj, lowerCase, titleCase }
