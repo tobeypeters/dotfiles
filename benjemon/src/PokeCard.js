@@ -22,7 +22,6 @@ import React from 'react'
 
 import placeholder from './assets/Placeholder.png'
 import styles from './App.module.css'
-import { logObj } from './utilities';
 
 /*
 const pokemon = Array(res.value).map(p => ({

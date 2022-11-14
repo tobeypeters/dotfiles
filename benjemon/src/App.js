@@ -209,7 +209,7 @@ console.log('three');
       <Logo />
       <br />
 
-      <div key='fake'>
+      <div >
         {data.length ? (
           <PokemonList pokemon={data}/>
         ) : (
