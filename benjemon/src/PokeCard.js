@@ -23,6 +23,8 @@ import React from 'react'
 import placeholder from './assets/Placeholder.png'
 import styles from './App.module.css'
 
+import { logObj } from './utilities';
+
 /*
 const pokemon = Array(res.value).map(p => ({
   id: p.id,
@@ -81,9 +83,10 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar;
 
-  // if (el.id === 1) {
-  //   console.log(`stats : ${logObj(el.stats)}`);
-  // }
+  console.log(el.types2);
+  if (el.id === 16) {
+    //console.log(`stats : ${logObj(el.stats)}`);
+  }
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;

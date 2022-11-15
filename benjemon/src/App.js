@@ -95,6 +95,7 @@ console.log('four');
             }
           });
 
+          console.log(bufferMove);
           setDataMoves(bufferMove);
         });
       }
@@ -145,12 +146,16 @@ console.log('four');
                 abilities: p.abilities
                           .filter(a => !a.is_hidden)
                           .map(a => a.ability.name).join(', '),
+                abilities2: [ p.abilities
+                          .filter(a => !a.is_hidden)
+                          .map(a => a.ability.name) ][0],
 
                 base_experience: p.base_experience,
-                forms: p.forms,
+                forms: p.forms[0],
                 game_indices: p.game_indices,
-                held_items: p.held_items,
+                held_items: [ p.held_items.map(a => a.item.name) ][0],
                 types: p.types.map((type) => type.type.name).join(', '),
+                types2: [ p.types.map((type) => type.type.name) ][0],
                 location_area_encounters: p.location_area_encounters,
                 moves: p.moves,
                 moveArr: [],
