@@ -24,6 +24,23 @@ const cleanse = (arr) => {
     }
 }
 
+const fillPromises = (buffer , url = [], count = 0, append_mode = false) => {
+    const singleURL = url.length === 1;
+
+    if (!append_mode) cleanse(buffer);
+
+    for (let i = 1; i <= count; i++) {
+      const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
+      buffer.push(
+        fetch(fetchPUSH)
+          .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
+          .then(res => {
+            return res.status === 200 ? res.json() : null;
+          })
+      )
+    }
+  };
+
 const logObj = (obj) => console.log(`object [JSON]  : ${JSON.stringify(obj, undefined, 4)}`);
 
 const lowerCase = (str) => str.toLowerCase(str);
@@ -34,4 +51,4 @@ const titleCase = (str) => {
     }).join(' ');
 }
 
-export { cleanse, logObj, lowerCase, titleCase }
+export { cleanse, fillPromises, logObj, lowerCase, titleCase }

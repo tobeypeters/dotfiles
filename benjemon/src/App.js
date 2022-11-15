@@ -47,37 +47,20 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { logObj, cleanse, titleCase } from './utilities';
+import { logObj, cleanse, fillPromises, titleCase } from './utilities';
 
 function App() {
   const baseURL = 'https://pokeapi.co/api/v2/';
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
-  const [dataMoves, setDataMoves] = useState([]);
+  const [moves, setDataMoves] = useState([]);
 
   useEffect(() => {
     //Right now, only get data once
     const getPokeData = async () => {
       let promises = [];
       let bufferA = [];
-
-      const fillPromises = (buffer , url = [], count = 0) => {
-        const singleURL = url.length === 1;
-
-        cleanse(buffer);
-
-        for (let i = 1; i <= count; i++) {
-          const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
-          buffer.push(
-            fetch(fetchPUSH)
-              .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
-              .then(res => {
-                return res.status === 200 ? res.json() : null;
-              })
-          )
-        }
-      };
 
       const buildMoveLookup = async () => {
 console.log('four');
@@ -93,6 +76,7 @@ console.log('four');
         fillPromises(promises,[`${baseURL}move/`],fdx);
         Promise.allSettled(promises)
         .then(res => {
+          cleanse(promises);
           let bufferMove = [];
           res.forEach(res => {
             if (res.status === 'fulfilled') {
@@ -111,9 +95,7 @@ console.log('four');
             }
           });
 
-          console.log(bufferMove);
           setDataMoves(bufferMove);
-          //cleanse(bufferMove);
         });
       }
 
