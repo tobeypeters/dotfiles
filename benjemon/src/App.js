@@ -47,7 +47,7 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { cleanse, lowerCase, titleCase } from './utilities';
+import { logObj, cleanse, titleCase } from './utilities';
 
 function App() {
   const baseURL = 'https://pokeapi.co/api/v2/';
@@ -56,12 +56,11 @@ function App() {
   const [data, setData] = useState([]);
   const [dataMoves, setDataMoves] = useState([]);
 
-  var bufferA = [];
-
   useEffect(() => {
     //Right now, only get data once
     const getPokeData = async () => {
       let promises = [];
+      let bufferA = [];
 
       const fillPromises = (buffer , url = [], count = 0) => {
         const singleURL = url.length === 1;
@@ -94,19 +93,27 @@ console.log('four');
         fillPromises(promises,[`${baseURL}move/`],fdx);
         Promise.allSettled(promises)
         .then(res => {
-//           let bufferMove = [];
-//           res.forEach(res => {
-//             if (res.status === 'fulfilled') {
-//               const move = Array(res.value).map(p => ({
-//                 name: p.name,
-//               }));
+          let bufferMove = [];
+          res.forEach(res => {
+            if (res.status === 'fulfilled') {
+              const move = Array(res.value).map(p => ({
+                id: p.id,
+                name: p.name,
+                accuracy: p.accuracy,
+                damage_class: p.damage_class.name,
+                flavor_text: p.flavor_text_entries
+                              .filter((f => f.language.name === 'en'))[0].flavor_text,
+                power: p.power,
+                pp: p.pp,
+              }));
 
-//               bufferMove.push(move);
-//             }
-//           })
-// //          console.log(`bufferMove: ${bufferMove}`);
-//           setDataMoves(bufferMove);
-//           cleanse(bufferMove);
+              bufferMove.push(move[0]);
+            }
+          });
+
+          console.log(bufferMove);
+          setDataMoves(bufferMove);
+          //cleanse(bufferMove);
         });
       }
 
@@ -171,7 +178,7 @@ console.log('four');
                 stats: p.stats,
               }));
 
-              bufferA.push(pokemon);
+              bufferA.push(pokemon[0]);
             } // if
           }); // forEach
           console.log('one');
@@ -183,7 +190,7 @@ console.log('four');
           .then (results => {
             results.forEach(res => {
               if (res.status === "fulfilled") {
-                bufferA[res.value.id - 1][0].formName =
+                bufferA[res.value.id - 1].formName =
                 titleCase(res.value.version_group.name.replace('-', ' & '));
               }
             });
@@ -191,12 +198,9 @@ console.log('four');
         }) // then formName
         .then (() => {
 console.log('three');
-          setData(bufferA);
-
-          cleanse(bufferA);
-          cleanse(promises);
 
           buildMoveLookup();
+          setData(bufferA);
         })
       } // response.ok
 

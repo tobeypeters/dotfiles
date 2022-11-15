@@ -28,7 +28,7 @@ export default function PokemonList({ pokemon }) {
   return (
     <div className={styles.pokeContainer} >
       {
-        (pokemon.map(p => ( <PokeCard pokechar={p} key={p[0].id} /> )))
+        (pokemon.map(p => ( <PokeCard pokechar={p} key={p.id} /> )))
       }
     </div>
   )
