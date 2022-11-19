@@ -83,7 +83,7 @@ const colors = {
 export default function PokeCard({pokechar}) {
   const el = pokechar;
 
-  console.log(el.types2);
+  // console.log(el.types2);
   if (el.id === 16) {
     //console.log(`stats : ${logObj(el.stats)}`);
   }

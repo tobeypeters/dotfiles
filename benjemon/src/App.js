@@ -47,13 +47,14 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { logObj, cleanse, fillPromises, titleCase } from './utilities';
+import { cleanse, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
 
 function App() {
   const baseURL = 'https://pokeapi.co/api/v2/';
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
+  const [items, setDataItems] = useState([]);
   const [moves, setDataMoves] = useState([]);
 
   useEffect(() => {
@@ -62,22 +63,46 @@ function App() {
       let promises = [];
       let bufferA = [];
 
-      const buildMoveLookup = async () => {
-console.log('four');
-        let fdx = 0;
-        await fetch(`${baseURL}move?limit=5000`)
-        .then(async res => res.status === 200 ? await res.json() : null)
-        .then(res => {
-          res.results.forEach((el, idx) => {
-            if (el.url.includes('10001')) fdx = idx;
-          })
-        })
+//       const buildItemLookup = async () => {
+//         console.log('five');
+//         let bufferItems = await grabData(`${baseURL}item?limit=5000`);
 
-        fillPromises(promises,[`${baseURL}move/`],fdx);
+//         let lookup = []
+//         bufferItems.forEach(f => lookup.push(f.url));
+
+//         console.log(bufferItems);
+//         console.log(lookup);
+
+//         await fillPromises(promises,lookup,lookup.length);
+//         console.log(promises);
+//         Promise.allSettled(promises)
+//         .then(res => {
+// //          console.log(res);
+//           res.forEach(res => {
+//             if (res.status === 'fulfilled') {
+// //              console.log(`res ${res.value}`);
+//               console.log(res.value);
+//             }
+//           });
+//         });
+//       }
+
+      const buildMoveLookup = async () => {
+        console.log('four');
+
+        let bufferMove = await grabData(`${baseURL}move?limit=5000`);
+
+        let fdx = 0;
+
+        bufferMove.forEach((f, idx) => {
+          if (f.url.includes('10001')) fdx = idx;
+        })
+        cleanse(bufferMove);
+
+        fillPromises2(promises,[`${baseURL}move/`],fdx);
         Promise.allSettled(promises)
         .then(res => {
           cleanse(promises);
-          let bufferMove = [];
           res.forEach(res => {
             if (res.status === 'fulfilled') {
               const move = Array(res.value).map(p => ({
@@ -183,10 +208,10 @@ console.log('four');
             });
           }) // then results
         }) // then formName
-        .then (() => {
+        .then (res => {
 console.log('three');
-
           buildMoveLookup();
+//          buildItemLookup();
           setData(bufferA);
         })
       } // response.ok
@@ -206,7 +231,7 @@ console.log('three');
         ) : (
           <Spinner />)}
       </div>
-    </div> // App
+    </div>
  )
 
 }

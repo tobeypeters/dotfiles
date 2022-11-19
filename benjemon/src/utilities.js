@@ -19,27 +19,99 @@
         miscellaneous utility functions
 */
 const cleanse = (arr) => {
-    if (Array.isArray(arr)) {
-        arr.splice(0, arr.length);
-    }
+  if (Array.isArray(arr)) {
+      arr.splice(0, arr.length);
+  }
 }
 
-const fillPromises = (buffer , url = [], count = 0, append_mode = false) => {
+const grabData = async (url) => {
+  let response = await fetch(url);
+  let results = await response.status === 200 ? await response.json() : null
+   return results.results;
+}
+const block_Promises = async (buffer, url = [], count = 0, buffer_clear = true) => {
+  const fillerUp = async (buffer , url = [], count = 0) => {
     const singleURL = url.length === 1;
-
-    if (!append_mode) cleanse(buffer);
 
     for (let i = 1; i <= count; i++) {
       const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
       buffer.push(
-        fetch(fetchPUSH)
-          .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
-          .then(res => {
+        await fetch(fetchPUSH)
+        .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
+        .then(res => {
             return res.status === 200 ? res.json() : null;
           })
       )
     }
   };
+
+  const MAX_GRAB_COUNT = 250;
+
+  let grabHowMany = count <= MAX_GRAB_COUNT ? count : MAX_GRAB_COUNT;
+  count -= grabHowMany;
+
+  if (buffer_clear) cleanse(buffer);
+
+  let arrIDX = 0;
+
+  if (grabHowMany > 0) {
+    do {
+      await fillerUp(buffer,url.slice(arrIDX, arrIDX + grabHowMany),grabHowMany);
+
+      arrIDX += grabHowMany;
+
+      grabHowMany = count <= MAX_GRAB_COUNT ? count : MAX_GRAB_COUNT;
+      count -= grabHowMany;
+    } while (grabHowMany > 0);
+  }
+
+  console.log(buffer);
+}
+
+const fillPromises2 = async (buffer , url = [], count = 0, buffer_clear = true) => {
+  const fillerUp = async (buffer , url = [], count = 0) => {
+    const singleURL = url.length === 1;
+
+    console.log(singleURL);
+    console.log(url[0]);
+    console.log(`count: ${count}`);
+    for (let i = 1; i <= count; i++) {
+      const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
+//      console.log(fetchPUSH);
+      buffer.push(
+        await fetch(fetchPUSH)
+        .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
+        .then(res => {
+            return res.status === 200 ? res.json() : null;
+          })
+      )
+    }
+
+    console.log(buffer);
+  };
+
+  if (buffer_clear) cleanse(buffer);
+
+  await fillerUp(buffer,url,count);
+}
+
+const fillPromises = (buffer , url = [], count = 0, append_mode = false) => {
+  const singleURL = url.length === 1;
+
+  if (!append_mode) cleanse(buffer);
+
+  for (let i = 1; i <= count; i++) {
+    const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
+//    console.log(`${i - 1} ${count} ${fetchPUSH}`);
+    buffer.push(
+      fetch(fetchPUSH)
+      .catch(err => { console.log(`buffer.push().catch err : ${err}`) })
+      .then(res => {
+          return res.status === 200 ? res.json() : null;
+        })
+    )
+  }
+};
 
 const logObj = (obj) => console.log(`object [JSON]  : ${JSON.stringify(obj, undefined, 4)}`);
 
@@ -51,4 +123,4 @@ const titleCase = (str) => {
     }).join(' ');
 }
 
-export { cleanse, fillPromises, logObj, lowerCase, titleCase }
+export { cleanse, block_Promises, fillPromises, fillPromises2, grabData, logObj, lowerCase, titleCase }
