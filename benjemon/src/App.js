@@ -43,14 +43,20 @@
 
 import { useEffect, useState } from 'react';
 
+import { Items, Moves } from './components/Items';
+
 import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
 import { cleanse, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
 
+const baseURL = 'https://pokeapi.co/api/v2/';
+
+export {baseURL}
+
 function App() {
-  const baseURL = 'https://pokeapi.co/api/v2/';
+  // const baseURL = 'https://pokeapi.co/api/v2/';
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
@@ -87,43 +93,43 @@ function App() {
 //         });
 //       }
 
-      const buildMoveLookup = async () => {
-        console.log('four');
+      // const buildMoveLookup = async () => {
+      //   console.log('four');
 
-        let bufferMove = await grabData(`${baseURL}move?limit=5000`);
+      //   let bufferMove = await grabData(`${baseURL}move?limit=5000`);
 
-        let fdx = 0;
+      //   let fdx = 0;
 
-        bufferMove.forEach((f, idx) => {
-          if (f.url.includes('10001')) fdx = idx;
-        })
-        cleanse(bufferMove);
+      //   bufferMove.forEach((f, idx) => {
+      //     if (f.url.includes('10001')) fdx = idx;
+      //   })
+      //   cleanse(bufferMove);
 
-        fillPromises2(promises,[`${baseURL}move/`],fdx);
-        Promise.allSettled(promises)
-        .then(res => {
-          cleanse(promises);
-          res.forEach(res => {
-            if (res.status === 'fulfilled') {
-              const move = Array(res.value).map(p => ({
-                id: p.id,
-                name: p.name,
-                accuracy: p.accuracy,
-                damage_class: p.damage_class.name,
-                flavor_text: p.flavor_text_entries
-                              .filter((f => f.language.name === 'en'))[0].flavor_text,
-                power: p.power,
-                pp: p.pp,
-              }));
+      //   fillPromises2(promises,[`${baseURL}move/`],fdx);
+      //   Promise.allSettled(promises)
+      //   .then(res => {
+      //     cleanse(promises);
+      //     res.forEach(res => {
+      //       if (res.status === 'fulfilled') {
+      //         const move = Array(res.value).map(p => ({
+      //           id: p.id,
+      //           name: p.name,
+      //           accuracy: p.accuracy,
+      //           damage_class: p.damage_class.name,
+      //           flavor_text: p.flavor_text_entries
+      //                         .filter((f => f.language.name === 'en'))[0].flavor_text,
+      //           power: p.power,
+      //           pp: p.pp,
+      //         }));
 
-              bufferMove.push(move[0]);
-            }
-          });
+      //         bufferMove.push(move[0]);
+      //       }
+      //     });
 
-          console.log(bufferMove);
-          setDataMoves(bufferMove);
-        });
-      }
+      //     console.log(bufferMove);
+      //     setDataMoves(bufferMove);
+      //   });
+      // }
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
@@ -210,7 +216,7 @@ function App() {
         }) // then formName
         .then (res => {
 console.log('three');
-          buildMoveLookup();
+          // buildMoveLookup();
 //          buildItemLookup();
           setData(bufferA);
         })
@@ -221,7 +227,10 @@ console.log('three');
   },[]); //useEffect
 
   return (
+    //Items(`${baseURL}move?limit=5000`);
     <div className="App">
+      <Items />
+      <Moves />
       <Logo />
       <br />
 
@@ -233,6 +242,7 @@ console.log('three');
       </div>
     </div>
  )
+
 
 }
 

@@ -26,9 +26,11 @@ const cleanse = (arr) => {
 
 const grabData = async (url) => {
   let response = await fetch(url);
-  let results = await response.status === 200 ? await response.json() : null
-   return results.results;
+  let results = response.status === 200 ? await response.json() : null
+  console.log(results.results);
+  return results.results;
 }
+
 const block_Promises = async (buffer, url = [], count = 0, buffer_clear = true) => {
   const fillerUp = async (buffer , url = [], count = 0) => {
     const singleURL = url.length === 1;

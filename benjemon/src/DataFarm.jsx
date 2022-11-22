@@ -14,30 +14,29 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  index.js
+/*  DataFarm.js
     Description:
-        Unoffical Pokémon Pokédex.
+        Data farm routines
 */
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import App from './App';
+import { useQuery } from 'react-query';
 
-// ReactDOM.render(<App />, document.getElementById('root'));
+const grabData2 = async (url) => {
+    let response = await fetch(url);
+    let results = await response.status === 200 ? await response.json() : null
+     return results.results;
+}
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+export function BuildItems(url) {
+    const {data, status} = useQuery('itemlookup', grabData2(url));
 
-import { QueryClient, QueryClientProvider } from 'react-query';
+    if (status === 'loading') {}
+    if (status === 'error') { console.log('BuildItems error'); }
 
-const queryClient = new QueryClient();
+    console.log('------------------');
+    console.log(data);
+    console.log('------------------');
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  // <React.StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
-  // </React.StrictMode>
-
-);
+    return (
+        {data}
+    )
+}
