@@ -60,8 +60,6 @@ function App() {
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
-  const [items, setDataItems] = useState([]);
-  const [moves, setDataMoves] = useState([]);
 
   useEffect(() => {
     //Right now, only get data once
@@ -229,17 +227,17 @@ console.log('three');
   return (
     //Items(`${baseURL}move?limit=5000`);
     <div className="App">
-      <Items />
+      {/* <Items /> */}
       <Moves />
       <Logo />
       <br />
 
-      <div >
+      {/* <div >
         {data.length ? (
           <PokemonList pokemon={data}/>
         ) : (
           <Spinner />)}
-      </div>
+      </div> */}
     </div>
  )
 

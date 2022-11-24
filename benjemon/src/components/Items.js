@@ -20,9 +20,11 @@
 */
 // import React from 'react'
 import { useQuery, useQueries } from 'react-query'
+import { useState  } from 'react';
 
 import { baseURL } from '../App';
 import { cleanse } from '../utilities';
+
 
 const grabData = async (url) => {
   let response = await fetch(url);
@@ -51,6 +53,10 @@ export function Items() {
 }
 
 export function Moves() {
+  // const [datamoves, setDataMoves] = useState([]);
+
+  let databuf = [];
+
   console.log('four');
 
   const {data, status, isFetched} = useQuery('movelookup', () => grabData(`${baseURL}move?limit=5000`));
@@ -58,13 +64,9 @@ export function Moves() {
   if (status === 'loading') { console.log('loading items...'); }
   if (status === 'error') { console.log('Items error'); }
 
-  let results = [];
+  let moves = [];
 
   if (isFetched) {
-    data.results.forEach(f => {
-      // console.log(f);
-    });
-
     let fdx = -1;
 
     data.results.forEach((f, idx) => {
@@ -76,15 +78,21 @@ export function Moves() {
       data.results = data.results.splice(0, fdx);
       console.log(`data.results.length a : ${data.results.length}`);
     }
+
+    // if (!datamoves.length) {
+    //   // setDataMoves(data.results);
+    //   console.log(`length ${datamoves.length} ${data.results.length}`);
+    // }
   }
 
-  // I can't put this in the above if block.
-  // So, how do I conditionally execute?
-  results = useQueries(data.results.map(m => {
-    return { queryKey:`move${m.name}`,
-              queryFn: () => grabData(m.url) }
-    }
-  ), {enabled: isFetched})
+  moves = isFetched ? data.results : [];
+  console.log(moves);
+  const results = useQueries(
+    moves.map(m => ({
+      queryKey:`move${m.name}`,
+      queryFn: () => grabData(m.url)
+    })), {enabled: isFetched}
+  );
 
   return (
     <></>

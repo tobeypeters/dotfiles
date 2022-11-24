@@ -18,6 +18,8 @@
     Description:
         miscellaneous utility functions
 */
+import { useEffect, useRef } from "react";
+
 const cleanse = (arr) => {
   if (Array.isArray(arr)) {
       arr.splice(0, arr.length);
@@ -125,4 +127,33 @@ const titleCase = (str) => {
     }).join(' ');
 }
 
-export { cleanse, block_Promises, fillPromises, fillPromises2, grabData, logObj, lowerCase, titleCase }
+/*  https://medium.com/@trisianto/react-query-how-to-memoize-results-from-usequeries-hook-eaed9a0ec700
+    const dataSets = useArrayMemo(
+    results.map((result) => result.data)
+    );
+*/
+function useArrayMemo(array) {
+  // this holds reference to previous value
+  const ref = useRef();
+  // check if each element of the old and new array match
+  const areArraysConsideredTheSame =
+    ref.current && array.length === ref.current.length
+      ? array.every((element, i) => {
+        return element === ref.current[i];
+      })
+    //initially there's no old array defined/stored, so set to false
+    : false;
+  useEffect(() => {
+    //only update prev results if array is not deemed the same
+    if (!areArraysConsideredTheSame) {
+      ref.current = array;
+    }
+  }, [areArraysConsideredTheSame, array]);
+  return areArraysConsideredTheSame ? ref.current : array;
+}
+
+export  {
+          cleanse, block_Promises, fillPromises,
+          fillPromises2, grabData, logObj,
+          lowerCase, titleCase, useArrayMemo
+        }
