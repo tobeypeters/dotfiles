@@ -20,10 +20,8 @@ LICENSE
 
 sudo apt update
 echo ''
-sudo apt-get install aptitude -y
-echo ''
-sudo apt upgrade -y
-echo ''
+#sudo apt upgrade -y
+#echo ''
 # update-manager;
 sudo apt dist-upgrade -y
 echo ''
