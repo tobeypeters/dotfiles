@@ -20,7 +20,7 @@
 */
 // import React from 'react'
 import { useQuery, useQueries } from 'react-query'
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
 
 import { baseURL } from '../App';
 import { arrClear, grabData } from '../utilities';
@@ -50,69 +50,57 @@ export function Items() {
 export function Moves() {
   console.log('four');
 
-  // const {data} = useQuery('nope',() => grabData('https://pokeapi.co/api/v2/move/826/'));
-  // console.log('rainbow',data);
-
   const [ state, dispatch ] = useContext(MovesContext);
 
   let baseBuff = useRef([]);
   let baseMoves = useRef([]);
   let basetest = useRef([]);
 
-  const baseBuffFetch = baseBuff.length ? [] : [ { queryKey:`moves_base`,
-                 queryFn: () => grabData(`${baseURL}move?limit=5000`) } ];
+  let moves = useRef([]);
+
+  const baseBuffFetch =
+    [{ queryKey:`moves_base`,
+        queryFn: async () => {
+          const res = await grabData(`${baseURL}move?limit=5000`);
+
+          for(let i = res.results.length - 1; i >= 0; i--) {
+            if (res.results[i].url.includes('10001/')) {
+              res.results = res.results.splice(0, i);
+              break;
+            }
+          }
+
+          moves.current = res.results;
+        }
+    }];
   let baseResults = useQueries(baseBuffFetch,
     { enabled: !baseBuff.length })
 
-  if (!baseBuff.current.length) {
-    baseBuff.current = baseResults[0]?.data?.results ?
-                       baseResults[0].data.results  : [];
-
-    arrClear(baseResults);
-
-    for(let i = baseBuff.current.length - 1; i >= 0; i--) {
-      if (baseBuff.current[i].url.includes('10001/')) {
-        baseBuff.current = baseBuff.current.splice(0, i);
-        break;
-      }
-    }
-  }
-
-  const moves = baseBuff.current.length ? baseBuff.current : [];
-
   basetest.current = useQueries(
-    moves.map((m,idx) => ({
+    moves.current.map((m,idx) => ({
       queryKey:`move${m.name}`,
+      queryFn: async () => {
+        const res = await grabData(m.url);
+        const move = {
+          id: res.id,
+          name: res.name,
+          accuracy: res.accuracy,
+          damage_class: res.damage_class.name,
+          flavor_text: res.flavor_text_entries
+                      .filter((f => f.language.name === 'en'))[0].flavor_text.replace('\n',' '),
+          power: res.power,
+          pp: res.pp,
+        };
 
-      // queryFn: () => grabData(`https://pokeapi.co/api/v2/move/1`)
-      queryFn: () => grabData(m.url)
-    })), { enabled: !basetest.current.length }
+        baseMoves.current.push(move);
+      }
+    })), { enabled: basetest.current.length === 0 } // enabled doesn't work, what goes here
   );
 
-  let doneLoading = basetest.current.every(e => !e.isLoading);
-  console.log('basetest',doneLoading,basetest.current);
-
-  if (doneLoading) {
-    basetest.current.forEach(f => {
-      const move = Array(f.data).map(p => ({
-        id: p.id,
-        name: p.name,
-        accuracy: p.accuracy,
-        damage_class: p.damage_class.name,
-        flavor_text: p.flavor_text_entries
-                     .filter((f => f.language.name === 'en'))[0].flavor_text.replace('\n',' '),
-        power: p.power,
-        pp: p.pp,
-      }));
-
-      baseMoves.current.push(move);
-    });
-
-    console.log('baseMoves',baseMoves.current);
-  }
+  console.log('baseMoves.current.length',baseMoves.current.length);
 
   if (baseMoves.current.length) {
-      // dispatch({ type: "assign", payload: baseMoves.current });
+      dispatch({ type: "assign", payload: baseMoves.current });
       console.log('Update global state');
   }
 
