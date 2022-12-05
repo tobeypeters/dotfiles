@@ -20,17 +20,12 @@
 */
 // import React from 'react'
 import { useQuery, useQueries } from 'react-query'
-import { useState  } from 'react';
+import { useContext, useRef } from 'react';
 
 import { baseURL } from '../App';
-import { cleanse } from '../utilities';
+import { arrClear, grabData } from '../utilities';
 
-
-const grabData = async (url) => {
-  let response = await fetch(url);
-  let results = response.status === 200 ? await response.json() : null
-  return results;
-}
+import { MovesContext } from '../DataFarm';
 
 export function Items() {
   // console.log(baseURL);
@@ -53,84 +48,73 @@ export function Items() {
 }
 
 export function Moves() {
-  // const [datamoves, setDataMoves] = useState([]);
-
-  let databuf = [];
-
   console.log('four');
 
-  const {data, status, isFetched} = useQuery('movelookup', () => grabData(`${baseURL}move?limit=5000`));
+  // const {data} = useQuery('nope',() => grabData('https://pokeapi.co/api/v2/move/826/'));
+  // console.log('rainbow',data);
 
-  if (status === 'loading') { console.log('loading items...'); }
-  if (status === 'error') { console.log('Items error'); }
+  const [ state, dispatch ] = useContext(MovesContext);
 
-  let moves = [];
+  let baseBuff = useRef([]);
+  let baseMoves = useRef([]);
+  let basetest = useRef([]);
 
-  if (isFetched) {
-    let fdx = -1;
+  const baseBuffFetch = baseBuff.length ? [] : [ { queryKey:`moves_base`,
+                 queryFn: () => grabData(`${baseURL}move?limit=5000`) } ];
+  let baseResults = useQueries(baseBuffFetch,
+    { enabled: !baseBuff.length })
 
-    data.results.forEach((f, idx) => {
-      if (f.url.includes('10001/')) fdx = idx
-    });
+  if (!baseBuff.current.length) {
+    baseBuff.current = baseResults[0]?.data?.results ?
+                       baseResults[0].data.results  : [];
 
-    if (fdx > -1) {
-      console.log(`data.results.length b : ${data.results.length}`);
-      data.results = data.results.splice(0, fdx);
-      console.log(`data.results.length a : ${data.results.length}`);
+    arrClear(baseResults);
+
+    for(let i = baseBuff.current.length - 1; i >= 0; i--) {
+      if (baseBuff.current[i].url.includes('10001/')) {
+        baseBuff.current = baseBuff.current.splice(0, i);
+        break;
+      }
     }
-
-    // if (!datamoves.length) {
-    //   // setDataMoves(data.results);
-    //   console.log(`length ${datamoves.length} ${data.results.length}`);
-    // }
   }
 
-  moves = isFetched ? data.results : [];
-  console.log(moves);
-  const results = useQueries(
-    moves.map(m => ({
+  const moves = baseBuff.current.length ? baseBuff.current : [];
+
+  basetest.current = useQueries(
+    moves.map((m,idx) => ({
       queryKey:`move${m.name}`,
+
+      // queryFn: () => grabData(`https://pokeapi.co/api/v2/move/1`)
       queryFn: () => grabData(m.url)
-    })), {enabled: isFetched}
+    })), { enabled: !basetest.current.length }
   );
 
-  return (
-    <></>
-    // <div>items</div>
-  )
+  let doneLoading = basetest.current.every(e => !e.isLoading);
+  console.log('basetest',doneLoading,basetest.current);
+
+  if (doneLoading) {
+    basetest.current.forEach(f => {
+      const move = Array(f.data).map(p => ({
+        id: p.id,
+        name: p.name,
+        accuracy: p.accuracy,
+        damage_class: p.damage_class.name,
+        flavor_text: p.flavor_text_entries
+                     .filter((f => f.language.name === 'en'))[0].flavor_text.replace('\n',' '),
+        power: p.power,
+        pp: p.pp,
+      }));
+
+      baseMoves.current.push(move);
+    });
+
+    console.log('baseMoves',baseMoves.current);
+  }
+
+  if (baseMoves.current.length) {
+      // dispatch({ type: "assign", payload: baseMoves.current });
+      console.log('Update global state');
+  }
+
+  return <></>
 }
-
-
-
-
-      // const results = useQueries(data.map(m => {
-      //   return { queryKey: `move${m.name}`,
-      //             queryFn: () => grabData(m.url) };
-      //   })
-      // );
-
-    // fillPromises2(promises,[`${baseURL}move/`],fdx);
-    // Promise.allSettled(promises)
-    // .then(res => {
-    //   cleanse(promises);
-    //   res.forEach(res => {
-    //     if (res.status === 'fulfilled') {
-    //       const move = Array(res.value).map(p => ({
-    //         id: p.id,
-    //         name: p.name,
-    //         accuracy: p.accuracy,
-    //         damage_class: p.damage_class.name,
-    //         flavor_text: p.flavor_text_entries
-    //                       .filter((f => f.language.name === 'en'))[0].flavor_text,
-    //         power: p.power,
-    //         pp: p.pp,
-    //       }));
-
-    //       bufferMove.push(move[0]);
-    //     }
-    //   });
-
-    //   console.log(bufferMove);
-    //   setDataMoves(bufferMove);
-    // });
-  // }

@@ -20,7 +20,7 @@
 */
 import { useEffect, useRef } from "react";
 
-const cleanse = (arr) => {
+const arrClear = (arr) => {
   if (Array.isArray(arr)) {
       arr.splice(0, arr.length);
   }
@@ -29,8 +29,7 @@ const cleanse = (arr) => {
 const grabData = async (url) => {
   let response = await fetch(url);
   let results = response.status === 200 ? await response.json() : null
-  console.log(results.results);
-  return results.results;
+  return results;
 }
 
 const block_Promises = async (buffer, url = [], count = 0, buffer_clear = true) => {
@@ -54,7 +53,7 @@ const block_Promises = async (buffer, url = [], count = 0, buffer_clear = true) 
   let grabHowMany = count <= MAX_GRAB_COUNT ? count : MAX_GRAB_COUNT;
   count -= grabHowMany;
 
-  if (buffer_clear) cleanse(buffer);
+  if (buffer_clear) arrClear(buffer);
 
   let arrIDX = 0;
 
@@ -94,7 +93,7 @@ const fillPromises2 = async (buffer , url = [], count = 0, buffer_clear = true) 
     console.log(buffer);
   };
 
-  if (buffer_clear) cleanse(buffer);
+  if (buffer_clear) arrClear(buffer);
 
   await fillerUp(buffer,url,count);
 }
@@ -102,7 +101,7 @@ const fillPromises2 = async (buffer , url = [], count = 0, buffer_clear = true) 
 const fillPromises = (buffer , url = [], count = 0, append_mode = false) => {
   const singleURL = url.length === 1;
 
-  if (!append_mode) cleanse(buffer);
+  if (!append_mode) arrClear(buffer);
 
   for (let i = 1; i <= count; i++) {
     const fetchPUSH = singleURL ? `${url[0]}${i}` : url[i - 1];
@@ -153,7 +152,7 @@ function useArrayMemo(array) {
 }
 
 export  {
-          cleanse, block_Promises, fillPromises,
+          arrClear, block_Promises, fillPromises,
           fillPromises2, grabData, logObj,
           lowerCase, titleCase, useArrayMemo
         }

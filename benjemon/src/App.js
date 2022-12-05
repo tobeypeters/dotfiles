@@ -41,7 +41,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Items, Moves } from './components/Items';
 
@@ -49,7 +49,12 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { cleanse, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
+import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
+
+
+import { MovesProvider } from './DataFarm';
+
+
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -60,6 +65,15 @@ function App() {
   //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
 
   const [data, setData] = useState([]);
+  const [data_moves, setDataMoves] = useState([]);
+
+
+  //const results = Moves();
+  // if (results?.length) setDataMoves(results);
+
+
+
+
 
   useEffect(() => {
     //Right now, only get data once
@@ -90,44 +104,6 @@ function App() {
 //           });
 //         });
 //       }
-
-      // const buildMoveLookup = async () => {
-      //   console.log('four');
-
-      //   let bufferMove = await grabData(`${baseURL}move?limit=5000`);
-
-      //   let fdx = 0;
-
-      //   bufferMove.forEach((f, idx) => {
-      //     if (f.url.includes('10001')) fdx = idx;
-      //   })
-      //   cleanse(bufferMove);
-
-      //   fillPromises2(promises,[`${baseURL}move/`],fdx);
-      //   Promise.allSettled(promises)
-      //   .then(res => {
-      //     cleanse(promises);
-      //     res.forEach(res => {
-      //       if (res.status === 'fulfilled') {
-      //         const move = Array(res.value).map(p => ({
-      //           id: p.id,
-      //           name: p.name,
-      //           accuracy: p.accuracy,
-      //           damage_class: p.damage_class.name,
-      //           flavor_text: p.flavor_text_entries
-      //                         .filter((f => f.language.name === 'en'))[0].flavor_text,
-      //           power: p.power,
-      //           pp: p.pp,
-      //         }));
-
-      //         bufferMove.push(move[0]);
-      //       }
-      //     });
-
-      //     console.log(bufferMove);
-      //     setDataMoves(bufferMove);
-      //   });
-      // }
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
@@ -214,30 +190,30 @@ function App() {
         }) // then formName
         .then (res => {
 console.log('three');
-          // buildMoveLookup();
-//          buildItemLookup();
           setData(bufferA);
+          arrClear(promises);
         })
       } // response.ok
 
     }; //getPokeData
     getPokeData();
+
   },[]); //useEffect
 
   return (
     //Items(`${baseURL}move?limit=5000`);
     <div className="App">
+    <MovesProvider>
       {/* <Items /> */}
-      <Moves />
+      { data.length ? <Moves /> : (<></>) }
       <Logo />
       <br />
 
-      {/* <div >
-        {data.length ? (
-          <PokemonList pokemon={data}/>
-        ) : (
-          <Spinner />)}
-      </div> */}
+      <div >
+        { data.length ? <PokemonList pokemon={data}/> :
+          <Spinner /> }
+      </div>
+    </MovesProvider>
     </div>
  )
 
