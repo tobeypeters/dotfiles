@@ -50,16 +50,17 @@ export function Items() {
 export function Moves() {
   console.log('four');
 
-  const [ state, dispatch ] = useContext(MovesContext);
+  // const [ state, dispatch ] = useContext(MovesContext);
 
-  let baseBuff = useRef([]);
   let baseMoves = useRef([]);
   let basetest = useRef([]);
 
   let moves = useRef([]);
 
+  console.log('moves.current.length',moves.current.length);
+
   const baseBuffFetch =
-    [{ queryKey:`moves_base`,
+    [{ queryKey:`base`,
         queryFn: async () => {
           const res = await grabData(`${baseURL}move?limit=5000`);
 
@@ -73,8 +74,13 @@ export function Moves() {
           moves.current = res.results;
         }
     }];
-  let baseResults = useQueries(baseBuffFetch,
-    { enabled: !baseBuff.length })
+  useQueries(baseBuffFetch,
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false
+    }
+  );
 
   basetest.current = useQueries(
     moves.current.map((m,idx) => ({
@@ -93,16 +99,22 @@ export function Moves() {
         };
 
         baseMoves.current.push(move);
+
+        // console.log('baseMoves.current.length',baseMoves.current.length);
       }
-    })), { enabled: basetest.current.length === 0 } // enabled doesn't work, what goes here
+    })),
+    {
+      enabled: moves.current.length === 0, //Doesn't work
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false
+    }
   );
 
-  console.log('baseMoves.current.length',baseMoves.current.length);
-
-  if (baseMoves.current.length) {
-      dispatch({ type: "assign", payload: baseMoves.current });
-      console.log('Update global state');
-  }
+  // if (baseMoves.current.length) {
+  //     dispatch({ type: "assign", payload: baseMoves.current });
+  //     console.log('Update global state');
+  // }
 
   return <></>
 }
