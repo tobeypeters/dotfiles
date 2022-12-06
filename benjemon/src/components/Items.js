@@ -76,6 +76,7 @@ export function Moves() {
     }];
   useQueries(baseBuffFetch,
     {
+      enabled: moves.current.length === 0, // Doesn't work ?
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false
@@ -104,7 +105,7 @@ export function Moves() {
       }
     })),
     {
-      enabled: moves.current.length === 0, //Doesn't work
+      enabled: moves.current.length === 0, //Doesn't work ?
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false
