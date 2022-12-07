@@ -10,6 +10,11 @@ const grabData = async (url) => {
     let results = response.status === 200 ? await response.json() : null
     return results;
 }
+
+const zipQueries = (queries,bundles) => queries.map(
+(query,i) => ({ query, bundle: bundles[i] })
+);
+
 export function useMovesQuery(limit) {
     const listQueryFn = async ({ queryKey: [{ limit }] }) => {
         const res = await grabData(`${baseURL}move?limit=${limit}`);
@@ -48,5 +53,9 @@ export function useMovesQuery(limit) {
        queryFn: detailQueryFn,
        enabled: !isMovesLoading && !!movesData,
     }));
-    return useQueries(moveDetailQueries);
+
+    // return useQueries(moveDetailQueries);
+    const queryBundles = useQueries(moveDetailQueries);
+
+    return zipQueries(moveDetailQueries, queryBundles);
 }
