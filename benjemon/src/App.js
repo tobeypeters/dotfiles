@@ -18,23 +18,18 @@
     Description:
         Unoffical Pokémon Pokédex.  This is a personal project. I don't plan on
         letting anyone else use it, except for family.
-
     Copyright Info:
         All property [ images & data ] belong and are registered trademarks and such, of the following companies:
           The Pokémon Company : Internation - http://www.pokemon.com
           Nintendo of America, Inc - http://www.nintendo.com
-
         NOTE: Data is being pulled from http://www.pokeapi.co
-
     Resources:
         Javascript library: npm install pokedex-promise-v2 --save
-
         Sprites:
           pokeApi provides sprites, but are lower quality. They are good, don't get me wrong.
           Official (Hi-Res) : https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png
                               https://assets.pokemon.com/assets/cms2/img/pokedex/detail/012.png
           https://cardmavin.com/media-category/pokemon-set-symbols
-
         Misc:
           https://stackoverflow.com/questions/26736209/how-do-i-stop-animation-in-html-and-css
           https://loading.io/css/
@@ -200,12 +195,11 @@ function App() {
   return (
     //Items(`${baseURL}move?limit=5000`);
     <div className="App">
-      {movesList}
+      <ul>{movesList}</ul>
     {/* <MovesProvider> */}
       {/* { data.length ? <Moves /> : (<></>) }
       <Logo />
       <br />
-
       <div >
         { data.length ? <PokemonList pokemon={data}/> :
           <Spinner /> }
