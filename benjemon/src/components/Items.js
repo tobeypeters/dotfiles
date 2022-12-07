@@ -50,72 +50,126 @@ export function Items() {
 export function Moves() {
   console.log('four');
 
-  // const [ state, dispatch ] = useContext(MovesContext);
+  const listQueryFn = async ({ queryKey: [{ limit }] }) => {
+    const res = await grabData(`${baseURL}move?limit=${limit}`);
+    return res.results;
+  }
 
-  let baseMoves = useRef([]);
-  let basetest = useRef([]);
+  const detailQueryFn = async ({ queryKey: [{ moveUrl }] }) => {
+    const res = await grabData(moveUrl);
+    const flavor_text = res
+                        .flavor_text_entries
+                        .filter((f => f.language.name === 'en')[0])
+                        .flavor_text
+                        .replace('\n',' ');
+     return {
+       id: res.id,
+       name: res.name,
+       accuracy: res.accuracy,
+       damage_class: res.damage_class.name,
+       flavor_text,
+       power: res.power,
+       pp: res.pp,
+     };
+  }
 
-  let moves = useRef([]);
+  const useMovesQuery = (limit) => {
+      const listQueryKey = [{queryType: 'movesList', limit }];
+      const {isLoading: isMovesLoading, data: movesData} = useQuery({
+          queryKey: listQueryKey,
+          queryFn: listQueryFn,
+      });
+      const moveDetailQueries = (movesData ? movesData : []).map(m => ({
+         queryKey: [{
+           queryType: 'movesDetail',
+           moveName: m.name,
+           moveUrl: m.url
+         }],
+         queryFn: detailQueryFn,
+         enabled: !isMovesLoading && !!movesData,
+      }));
+      return useQueries(moveDetailQueries);
+  }
 
-  console.log('moves.current.length',moves.current.length);
+  // // const [ state, dispatch ] = useContext(MovesContext);
 
-  const baseBuffFetch =
-    [{ queryKey:`base`,
-        queryFn: async () => {
-          const res = await grabData(`${baseURL}move?limit=5000`);
+  // let baseMoves = useRef([]);
+  // let basetest = useRef([]);
 
-          for(let i = res.results.length - 1; i >= 0; i--) {
-            if (res.results[i].url.includes('10001/')) {
-              res.results = res.results.splice(0, i);
-              break;
-            }
-          }
+  // let moves = useRef([]);
 
-          moves.current = res.results;
-        }
-    }];
-  useQueries(baseBuffFetch,
-    {
-      enabled: moves.current.length === 0, // Doesn't work ?
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false
-    }
-  );
+  // // console.log('moves.current.length',moves.current.length);
 
-  basetest.current = useQueries(
-    moves.current.map((m,idx) => ({
-      queryKey:`move${m.name}`,
-      queryFn: async () => {
-        const res = await grabData(m.url);
-        const move = {
-          id: res.id,
-          name: res.name,
-          accuracy: res.accuracy,
-          damage_class: res.damage_class.name,
-          flavor_text: res.flavor_text_entries
-                      .filter((f => f.language.name === 'en'))[0].flavor_text.replace('\n',' '),
-          power: res.power,
-          pp: res.pp,
-        };
+  // // const baseBuffFetch =
+  // // [{ queryKey:`base`,
+  // //    queryFn: () => grabData(`${baseURL}move?limit=5000`)
+  // // }];
 
-        baseMoves.current.push(move);
+  // const baseBuffFetch =
+  // [{ queryKey:`base`,
+  //   queryFn: async () => {
+  //     const res = await grabData(`${baseURL}move?limit=5000`);
 
-        // console.log('baseMoves.current.length',baseMoves.current.length);
-      }
-    })),
-    {
-      enabled: moves.current.length === 0, //Doesn't work ?
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false
-    }
-  );
+  //     for(let i = res.results.length - 1; i >= 0; i--) {
+  //       if (res.results[i].url.includes('10001/')) {
+  //         res.results = res.results.splice(0, i);
+  //         break;
+  //       }
+  //     }
 
-  // if (baseMoves.current.length) {
-  //     dispatch({ type: "assign", payload: baseMoves.current });
-  //     console.log('Update global state');
-  // }
+  //     moves.current = res.results;
 
-  return <></>
+  //   }
+  // }];
+
+  // const baseBuffResults = useQueries(baseBuffFetch,
+  //   {
+  //     enabled: false,
+  //     refetchOnMount: false,
+  //     refetchOnReconnect: false,
+  //     refetchOnWindowFocus: false
+  //   }
+  // );
+
+  // // console.log('baseBuffResults',baseBuffResults);
+
+  // // moves.current = baseBuffResults.results;
+
+  // basetest.current = useQueries(
+  //   moves.current.map((m,idx) => ({
+  //     queryKey:`move${m.name}`,
+  //     queryFn: async () => {
+  //       const res = await grabData(m.url);
+  //       const move = {
+  //         id: res.id,
+  //         name: res.name,
+  //         accuracy: res.accuracy,
+  //         damage_class: res.damage_class.name,
+  //         flavor_text: res.flavor_text_entries
+  //                     .filter((f => f.language.name === 'en'))[0].flavor_text.replace('\n',' '),
+  //         power: res.power,
+  //         pp: res.pp,
+  //       };
+
+  //       baseMoves.current.push(move);
+
+  //       console.log('baseMoves.current.length',baseMoves.current.length);
+  //     }
+  //   })),
+  //   {
+  //     enabled: false,
+  //     refetchOnMount: false,
+  //     refetchOnReconnect: false,
+  //     refetchOnWindowFocus: false
+  //   }
+  // );
+
+  // // console.log('baseMoves',baseMoves.current);
+
+  // // if (baseMoves.current.length) {
+  // //     dispatch({ type: "assign", payload: baseMoves.current });
+  // //     console.log('Update global state');
+  // // }
+
+  // return <></>
 }

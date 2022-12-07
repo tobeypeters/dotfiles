@@ -43,7 +43,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Items, Moves } from './components/Items';
+// import { Items, Moves } from './components/Items';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -51,59 +51,25 @@ import Spinner from './Spinner';
 
 import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
 
+// import { MovesProvider } from './DataFarm';
 
-import { MovesProvider } from './DataFarm';
-
-
+import { useMovesQuery } from './components/Moves';
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
 export {baseURL}
 
 function App() {
-  // const baseURL = 'https://pokeapi.co/api/v2/';
-  //const pokeURL = `${baseURL}pokemon-species?limit=5000`;
-
   const [data, setData] = useState([]);
-  const [data_moves, setDataMoves] = useState([]);
 
-
-  //const results = Moves();
-  // if (results?.length) setDataMoves(results);
-
-
-
-
+  // const movetable = useMovesQuery(825);
 
   useEffect(() => {
+
     //Right now, only get data once
     const getPokeData = async () => {
       let promises = [];
       let bufferA = [];
-
-//       const buildItemLookup = async () => {
-//         console.log('five');
-//         let bufferItems = await grabData(`${baseURL}item?limit=5000`);
-
-//         let lookup = []
-//         bufferItems.forEach(f => lookup.push(f.url));
-
-//         console.log(bufferItems);
-//         console.log(lookup);
-
-//         await fillPromises(promises,lookup,lookup.length);
-//         console.log(promises);
-//         Promise.allSettled(promises)
-//         .then(res => {
-// //          console.log(res);
-//           res.forEach(res => {
-//             if (res.status === 'fulfilled') {
-// //              console.log(`res ${res.value}`);
-//               console.log(res.value);
-//             }
-//           });
-//         });
-//       }
 
       let response = await fetch(`${baseURL}pokemon-species?limit=5000`);
       if (response.ok) {
@@ -203,9 +169,8 @@ console.log('three');
   return (
     //Items(`${baseURL}move?limit=5000`);
     <div className="App">
-    <MovesProvider>
-      {/* <Items /> */}
-      { data.length ? <Moves /> : (<></>) }
+    {/* <MovesProvider> */}
+      {/* { data.length ? <Moves /> : (<></>) } */}
       <Logo />
       <br />
 
@@ -213,10 +178,9 @@ console.log('three');
         { data.length ? <PokemonList pokemon={data}/> :
           <Spinner /> }
       </div>
-    </MovesProvider>
+    {/* </MovesProvider> */}
     </div>
  )
-
 
 }
 
