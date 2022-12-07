@@ -57,7 +57,7 @@ const baseURL = 'https://pokeapi.co/api/v2/';
 export {baseURL}
 
 function App() {
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
   // .... delete all your existing useEffect crap
   const movesBundles = useMovesQuery(1000);
