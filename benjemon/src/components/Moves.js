@@ -44,42 +44,24 @@ export function useMovesQuery(limit) {
         queryKey: listQueryKey,
         queryFn: listQueryFn,
     });
-//  const moveDetailQueries = (movesData ? movesData : []).map(m => ({
-//     queryKey: [{
-//       queryType: 'movesDetail',
-//       moveName: m.name,
-//       moveUrl: m.url
-//     }],
-//     queryFn: detailQueryFn,
-//     enabled: !isMovesLoading && !!movesData,
-//  }));
-    const moveDetailQueries = () => {
-        let buffer = movesData ? movesData : [];
 
-        for(let i = buffer.length - 1; i >= 0; i--) {
-            if (buffer[i].url.includes('10001/')) {
-                buffer = buffer.splice(0, i);
-                break;
-            }
-        }
-
-        return buffer.map(m => ({
-            queryKey: [{
-            queryType: 'movesDetail',
-            moveName: m.name,
-            moveUrl: m.url
-            }],
-            queryFn: detailQueryFn,
-            enabled: !isMovesLoading && !!movesData,
-        }));
-    }
-    const moveDetailQueries2 = moveDetailQueries();
+    const moveDetailQueries = (movesData ?
+        movesData.filter(f => f.url.replace(baseURL,'')
+        .match(/(\d+)/)[0] < 10000) : []).map(m => ({
+        queryKey: [{
+        queryType: 'movesDetail',
+        moveName: m.name,
+        moveUrl: m.url
+        }],
+        queryFn: detailQueryFn,
+        enabled: !isMovesLoading && !!movesData,
+    }));
 
     // return useQueries(moveDetailQueries);
-    const queryBundles = useQueries(moveDetailQueries2);
+    const queryBundles = useQueries(moveDetailQueries);
 
-    console.log('moveDetailQueries',moveDetailQueries2);
-    console.log('queryBundles',queryBundles);
+    // console.log('moveDetailQueries',moveDetailQueries2);
+    // console.log('queryBundles',queryBundles);
 
-    return zipQueries(moveDetailQueries2, queryBundles);
+    return zipQueries(moveDetailQueries, queryBundles);
 }

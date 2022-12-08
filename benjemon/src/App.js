@@ -36,7 +36,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // import { Items, Moves } from './components/Items';
 
@@ -72,8 +72,6 @@ function App() {
       },
     } = bundle;
     return (
-      <>
-      { console.log('here') }
       <li key={moveName}>
         {moveName}
         <DisplayMove
@@ -83,7 +81,6 @@ function App() {
           error={error}
         />
       </li>
-      </>
     );
   });
 
