@@ -47,7 +47,8 @@ export function useMovesQuery(limit) {
 
     const moveDetailQueries = (movesData ?
         movesData.filter(f => f.url.replace(baseURL,'')
-        .match(/(\d+)/)[0] < 10000) : []).map(m => ({
+        .match(/(\d+)/)[0] < 10000) : [])
+        .map(m => ({
         queryKey: [{
         queryType: 'movesDetail',
         moveName: m.name,
