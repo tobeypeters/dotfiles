@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 // import { grabData } from "../utilities";
@@ -16,6 +17,24 @@ const zipQueries = (queries,bundles) => queries.map(
 );
 
 export function useMovesQuery(limit) {
+    // //Bad code starts here
+    // const queries = [];
+    // for (let i = 1; i <= 826; i++) {
+    //     queries.push({
+    //         queryKey: `move_detail${i}`,
+    //         queryFn: async () => {
+    //             const response = await grabData(`${baseURL}move/${i}`);
+    //             return response;
+    //         }
+    //     });
+    // }
+
+    // const testresults = useQueries(queries);
+    // if (testresults.every(e => e.status === 'success')) {
+    //     testresults.forEach(f => console.log(f.data.id,f.data));
+    // }
+    // //Bad code ends here
+
     const listQueryFn = async ({ queryKey: [{ limit }] }) => {
         const res = await grabData(`${baseURL}move?limit=${limit}`);
         return res.results;
@@ -36,13 +55,12 @@ try {
     return {
         id: res.id,
         name: res.name,
-        accuracy: res.accuracy,
-        damage_class: res.damage_class.name,
+        // accuracy: res.accuracy,
+        // damage_class: res.damage_class.name,
         // flavor_text,
-        power: res.power,
-        pp: res.pp,
-    };
-
+        // power: res.power,
+        // pp: res.pp,
+    }
 } catch (error) {
     console.log('detail error',error);
 }

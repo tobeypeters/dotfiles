@@ -61,28 +61,28 @@ function App() {
 
   // .... delete all your existing useEffect crap
   const movesBundles = useMovesQuery(1);
-  const movesList = movesBundles.map(bundle => {
-    const {
-      query: { queryKey: [{ moveName }] },
-      bundle: {
-        isLoading,
-        isError,
-        data,
-        error
-      },
-    } = bundle;
-    return (
-      <li key={moveName}>
-        {moveName}
-        <DisplayMove
-          isLoading={isLoading}
-          isError={isError}
-          data={data}
-          error={error}
-        />
-      </li>
-    );
-  });
+  // const movesList = movesBundles.map(bundle => {
+  //   const {
+  //     query: { queryKey: [{ moveName }] },
+  //     bundle: {
+  //       isLoading,
+  //       isError,
+  //       data,
+  //       error
+  //     },
+  //   } = bundle;
+  //   return (
+  //     <li key={moveName}>
+  //       {moveName}
+  //       <DisplayMove
+  //         isLoading={isLoading}
+  //         isError={isError}
+  //         data={data}
+  //         error={error}
+  //       />
+  //     </li>
+  //   );
+  // });
 
   // console.log('moveList',movesList);
 
@@ -194,7 +194,7 @@ function App() {
   return (
     //Items(`${baseURL}move?limit=5000`);
     <div className="App">
-      <ul>{movesList}</ul>
+      {/* <ul>{movesList}</ul> */}
     {/* <MovesProvider> */}
       {/* { data.length ? <Moves /> : (<></>) }
       <Logo />
