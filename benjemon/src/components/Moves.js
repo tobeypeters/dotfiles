@@ -6,7 +6,6 @@ import { baseURL } from "../App"
 // const baseURL = 'https://pokeapi.co/api/v2/';
 
 const grabData = async (url) => {
-//    console.log('url',JSON.stringify(url));
     let response = await fetch(url);
     let results = response.status === 200 ? await response.json() : null
     return results;
@@ -23,35 +22,39 @@ export function useMovesQuery(limit) {
     }
 
     const detailQueryFn = async (moveUrl) => {
-        const res = await grabData(moveUrl);
+try {
+    const res = await grabData(moveUrl);
+        // console.log('moveUrl',moveUrl,res);
 
-        console.log('moveUrl',moveUrl,res);
+        // const glendale = res.flavor_text_entries.filter(f => f.language.name === 'en');
+        // console.log('glendale',glendale);
 
-        const glendale = res.flavor_text_entries.filter(f => f.language.name === 'en');
-        console.log('glendale',glendale);
+        // const flavor_text = res.flavor_text_entries
+        //     .filter((f => f.language.name === 'en')[0])
+        //     .flavor_text
+        //     .replace('\n',' ');
+    return {
+        id: res.id,
+        name: res.name,
+        accuracy: res.accuracy,
+        damage_class: res.damage_class.name,
+        // flavor_text,
+        power: res.power,
+        pp: res.pp,
+    };
 
-        const flavor_text = res.flavor_text_entries
-            .filter((f => f.language.name === 'en')[0])
-            .flavor_text
-            .replace('\n',' ');
-
-        return {
-            id: res.id,
-            name: res.name,
-            accuracy: res.accuracy,
-            damage_class: res.damage_class.name,
-            flavor_text,
-            power: res.power,
-            pp: res.pp,
-        };
-
+} catch (error) {
+    console.log('detail error',error);
+}
     }
 
     const listQueryKey = [{queryType: 'movesList', limit }];
-    const {isLoading: isMovesLoading, data: movesData} = useQuery({
+    const {isLoading: isMovesLoading, error, data: movesData} = useQuery({
         queryKey: listQueryKey,
         queryFn: listQueryFn,
     });
+
+    console.log('error',error); //always null
 
     const moveDetailQueries = (movesData ?
         movesData.filter(f => f.url.replace(baseURL,'')
@@ -62,11 +65,14 @@ export function useMovesQuery(limit) {
         moveName: m.name,
         moveUrl: m.url
         }],
-        queryFn: detailQueryFn(m.url),
+        queryFn: detailQueryFn,
         enabled: !isMovesLoading && !!movesData,
     }));
 
     // return useQueries(moveDetailQueries);
-   const queryBundles = useQueries(moveDetailQueries);
+    const queryBundles = useQueries(moveDetailQueries);
+
+    // console.log('queryBundles',queryBundles);
+
     return zipQueries(moveDetailQueries, queryBundles);
 }
