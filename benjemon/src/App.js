@@ -60,7 +60,7 @@ function App() {
   // const [data, setData] = useState([]);
 
   // .... delete all your existing useEffect crap
-  const movesBundles = useMovesQuery(1000);
+  const movesBundles = useMovesQuery(1);
   const movesList = movesBundles.map(bundle => {
     const {
       query: { queryKey: [{ moveName }] },
@@ -83,6 +83,8 @@ function App() {
       </li>
     );
   });
+
+  // console.log('moveList',movesList);
 
 //   // const movetable = useMovesQuery(825);
 //   // console.log('movetable',movetable);

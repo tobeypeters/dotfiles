@@ -6,6 +6,7 @@ import { baseURL } from "../App"
 // const baseURL = 'https://pokeapi.co/api/v2/';
 
 const grabData = async (url) => {
+//    console.log('url',JSON.stringify(url));
     let response = await fetch(url);
     let results = response.status === 200 ? await response.json() : null
     return results;
@@ -21,13 +22,19 @@ export function useMovesQuery(limit) {
         return res.results;
     }
 
-    const detailQueryFn = async ({ queryKey: [{ moveUrl }] }) => {
-    const res = await grabData(moveUrl);
-    const flavor_text = res
-                        .flavor_text_entries
-                        .filter((f => f.language.name === 'en')[0])
-                        .flavor_text
-                        .replace('\n',' ');
+    const detailQueryFn = async (moveUrl) => {
+        const res = await grabData(moveUrl);
+
+        console.log('moveUrl',moveUrl,res);
+
+        const glendale = res.flavor_text_entries.filter(f => f.language.name === 'en');
+        console.log('glendale',glendale);
+
+        const flavor_text = res.flavor_text_entries
+            .filter((f => f.language.name === 'en')[0])
+            .flavor_text
+            .replace('\n',' ');
+
         return {
             id: res.id,
             name: res.name,
@@ -37,6 +44,7 @@ export function useMovesQuery(limit) {
             power: res.power,
             pp: res.pp,
         };
+
     }
 
     const listQueryKey = [{queryType: 'movesList', limit }];
@@ -54,15 +62,11 @@ export function useMovesQuery(limit) {
         moveName: m.name,
         moveUrl: m.url
         }],
-        queryFn: detailQueryFn,
+        queryFn: detailQueryFn(m.url),
         enabled: !isMovesLoading && !!movesData,
     }));
 
     // return useQueries(moveDetailQueries);
-    const queryBundles = useQueries(moveDetailQueries);
-
-    // console.log('moveDetailQueries',moveDetailQueries2);
-    // console.log('queryBundles',queryBundles);
-
+   const queryBundles = useQueries(moveDetailQueries);
     return zipQueries(moveDetailQueries, queryBundles);
 }
