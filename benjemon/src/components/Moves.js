@@ -8,6 +8,7 @@ import { baseURL } from "../App"
 
 const grabData = async (url) => {
     let response = await fetch(url);
+
     let results = response.status === 200 ? await response.json() : null
     return results;
 }
@@ -41,8 +42,9 @@ export function useMovesQuery(limit) {
     }
 
     const detailQueryFn = async (moveUrl) => {
-try {
+//try {
     const res = await grabData(moveUrl);
+    console.log('herer');
         // console.log('moveUrl',moveUrl,res);
 
         // const glendale = res.flavor_text_entries.filter(f => f.language.name === 'en');
@@ -55,15 +57,15 @@ try {
     return {
         id: res.id,
         name: res.name,
-        // accuracy: res.accuracy,
-        // damage_class: res.damage_class.name,
+        accuracy: res.accuracy,
+        damage_class: res.damage_class.name,
         // flavor_text,
-        // power: res.power,
-        // pp: res.pp,
+        power: res.power,
+        pp: res.pp,
     }
-} catch (error) {
-    console.log('detail error',error);
-}
+// } catch (error) {
+//     console.log('detail error',error);
+// }
     }
 
     const listQueryKey = [{queryType: 'movesList', limit }];
@@ -71,8 +73,6 @@ try {
         queryKey: listQueryKey,
         queryFn: listQueryFn,
     });
-
-    console.log('error',error); //always null
 
     const moveDetailQueries = (movesData ?
         movesData.filter(f => f.url.replace(baseURL,'')
@@ -87,10 +87,27 @@ try {
         enabled: !isMovesLoading && !!movesData,
     }));
 
-    // return useQueries(moveDetailQueries);
+    const testfn = () => {
+        const buffer = (movesData ?
+            movesData.filter(f => f.url.replace(baseURL,'')
+            .match(/(\d+)/)[0] < 10000) : [])
+            .map(m => (
+
+`{ queryKey: [{ queryType: 'movesDetail', moveName: ${m.name}, moveUrl: ${m.url} }]`
+        ));
+
+        console.log('buffer',buffer);
+
+    }
+    testfn();
+
+    // console.log('movesData error',movesData,error); //always null
+
+    //  return useQueries(moveDetailQueries);
     const queryBundles = useQueries(moveDetailQueries);
+    // console.log('moveDetailQueries',moveDetailQueries);
+    console.log('queryBundles',queryBundles);
 
-    // console.log('queryBundles',queryBundles);
-
+    // console.log('Tango el zipo',zipQueries(moveDetailQueries, queryBundles));
     return zipQueries(moveDetailQueries, queryBundles);
 }
