@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 // import { grabData } from "../utilities";
@@ -9,7 +8,9 @@ import { baseURL } from "../App"
 const grabData = async (url) => {
     let response = await fetch(url);
 
-    let results = response.status === 200 ? await response.json() : null
+    // console.log('response',response);
+
+    let results = response.status === 200 ? await response.json() : { dash: 'wop' }
     return results;
 }
 
@@ -42,30 +43,33 @@ export function useMovesQuery(limit) {
     }
 
     const detailQueryFn = async (moveUrl) => {
-//try {
-    const res = await grabData(moveUrl);
-    console.log('herer');
-        // console.log('moveUrl',moveUrl,res);
+        // console.log('moveUrl',moveUrl.queryKey[0].moveUrl);
 
-        // const glendale = res.flavor_text_entries.filter(f => f.language.name === 'en');
-        // console.log('glendale',glendale);
+        const res = await grabData(moveUrl.queryKey[0].moveUrl);
+        // console.log('res',res);
+            const flavor_text = res.flavor_text_entries
+            .filter((f => f.language.name === 'en'))[0]
+                           .flavor_text.replace('\n',' ');
 
-        // const flavor_text = res.flavor_text_entries
-        //     .filter((f => f.language.name === 'en')[0])
-        //     .flavor_text
-        //     .replace('\n',' ');
-    return {
-        id: res.id,
-        name: res.name,
-        accuracy: res.accuracy,
-        damage_class: res.damage_class.name,
-        // flavor_text,
-        power: res.power,
-        pp: res.pp,
-    }
-// } catch (error) {
-//     console.log('detail error',error);
-// }
+            // return [
+            //     res.id,
+            //     res.name,
+            //     res.accuracy,
+            //     res.damage_class.name,
+            //     // flavor_text,
+            //     res.power,
+            //     res.pp,
+            // ]
+
+        return {
+            id: res.id,
+            name: res.name,
+            accuracy: res.accuracy,
+            damage_class: res.damage_class.name,
+            flavor_text,
+            power: res.power,
+            pp: res.pp,
+        }
     }
 
     const listQueryKey = [{queryType: 'movesList', limit }];
@@ -87,27 +91,10 @@ export function useMovesQuery(limit) {
         enabled: !isMovesLoading && !!movesData,
     }));
 
-    const testfn = () => {
-        const buffer = (movesData ?
-            movesData.filter(f => f.url.replace(baseURL,'')
-            .match(/(\d+)/)[0] < 10000) : [])
-            .map(m => (
-
-`{ queryKey: [{ queryType: 'movesDetail', moveName: ${m.name}, moveUrl: ${m.url} }]`
-        ));
-
-        console.log('buffer',buffer);
-
-    }
-    testfn();
-
-    // console.log('movesData error',movesData,error); //always null
-
     //  return useQueries(moveDetailQueries);
     const queryBundles = useQueries(moveDetailQueries);
     // console.log('moveDetailQueries',moveDetailQueries);
-    console.log('queryBundles',queryBundles);
-
+    // console.log('queryBundles',queryBundles);
     // console.log('Tango el zipo',zipQueries(moveDetailQueries, queryBundles));
     return zipQueries(moveDetailQueries, queryBundles);
 }
