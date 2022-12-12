@@ -5,10 +5,7 @@ export function DisplayMove(props) {
     return (
     <div>
         {/* Just display all the parameters to see what we get. */}
-        <span>{props.data} </span>
-        <span>{props.isLoading} </span>
-        <span>{props.isError} </span>
-        <span>{props.isError} </span>
+        <span>{props.data}</span>
     </div>
   )
 }

@@ -36,9 +36,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-
-// import { Items, Moves } from './components/Items';
+import { useEffect, useMemo } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -46,11 +44,8 @@ import Spinner from './Spinner';
 
 import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
 
-// import { MovesProvider } from './DataFarm';
-
+import { useMovesQuery } from './components/DataFarm';
 import { DisplayMove } from './components/DisplayMove';
-
-import { useMovesQuery } from './components/Moves';
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -61,28 +56,40 @@ function App() {
 
   // .... delete all your existing useEffect crap
   const movesBundles = useMovesQuery(1000);
-  const movesList = movesBundles.map(bundle => {
-    const {
-      query: { queryKey: [{ moveName }] },
-      bundle: {
-        isLoading,
-        isError,
-        data,
-        error
-      },
-    } = bundle;
+  console.log('moveBundles',movesBundles);
+
+  const movesList = !movesBundles ? [] : movesBundles.map(m => {
     return (
-      <li key={moveName}>
-        {moveName}
-        <DisplayMove
-          isLoading={isLoading}
-          isError={isError}
-          data={data}
-          error={error}
-        />
+      <li key={m.name}>
+        {m.name}
+        <DisplayMove data={m.name}/>
       </li>
     );
   });
+  console.log('moveList',movesList);
+
+  // const movesList = movesBundles.map(bundle => {
+  //   const {
+  //     query: { queryKey: [{ moveName }] },
+  //     bundle: {
+  //       isLoading,
+  //       isError,
+  //       data,
+  //       error
+  //     },
+  //   } = bundle;
+  //   return (
+  //     <li key={moveName}>
+  //       {moveName}
+  //       {/* <DisplayMove
+  //         isLoading={isLoading}
+  //         isError={isError}
+  //         data={data}
+  //         error={error}
+  //       /> */}
+  //     </li>
+  //   );
+  // });
 
   // console.log('moveList',movesList);
 
@@ -192,10 +199,8 @@ function App() {
 //   },[]); //useEffect
 
   return (
-    //Items(`${baseURL}move?limit=5000`);
     <div className="App">
       <ul>{movesList}</ul>
-    {/* <MovesProvider> */}
       {/* { data.length ? <Moves /> : (<></>) }
       <Logo />
       <br />
@@ -203,7 +208,6 @@ function App() {
         { data.length ? <PokemonList pokemon={data}/> :
           <Spinner /> }
       </div> */}
-    {/* </MovesProvider> */}
     </div>
  )
 
