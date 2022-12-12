@@ -14,9 +14,9 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  DataFarm.js
+/*  Endpoints.js
     Description:
-        Houses all the data retrieval queries.
+        Houses all the data endpoints.
 */
 import { useQuery, useQueries } from "react-query";
 
