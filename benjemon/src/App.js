@@ -42,10 +42,11 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utilities';
+import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utility/Data';
 
-import { useMovesQuery } from './components/DataFarm';
-import { DisplayMove } from './components/DisplayMove';
+import { DisplayMove,
+         useMovesQuery,
+         useCharactersQuery } from './components';
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -53,20 +54,22 @@ export {baseURL}
 
 function App() {
   // const [data, setData] = useState([]);
+  const characters = useCharactersQuery(5000);
+//  console.log('characters',characters);
 
-  // .... delete all your existing useEffect crap
-  const movesBundles = useMovesQuery(1000);
-  console.log('moveBundles',movesBundles);
+  // // .... delete all your existing useEffect crap
+  // const movesBundles = useMovesQuery(1000);
+  // // console.log('moveBundles',movesBundles);
 
-  const movesList = !movesBundles ? [] : movesBundles.map(m => {
-    return (
-      <li key={m.name}>
-        {m.name}
-        <DisplayMove data={m.name}/>
-      </li>
-    );
-  });
-  console.log('moveList',movesList);
+  // const movesList = !movesBundles ? [] : movesBundles.map(m => {
+  //   return (
+  //     <li key={m.name}>
+  //       {m.name}
+  //       <DisplayMove data={m.name}/>
+  //     </li>
+  //   );
+  // });
+  // // console.log('moveList',movesList);
 
   // const movesList = movesBundles.map(bundle => {
   //   const {
@@ -200,7 +203,7 @@ function App() {
 
   return (
     <div className="App">
-      <ul>{movesList}</ul>
+      {/* <ul>{movesList}</ul> */}
       {/* { data.length ? <Moves /> : (<></>) }
       <Logo />
       <br />

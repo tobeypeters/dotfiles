@@ -1,11 +1,7 @@
 import React from 'react'
 
-// export function DisplayMove({isLoading,isError,data,error}) {
 export function DisplayMove(props) {
-    return (
-    <div>
-        {/* Just display all the parameters to see what we get. */}
-        <span>{props.data}</span>
-    </div>
+  return (
+    <div>{ props.data }</div>
   )
 }
