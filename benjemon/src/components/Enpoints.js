@@ -185,8 +185,7 @@ export function useMovesQuery(limit) {
     const listQueryKey = [{queryType: 'movesList', limit }];
     let loadAllowed = !MoveData.length;
 
-    let { data, IsError, error,
-            isLoading, isSuccess: isMovesSuccessful
+    let { data, IsError, error, isLoading, isSuccess
           } = useQuery({
         queryKey: listQueryKey,
         queryFn: listQueryFn,
@@ -194,7 +193,7 @@ export function useMovesQuery(limit) {
 
     if (IsError) console.log('Error: ',error.message);
 
-    loadAllowed = loadAllowed && (isMovesSuccessful && !!data);
+    loadAllowed = loadAllowed && (isSuccess && !!data);
     const moveDetailQueries = buildQueries(data ?
         data.filter(f => extractID(f.url) < 10000) : [],
         detailQueryFn, loadAllowed, 'movwDetail');
