@@ -36,7 +36,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Logo from './Logo';
 import PokemonList from './PokemonList';
@@ -52,10 +52,10 @@ const baseURL = 'https://pokeapi.co/api/v2/';
 export {baseURL}
 
 function App() {
-  const characters = useCharactersQuery(5000);
+  const [characters, setCharacters] = useState(useCharactersQuery(5000));
   // if (!!characters) console.log('characters',characters);
 
-  // const moves = useMovesQuery(1000);
+  const [moves, setMoves] = useState(useMovesQuery(1000));
   // if (!!moves) console.log('moves',moves);
 
   return (
