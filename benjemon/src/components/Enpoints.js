@@ -33,7 +33,7 @@ import { baseURL } from "../App"
  //Global for now. If no one else needs it, move it into the move function.
 const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
 
-const buildQueries = (iterator,queryFn,enable,type,url) => {
+const buildQueries = (iterator,queryFn,enable,type) => {
     return iterator.map(m => ({
         queryKey: [{
         queryType: type,
