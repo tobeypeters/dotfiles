@@ -42,7 +42,6 @@ import Logo from './Logo';
 import PokemonList from './PokemonList';
 import Spinner from './Spinner';
 
-import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utility/Data';
 
 import {  useMovesQuery,
          useCharactersQuery } from './components';
@@ -52,11 +51,11 @@ const baseURL = 'https://pokeapi.co/api/v2/';
 export {baseURL}
 
 function App() {
-  const [characters, setCharacters] = useState(useCharactersQuery(5000));
-  // if (!!characters) console.log('characters',characters);
+  const characters = useCharactersQuery(5000);
+  if (!!characters) console.log('characters',characters);
 
-  const [moves, setMoves] = useState(useMovesQuery(1000));
-  // if (!!moves) console.log('moves',moves);
+  const moves = useMovesQuery(1000);
+  if (!!moves) console.log('moves',moves);
 
   return (
     <div className="App">
