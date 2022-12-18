@@ -127,17 +127,6 @@ export function useCharactersQuery(limit) {
     const listDetailQueries = buildQueries(data ? data : [],
         detailQueryFn, loadAllowed, 'charDetail');
 
-    // const listDetailQueries = (data ? data : [])
-    //     .map(m => ({
-    //         queryKey: [{
-    //             queryType: 'charDetail',
-    //             id: extractID(m.url)
-    //         }],
-    //         queryFn: detailQueryFn,
-    //         enabled: loadAllowed
-    //         })
-    // );
-
     let listQueryDetails = useQueries(listDetailQueries);
 
     if (loadAllowed && listQueryDetails.every(e => e.status === 'success')) {
@@ -167,17 +156,13 @@ export function useItemsQuery(limit) {
 export function useMovesQuery(limit) {
     const [ MoveData, SetmoveData ] = useState([]);
 
-    const queryCache = useQueryClient();
-
-//    console.log('MoveData',MoveData);
-
     const listQueryFn = async ({ queryKey: [{ limit }] }) => {
         const res = await grabData(`${baseURL}move?limit=${limit}`);
         return res.results;
     }
 
-    const detailQueryFn = async (moveUrl) => {
-        const res = await grabData(moveUrl.queryKey[0].moveUrl);
+    const detailQueryFn = async (id) => {
+        const res = await grabData(`${baseURL}move/${(id.queryKey[0].id)}`);
         const flavor_entries = res.flavor_text_entries
             .filter((f => f.language.name === 'en'))
             .map(m => { return { version: m.version_group.name,
@@ -200,7 +185,7 @@ export function useMovesQuery(limit) {
     let loadAllowed = !MoveData.length;
 
     let { data, IsError, error,
-            isLoading: isMovesLoading, isSuccess: isMovesSuccessful
+            isLoading, isSuccess: isMovesSuccessful
           } = useQuery({
         queryKey: listQueryKey,
         queryFn: listQueryFn,
@@ -209,16 +194,9 @@ export function useMovesQuery(limit) {
     if (IsError) console.log('Error: ',error.message);
 
     loadAllowed = loadAllowed && (isMovesSuccessful && !!data);
-    const moveDetailQueries = (data ?
-        data.filter(f => extractID(f.url) < 10000) : [])
-        .map(m => ({
-        queryKey: [{
-        queryType: 'movesDetail',
-        moveName: m.name,
-        moveUrl: m.url
-        }],
-        queryFn: detailQueryFn,
-        enabled: loadAllowed }));
+    const moveDetailQueries = buildQueries(data ?
+        data.filter(f => extractID(f.url) < 10000) : [],
+        detailQueryFn, loadAllowed, 'movwDetail');
 
     let queryBundles = useQueries(moveDetailQueries);
 
