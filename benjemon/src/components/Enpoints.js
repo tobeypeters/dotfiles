@@ -19,11 +19,13 @@
         Houses all the data endpoints.
 */
 
-import { useRef, useState } from "react";
-import { useQuery, useQueries, useQueryClient, QueryClient } from "react-query";
+import { useState } from "react";
+import { useQuery, useQueries } from "react-query";
 
 import { arrClear, grabData } from "../utility";
 
+//Will I ever need to have baseURL anywhere except in here?
+//Might be able to get rid of this import.
 import { baseURL } from "../App"
 
 // const baseURL = 'https://pokeapi.co/api/v2/';
