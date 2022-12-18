@@ -19,6 +19,5 @@
         components index file
 */
 
-export { DisplayMove } from './DisplayMove';
 export { useCharactersQuery } from './Enpoints';
 export { useMovesQuery } from './Enpoints';

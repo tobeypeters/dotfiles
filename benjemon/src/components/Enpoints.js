@@ -19,7 +19,7 @@
         Houses all the data endpoints.
 */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueries, useQueryClient, QueryClient } from "react-query";
 
 import { arrClear, grabData } from "../utility";
@@ -31,18 +31,15 @@ import { baseURL } from "../App"
  //Global for now. If no one else needs it, move it into the move function.
 const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
 
-//#region Characters
-//         /*
-//           abilities, base_experience
-//           forms, game_indices
-//           height, held_items
-//           id, is_default
-//           location_area_encounters, moves
-//           name, order
-//           past_types, species,
-//           sprites, stats,
-//           types,weight
-//         */
+const buildQueries = (iterator,queryFn,enable,type,url) => {
+    return iterator.map(m => ({
+        queryKey: [{
+        queryType: type,
+        id: extractID(m.url)
+        }],
+        queryFn: queryFn,
+        enabled: enable }));
+}
 
 export function useCharactersQuery(limit) {
     const [ CharData, SetCharData ] = useState([]);
@@ -60,8 +57,10 @@ export function useCharactersQuery(limit) {
         queryFn: listQueryFn,
     }, { enabled: loadAllowed });
 
+    if (IsError) console.log(`Error: ${error.message}`);
+
     const detailQueryFn = async (id) => {
-        const res = await grabData(`${baseURL}pokemon/${id.queryKey[0].id}`);
+        const res = await grabData(`${baseURL}pokemon/${(id.queryKey[0].id)}`);
 
         return ({
             id: res.id,
@@ -125,16 +124,19 @@ export function useCharactersQuery(limit) {
     }
 
     loadAllowed = loadAllowed && (isSuccess && !!data);
-    const listDetailQueries = (data ? data : [])
-        .map(m => ({
-            queryKey: [{
-                queryType: 'charDetail',
-                id: extractID(m.url)
-            }],
-            queryFn: detailQueryFn,
-            enabled: loadAllowed
-            })
-        );
+    const listDetailQueries = buildQueries(data ? data : [],
+        detailQueryFn, loadAllowed, 'charDetail');
+
+    // const listDetailQueries = (data ? data : [])
+    //     .map(m => ({
+    //         queryKey: [{
+    //             queryType: 'charDetail',
+    //             id: extractID(m.url)
+    //         }],
+    //         queryFn: detailQueryFn,
+    //         enabled: loadAllowed
+    //         })
+    // );
 
     let listQueryDetails = useQueries(listDetailQueries);
 
@@ -197,14 +199,14 @@ export function useMovesQuery(limit) {
     const listQueryKey = [{queryType: 'movesList', limit }];
     let loadAllowed = !MoveData.length;
 
-    let { data, IsError: IsMovesError, error: movesError,
+    let { data, IsError, error,
             isLoading: isMovesLoading, isSuccess: isMovesSuccessful
           } = useQuery({
         queryKey: listQueryKey,
         queryFn: listQueryFn,
     }, { enabled: loadAllowed });
 
-    if (IsMovesError) console.log('movesError: ',movesError.message);
+    if (IsError) console.log('Error: ',error.message);
 
     loadAllowed = loadAllowed && (isMovesSuccessful && !!data);
     const moveDetailQueries = (data ?

@@ -44,8 +44,7 @@ import Spinner from './Spinner';
 
 import { arrClear, fillPromises, fillPromises2, grabData, titleCase } from './utility/Data';
 
-import { DisplayMove,
-         useMovesQuery,
+import {  useMovesQuery,
          useCharactersQuery } from './components';
 
 const baseURL = 'https://pokeapi.co/api/v2/';
@@ -54,10 +53,10 @@ export {baseURL}
 
 function App() {
   const characters = useCharactersQuery(5000);
-  if (!!characters) console.log('characters',characters);
+  // if (!!characters) console.log('characters',characters);
 
-  const moves = useMovesQuery(1000);
-  if (!!moves) console.log('moves',moves);
+  // const moves = useMovesQuery(1000);
+  // if (!!moves) console.log('moves',moves);
 
   return (
     <div className="App">
