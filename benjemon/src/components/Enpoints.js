@@ -132,7 +132,6 @@ export function useCharactersQuery(limit) {
     let listQueryDetails = useQueries(listDetailQueries);
 
     if (loadAllowed && listQueryDetails.every(e => e.status === 'success')) {
-    //    console.log('listQueryDetails',listQueryDetails.map(q => q.data));
        SetCharData(listQueryDetails.map(q => q.data));
 
        ///////////////////////////////////////////////////////////////
