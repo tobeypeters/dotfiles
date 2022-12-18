@@ -45,17 +45,20 @@ const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
 //         */
 
 export function useCharactersQuery(limit) {
+    const [ CharData, SetCharData ] = useState([]);
+
     const listQueryFn = async ({ queryKey: [{ limit }] }) => {
         const res = await grabData(`${baseURL}pokemon-species?limit=${limit}`);
         return res.results;
     }
 
     const listQueryKey = [{queryType: 'charList', limit }];
+    let loadAllowed = !CharData.length;
 
-    const { data, IsError, error, isSuccess } = useQuery({
+    let { data, IsError, error, isSuccess } = useQuery({
         queryKey: listQueryKey,
         queryFn: listQueryFn,
-    });
+    }, { enabled: loadAllowed });
 
     const detailQueryFn = async (id) => {
         const res = await grabData(`${baseURL}pokemon/${id.queryKey[0].id}`);
@@ -121,6 +124,7 @@ export function useCharactersQuery(limit) {
         })
     }
 
+    loadAllowed = loadAllowed && (isSuccess && !!data);
     const listDetailQueries = (data ? data : [])
         .map(m => ({
             queryKey: [{
@@ -128,23 +132,31 @@ export function useCharactersQuery(limit) {
                 id: extractID(m.url)
             }],
             queryFn: detailQueryFn,
-            enabled: isSuccess && !!data
+            enabled: loadAllowed
             })
         );
 
-    const listQueryDetails = useQueries(listDetailQueries);
+    let listQueryDetails = useQueries(listDetailQueries);
 
-    if (listQueryDetails.every(e => e.status === 'success')) {
-       console.log('listQueryDetails',listQueryDetails.map(q => q.data));
-    }
+    if (loadAllowed && listQueryDetails.every(e => e.status === 'success')) {
+    //    console.log('listQueryDetails',listQueryDetails.map(q => q.data));
+       SetCharData(listQueryDetails.map(q => q.data));
 
-    // if (isSuccess) return data;
+       ///////////////////////////////////////////////////////////////
+       //So, this looks dumb. But, ultimate goal is for these functions
+       //to only get called until we have our lookup table data.
+       data = null;
+       listQueryDetails = null;
+       ///////////////////////////////////////////////////////////////
+   }
+
+   if (CharData.length) return CharData;
 
 }
 //#endregion Characters
 
 //#region Items
-export function useItemsQuery(limi) {
+export function useItemsQuery(limit) {
 }
 //#endregion Items
 
@@ -214,8 +226,6 @@ export function useMovesQuery(limit) {
         ///////////////////////////////////////////////////////////////
         //So, this looks dumb. But, ultimate goal is for these functions
         //to only get called until we have our lookup table data.
-        //I don't need any data cached else where. Probably need to add
-        //context logic. Also will change this to use QueryCache functions
         data = null;
         queryBundles = null;
         ///////////////////////////////////////////////////////////////
