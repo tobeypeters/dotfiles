@@ -36,29 +36,49 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useQueryClient } from 'react-query';
 
 import Logo from './Logo';
-import PokemonList from './PokemonList';
-import Spinner from './Spinner';
+// import PokemonList from './PokemonList';
+// import Spinner from './Spinner';
 
+// import {  useMovesQuery,
+//          useCharactersQuery } from './components';
 
-import {  useMovesQuery,
-         useCharactersQuery } from './components';
-
-const baseURL = 'https://pokeapi.co/api/v2/';
-
-export {baseURL}
+import { useEndpoints } from './components';
 
 function App() {
-  const characters = useCharactersQuery(5000);
-  if (!!characters) console.log('characters',characters);
+  useEndpoints(10000);
 
-  const moves = useMovesQuery(1000);
-  if (!!moves) console.log('moves',moves);
+  const queryClient = useQueryClient();
+  const queryKeys = queryClient.getQueryCache()
+                               .getAll().map(m => m.queryKey);
+
+//#region Data
+  const  [chars, moves] = useMemo(() => {
+    const filterKeys = (type) => queryKeys.map(m => m[0])
+                                 .filter(f => f['queryType'] === type);
+    const filterData = (keys) => keys.map(m => queryClient
+                                               .getQueriesData([m])[0][1]);
+
+    const charRes = filterData(filterKeys('charDetail'));
+    const moveRes = filterData(filterKeys('moveDetail'));
+
+    return [
+      charRes.every(e => e !== undefined) ? charRes : [],
+      moveRes.every(e => e !== undefined) ? moveRes : []
+    ]
+
+  },[ queryClient, queryKeys ]);
+
+  if (chars.length) console.log('chars',chars);
+  if (moves.length) console.log('moves',moves);
+//#endregion Data
 
   return (
     <div className="App">
+      <Logo />
       {/* <ul>{movesList}</ul> */}
       {/* { data.length ? <Moves /> : (<></>) }
       <Logo />

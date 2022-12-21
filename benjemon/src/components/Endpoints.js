@@ -22,13 +22,11 @@
 import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
-import { arrClear, grabData } from "../utility";
+import { arrClear, clearCache, grabData } from "../utility";
 
-//Will I ever need to have baseURL anywhere except in here?
-//Might be able to get rid of this import.
-import { baseURL } from "../App"
+// import { baseURL } from "../App"
 
-// const baseURL = 'https://pokeapi.co/api/v2/';
+const baseURL = 'https://pokeapi.co/api/v2/';
 
  //Global for now. If no one else needs it, move it into the move function.
 const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
@@ -43,26 +41,15 @@ const buildQueries = (iterator,queryFn,enable,type) => {
         enabled: enable }));
 }
 
-export function useCharactersQuery(limit) {
-    const [ CharData, SetCharData ] = useState([]);
-
-    const listQueryFn = async ({ queryKey: [{ limit }] }) => {
-        const res = await grabData(`${baseURL}pokemon-species?limit=${limit}`);
+//#region Endpoints
+export function useEndpoints(limit) {
+    const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
+        const res = await grabData(`${baseURL}${url_part}?limit=${limit}`);
         return res.results;
     }
 
-    const listQueryKey = [{queryType: 'charList', limit }];
-    let loadAllowed = !CharData.length;
-
-    let { data, IsError, error, isSuccess } = useQuery({
-        queryKey: listQueryKey,
-        queryFn: listQueryFn,
-    }, { enabled: loadAllowed });
-
-    if (IsError) console.log(`Error: ${error.message}`);
-
-    const detailQueryFn = async (id) => {
-        const res = await grabData(`${baseURL}pokemon/${(id.queryKey[0].id)}`);
+    const char_detailQueryFn = async ({ queryKey: [{ id }] }) => {
+        const res = await grabData(`${baseURL}pokemon/${id}`);
 
         return ({
             id: res.id,
@@ -125,45 +112,8 @@ export function useCharactersQuery(limit) {
         })
     }
 
-    loadAllowed = loadAllowed && (isSuccess && !!data);
-    const listDetailQueries = buildQueries(data ? data : [],
-        detailQueryFn, loadAllowed, 'charDetail');
-
-    let listQueryDetails = useQueries(listDetailQueries);
-
-    if (loadAllowed && listQueryDetails.every(e => e.status === 'success')) {
-       SetCharData(listQueryDetails.map(q => q.data));
-
-       ///////////////////////////////////////////////////////////////
-       //So, this looks dumb. But, ultimate goal is for these functions
-       //to only get called until we have our lookup table data.
-       data = null;
-       listQueryDetails = null;
-       ///////////////////////////////////////////////////////////////
-   }
-
-   if (CharData.length) return CharData;
-
-}
-//#endregion Characters
-
-//#region Items
-export function useItemsQuery(limit) {
-}
-//#endregion Items
-
-//#region Moves
-/*  Description: Moves lookup table */
-export function useMovesQuery(limit) {
-    const [ MoveData, SetmoveData ] = useState([]);
-
-    const listQueryFn = async ({ queryKey: [{ limit }] }) => {
-        const res = await grabData(`${baseURL}move?limit=${limit}`);
-        return res.results;
-    }
-
-    const detailQueryFn = async (id) => {
-        const res = await grabData(`${baseURL}move/${(id.queryKey[0].id)}`);
+    const moves_detailQueryFn = async ({ queryKey: [{ id }] }) => {
+        const res = await grabData(`${baseURL}move/${id}`);
         const flavor_entries = res.flavor_text_entries
             .filter((f => f.language.name === 'en'))
             .map(m => { return { version: m.version_group.name,
@@ -182,37 +132,63 @@ export function useMovesQuery(limit) {
         })
     }
 
-    const listQueryKey = [{queryType: 'movesList', limit }];
-    let loadAllowed = !MoveData.length;
+    //////////////////////////////////////////////////
+    // Replace with context
+    const [ CharData, SetCharData ] = useState([]);
+    const [ MoveData, SetMoveData ] = useState([]);
+    //////////////////////////////////////////////////
 
-    let { data, IsError, error, isLoading, isSuccess
-          } = useQuery({
-        queryKey: listQueryKey,
+    let loadCharsAllowed = !CharData.length;
+    let loadMovesAllowed = Boolean(!MoveData.length && CharData.length);
+
+    let { data: char_data, IsError: IsCharError,
+          error: char_error, isSuccess: isCharSuccess } = useQuery({
+        queryKey: [{queryType: 'charList', limit, url_part: 'pokemon-species' }],
         queryFn: listQueryFn,
-    }, { enabled: loadAllowed });
+    }, { enabled: loadCharsAllowed });
 
-    if (IsError) console.log('Error: ',error.message);
+    if (IsCharError) console.log(`Char Error: ${char_error.message}`);
 
-    loadAllowed = loadAllowed && (isSuccess && !!data);
-    const moveDetailQueries = buildQueries(data ?
-        data.filter(f => extractID(f.url) < 10000) : [],
-        detailQueryFn, loadAllowed, 'movwDetail');
+    let { data: moves_data, IsError: IsMovesError,
+          error: moves_error, isSuccess: isMovesSuccess
+          } = useQuery({
+        queryKey: [{queryType: 'movesList', limit, url_part: 'move' }],
+        queryFn: listQueryFn,
+    }, { enabled: loadMovesAllowed });
 
-    let queryBundles = useQueries(moveDetailQueries);
+    if (IsMovesError) console.log(`Moves Error: ${moves_error.message}`);
 
-    if (loadAllowed && queryBundles.every(e => e.status === 'success')) {
-        SetmoveData(queryBundles.map(q => q.data));
+    loadCharsAllowed = loadCharsAllowed && (isCharSuccess && !!char_data);
+    const char_listDetailQueries = buildQueries(char_data ? char_data : [],
+        char_detailQueryFn, loadCharsAllowed, 'charDetail');
+
+    loadMovesAllowed = loadMovesAllowed && (isMovesSuccess && !!moves_data);
+    const moves_listDetailQueries = buildQueries(moves_data ?
+        moves_data.filter(f => extractID(f.url) < 10000) : [],
+        moves_detailQueryFn, loadMovesAllowed, 'moveDetail');
+
+    let char_finalResults = useQueries(char_listDetailQueries);
+    let moves_finalResults = useQueries(moves_listDetailQueries);
+
+    if (loadCharsAllowed && char_finalResults.every(e => e.status === 'success')) {
+        SetCharData(char_finalResults.map(q => q.data));
 
         ///////////////////////////////////////////////////////////////
         //So, this looks dumb. But, ultimate goal is for these functions
         //to only get called until we have our lookup table data.
-        data = null;
-        queryBundles = null;
+        // char_data = null;
+        // char_finalResults = null;
+        ///////////////////////////////////////////////////////////////
+     }
+    if (loadMovesAllowed && moves_finalResults.every(e => e.status === 'success')) {
+        SetMoveData(moves_finalResults.map(q => q.data));
+
+        ///////////////////////////////////////////////////////////////
+        //So, this looks dumb. But, ultimate goal is for these functions
+        //to only get called until we have our lookup table data.
+        // moves_data = null;
+        // moves_finalResults = null;
         ///////////////////////////////////////////////////////////////
     }
-
-    if (MoveData.length) return MoveData;
-
-    // return queryBundles.map(q => q.data);
 }
-//#endregion Moves
+//#endregion Endpoints

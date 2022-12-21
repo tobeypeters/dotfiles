@@ -19,5 +19,4 @@
         components index file
 */
 
-export { useCharactersQuery } from './Enpoints';
-export { useMovesQuery } from './Enpoints';
+export { useEndpoints } from './Endpoints';

@@ -32,7 +32,7 @@ export const clearCache = () => {
 }
 
 export const grabData = async (url) => {
-  let response = await fetch(url);
-  let results = response.status === 200 ? await response.json() : null
+  const response = await fetch(url);
+  const results = response.status === 200 ? await response.json() : null
   return results;
 }
