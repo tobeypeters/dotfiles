@@ -40,13 +40,14 @@ import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 
 import Logo from './Logo';
-// import PokemonList from './PokemonList';
 // import Spinner from './Spinner';
 
 // import {  useMovesQuery,
 //          useCharactersQuery } from './components';
 
 import { useEndpoints } from './components';
+
+import { Charlist } from './components';
 
 function App() {
   useEndpoints(10000);
@@ -72,23 +73,18 @@ function App() {
 
   },[ queryClient, queryKeys ]);
 
-  if (chars.length) console.log('chars',chars);
-  if (moves.length) console.log('moves',moves);
+  // if (chars.length) console.log('chars',chars);
+  // if (moves.length) console.log('moves',moves);
 //#endregion Data
 
   return (
     <div className="App">
       <Logo />
-      {/* <ul>{movesList}</ul> */}
-      {/* { data.length ? <Moves /> : (<></>) }
-      <Logo />
-      <br />
-      <div >
-        { data.length ? <PokemonList pokemon={data}/> :
-          <Spinner /> }
-      </div> */}
+      <div>
+      { chars.length ? <Charlist data={ chars } /> : (<></>) }
+      </div>
     </div>
- )
+  )
 
 }
 

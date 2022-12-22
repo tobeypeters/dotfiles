@@ -19,17 +19,23 @@
         Pokémon List component.
 */
 
-import React from 'react'
+import React from 'react';
 
-import PokeCard from './PokeCard'
-import styles from './App.module.css'
+import { Charcard } from '.';
+import styles from '../App.module.css';
 
-export default function PokemonList({ pokemon }) {
+export default function Charlist({ data }) {
+  console.log('data',data);
+
+
   return (
-    <div className={styles.pokeContainer} >
-      {
-        (pokemon.map(p => ( <PokeCard pokechar={p} key={p.id} /> )))
-      }
-    </div>
+    <>
+      {/* <br />
+      <br />
+      <div className={styles.pokeContainer} > */}
+      <div >
+        { data.map(m => (<Charcard key={m.id} char={m} />)) }
+      </div>
+    </>
   )
 }

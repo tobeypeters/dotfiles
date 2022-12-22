@@ -22,9 +22,7 @@
 import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
-import { arrClear, clearCache, grabData } from "../utility";
-
-// import { baseURL } from "../App"
+import { grabData } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -42,7 +40,7 @@ const buildQueries = (iterator,queryFn,enable,type) => {
 }
 
 //#region Endpoints
-export function useEndpoints(limit) {
+export default function useEndpoints(limit) {
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
         const res = await grabData(`${baseURL}${url_part}?limit=${limit}`);
         return res.results;
