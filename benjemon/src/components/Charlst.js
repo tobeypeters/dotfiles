@@ -25,15 +25,9 @@ import { Charcard } from '.';
 import styles from '../App.module.css';
 
 export default function Charlist({ data }) {
-  console.log('data',data);
-
-
   return (
     <>
-      {/* <br />
-      <br />
-      <div className={styles.pokeContainer} > */}
-      <div >
+      <div className={styles.pokeContainer} >
         { data.map(m => (<Charcard key={m.id} char={m} />)) }
       </div>
     </>

@@ -79,22 +79,17 @@ const colors = {
 };
 
 export default function Charcard({char}) {
-  // const el = char;
+  const el = char;
 
-  // // console.log(el.types2);
-  // if (el.id === 16) {
-  //   //console.log(`stats : ${logObj(el.stats)}`);
-  // }
-
-  // if (el.sprites[1][0] === null) { // Validate images
-  // //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
-  //    el.sprites[1][0] = placeholder;
-  //    el.sprites[2][0] = placeholder;
-  //    el.sprites[3][0] = placeholder;
-  // }
+  if (el.sprites[1][0] === null) { // Validate images
+  //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
+     el.sprites[1][0] = placeholder;
+     el.sprites[2][0] = placeholder;
+     el.sprites[3][0] = placeholder;
+  }
 
   // const cardID = 'card_' + el.name;
-  // const cardImageID = 'cardImage_' + el.name;
+  const cardImageID = 'cardImage_' + el.name;
   // const cardMiniImageID = 'cardMiniImage_' + el.name;
   // const cardNameID = 'cardName_' + el.name;
   // const cardInfoID = 'cardInfo_' + el.name;
@@ -104,19 +99,19 @@ export default function Charcard({char}) {
   // const charBG = `linear-gradient(${colors[charTypes[0]]},lightgrey)`;
   // const charTypeBG = `linear-gradient(${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
 
-  // const getElm = eID => document.getElementById(eID);
+  const getElm = eID => document.getElementById(eID);
 
-  // const imageClick = () => {
-  //   const elm = getElm(cardImageID);
+  const imageClick = () => {
+    const elm = getElm(cardImageID);
 
-  //   let idx = parseInt(elm.alt);
+    let idx = parseInt(elm.alt);
 
-  //   idx = idx + (idx < 3 ? 1 : -idx);
+    idx = idx + (idx < 3 ? 1 : -idx);
 
-  //   elm.alt = idx;
-  //   elm.src = el.sprites[idx][0];
-  //   elm.title = el.sprites[idx][1];
-  // }
+    elm.alt = idx;
+    elm.src = el.sprites[idx][0];
+    elm.title = el.sprites[idx][1];
+  }
 
   // const showPokeDetail = async function (ev) {
   //   const elImgLarge = getElm(cardImageID);
@@ -143,7 +138,11 @@ export default function Charcard({char}) {
   console.log('data.length',char);
 
   return (
-    <div className={styles.glasscard}>{ char.name }</div>
+    <div className={ styles.glasscard }>
+      <img id={ cardImageID } className={ styles.cardimage } loading='lazy'
+        onClick={ imageClick } src={ el.sprites[0][0] } alt='0' title={ el.sprites[0][1] } />
+      <span>[{ el.id.toString().padStart(3,'0') }] { el.name.charAt(0).toUpperCase() + el.name.slice(1) }</span>
+    </div>
   )
   //     {/* <div id={cardID} className={styles.card} style={{ backgroundImage: charBG }}
   //     onClick={ showPokeDetail } >

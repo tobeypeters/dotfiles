@@ -36,11 +36,11 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 
 import Logo from './Logo';
-// import Spinner from './Spinner';
+import Spinner from './Spinner';
 
 // import {  useMovesQuery,
 //          useCharactersQuery } from './components';
@@ -51,6 +51,7 @@ import { Charlist } from './components';
 
 function App() {
   useEndpoints(10000);
+  const doneLoading = useRef(false);
 
   const queryClient = useQueryClient();
   const queryKeys = queryClient.getQueryCache()
@@ -75,13 +76,16 @@ function App() {
 
   // if (chars.length) console.log('chars',chars);
   // if (moves.length) console.log('moves',moves);
+
+  doneLoading.current = (chars.length && moves.length);
 //#endregion Data
 
   return (
     <div className="App">
       <Logo />
       <div>
-      { chars.length ? <Charlist data={ chars } /> : (<></>) }
+        { doneLoading.current ? <></> : <Spinner /> }
+        { chars.length ? <Charlist data={ chars } /> : <></> }
       </div>
     </div>
   )
