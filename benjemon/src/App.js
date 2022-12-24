@@ -36,7 +36,7 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import { useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 
 import Logo from './Logo';
@@ -51,7 +51,8 @@ import { Charlist } from './components';
 import { Footer } from './components';
 
 function App() {
-  useEndpoints(20);
+  useEndpoints(20,0);
+
   const doneLoading = useRef(false);
 
   const queryClient = useQueryClient();

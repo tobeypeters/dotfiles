@@ -91,6 +91,10 @@
     }
 }
 
+.verttext {
+    writing-mode: vertical-lr;
+}
+
 .logo {
      text-align:center;
 }

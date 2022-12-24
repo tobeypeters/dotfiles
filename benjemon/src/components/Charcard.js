@@ -145,19 +145,6 @@ export default function Charcard({char}) {
 
   }
 
-  // console.log('data.length',char);
-
-//<div class="card">
-//  <div class="card-inner">
-    // <div class="card-front">
-      // Front side of card
-    // </div>
-    // <div class="card-back">
-      // Back side of card
-    // </div>
-  // </div>
-// </div>
-
   return (
   <>
     <div className={ styles.glasscard }>

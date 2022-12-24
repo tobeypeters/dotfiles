@@ -19,10 +19,12 @@
         Houses all the data endpoints.
 */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 import { grabData } from "../utility";
+
+// import { queryClient } from "..";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -40,9 +42,20 @@ const buildQueries = (iterator,queryFn,enable,type) => {
 }
 
 //#region Endpoints
-export default function useEndpoints(limit) {
+export default function useEndpoints(limit,offset=0) {
+    // const junk = useRef(true);
+
+    // if (junk.current) {
+    //     queryClient.prefetchQuery({
+    //         queryKey: ['test'],
+    //         queryFn: () => grabData('https://pokeapi.co/api/v2/'),
+    //         staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    //       })
+    //     junk.current = false;
+    // }
+
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
-        const res = await grabData(`${baseURL}${url_part}?limit=${limit}`);
+        const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
         return res.results;
     }
 
@@ -130,18 +143,20 @@ export default function useEndpoints(limit) {
         })
     }
 
-    //////////////////////////////////////////////////
-    // Replace with context
+    //////// maybe replace with useRef
     const [ CharData, SetCharData ] = useState([]);
     const [ MoveData, SetMoveData ] = useState([]);
-    //////////////////////////////////////////////////
+
+    const refChars = useRef([]);
+    const refMoves = useRef([]);
+    //////// maybe replace with useRef
 
     let loadCharsAllowed = !CharData.length;
     let loadMovesAllowed = Boolean(!MoveData.length && CharData.length);
 
     let { data: char_data, IsError: IsCharError,
           error: char_error, isSuccess: isCharSuccess } = useQuery({
-        queryKey: [{queryType: 'charList', limit, url_part: 'pokemon-species' }],
+        queryKey: [{queryType: 'charList', limit, url_part: `pokemon-species`, offset: {offset} }],
         queryFn: listQueryFn,
     }, { enabled: loadCharsAllowed });
 
@@ -170,23 +185,9 @@ export default function useEndpoints(limit) {
 
     if (loadCharsAllowed && char_finalResults.every(e => e.status === 'success')) {
         SetCharData(char_finalResults.map(q => q.data));
-
-        ///////////////////////////////////////////////////////////////
-        //So, this looks dumb. But, ultimate goal is for these functions
-        //to only get called until we have our lookup table data.
-        // char_data = null;
-        // char_finalResults = null;
-        ///////////////////////////////////////////////////////////////
-     }
+    }
     if (loadMovesAllowed && moves_finalResults.every(e => e.status === 'success')) {
         SetMoveData(moves_finalResults.map(q => q.data));
-
-        ///////////////////////////////////////////////////////////////
-        //So, this looks dumb. But, ultimate goal is for these functions
-        //to only get called until we have our lookup table data.
-        // moves_data = null;
-        // moves_finalResults = null;
-        ///////////////////////////////////////////////////////////////
     }
 }
 //#endregion Endpoints
