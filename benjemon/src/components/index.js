@@ -23,3 +23,4 @@ export { default as useEndpoints } from './Endpoints';
 
 export { default as Charlist } from './Charlst';
 export { default as Charcard } from './Charcard';
+export { default as Footer } from './Footer';

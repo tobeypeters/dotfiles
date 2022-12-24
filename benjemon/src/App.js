@@ -48,9 +48,10 @@ import Spinner from './Spinner';
 import { useEndpoints } from './components';
 
 import { Charlist } from './components';
+import { Footer } from './components';
 
 function App() {
-  useEndpoints(10000);
+  useEndpoints(20);
   const doneLoading = useRef(false);
 
   const queryClient = useQueryClient();
@@ -87,6 +88,7 @@ function App() {
         { doneLoading.current ? <></> : <Spinner /> }
         { chars.length ? <Charlist data={ chars } /> : <></> }
       </div>
+      <Footer />
     </div>
   )
 

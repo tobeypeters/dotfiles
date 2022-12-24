@@ -14,22 +14,13 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  PokeMonList.js
+/*  Footer.js
     Description:
-        Pokémon List component.
+        Footer component - privacy, terms, copyright, etc ...
 */
-
-import React from 'react';
-
-import { Charcard } from '.';
 import styles from '../App.module.css';
 
-export default function Charlist({ data }) {
+export default function Footer() {
   return (
-    <>
-      <div className={styles.charContainer} >
-        { data.map(m => (<Charcard key={m.id} char={m} />)) }
-      </div>
-    </>
-  )
+    <div className={styles.footer}>Footer</div>  )
 }

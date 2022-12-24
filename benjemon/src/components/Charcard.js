@@ -18,7 +18,8 @@
     Description:
         Pokémon Card component.
 */
-import React from 'react';
+import { useRef } from 'react';
+import ReactDOM from 'react-dom'
 
 import placeholder from '../assets/placeholder.png';
 import styles from '../App.module.css';
@@ -80,6 +81,7 @@ const colors = {
 
 export default function Charcard({char}) {
   const el = char;
+  const nodeRef = useRef(null);
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
@@ -113,36 +115,59 @@ export default function Charcard({char}) {
     elm.title = el.sprites[idx][1];
   }
 
-  // const showPokeDetail = async function (ev) {
-  //   const elImgLarge = getElm(cardImageID);
-  //   const elImgMini = getElm(cardMiniImageID);
-  //   const elInfo = getElm(cardInfoID);
+  const showPokeDetail = async function (ev) {
+    // if (ev.target instanceof HTMLDivElement) {
+      // const elm = getElm('viper');
+      // elm.classList.toggle('flipper');
+    // }
 
-  //   if (ev.target instanceof HTMLDivElement ||
-  //     ev.target.id === cardNameID ) {
 
-  //     if (window.getComputedStyle(elImgLarge).display === 'block') {
-  //       elImgLarge.style.display = 'none';
-  //       elInfo.style.display = 'block';
-  //       elImgMini.style.display = 'block';
-  //     } else {
-  //       elImgLarge.style.display = 'block';
-  //       elInfo.style.display = 'none';
-  //       elImgMini.style.display = 'none';
-  //     }
 
-  //   }
 
-  // }
+    // const elImgLarge = getElm(cardImageID);
+    // const elImgMini = getElm(cardMiniImageID);
+    // const elInfo = getElm(cardInfoID);
 
-  console.log('data.length',char);
+    // if (ev.target instanceof HTMLDivElement ||
+    //   ev.target.id === cardNameID ) {
+
+    //   if (window.getComputedStyle(elImgLarge).display === 'block') {
+    //     elImgLarge.style.display = 'none';
+    //     elInfo.style.display = 'block';
+    //     elImgMini.style.display = 'block';
+    //   } else {
+    //     elImgLarge.style.display = 'block';
+    //     elInfo.style.display = 'none';
+    //     elImgMini.style.display = 'none';
+    //   }
+
+    // }
+
+  }
+
+  // console.log('data.length',char);
+
+//<div class="card">
+//  <div class="card-inner">
+    // <div class="card-front">
+      // Front side of card
+    // </div>
+    // <div class="card-back">
+      // Back side of card
+    // </div>
+  // </div>
+// </div>
 
   return (
+  <>
     <div className={ styles.glasscard }>
-      <img id={ cardImageID } className={ styles.cardimage } loading='lazy'
+      <img id={ cardImageID } className={ styles.glasscardimage } loading='lazy'
         onClick={ imageClick } src={ el.sprites[0][0] } alt='0' title={ el.sprites[0][1] } />
       <span>[{ el.id.toString().padStart(3,'0') }] { el.name.charAt(0).toUpperCase() + el.name.slice(1) }</span>
     </div>
+  </>
+
+
   )
   //     {/* <div id={cardID} className={styles.card} style={{ backgroundImage: charBG }}
   //     onClick={ showPokeDetail } >

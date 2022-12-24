@@ -18,6 +18,8 @@
     Description:
         Logo component
 
+    Logo Text: Bénjémon
+
     Resources:
         https://textcraft.net/style/Textcraft/pokemon
 */
@@ -28,7 +30,7 @@ import styles from './App.module.css'
 export default function Logo() {
   return (
     <div  className={styles.logo}>
-      <img src={process.env.PUBLIC_URL + 'images/benjemonlogo.png'} alt='logo' />
+      <img src={process.env.PUBLIC_URL + 'images/Benjemon.png'} alt='logo' />
     </div>
   )
 }

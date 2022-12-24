@@ -18,18 +18,12 @@
     Description:
         App.js - css
 */
-
 .charContainer {
-    /* display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    grid-gap: 12px;
-    padding-inline-start: 0; */
-
     display: flex;
 	flex-wrap: wrap;
 	align-items: space-between;
 	justify-content: center;
-	max-width: 1280px;
+	/* max-width: 1280px; */
     margin: 0 auto;
 }
 
@@ -39,19 +33,13 @@
     list-style: none;
     text-align: center;
 
-    display: fkex;
-	flex-wrap: wrap;
-	align-items: space-between;
-	justify-content: center;
-
     margin: 10px 10px 10px 10px;
-
     padding: 10px 10px 10px 10px;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     background-color: rgba(255, 255, 255, 0.25);
-    border-radius: 12px;
     border: 1px solid rgba(255, 213, 219, 0.3);
+    border-radius: 12px;
 }
 
 .glasscard:hover {
@@ -59,6 +47,33 @@
     animation: bounce 0.5s linear;
 	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.15);
 }
+
+.glasscardimage, .glasscardMiniImage {
+    background: lightgrey;
+    border-radius: 10px;
+    float: left;
+}
+.glasscardimage {
+    height: 180px;
+    width: 180px;
+    margin: 10px 10px 0px 10px;
+
+    position: relative;
+    perspective: 1000px;
+
+}
+
+.glasscardimage img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+
+
 
 @keyframes bounce {
     20% {
@@ -81,11 +96,6 @@
 }
 
 .pokeContainer {
-    /* display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    grid-gap: 12px;
-    padding-inline-start: 0; */
-
     display: flex;
 	flex-wrap: wrap;
 	align-items: space-between;
@@ -153,4 +163,3 @@
 .pokeType {
     background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
 }
-
