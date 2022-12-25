@@ -51,7 +51,7 @@ import { Charlist } from './components';
 import { Footer } from './components';
 
 function App() {
-  useEndpoints(20,0);
+  useEndpoints(3,0);
 
   const doneLoading = useRef(false);
 
@@ -75,6 +75,13 @@ function App() {
     ]
 
   },[ queryClient, queryKeys ]);
+
+  if (chars.length) {
+    chars.forEach(f => {
+      // Test.addItem(f.name);
+      // console.log(f);
+    });
+  }
 
   // if (chars.length) console.log('chars',chars);
   // if (moves.length) console.log('moves',moves);

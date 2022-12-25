@@ -143,13 +143,8 @@ export default function useEndpoints(limit,offset=0) {
         })
     }
 
-    //////// maybe replace with useRef
     const [ CharData, SetCharData ] = useState([]);
     const [ MoveData, SetMoveData ] = useState([]);
-
-    const refChars = useRef([]);
-    const refMoves = useRef([]);
-    //////// maybe replace with useRef
 
     let loadCharsAllowed = !CharData.length;
     let loadMovesAllowed = Boolean(!MoveData.length && CharData.length);
