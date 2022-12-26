@@ -19,8 +19,6 @@
         Pokémon List component.
 */
 
-import React from 'react';
-
 import { Charcard } from '.';
 import styles from '../App.module.css';
 

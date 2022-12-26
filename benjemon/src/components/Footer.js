@@ -22,5 +22,11 @@ import styles from '../App.module.css';
 
 export default function Footer() {
   return (
-    <div className={styles.footer}>Footer</div>  )
+    <>
+    <div className={styles.footer}>
+        The use of this site is governed by our <a href="?d=hyperlinks.html">Hyperlink Disclaimer</a>, <a href="?d=informational.html">Informational Content Disclaimer</a>, <a href="?d=privacy.html">Privacy Policy</a>, and <a href="?d=terms.html">Terms of Service</a>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
+        <br /><a href="?d=copyright.html">Copyright &copy;</a> 2022. <a href="https://en.wikipedia.org/wiki/All_rights_reserved" target="_blank">All rights reserved&reg;</a>
+    </div>
+    </>
+    )
 }

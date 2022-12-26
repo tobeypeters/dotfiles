@@ -81,7 +81,6 @@ const colors = {
 
 export default function Charcard({char}) {
   const el = char;
-  const nodeRef = useRef(null);
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;

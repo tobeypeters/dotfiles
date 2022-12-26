@@ -73,8 +73,6 @@
     transform-style: preserve-3d;
   }
 
-
-
 @keyframes bounce {
     20% {
         transform: translateY(-6px);
@@ -89,6 +87,20 @@
     100% {
         transform: translateY(0);
     }
+}
+
+.footer {
+    background-color: orangered;
+    width: 100%;
+    color: white;
+    padding: 4px;
+}
+
+.footer a {
+    color: white;
+}
+.footer a:hover {
+    color: black;
 }
 
 .verttext {
