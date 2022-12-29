@@ -18,15 +18,53 @@
     Description:
         Footer component - privacy, terms, copyright, etc ...
 */
+import { Link, Outlet, Route, Routes } from 'react-router-dom';
+
+import { Copyright, Hyperlinks, Informational,
+         Privacy, Rights, Terms } from './Legal';
+
+//Test components
+import Home from './Home';
+import Delete from './Delete';
+//Test components
+
 import styles from '../App.module.css';
 
 export default function Footer() {
-  return (
-    <>
-    <div className={styles.footer}>
-        The use of this site is governed by our <a href="?d=hyperlinks.html">Hyperlink Disclaimer</a>, <a href="?d=informational.html">Informational Content Disclaimer</a>, <a href="?d=privacy.html">Privacy Policy</a>, and <a href="?d=terms.html">Terms of Service</a>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
-        <br /><a href="?d=copyright.html">Copyright &copy;</a> 2022. <a href="https://en.wikipedia.org/wiki/All_rights_reserved" target="_blank">All rights reserved&reg;</a>
-    </div>
-    </>
+    return (
+        <>
+        <Copyright />
+        <Hyperlinks />
+        <Informational />
+        <Privacy />
+        <Rights />
+        <Terms />
+            <Routes>
+                {/* Test routes */}
+                {/* <Route exact path='/' component={Home} /> */}
+                <Route path="/delete" component={Delete} />
+                {/* Test routes */}
+
+                <Route path="/copyright" component={Copyright} />
+                <Route path="/yyperlinks" component={Hyperlinks} />
+                <Route path="/informational" component={Informational} />
+                <Route path="/privacy" component={Privacy} />
+                <Route path="/rights" component={Rights} />
+                <Route path="/terms" component={Terms} />
+            </Routes>
+
+            <a href="https://www.example.com" target="_blank" rel="noopener noreferrer">
+      This works like it should
+    </a>
+            <Link to='http://www.reddit.com' target="_blank" rel="noopener noreferrer">this doesn't work either</Link>
+
+            <Link to='/delete'>Delete</Link>
+            <div className={styles.footer}>
+                The use of this site is governed by our <Link to='/Hyperlinks'>Hyperlink Disclaimer</Link>, <Link to='/informational'>Informational Content Disclaimer</Link>, <Link to='/privacy'>Privacy Policy</Link>, and <Link to='/terms'>Terms of Service</Link>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
+                <br />
+                <Link to='/copyright'>Copyright &copy;</Link> 2023. <Link to='/rights'>All rights reserved&reg;</Link>
+            </div>
+
+        </>
     )
 }

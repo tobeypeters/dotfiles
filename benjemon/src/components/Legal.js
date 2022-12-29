@@ -1,6 +1,7 @@
 import React from 'react'
 
-export function hyperlinks() {
+export function Hyperlinks() {
+    console.log('hyperlinks');
     return (
         <div>
             <span>Hyperlink Disclaimer</span>
@@ -9,7 +10,8 @@ export function hyperlinks() {
     )
 }
 
-export function informational() {
+export function Informational() {
+    console.log('informational');
     return (
         <div>
             <span>Informational Content Disclaimer</span>
@@ -18,7 +20,8 @@ export function informational() {
     )
 }
 
-export function copyright() {
+export function Copyright() {
+    console.log('copyright');
     return (
         <div>
             <div>
@@ -32,7 +35,8 @@ export function copyright() {
     )
 }
 
-export function privacy() {
+export function Privacy() {
+    console.log('privacy');
     return (
         <div>
             <div>Private Policy Disclaimer</div>
@@ -51,7 +55,8 @@ export function privacy() {
     )
 }
 
-export function terms() {
+export function Terms() {
+    console.log('terms');
     return (
         <div>
             <div>
@@ -81,7 +86,8 @@ export function terms() {
     )
 }
 
-export function rights() {
+export function Rights() {
+    console.log('rights');
     //https://en.wikipedia.org/wiki/All_rights_reserved
     return (
         <div>

@@ -146,13 +146,12 @@ export default function Charcard({char}) {
 
   return (
   <>
-    <div className={ styles.glasscard }>
-      <img id={ cardImageID } className={ styles.glasscardimage } loading='lazy'
-        onClick={ imageClick } src={ el.sprites[0][0] } alt='0' title={ el.sprites[0][1] } />
-      <span>[{ el.id.toString().padStart(3,'0') }] { el.name.charAt(0).toUpperCase() + el.name.slice(1) }</span>
+    <div className={styles.glasscard}>
+      <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
+        onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
+      [{ el.id.toString().padStart(3,'0') }] {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
     </div>
   </>
-
 
   )
   //     {/* <div id={cardID} className={styles.card} style={{ backgroundImage: charBG }}

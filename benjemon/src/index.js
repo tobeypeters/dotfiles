@@ -26,6 +26,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from "react-query/devtools";
 import App from './App';
 
@@ -37,8 +38,10 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
   <QueryClientProvider client={queryClient} contextSharing={true}>
-    <App />
-    <ReactQueryDevtools initialIsOpen={false} />
+    <BrowserRouter>
+      <App />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </BrowserRouter>
   </QueryClientProvider>
   </React.StrictMode>
 

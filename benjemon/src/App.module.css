@@ -48,6 +48,10 @@
 	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.15);
 }
 
+.glasscardDetail {
+    padding: 200px;
+}
+
 .glasscardimage, .glasscardMiniImage {
     background: lightgrey;
     border-radius: 10px;
