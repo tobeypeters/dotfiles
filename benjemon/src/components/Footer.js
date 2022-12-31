@@ -18,53 +18,30 @@
     Description:
         Footer component - privacy, terms, copyright, etc ...
 */
-import { Link, Outlet, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 
 import { Copyright, Hyperlinks, Informational,
-         Privacy, Rights, Terms } from './Legal';
-
-//Test components
-import Home from './Home';
-import Delete from './Delete';
-//Test components
+         Privacy, Rights, Terms } from '.';
 
 import styles from '../App.module.css';
 
-export default function Footer() {
+export function Footer() {
     return (
         <>
-        <Copyright />
-        <Hyperlinks />
-        <Informational />
-        <Privacy />
-        <Rights />
-        <Terms />
             <Routes>
-                {/* Test routes */}
-                {/* <Route exact path='/' component={Home} /> */}
-                <Route path="/delete" component={Delete} />
-                {/* Test routes */}
-
-                <Route path="/copyright" component={Copyright} />
-                <Route path="/yyperlinks" component={Hyperlinks} />
-                <Route path="/informational" component={Informational} />
-                <Route path="/privacy" component={Privacy} />
-                <Route path="/rights" component={Rights} />
-                <Route path="/terms" component={Terms} />
+                <Route path="/copyright" element={<Copyright />} />
+                <Route path="/hyperlinks" element={<Hyperlinks />} />
+                <Route path="/informational" element={<Informational />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/rights" element={<Rights />} />
+                <Route path="/terms" element={<Terms />} />
             </Routes>
 
-            <a href="https://www.example.com" target="_blank" rel="noopener noreferrer">
-      This works like it should
-    </a>
-            <Link to='http://www.reddit.com' target="_blank" rel="noopener noreferrer">this doesn't work either</Link>
-
-            <Link to='/delete'>Delete</Link>
             <div className={styles.footer}>
-                The use of this site is governed by our <Link to='/Hyperlinks'>Hyperlink Disclaimer</Link>, <Link to='/informational'>Informational Content Disclaimer</Link>, <Link to='/privacy'>Privacy Policy</Link>, and <Link to='/terms'>Terms of Service</Link>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
+                The use of this site is governed by our <NavLink to='/hyperlinks'>Hyperlink Disclaimer</NavLink>, <NavLink to='/informational'>Informational Content Disclaimer</NavLink>, <NavLink to='/privacy'>Privacy Policy</NavLink>, and <NavLink to='/terms'>Terms of Service</NavLink>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
                 <br />
-                <Link to='/copyright'>Copyright &copy;</Link> 2023. <Link to='/rights'>All rights reserved&reg;</Link>
+                <NavLink to='/copyright'>Copyright</NavLink> &copy; 2023. <NavLink to='/rights'>All rights reserved&reg;</NavLink>
             </div>
-
         </>
     )
 }

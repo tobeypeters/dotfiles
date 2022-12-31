@@ -36,67 +36,72 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 
-import React, { useMemo, useRef } from 'react';
-import { useQueryClient } from 'react-query';
+// import React, { useMemo, useRef } from 'react';
+// import { useQueryClient } from 'react-query';
 
-import Logo from './Logo';
-import Spinner from './Spinner';
+// import Logo from './Logo';
+// import Spinner from './components/Spinner';
 
 // import {  useMovesQuery,
 //          useCharactersQuery } from './components';
 
 import { useEndpoints } from './components';
 
-import { Charlist } from './components';
-import { Footer } from './components';
+// import { Charlist } from './components';
+// import { Footer } from './components';
+
+import { Characters } from "./components";
 
 function App() {
   useEndpoints(3,0);
 
-  const doneLoading = useRef(false);
+  // const doneLoading = useRef(false);
 
-  const queryClient = useQueryClient();
-  const queryKeys = queryClient.getQueryCache()
-                               .getAll().map(m => m.queryKey);
+  // const queryClient = useQueryClient();
+  // const queryKeys = queryClient.getQueryCache()
+  //                              .getAll().map(m => m.queryKey);
 
 //#region Data
-  const  [chars, moves] = useMemo(() => {
-    const filterKeys = (type) => queryKeys.map(m => m[0])
-                                 .filter(f => f['queryType'] === type);
-    const filterData = (keys) => keys.map(m => queryClient
-                                               .getQueriesData([m])[0][1]);
+  // const  [chars, moves] = useMemo(() => {
+  //   const filterKeys = (type) => queryKeys.map(m => m[0])
+  //                                .filter(f => f['queryType'] === type);
+  //   const filterData = (keys) => keys.map(m => queryClient
+  //                                              .getQueriesData([m])[0][1]);
 
-    const charRes = filterData(filterKeys('charDetail'));
-    const moveRes = filterData(filterKeys('moveDetail'));
+  //   const charRes = filterData(filterKeys('charDetail'));
+  //   const moveRes = filterData(filterKeys('moveDetail'));
 
-    return [
-      charRes.every(e => e !== undefined) ? charRes : [],
-      moveRes.every(e => e !== undefined) ? moveRes : []
-    ]
+  //   return [
+  //     charRes.every(e => e !== undefined) ? charRes : [],
+  //     moveRes.every(e => e !== undefined) ? moveRes : []
+  //   ]
 
-  },[ queryClient, queryKeys ]);
+  // },[ queryClient, queryKeys ]);
 
-  if (chars.length) {
-    chars.forEach(f => {
-      // Test.addItem(f.name);
-      // console.log(f);
-    });
-  }
+  // if (chars.length) {
+  //   chars.forEach(f => {
+  //     // Test.addItem(f.name);
+  //     // console.log(f);
+  //   });
+  // }
 
-  // if (chars.length) console.log('chars',chars);
-  // if (moves.length) console.log('moves',moves);
+  // // if (chars.length) console.log('chars',chars);
+  // // if (moves.length) console.log('moves',moves);
 
-  doneLoading.current = (chars.length && moves.length);
+  // doneLoading.current = (chars.length && moves.length);
 //#endregion Data
 
   return (
     <div className="App">
-      <Logo />
+      <>
+        <Characters />
+      </>
+      {/* <Logo />
       <div>
         { doneLoading.current ? <></> : <Spinner /> }
         { chars.length ? <Charlist data={ chars } /> : <></> }
       </div>
-      <Footer />
+      <Footer /> */}
     </div>
   )
 

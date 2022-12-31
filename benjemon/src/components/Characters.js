@@ -14,23 +14,22 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  Logo.js
+/*  Characters.js
     Description:
-        Logo component
-
-    Logo Text: Bénjémon
-
-    Resources:
-        https://textcraft.net/style/Textcraft/pokemon
+        Display the characters.
 */
-import React from 'react'
+import { useRef } from 'react';
+import { useQueryClient } from "react-query";
 
-import styles from './App.module.css'
+import { Giveme, Charlist, Spinner } from '.';
 
-export default function Logo() {
-  return (
-    <div  className={styles.logo}>
-      <img src={process.env.PUBLIC_URL + 'images/Benjemon.png'} alt='logo' />
-    </div>
-  )
+export function Characters() {
+    const chars = Giveme(useQueryClient(), 'charDetail');
+    const doneLoading = useRef(chars?.length);
+    return (
+        <div>
+            { doneLoading.current ? <></> : <Spinner /> }
+            { chars?.length ? <Charlist data={ chars } /> : <></> }
+        </div>
+    )
 }

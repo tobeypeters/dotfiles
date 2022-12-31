@@ -13,18 +13,22 @@
     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-/*  index.js
+
+/*  Logo.js
     Description:
-        components index file
+        Logo component
+
+    Logo Text: Bénjémon
+
+    Resources:
+        https://textcraft.net/style/Textcraft/pokemon
 */
-export { useEndpoints, Giveme } from './Endpoints';
+import styles from '../App.module.css'
 
-export { Characters } from './Characters';
-export { default as Charlist } from './Charlst';
-export { default as Charcard } from './Charcard';
-export { Logo } from './Logo';
-export { Footer } from './Footer';
-export { Spinner } from './Spinner';
-
-export { Copyright, Hyperlinks, Informational,
-         Privacy, Rights, Terms } from './Legal';
+export function Logo() {
+  return (
+    <div  className={styles.logo}>
+      <img src={process.env.PUBLIC_URL + 'images/Benjemon.png'} alt='logo' />
+    </div>
+  )
+}

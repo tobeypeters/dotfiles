@@ -18,17 +18,12 @@
     Description:
         Loading animation.
 */
+import styles from './Spinner.module.css';
 
-import React from 'react'
-
-import styles from './Spinner.module.css'
-
-export default function Spinner() {
-  return (
+export function Spinner() {
+return (
     <>
         <div className={styles.ldsripple}><div></div><div></div></div>
     </>
-   )
+    )
 }
-
-

@@ -19,7 +19,7 @@
         Houses all the data endpoints.
 */
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 import { grabData } from "../utility";
@@ -42,7 +42,7 @@ const buildQueries = (iterator,queryFn,enable,type) => {
 }
 
 //#region Endpoints
-export default function useEndpoints(limit,offset=0) {
+export function useEndpoints(limit,offset=0) {
     // const junk = useRef(true);
 
     // if (junk.current) {
@@ -186,3 +186,42 @@ export default function useEndpoints(limit,offset=0) {
     }
 }
 //#endregion Endpoints
+
+//#region Giveme
+export function Giveme(qClient, what) {
+    const giveYouData = useRef(true);
+
+    const gabby1 = useRef(0);
+    const gabby2 = useRef(0);
+
+    const queryKeys = qClient.getQueryCache()
+    .getAll().map(m => m.queryKey);
+    // console.log('queryKeys',queryKeys);
+
+    const cacheData = useMemo(() => {
+        gabby2.current += 1;
+
+        // console.log('viper armed ... protected by viper stand back');
+        const filterKeys = (type) => queryKeys.map(m => m[0])
+                .filter(f => f['queryType'] === type);
+        const filterData = (keys) => keys.map(m => qClient
+                                .getQueriesData([m])[0][1]);
+        const res = filterData(filterKeys(what));
+        // console.log(res);
+
+        giveYouData.current = res.every(e => e !== undefined);
+
+        if (giveYouData.current) console.log('give to you');
+
+        return giveYouData.current ? res : [];
+
+        // return ( res.every(e => e !== undefined) ? res : [] );
+    }, [ qClient, what, queryKeys, giveYouData ]);
+
+    gabby1.current += 1;
+
+    // console.log(gabby1, gabby2);
+
+    return cacheData;
+}
+//#endregion Giveme

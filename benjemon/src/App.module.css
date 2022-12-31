@@ -18,6 +18,16 @@
     Description:
         App.js - css
 */
+
+a {
+    color: white;
+}
+a:active {
+    color: greenyellow;
+}
+a:hover {
+    color: pink;
+}
 .charContainer {
     display: flex;
 	flex-wrap: wrap;
