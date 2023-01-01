@@ -20,6 +20,7 @@
 */
 import { NavLink, Route, Routes } from 'react-router-dom';
 
+import { Characters, Page404 } from '.';
 import { Copyright, Hyperlinks, Informational,
          Privacy, Rights, Terms } from '.';
 
@@ -29,12 +30,15 @@ export function Footer() {
     return (
         <>
             <Routes>
+                <Route path="/" element={<Characters />} />
                 <Route path="/copyright" element={<Copyright />} />
                 <Route path="/hyperlinks" element={<Hyperlinks />} />
                 <Route path="/informational" element={<Informational />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/rights" element={<Rights />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="*" element={<Characters />} />
+                {/* <Route render={() => <Page404 />} /> */}
             </Routes>
 
             <div className={styles.footer}>

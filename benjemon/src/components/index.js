@@ -17,13 +17,14 @@
     Description:
         components index file
 */
-export { useEndpoints, Giveme } from './Endpoints';
+export { useEndpoints, CacheExtract } from './Endpoints';
 
 export { Characters } from './Characters';
 export { default as Charlist } from './Charlst';
 export { default as Charcard } from './Charcard';
 export { Logo } from './Logo';
 export { Footer } from './Footer';
+export { Page404 } from './Page404';
 export { Spinner } from './Spinner';
 
 export { Copyright, Hyperlinks, Informational,

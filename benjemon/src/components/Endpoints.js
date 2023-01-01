@@ -187,41 +187,30 @@ export function useEndpoints(limit,offset=0) {
 }
 //#endregion Endpoints
 
-//#region Giveme
-export function Giveme(qClient, what) {
-    const giveYouData = useRef(true);
-
-    const gabby1 = useRef(0);
-    const gabby2 = useRef(0);
+//#region CacheExtract
+export function CacheExtract(qClient, filter='queryType', forWhat='') {
+    //Sample Query Key : [{"id":"2","queryType":"charDetail"}]
+    //CacheExtract(useQueryClient(),undefined,'charDetail');
+    const extractData = useRef(true);
 
     const queryKeys = qClient.getQueryCache()
     .getAll().map(m => m.queryKey);
-    // console.log('queryKeys',queryKeys);
 
     const cacheData = useMemo(() => {
-        gabby2.current += 1;
 
-        // console.log('viper armed ... protected by viper stand back');
+        console.log('Extracting cache data ...');
+
         const filterKeys = (type) => queryKeys.map(m => m[0])
-                .filter(f => f['queryType'] === type);
+                .filter(f => f[filter] === type);
         const filterData = (keys) => keys.map(m => qClient
                                 .getQueriesData([m])[0][1]);
-        const res = filterData(filterKeys(what));
-        // console.log(res);
+        const res = filterData(filterKeys(forWhat));
 
-        giveYouData.current = res.every(e => e !== undefined);
+        extractData.current = res.every(e => e !== undefined);
 
-        if (giveYouData.current) console.log('give to you');
-
-        return giveYouData.current ? res : [];
-
-        // return ( res.every(e => e !== undefined) ? res : [] );
-    }, [ qClient, what, queryKeys, giveYouData ]);
-
-    gabby1.current += 1;
-
-    // console.log(gabby1, gabby2);
+        return extractData.current ? res : [];
+    }, [ qClient, filter, forWhat, queryKeys, extractData ]);
 
     return cacheData;
 }
-//#endregion Giveme
+//#endregion CacheExtract

@@ -18,18 +18,16 @@
     Description:
         Display the characters.
 */
-import { useRef } from 'react';
 import { useQueryClient } from "react-query";
 
-import { Giveme, Charlist, Spinner } from '.';
+import { CacheExtract, Charlist, Spinner } from '.';
 
 export function Characters() {
-    const chars = Giveme(useQueryClient(), 'charDetail');
-    const doneLoading = useRef(chars?.length);
+    const chars = CacheExtract(useQueryClient(),undefined,'charDetail');
+
     return (
         <div>
-            { doneLoading.current ? <></> : <Spinner /> }
-            { chars?.length ? <Charlist data={ chars } /> : <></> }
+            { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
         </div>
     )
 }
