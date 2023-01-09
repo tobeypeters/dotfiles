@@ -22,7 +22,7 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 
 import { Characters, Page404 } from '.';
 import { Copyright, Hyperlinks, Informational,
-         Privacy, Rights, Terms } from '.';
+         Privacy, Terms } from '.';
 
 import styles from '../App.module.css';
 
@@ -35,16 +35,14 @@ export function Footer() {
                 <Route path="/hyperlinks" element={<Hyperlinks />} />
                 <Route path="/informational" element={<Informational />} />
                 <Route path="/privacy" element={<Privacy />} />
-                <Route path="/rights" element={<Rights />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="*" element={<Characters />} />
-                {/* <Route render={() => <Page404 />} /> */}
+                <Route path="*" element={<Page404 />} />
             </Routes>
 
             <div className={styles.footer}>
                 The use of this site is governed by our <NavLink to='/hyperlinks'>Hyperlink Disclaimer</NavLink>, <NavLink to='/informational'>Informational Content Disclaimer</NavLink>, <NavLink to='/privacy'>Privacy Policy</NavLink>, and <NavLink to='/terms'>Terms of Service</NavLink>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
                 <br />
-                <NavLink to='/copyright'>Copyright</NavLink> &copy; 2023. <NavLink to='/rights'>All rights reserved&reg;</NavLink>
+                <NavLink to='/copyright'>Copyright</NavLink> &copy; 2023. <a href='https://en.wikipedia.org/wiki/All_rights_reserved' target='_blank' rel='noreferrer'>All rights reserved</a> &reg;
             </div>
         </>
     )

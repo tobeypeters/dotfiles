@@ -28,4 +28,4 @@ export { Page404 } from './Page404';
 export { Spinner } from './Spinner';
 
 export { Copyright, Hyperlinks, Informational,
-         Privacy, Rights, Terms } from './Legal';
+         Privacy, Terms } from './Legal';

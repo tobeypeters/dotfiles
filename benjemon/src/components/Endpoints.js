@@ -19,7 +19,7 @@
         Houses all the data endpoints.
 */
 
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 import { grabData } from "../utility";
@@ -183,6 +183,7 @@ export function useEndpoints(limit,offset=0) {
     }
     if (loadMovesAllowed && moves_finalResults.every(e => e.status === 'success')) {
         SetMoveData(moves_finalResults.map(q => q.data));
+        console.log('moves');
     }
 }
 //#endregion Endpoints
@@ -191,26 +192,18 @@ export function useEndpoints(limit,offset=0) {
 export function CacheExtract(qClient, filter='queryType', forWhat='') {
     //Sample Query Key : [{"id":"2","queryType":"charDetail"}]
     //CacheExtract(useQueryClient(),undefined,'charDetail');
-    const extractData = useRef(true);
 
     const queryKeys = qClient.getQueryCache()
     .getAll().map(m => m.queryKey);
 
-    const cacheData = useMemo(() => {
+    console.log('Extracting cache data ...');
 
-        console.log('Extracting cache data ...');
+    const filterKeys = (type) => queryKeys.map(m => m[0])
+            .filter(f => f[filter] === type);
+    const filterData = (keys) => keys.map(m => qClient
+                            .getQueriesData([m])[0][1]);
+    const res = filterData(filterKeys(forWhat));
 
-        const filterKeys = (type) => queryKeys.map(m => m[0])
-                .filter(f => f[filter] === type);
-        const filterData = (keys) => keys.map(m => qClient
-                                .getQueriesData([m])[0][1]);
-        const res = filterData(filterKeys(forWhat));
-
-        extractData.current = res.every(e => e !== undefined);
-
-        return extractData.current ? res : [];
-    }, [ qClient, filter, forWhat, queryKeys, extractData ]);
-
-    return cacheData;
+    return res.every(e => e !== undefined) ? res : [];
 }
 //#endregion CacheExtract

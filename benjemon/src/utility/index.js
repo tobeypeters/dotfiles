@@ -19,4 +19,4 @@
         utility index file
 */
 
-export { arrClear, clearCache, grabData } from './Data'
+export { arrClear, clearCache, grabData } from './Data';

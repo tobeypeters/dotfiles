@@ -103,11 +103,24 @@ a:hover {
     }
 }
 
+.legal {
+    text-align: justify;
+    color: #faebd7aa;
+
+}
+.legal a {
+    color: currentColor;
+}
+.legal a:hover {
+    color: white;
+}
+
 .footer {
     background-color: orangered;
     width: 100%;
     color: white;
     padding: 4px;
+    margin-top: 10px;
 }
 
 .footer a {
@@ -123,73 +136,4 @@ a:hover {
 
 .logo {
      text-align:center;
-}
-
-.pokeContainer {
-    display: flex;
-	flex-wrap: wrap;
-	align-items: space-between;
-	justify-content: center;
-	max-width: 1280px;
-    margin: 0 auto;
-}
-
-.card {
-    width: min-content;
-    list-style: none;
-    text-align: center;
-    /* padding: 10px; */
-    color: black;
-
-	border-radius: 20px;
-    background-color: #eee;
-	margin: 10px;
-
-    min-height: 221px;
-}
-
-.card:hover {
-    cursor: pointer;
-    animation: bounce 0.5s linear;
-	box-shadow: 0 3px 15px rgba(255, 69, 0, 0.3);
-}
-
-.cardimage, .cardMiniImage {
-    background: lightgrey;
-    border-radius: 10px;
-    float: left;
-}
-.cardimage {
-    height: 180px;
-    width: 180px;
-    margin: 10px 10px 0px 10px;
-}
-.cardMiniImage {
-    height: 20px;
-    width: 20px;
-    margin-left: 4px;
-
-    display: none;
-}
-
-.pokeInfo {
-    background: lightgrey;
-    display: none;
-    text-align: left;
-    margin: 0px 10px 0px 10px;
-    padding: 0px 4px 4px 4px;
-    border-radius: 10px;
-}
-
-.pokeName {
-    display: block;
-    background-color: lightgrey;
-    padding: 2px 0px 2px 0px;
-    border-radius: 6px;
-    margin: 10px;
-    width: 180px;
-}
-
-.pokeType {
-    background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
 }

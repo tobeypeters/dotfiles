@@ -35,13 +35,12 @@
           https://loading.io/css/
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
-
 import { useEndpoints } from './components';
 
 import { Footer, Logo } from "./components";
 
 function App() {
-  useEndpoints(3,0); //Think, I know how to make this run only once.
+  useEndpoints(24,0); //Think, I know how to make this run only once.
 
   return (
     <div className="App">

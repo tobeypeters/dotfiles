@@ -26,8 +26,11 @@ export function Characters() {
     const chars = CacheExtract(useQueryClient(),undefined,'charDetail');
 
     return (
+        <>
         <div>
             { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
         </div>
+        <br /><br />
+        </>
     )
 }
