@@ -22,10 +22,13 @@ export { useEndpoints, CacheExtract } from './Endpoints';
 export { Characters } from './Characters';
 export { default as Charlist } from './Charlst';
 export { default as Charcard } from './Charcard';
-export { Logo } from './Logo';
 export { Footer } from './Footer';
+export { Home } from './Home';
+export { Logo } from './Logo';
 export { Page404 } from './Page404';
 export { Spinner } from './Spinner';
 
 export { Copyright, Hyperlinks, Informational,
          Privacy, Terms } from './Legal';
+
+export { Navbar } from './navbar';

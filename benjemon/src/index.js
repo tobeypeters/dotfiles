@@ -26,8 +26,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { NavLink,BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from "react-query/devtools";
+
 import App from './App';
 
 import { QueryClient, QueryClientProvider } from 'react-query';

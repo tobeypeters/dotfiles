@@ -18,31 +18,33 @@
     Description:
         Footer component - privacy, terms, copyright, etc ...
 */
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Outlet, useRoutes } from 'react-router-dom';
 
-import { Characters, Page404 } from '.';
 import { Copyright, Hyperlinks, Informational,
          Privacy, Terms } from '.';
 
 import styles from '../App.module.css';
 
 export function Footer() {
+    const routes = useRoutes([
+        { path: "/copyright", element: <Copyright /> },
+        { path: "/hyperlinks", element: <Hyperlinks /> },
+        { path: "/informational", element: <Informational /> },
+        { path: "/privacy", element: <Privacy /> },
+        { path: "/terms", element: <Terms /> },
+    ])
     return (
         <>
-            <Routes>
-                <Route path="/" element={<Characters />} />
-                <Route path="/copyright" element={<Copyright />} />
-                <Route path="/hyperlinks" element={<Hyperlinks />} />
-                <Route path="/informational" element={<Informational />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="*" element={<Page404 />} />
-            </Routes>
+            {routes}
+            <Outlet />
 
             <div className={styles.footer}>
                 The use of this site is governed by our <NavLink to='/hyperlinks'>Hyperlink Disclaimer</NavLink>, <NavLink to='/informational'>Informational Content Disclaimer</NavLink>, <NavLink to='/privacy'>Privacy Policy</NavLink>, and <NavLink to='/terms'>Terms of Service</NavLink>. By using this site, you acknowledge that you have read these disclaimers and policies and that you accept and will be bound by their terms. <br />
                 <br />
                 <NavLink to='/copyright'>Copyright</NavLink> &copy; 2023. <a href='https://en.wikipedia.org/wiki/All_rights_reserved' target='_blank' rel='noreferrer'>All rights reserved</a> &reg;
+                <div className={styles.horzAlign}>
+                    <NavLink className={styles.linkNoDecorations} to="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Back to top</NavLink>
+                </div>
             </div>
         </>
     )
