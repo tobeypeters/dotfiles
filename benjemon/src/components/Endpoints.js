@@ -19,12 +19,10 @@
         Houses all the data endpoints.
 */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 import { grabData } from "../utility";
-
-// import { queryClient } from "..";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -42,18 +40,7 @@ const buildQueries = (iterator,queryFn,enable,type) => {
 }
 
 //#region Endpoints
-export function useEndpoints(limit,offset=0) {
-    // const junk = useRef(true);
-
-    // if (junk.current) {
-    //     queryClient.prefetchQuery({
-    //         queryKey: ['test'],
-    //         queryFn: () => grabData('https://pokeapi.co/api/v2/'),
-    //         staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-    //       })
-    //     junk.current = false;
-    // }
-
+export function Endpoints(limit,offset=0) {
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
         const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
         return res.results;
@@ -143,11 +130,11 @@ export function useEndpoints(limit,offset=0) {
         })
     }
 
-    const [ CharData, SetCharData ] = useState([]);
-    const [ MoveData, SetMoveData ] = useState([]);
+    const [ chardata, Setchardata ] = useState(false);
+    const [ movedata, Setmovedata ] = useState(false);
 
-    let loadCharsAllowed = !CharData.length;
-    let loadMovesAllowed = Boolean(!MoveData.length && CharData.length);
+    let loadCharsAllowed = !chardata;
+    let loadMovesAllowed = loadCharsAllowed && !movedata;
 
     let { data: char_data, IsError: IsCharError,
           error: char_error, isSuccess: isCharSuccess } = useQuery({
@@ -155,7 +142,7 @@ export function useEndpoints(limit,offset=0) {
         queryFn: listQueryFn,
     }, { enabled: loadCharsAllowed });
 
-    if (IsCharError) console.log(`Char Error: ${char_error.message}`);
+    IsCharError && console.log(`Char Error: ${char_error.message}`);
 
     let { data: moves_data, IsError: IsMovesError,
           error: moves_error, isSuccess: isMovesSuccess
@@ -164,7 +151,7 @@ export function useEndpoints(limit,offset=0) {
         queryFn: listQueryFn,
     }, { enabled: loadMovesAllowed });
 
-    if (IsMovesError) console.log(`Moves Error: ${moves_error.message}`);
+    IsMovesError && console.log(`Moves Error: ${moves_error.message}`);
 
     loadCharsAllowed = loadCharsAllowed && (isCharSuccess && !!char_data);
     const char_listDetailQueries = buildQueries(char_data ? char_data : [],
@@ -178,13 +165,11 @@ export function useEndpoints(limit,offset=0) {
     let char_finalResults = useQueries(char_listDetailQueries);
     let moves_finalResults = useQueries(moves_listDetailQueries);
 
-    if (loadCharsAllowed && char_finalResults.every(e => e.status === 'success')) {
-        SetCharData(char_finalResults.map(q => q.data));
-    }
-    if (loadMovesAllowed && moves_finalResults.every(e => e.status === 'success')) {
-        SetMoveData(moves_finalResults.map(q => q.data));
-        console.log('moves');
-    }
+    loadCharsAllowed && char_finalResults.every(e =>
+        e.status === 'success') && Setchardata(true);
+
+    loadMovesAllowed && moves_finalResults.every(e =>
+        e.status === 'success') && Setmovedata(true);
 }
 //#endregion Endpoints
 

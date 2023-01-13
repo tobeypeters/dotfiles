@@ -17,7 +17,7 @@
     Description:
         components index file
 */
-export { useEndpoints, CacheExtract } from './Endpoints';
+export { Endpoints, CacheExtract } from './Endpoints';
 
 export { Characters } from './Characters';
 export { default as Charlist } from './Charlst';

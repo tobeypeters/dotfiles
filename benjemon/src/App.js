@@ -35,13 +35,14 @@
           https://loading.io/css/
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
-import { useEndpoints } from './components';
+import { Endpoints } from './components';
 import { Footer, Logo, Page404 } from "./components";
 import { Outlet, useRoutes } from 'react-router-dom';
 
 import { Characters, Home } from './components';
 
 function App() {
+  console.log('I lick buttholes');
   const routes = useRoutes([
     { path: "/", element: <Home /> },
     { path: "/home", element: <Home /> },
@@ -49,7 +50,9 @@ function App() {
     // { path: "*", element: <Page404 /> },
   ])
 
-  useEndpoints(24,0); //Think, I know how to make this run only once.
+  if (1 > 0) {
+  Endpoints(24,0); //Think, I know how to make this run only once.
+  }
 
   return (
     <>
