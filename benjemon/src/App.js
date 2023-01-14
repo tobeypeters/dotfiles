@@ -39,7 +39,7 @@ import { Endpoints } from './components';
 import { Footer, Logo, Page404 } from "./components";
 import { Outlet, useRoutes } from 'react-router-dom';
 
-import { Characters, Home } from './components';
+import { Characters, Home, Moves } from './components';
 
 function App() {
   console.log('I lick buttholes');
@@ -47,12 +47,11 @@ function App() {
     { path: "/", element: <Home /> },
     { path: "/home", element: <Home /> },
     { path: "/characters", element: <Characters /> },
+    { path: "/moves", element: <Moves /> },
     // { path: "*", element: <Page404 /> },
   ])
 
-  if (1 > 0) {
   Endpoints(24,0); //Think, I know how to make this run only once.
-  }
 
   return (
     <>

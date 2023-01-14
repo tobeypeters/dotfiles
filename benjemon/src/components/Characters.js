@@ -28,7 +28,7 @@ export function Characters() {
     return (
         <>
         <div>
-            { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
+        { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
         </div>
         <br /><br />
         </>

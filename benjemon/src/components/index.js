@@ -32,3 +32,6 @@ export { Copyright, Hyperlinks, Informational,
          Privacy, Terms } from './Legal';
 
 export { Navbar } from './navbar';
+
+export { MoveList } from './MoveList';
+export { Moves } from './Moves';

@@ -14,19 +14,24 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  PokeMonList.js
+/*  Moves.js
     Description:
-        Pokémon List component.
+        Display the moves.
 */
-import { Charcard } from '.';
-import styles from '../App.module.css';
 
-export default function Charlist({ data }) {
-  return (
-    <>
-      <div className={styles.charContainer} >
-        { data.map(m => (<Charcard key={m.id} char={m} />)) }
-      </div>
-    </>
-  )
+import { useQueryClient } from "react-query";
+
+import { CacheExtract, MoveList, Spinner } from '.';
+
+export function Moves() {
+    const moves = CacheExtract(useQueryClient(),undefined,'moveDetail');
+
+    return (
+        <>
+        <div>
+            { moves.length ? <MoveList data={ moves } /> : <Spinner /> }
+        </div>
+        <br /><br />
+        </>
+    )
 }

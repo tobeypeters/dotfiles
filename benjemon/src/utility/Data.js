@@ -20,6 +20,8 @@
 */
 import { QueryCache } from "react-query";
 
+import JsonPretty from 'react-json-pretty';
+
 export const arrClear = (arr) => {
   if (Array.isArray(arr)) {
       arr.splice(0, arr.length);
@@ -35,4 +37,8 @@ export const grabData = async (url) => {
   const response = await fetch(url);
   const results = response.status === 200 ? await response.json() : null
   return results;
+}
+
+export const prettyjson = (json) => {
+  return <JsonPretty json={json} />
 }

@@ -14,18 +14,20 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  PokeMonList.js
+/*  MoveList.js
     Description:
-        Pokémon List component.
+        Move List component.
 */
-import { Charcard } from '.';
-import styles from '../App.module.css';
+// import styles from '../App.module.css';
+import { prettyjson } from "../utility"
 
-export default function Charlist({ data }) {
+export function MoveList({ data }) {
   return (
     <>
-      <div className={styles.charContainer} >
-        { data.map(m => (<Charcard key={m.id} char={m} />)) }
+      <div>
+      { data.map((m,idx) =>
+        (<><div key={idx}>{prettyjson(m)}</div><br /></>)
+      )}
       </div>
     </>
   )

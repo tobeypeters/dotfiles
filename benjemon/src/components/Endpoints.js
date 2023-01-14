@@ -132,9 +132,11 @@ export function Endpoints(limit,offset=0) {
 
     const [ chardata, Setchardata ] = useState(false);
     const [ movedata, Setmovedata ] = useState(false);
+    const [ itemdata, Setitemdata ] = useState(false);
 
     let loadCharsAllowed = !chardata;
-    let loadMovesAllowed = loadCharsAllowed && !movedata;
+    let loadMovesAllowed = !loadCharsAllowed && !movedata;
+    let loadItemsAllowed = !loadMovesAllowed && !itemdata;
 
     let { data: char_data, IsError: IsCharError,
           error: char_error, isSuccess: isCharSuccess } = useQuery({
