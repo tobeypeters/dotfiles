@@ -46,6 +46,24 @@ export function Endpoints(limit,offset=0) {
         return res.results;
     }
 
+    const groupElements = (arr) => {
+        const textToObject = new Map();
+        for (const elem of arr) {
+            let object = textToObject.get(elem.text);
+            if (object === undefined) {
+                object = {
+                    version: [],
+                    text: elem.text,
+                };
+                textToObject.set(elem.text, object);
+            }
+            object.version.push(...elem.version);
+        }
+        return Array.from(textToObject.values());
+    }
+
+    const ran = (str) => str.replaceAll('\n',' ');
+
     const char_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}pokemon/${id}`);
 
@@ -113,11 +131,9 @@ export function Endpoints(limit,offset=0) {
     const moves_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}move/${id}`);
         const flavor_entries = res.flavor_text_entries
-            .filter((f => f.language.name === 'en'))
-            .map(m => { return { version: m.version_group.name,
-                                    text: m.flavor_text
-                                           .replaceAll('\n','') }
-            });
+        .filter(f => f.language.name === 'en')
+        .map(m => ({ version: [m.version_group.name],
+                            text: ran(m.flavor_text)}));
 
         return ({
             id: res.id,
@@ -130,48 +146,92 @@ export function Endpoints(limit,offset=0) {
         })
     }
 
-    const [ chardata, Setchardata ] = useState(false);
-    const [ movedata, Setmovedata ] = useState(false);
-    const [ itemdata, Setitemdata ] = useState(false);
+    const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
+        const res = await grabData(`${baseURL}item/${id}`);
+        const flavor_entries = groupElements(res.flavor_text_entries
+        .filter(f => f.language.name === 'en')
+        .map(m => ({text: ran(m.text),
+                 version: [m.version_group.name]})));
 
-    let loadCharsAllowed = !chardata;
-    let loadMovesAllowed = !loadCharsAllowed && !movedata;
-    let loadItemsAllowed = !loadMovesAllowed && !itemdata;
+        const effect_entries = res.effect_entries
+        .filter(f => f.language.name === 'en')
+        .map(m => ({ effect: ran(m.effect),
+               short_effect: ran(m.short_effect)
+        }));
+
+        return ({
+            name: res.name,
+            attributes: res.attributes.map(m => m.name),
+            category: res.category.name,
+            cost: res.cost,
+            effect_entries,
+            flavor_entries: flavor_entries,
+            fling_effect: res.fling_effect,
+            fling_power: res.fling_power,
+            sprites: res.sprites,
+        })
+    }
+
+    const [ chardata, Setchardata ] = useState(true);
+    const [ movedata, Setmovedata ] = useState(true);
+    const [ itemdata, Setitemdata ] = useState(true);
+
+    let loadCharsAllowed = chardata;
+    let loadMovesAllowed = !loadCharsAllowed && movedata;
+    let loadItemsAllowed = !loadMovesAllowed && itemdata;
 
     let { data: char_data, IsError: IsCharError,
           error: char_error, isSuccess: isCharSuccess } = useQuery({
-        queryKey: [{queryType: 'charList', limit, url_part: `pokemon-species`, offset: {offset} }],
-        queryFn: listQueryFn,
+          queryKey: [{queryType: 'charList', limit, url_part: `pokemon-species`, offset: {offset} }],
+          queryFn: listQueryFn,
     }, { enabled: loadCharsAllowed });
 
     IsCharError && console.log(`Char Error: ${char_error.message}`);
 
     let { data: moves_data, IsError: IsMovesError,
           error: moves_error, isSuccess: isMovesSuccess
-          } = useQuery({
-        queryKey: [{queryType: 'movesList', limit, url_part: 'move' }],
-        queryFn: listQueryFn,
+        } = useQuery({
+          queryKey: [{queryType: 'movesList', limit, url_part: 'move' }],
+          queryFn: listQueryFn,
     }, { enabled: loadMovesAllowed });
 
     IsMovesError && console.log(`Moves Error: ${moves_error.message}`);
 
-    loadCharsAllowed = loadCharsAllowed && (isCharSuccess && !!char_data);
+    let { data: items_data, IsError: IsItemsError,
+          error: items_error, isSuccess: isItemsSuccess
+        } = useQuery({
+        queryKey: [{queryType: 'itemsList', limit, url_part: 'item' }],
+        queryFn: listQueryFn,
+    }, { enabled: loadItemsAllowed });
+
+    IsItemsError && console.log(`Items Error: ${items_error.message}`);
+
+    loadCharsAllowed = loadCharsAllowed && isCharSuccess;
     const char_listDetailQueries = buildQueries(char_data ? char_data : [],
         char_detailQueryFn, loadCharsAllowed, 'charDetail');
 
-    loadMovesAllowed = loadMovesAllowed && (isMovesSuccess && !!moves_data);
+    loadMovesAllowed = loadMovesAllowed && isMovesSuccess;
     const moves_listDetailQueries = buildQueries(moves_data ?
         moves_data.filter(f => extractID(f.url) < 10000) : [],
         moves_detailQueryFn, loadMovesAllowed, 'moveDetail');
 
+    loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
+    const items_listDetailQueries = buildQueries(items_data ?
+        items_data.filter(f => extractID(f.url) < 10000) : [],
+        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
+
     let char_finalResults = useQueries(char_listDetailQueries);
     let moves_finalResults = useQueries(moves_listDetailQueries);
+    let items_finalResults = useQueries(items_listDetailQueries);
 
     loadCharsAllowed && char_finalResults.every(e =>
-        e.status === 'success') && Setchardata(true);
+        e.status === 'success') && Setchardata(false);
 
     loadMovesAllowed && moves_finalResults.every(e =>
-        e.status === 'success') && Setmovedata(true);
+        e.status === 'success') && Setmovedata(false);
+
+    loadItemsAllowed && items_finalResults.every(e =>
+        e.status === 'success') && Setitemdata(false);
 }
 //#endregion Endpoints
 
@@ -182,8 +242,6 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 
     const queryKeys = qClient.getQueryCache()
     .getAll().map(m => m.queryKey);
-
-    console.log('Extracting cache data ...');
 
     const filterKeys = (type) => queryKeys.map(m => m[0])
             .filter(f => f[filter] === type);

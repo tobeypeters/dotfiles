@@ -23,6 +23,7 @@ export { Characters } from './Characters';
 export { default as Charlist } from './Charlst';
 export { default as Charcard } from './Charcard';
 export { Footer } from './Footer';
+export { GenericList } from './GenericList';
 export { Home } from './Home';
 export { Logo } from './Logo';
 export { Page404 } from './Page404';
@@ -32,6 +33,9 @@ export { Copyright, Hyperlinks, Informational,
          Privacy, Terms } from './Legal';
 
 export { Navbar } from './navbar';
+
+export { ItemsList } from './ItemsList';
+export { Items } from './Items';
 
 export { MoveList } from './MoveList';
 export { Moves } from './Moves';

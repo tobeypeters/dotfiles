@@ -39,19 +39,19 @@ import { Endpoints } from './components';
 import { Footer, Logo, Page404 } from "./components";
 import { Outlet, useRoutes } from 'react-router-dom';
 
-import { Characters, Home, Moves } from './components';
+import { Characters, Home, Items, Moves } from './components';
 
 function App() {
-  console.log('I lick buttholes');
   const routes = useRoutes([
     { path: "/", element: <Home /> },
     { path: "/home", element: <Home /> },
     { path: "/characters", element: <Characters /> },
+    { path: "/items", element: <Items /> },
     { path: "/moves", element: <Moves /> },
     // { path: "*", element: <Page404 /> },
   ])
 
-  Endpoints(24,0); //Think, I know how to make this run only once.
+  Endpoints(200,0); //Think, I know how to make this run only once.
 
   return (
     <>

@@ -14,23 +14,21 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  Moves.js
+/*  ItemsList.js
     Description:
-        Display the moves.
+        Items List component.
 */
-import { useQueryClient } from "react-query";
+// import styles from '../App.module.css';
+import { prettyjson } from "../utility"
 
-import { CacheExtract, GenericList, MoveeList, Spinner } from '.';
-
-export function Moves() {
-    const moves = CacheExtract(useQueryClient(),undefined,'moveDetail');
-
-    return (
-        <>
-        <div>
-            { moves.length ? <GenericList data={ moves } /> : <Spinner /> }
-        </div>
-        <br /><br />
-        </>
-    )
+export function ItemsList({ data }) {
+  return (
+    <>
+      <div>
+      { data.map((m,idx) =>
+        (<><div key={idx}>{prettyjson(m)}</div><br /></>)
+      )}
+      </div>
+    </>
+  )
 }

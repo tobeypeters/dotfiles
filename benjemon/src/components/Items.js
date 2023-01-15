@@ -14,21 +14,21 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  Moves.js
+/*  Itemss.js
     Description:
-        Display the moves.
+        Display the items.
 */
 import { useQueryClient } from "react-query";
 
-import { CacheExtract, GenericList, MoveeList, Spinner } from '.';
+import { CacheExtract, ItemsList, Spinner } from '.';
 
-export function Moves() {
-    const moves = CacheExtract(useQueryClient(),undefined,'moveDetail');
+export function Items() {
+    const items = CacheExtract(useQueryClient(),undefined,'itemDetail');
 
     return (
         <>
         <div>
-            { moves.length ? <GenericList data={ moves } /> : <Spinner /> }
+            { items.length ? <ItemsList data={ items } /> : <Spinner /> }
         </div>
         <br /><br />
         </>
