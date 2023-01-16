@@ -36,10 +36,10 @@
           https://www.tiktok.com/@thesnikle/video/7036799720718650670?is_from_webapp=1&sender_device=pc&web_id=7164190503155566126
 */
 import { Endpoints } from './components';
-import { Footer, Logo, Page404 } from "./components";
 import { Outlet, useRoutes } from 'react-router-dom';
 
-import { Characters, Home, Items, Moves } from './components';
+import { Characters, Footer, Home, Items,
+         Logo, Moves, Navbar, Page404 } from './components';
 
 function App() {
   const routes = useRoutes([
@@ -57,6 +57,8 @@ function App() {
     <>
       <div className="App">
         <Logo />
+        <Navbar />
+        <br />
 
         { routes }
         <Outlet />

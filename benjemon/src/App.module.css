@@ -18,22 +18,14 @@
     Description:
         App.js - css
 */
-
-a {
-    color: white;
-}
-a:active {
-    color: greenyellow;
-}
-a:hover {
-    color: pink;
+* {
+    font-size: 16px;
 }
 .charContainer {
     display: flex;
 	flex-wrap: wrap;
 	align-items: space-between;
 	justify-content: center;
-	/* max-width: 1280px; */
     margin: 0 auto;
 }
 
@@ -51,13 +43,11 @@ a:hover {
     border: 1px solid rgba(255, 213, 219, 0.3);
     border-radius: 12px;
 }
-
 .glasscard:hover {
     cursor: pointer;
     animation: bounce 0.5s linear;
 	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.15);
 }
-
 .glasscardDetail {
     padding: 200px;
 }
@@ -103,7 +93,7 @@ a:hover {
     }
 }
 
-.legal, .crumb hr {
+.legal {
     text-align: justify;
     color: #faebd7aa;
 }
@@ -114,17 +104,41 @@ a:hover {
     color: white;
 }
 
-.footer {
+.footer{
     background-color: orangered;
     color: white;
     padding: 8px;
 }
 
-.footer a {
+.footer a, .navbar a {
     color: lightsalmon;
 }
-.footer a:hover {
+.footer a:hover, .navbar a:hover {
     color: black;
+}
+
+.navbar, .navbutton {
+    border: solid 1px black;
+    border-radius: 4px;
+}
+.navbar {
+    height: 28px;
+    background-color: orangered;
+    border-color: lightsalmon #c36b49 #c36b49 lightsalmon;
+}
+.navbutton {
+    width: 16px;
+    height: 16px;
+    display:inline-block;
+    border-color: lightsalmon lightsalmon lightsalmon lightsalmon;
+    /* border-color: lightsalmon #c36b49 #c36b49 lightsalmon; */
+    /* border-color: #c36b49 lightsalmon lightsalmon #c36b49; */
+    margin: 5px 0px 0px 5px;
+}
+.navlinks {
+    display: inline;
+    position: absolute;
+    margin: 5px 0px 0px 4px;
 }
 
 .horzAlign {
@@ -142,13 +156,4 @@ a:hover {
 
 .logo {
     text-align: center;
-}
-
-.crumb hr {
-    border-style: solid;
-}
-
-.news {
-    width: 100%;
-    height: 100%;
 }
