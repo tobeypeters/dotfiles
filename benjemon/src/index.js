@@ -33,7 +33,13 @@ import App from './App';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0
+    }
+  }
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

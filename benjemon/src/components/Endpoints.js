@@ -18,15 +18,13 @@
     Description:
         Houses all the data endpoints.
 */
-
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
 import { grabData } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
- //Global for now. If no one else needs it, move it into the move function.
 const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
 
 const buildQueries = (iterator,queryFn,enable,type) => {
@@ -38,28 +36,47 @@ const buildQueries = (iterator,queryFn,enable,type) => {
         queryFn: queryFn,
         enabled: enable }));
 }
+const groupFlavorText = (arr) => {
+    const results = [];
+
+    arr.forEach(f => {
+        const res = results.find(resultValue => resultValue.text === f.text);
+
+        if (!res) {
+          results.push(f);
+        } else {
+          res.version.push(...f.version);
+        }
+    })
+
+    return results;
+}
+
+const ran = (str) => str.replaceAll('\n',' ');
 
 //#region Endpoints
 export function Endpoints(limit,offset=0) {
+    console.log('Endpoints');
+
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
         const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
         return res.results;
     }
 
-    const groupElements = (arr) => {
-        const textToObject = new Map();
-        for (const elem of arr) {
-            let object = textToObject.get(elem.text);
-            if (object === undefined) {
-                object = {
-                    version: [],
-                    text: elem.text,
-                };
-                textToObject.set(elem.text, object);
+    const groupFlavorText = (arr) => {
+        const results = [];
+
+        arr.forEach(f => {
+            const res = results.find(resultValue => resultValue.text === f.text);
+
+            if (!res) {
+              results.push(f);
+            } else {
+              res.version.push(...f.version);
             }
-            object.version.push(...elem.version);
-        }
-        return Array.from(textToObject.values());
+        })
+
+        return results;
     }
 
     const ran = (str) => str.replaceAll('\n',' ');
@@ -130,10 +147,10 @@ export function Endpoints(limit,offset=0) {
 
     const moves_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}move/${id}`);
-        const flavor_entries = res.flavor_text_entries
+        const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({ version: [m.version_group.name],
-                            text: ran(m.flavor_text)}));
+                        text: ran(m.flavor_text)})));
 
         return ({
             id: res.id,
@@ -148,7 +165,7 @@ export function Endpoints(limit,offset=0) {
 
     const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}item/${id}`);
-        const flavor_entries = groupElements(res.flavor_text_entries
+        const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({text: ran(m.text),
                  version: [m.version_group.name]})));
@@ -227,8 +244,15 @@ export function Endpoints(limit,offset=0) {
     loadCharsAllowed && char_finalResults.every(e =>
         e.status === 'success') && Setchardata(false);
 
+        if (char_data) {
+            // console.log('char_data');
+        }
+
     loadMovesAllowed && moves_finalResults.every(e =>
         e.status === 'success') && Setmovedata(false);
+        if (moves_data) {
+            // console.log('moves_data');
+        }
 
     loadItemsAllowed && items_finalResults.every(e =>
         e.status === 'success') && Setitemdata(false);
@@ -252,3 +276,66 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
     return res.every(e => e !== undefined) ? res : [];
 }
 //#endregion CacheExtract
+
+
+export function useItems(limit,offset=0) {
+    console.log('useItems');
+
+    const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
+        const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
+        return res.results;
+    }
+
+    const [ itemdata, Setitemdata ] = useState(true);
+
+    let loadItemsAllowed = itemdata;
+
+    const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
+        const res = await grabData(`${baseURL}item/${id}`);
+        const flavor_entries = groupFlavorText(res.flavor_text_entries
+        .filter(f => f.language.name === 'en')
+        .map(m => ({text: ran(m.text),
+                 version: [m.version_group.name]})));
+
+        const effect_entries = res.effect_entries
+        .filter(f => f.language.name === 'en')
+        .map(m => ({ effect: ran(m.effect),
+               short_effect: ran(m.short_effect)
+        }));
+
+        return ({
+            name: res.name,
+            attributes: res.attributes.map(m => m.name),
+            category: res.category.name,
+            cost: res.cost,
+            effect_entries,
+            flavor_entries: flavor_entries,
+            fling_effect: res.fling_effect,
+            fling_power: res.fling_power,
+            sprites: res.sprites,
+        })
+    }
+
+    let { data: items_data, IsError: IsItemsError,
+          error: items_error, isSuccess: isItemsSuccess
+        } = useQuery({
+        queryKey: [{queryType: 'itemsList', limit, url_part: 'item' }],
+        queryFn: listQueryFn,
+    }, { enabled: loadItemsAllowed });
+
+    IsItemsError && console.log(`Items Error: ${items_error.message}`);
+
+    loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
+    const items_listDetailQueries = buildQueries(items_data ?
+        items_data.filter(f => extractID(f.url) < 10000) : [],
+        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
+
+    let items_finalResults = useQueries(items_listDetailQueries);
+
+    loadItemsAllowed && items_finalResults.every(e =>
+        e.status === 'success') && Setitemdata(false);
+
+    if (itemdata) {
+        console.log('items_finalResults', items_finalResults);
+    }
+}

@@ -2,8 +2,9 @@ import { NavLink } from "react-router-dom";
 
 import styles from "../App.module.css";
 
-export function Navbar() {
+export function Navbar(props) {
   const sep = ' > ';
+
   return (
     <>
       <div className={styles.navbar}>

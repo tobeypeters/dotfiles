@@ -66,7 +66,6 @@
     perspective: 1000px;
 
 }
-
 .glasscardimage img {
     width: 100%;
     height: 100%;
@@ -93,67 +92,38 @@
     }
 }
 
-.legal {
-    text-align: justify;
-    color: #faebd7aa;
-}
-.legal a {
-    color: currentColor;
-}
-.legal a:hover {
-    color: white;
-}
-
-.footer{
-    background-color: orangered;
-    color: white;
-    padding: 8px;
-}
-
-.footer a, .navbar a {
-    color: lightsalmon;
-}
-.footer a:hover, .navbar a:hover {
-    color: black;
-}
-
-.navbar, .navbutton {
-    border: solid 1px black;
-    border-radius: 4px;
-}
-.navbar {
-    height: 28px;
-    background-color: orangered;
-    border-color: lightsalmon #c36b49 #c36b49 lightsalmon;
-}
-.navbutton {
-    width: 16px;
-    height: 16px;
-    display:inline-block;
-    border-color: lightsalmon lightsalmon lightsalmon lightsalmon;
-    /* border-color: lightsalmon #c36b49 #c36b49 lightsalmon; */
-    /* border-color: #c36b49 lightsalmon lightsalmon #c36b49; */
-    margin: 5px 0px 0px 5px;
-}
-.navlinks {
-    display: inline;
-    position: absolute;
-    margin: 5px 0px 0px 4px;
-}
+.backtop { text-decoration: none; }
+.footer { padding: 8px; }
+.footer a, .navbar a { color: lightsalmon; }
+.footer a:hover, .navbar a:hover { color: black; }
+.legal { text-align: justify; }
+.logo { text-align: center; }
+.navbar { height: 28px; }
 
 .horzAlign {
     float: right;
     padding-right: 4px;
 }
 
-.linkNoDecorations {
-    text-decoration: none;
+.navbar, .navbutton, .footer {
+    border: solid 1px black;
+    border-radius: 4px;
 }
-
-.verttext {
-    writing-mode: vertical-lr;
+.navbar, .footer {
+    background-color: orangered;
+    border-color: lightsalmon #c36b49 #c36b49 lightsalmon;
+    color: white;
 }
-
-.logo {
-    text-align: center;
+.navbutton { background-color: #00000077; }
+.navbutton {
+    width: 8px;
+    height: 8px;
+    display:inline-block;
+    border-color: lightsalmon lightsalmon lightsalmon lightsalmon;
+    margin: 5px 0px 0px 5px;
+}
+.navlinks {
+    display: inline;
+    position: absolute;
+    margin: 5px 0px 0px 4px;
 }

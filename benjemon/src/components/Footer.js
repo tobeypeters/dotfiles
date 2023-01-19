@@ -43,7 +43,7 @@ export function Footer() {
                 <br />
                 <NavLink to='/copyright'>Copyright</NavLink> &copy; 2023. <a href='https://en.wikipedia.org/wiki/All_rights_reserved' target='_blank' rel='noreferrer'>All rights reserved</a> &reg;
                 <div className={styles.horzAlign}>
-                    <NavLink className={styles.linkNoDecorations} to="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Back to top</NavLink>
+                    <NavLink className={styles.backtop} to="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑ Back to top</NavLink>
                 </div>
             </div>
         </>
