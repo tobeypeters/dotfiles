@@ -19,4 +19,4 @@
         utility index file
 */
 
-export { arrClear, clearCache, grabData, prettyjson } from './Data';
+export { allornothing, arrClear, clearCache, grabData, prettyjson } from './Data';

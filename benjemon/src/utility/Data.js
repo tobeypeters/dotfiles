@@ -22,9 +22,16 @@ import { QueryCache } from "react-query";
 
 import JsonPretty from 'react-json-pretty';
 
+export const allornothing = (arr, condition) => {
+  console.log('allornothing', arr);
+  if (Array.isArray(arr)) {
+    return arr.length && arr.every(condition);
+  }
+}
+
 export const arrClear = (arr) => {
   if (Array.isArray(arr)) {
-      arr.splice(0, arr.length);
+    arr.splice(0, arr.length);
   }
 }
 

@@ -18,10 +18,10 @@
     Description:
         Houses all the data endpoints.
 */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueries } from "react-query";
 
-import { grabData } from "../utility";
+import { allornothing, grabData } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -277,9 +277,41 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 }
 //#endregion CacheExtract
 
+const buildQueries2 = (iterator,queryFn,enable,type,hm,pos) => {
+    let buffer = [];
+    // console.log('build',enable,hm,pos);
+    let temp = iterator.map((m, idx) => {
+
+        const mid = extractID(m.url);
+        const en = enable ? mid >= pos && mid
+                                 <= hm ? true : false  : enable;
+        buffer.push(en);
+
+        return {
+            queryKey: [{
+            queryType: type,
+            id: mid,
+            // id: extractID(m.url)
+            }],
+            queryFn: queryFn,
+            enabled: en
+        }
+
+        // enabled: enable }
+    });
+
+    console.log('buffer', buffer);
+
+    return temp;
+}
 
 export function useItems(limit,offset=0) {
-    console.log('useItems');
+    // console.log('useItems');
+
+    const gc = 10; //How many to grab at a time.
+    const hm = useRef(gc); //How many queries may be enabled at a time.
+    const left = useRef(-1); //How many queries are left to execute.
+    const pos = useRef(0); //Starting position to start enabling queries.
 
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
         const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
@@ -323,19 +355,48 @@ export function useItems(limit,offset=0) {
         queryFn: listQueryFn,
     }, { enabled: loadItemsAllowed });
 
+    useEffect(() => {
+        if (items_data) {
+            left.current = items_data.length;
+            console.log('effect');
+        }
+        // console.log('left', left.current);
+    },[items_data]);
+
     IsItemsError && console.log(`Items Error: ${items_error.message}`);
 
     loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
-    const items_listDetailQueries = buildQueries(items_data ?
+    const items_listDetailQueries = buildQueries2(items_data ?
         items_data.filter(f => extractID(f.url) < 10000) : [],
-        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
+        items_detailQueryFn, loadItemsAllowed, 'itemDetail',hm.current,pos.current);
 
     let items_finalResults = useQueries(items_listDetailQueries);
 
-    loadItemsAllowed && items_finalResults.every(e =>
-        e.status === 'success') && Setitemdata(false);
+    // if (items_finalResults.every(e =>
+    //     e.status === 'success')) {
 
-    if (itemdata) {
-        console.log('items_finalResults', items_finalResults);
+    if (left.current > -1 && allornothing(function(e) {
+        return e.status === 'success' })) {
+            console.log('gabs');
+        left.current = Math.max(left.current -= hm.current,0);
+
+        if (left.current > -1) {
+            pos.current += hm.current;
+            hm.current = left.current > gc.current ? gc.current : left.current;
+            console.log('gabbers',pos,hm);
+        }
+        else {
+            if (itemdata) Setitemdata(false);
+            console.log('here');
+        }
     }
+
+    // console.log('items_data',items_data);
+
+    // loadItemsAllowed && items_finalResults.every(e =>
+    //     e.status === 'success') && Setitemdata(false);
+
+    // if (itemdata) {
+    //     console.log('items_finalResults', items_finalResults);
+    // }
 }
