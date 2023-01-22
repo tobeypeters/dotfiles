@@ -182,6 +182,7 @@ for_window [class="ckb-next"] floating enable
 for_window [class="Code"] floating enable
 for_window [class="Cubic_wizard.py"] floating enable
 for_window [class="Cycle_switcher"] floating enable
+for_window [class="discord"] floating enable
 for_window [class="discover"] floating enable
 for_window [class="feh"] floating enable
 for_window [class="Feren-store.py"] floating enable
