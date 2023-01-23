@@ -53,8 +53,8 @@ function App() {
     // { path: "*", element: <Page404 /> },
   ])
 
-  // Endpoints(500,0); //Think, I know how to make this run only once.
-  useItems(100,0);
+  // Endpoints(5000,0); //Think, I know how to make this run only once.
+  useItems(5000,0);
 
   // console.log('match', routes.props.match.pathname);
 

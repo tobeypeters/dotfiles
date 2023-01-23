@@ -25,6 +25,8 @@ import { CacheExtract, ItemsList, Spinner } from '.';
 export function Items() {
     const items = CacheExtract(useQueryClient(),undefined,'itemDetail');
 
+    console.log('items',items.length);
+
     return (
         <>
         <div>

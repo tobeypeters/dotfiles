@@ -18,10 +18,10 @@
     Description:
         Houses all the data endpoints.
 */
-import { useEffect, useRef, useState } from "react";
-import { useQuery, useQueries } from "react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery, useQueries, useQueryClient } from "react-query";
 
-import { allornothing, grabData } from "../utility";
+import { grabData } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -165,6 +165,7 @@ export function Endpoints(limit,offset=0) {
 
     const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}item/${id}`);
+
         const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({text: ran(m.text),
@@ -278,14 +279,21 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 //#endregion CacheExtract
 
 const buildQueries2 = (iterator,queryFn,enable,type,hm,pos) => {
+    if (!iterator.length) return [];
+
+    console.log('------------------------------------------');
+    console.log('one', iterator);
+    console.log(`hm : ${hm}  pos : ${pos}`);
+
     let buffer = [];
-    // console.log('build',enable,hm,pos);
+
     let temp = iterator.map((m, idx) => {
 
         const mid = extractID(m.url);
         const en = enable ? mid >= pos && mid
                                  <= hm ? true : false  : enable;
         buffer.push(en);
+        // console.log('build',enable,hm,pos,buffer);
 
         return {
             queryKey: [{
@@ -294,24 +302,22 @@ const buildQueries2 = (iterator,queryFn,enable,type,hm,pos) => {
             // id: extractID(m.url)
             }],
             queryFn: queryFn,
-            enabled: en
+            enabled: en,
         }
 
         // enabled: enable }
     });
 
     console.log('buffer', buffer);
+    console.log('------------------------------------------\n');
 
     return temp;
 }
 
-export function useItems(limit,offset=0) {
+export async function useItems(limit,offset=0) {
     // console.log('useItems');
 
-    const gc = 10; //How many to grab at a time.
-    const hm = useRef(gc); //How many queries may be enabled at a time.
-    const left = useRef(-1); //How many queries are left to execute.
-    const pos = useRef(0); //Starting position to start enabling queries.
+    const uqc = useQueryClient();
 
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
         const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
@@ -355,48 +361,28 @@ export function useItems(limit,offset=0) {
         queryFn: listQueryFn,
     }, { enabled: loadItemsAllowed });
 
-    useEffect(() => {
-        if (items_data) {
-            left.current = items_data.length;
-            console.log('effect');
-        }
-        // console.log('left', left.current);
-    },[items_data]);
-
     IsItemsError && console.log(`Items Error: ${items_error.message}`);
 
     loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
-    const items_listDetailQueries = buildQueries2(items_data ?
+    const items_listDetailQueries = buildQueries(items_data ?
         items_data.filter(f => extractID(f.url) < 10000) : [],
-        items_detailQueryFn, loadItemsAllowed, 'itemDetail',hm.current,pos.current);
+        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
-    let items_finalResults = useQueries(items_listDetailQueries);
+    // let items_finalResults = useQueries(items_listDetailQueries);
 
-    // if (items_finalResults.every(e =>
-    //     e.status === 'success')) {
-
-    if (left.current > -1 && allornothing(function(e) {
-        return e.status === 'success' })) {
-            console.log('gabs');
-        left.current = Math.max(left.current -= hm.current,0);
-
-        if (left.current > -1) {
-            pos.current += hm.current;
-            hm.current = left.current > gc.current ? gc.current : left.current;
-            console.log('gabbers',pos,hm);
+    if (loadItemsAllowed && itemdata) {
+        console.log('here 1');
+        const gc = Math.max(items_listDetailQueries.length / 5, 1);
+        for (let i = 0; i < items_listDetailQueries.length - 1;i += gc - 1)
+        {
+            const currentBatch = items_listDetailQueries.slice(i, i + gc);
+            const results = await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
         }
-        else {
-            if (itemdata) Setitemdata(false);
-            console.log('here');
-        }
+
+        Setitemdata(false);
+        console.log('here 2');
     }
-
-    // console.log('items_data',items_data);
 
     // loadItemsAllowed && items_finalResults.every(e =>
     //     e.status === 'success') && Setitemdata(false);
-
-    // if (itemdata) {
-    //     console.log('items_finalResults', items_finalResults);
-    // }
 }

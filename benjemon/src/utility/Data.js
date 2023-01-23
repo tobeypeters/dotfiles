@@ -24,7 +24,7 @@ import JsonPretty from 'react-json-pretty';
 
 export const allornothing = (arr, condition) => {
   console.log('allornothing', arr);
-  if (Array.isArray(arr)) {
+  if (Array.isArray(arr) && !!arr) {
     return arr.length && arr.every(condition);
   }
 }
