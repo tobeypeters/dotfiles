@@ -214,6 +214,7 @@ for_window [class="Nautilus"] floating enable
 for_window [class="Nemo"] floating enable
 for_window [class="Nm-connection-editor"] floating enable
 for_window [class="Nyxt"] floating enable
+for_window [class="Opera"] floating enable
 for_window [class="Org.gnome.Software"] floating enable
 for_window [class="Pavucontrol"] floating enable
 for_window [class="Snap-store"] floating enable
