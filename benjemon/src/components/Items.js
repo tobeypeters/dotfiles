@@ -27,8 +27,17 @@ export function Items() {
 
     console.log('items',items.length);
 
+    const queryClient = useQueryClient();
+
+    const handleDisableQueries = () => {
+      queryClient.setQueriesConfig({ enabled: false })
+    };
+
     return (
         <>
+        <button onClick={handleDisableQueries}>
+            Disable Queries
+        </button>
         <div>
             { items.length ? <ItemsList data={ items } /> : <Spinner /> }
         </div>

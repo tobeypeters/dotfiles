@@ -18,7 +18,7 @@
     Description:
         Houses all the data endpoints.
 */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueries, useQueryClient } from "react-query";
 
 import { grabData } from "../utility";
@@ -27,6 +27,19 @@ const baseURL = 'https://pokeapi.co/api/v2/';
 
 const extractID = inStr => inStr.replace(baseURL,'').match(/\d+/g)[0];
 
+//If obj is null return a str specifying that, else return the orig obj.
+const nullObj = (obj) => obj ? obj : '<not specified>';
+
+const nofluff = (str) => {
+    //Let's make the data prettier
+    str = str.replace(new RegExp('pokémon', 'i'),'Pokémon');
+    str = str.replace(new RegExp('poké ', 'i'),'Poké ');
+    str = str.replace(new RegExp('ball', 'i'),'ball');
+    str = str.replaceAll('\n',' ');
+    str = str.replace(/\s+/g,' ');
+    return str;
+}
+
 const buildQueries = (iterator,queryFn,enable,type) => {
     return iterator.map(m => ({
         queryKey: [{
@@ -34,13 +47,17 @@ const buildQueries = (iterator,queryFn,enable,type) => {
         id: extractID(m.url)
         }],
         queryFn: queryFn,
-        enabled: enable }));
+        // enabled: enable,
+    }));
 }
+
 const groupFlavorText = (arr) => {
     const results = [];
 
     arr.forEach(f => {
         const res = results.find(resultValue => resultValue.text === f.text);
+
+        f.text = nofluff(f.text);
 
         if (!res) {
           results.push(f);
@@ -51,8 +68,6 @@ const groupFlavorText = (arr) => {
 
     return results;
 }
-
-const ran = (str) => str.replaceAll('\n',' ');
 
 //#region Endpoints
 export function Endpoints(limit,offset=0) {
@@ -70,16 +85,14 @@ export function Endpoints(limit,offset=0) {
             const res = results.find(resultValue => resultValue.text === f.text);
 
             if (!res) {
-              results.push(f);
+                results.push(f);
             } else {
-              res.version.push(...f.version);
+                res.version.push(...f.version);
             }
         })
 
         return results;
     }
-
-    const ran = (str) => str.replaceAll('\n',' ');
 
     const char_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}pokemon/${id}`);
@@ -150,7 +163,7 @@ export function Endpoints(limit,offset=0) {
         const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({ version: [m.version_group.name],
-                        text: ran(m.flavor_text)})));
+                        text: nofluff(m.flavor_text)})));
 
         return ({
             id: res.id,
@@ -168,13 +181,13 @@ export function Endpoints(limit,offset=0) {
 
         const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
-        .map(m => ({text: ran(m.text),
+        .map(m => ({text: nofluff(m.text),
                  version: [m.version_group.name]})));
 
         const effect_entries = res.effect_entries
         .filter(f => f.language.name === 'en')
-        .map(m => ({ effect: ran(m.effect),
-               short_effect: ran(m.short_effect)
+        .map(m => ({ effect: nofluff(m.effect),
+               short_effect: nofluff(m.short_effect)
         }));
 
         return ({
@@ -239,8 +252,8 @@ export function Endpoints(limit,offset=0) {
         items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
     let char_finalResults = useQueries(char_listDetailQueries);
-    let moves_finalResults = useQueries(moves_listDetailQueries);
-    let items_finalResults = useQueries(items_listDetailQueries);
+    // let moves_finalResults = useQueries(moves_listDetailQueries);
+    // let items_finalResults = useQueries(items_listDetailQueries);
 
     loadCharsAllowed && char_finalResults.every(e =>
         e.status === 'success') && Setchardata(false);
@@ -249,14 +262,14 @@ export function Endpoints(limit,offset=0) {
             // console.log('char_data');
         }
 
-    loadMovesAllowed && moves_finalResults.every(e =>
-        e.status === 'success') && Setmovedata(false);
-        if (moves_data) {
-            // console.log('moves_data');
-        }
+    // loadMovesAllowed && moves_finalResults.every(e =>
+    //     e.status === 'success') && Setmovedata(false);
+    //     if (moves_data) {
+    //         // console.log('moves_data');
+    //     }
 
-    loadItemsAllowed && items_finalResults.every(e =>
-        e.status === 'success') && Setitemdata(false);
+    // loadItemsAllowed && items_finalResults.every(e =>
+    //     e.status === 'success') && Setitemdata(false);
 }
 //#endregion Endpoints
 
@@ -278,45 +291,7 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 }
 //#endregion CacheExtract
 
-const buildQueries2 = (iterator,queryFn,enable,type,hm,pos) => {
-    if (!iterator.length) return [];
-
-    console.log('------------------------------------------');
-    console.log('one', iterator);
-    console.log(`hm : ${hm}  pos : ${pos}`);
-
-    let buffer = [];
-
-    let temp = iterator.map((m, idx) => {
-
-        const mid = extractID(m.url);
-        const en = enable ? mid >= pos && mid
-                                 <= hm ? true : false  : enable;
-        buffer.push(en);
-        // console.log('build',enable,hm,pos,buffer);
-
-        return {
-            queryKey: [{
-            queryType: type,
-            id: mid,
-            // id: extractID(m.url)
-            }],
-            queryFn: queryFn,
-            enabled: en,
-        }
-
-        // enabled: enable }
-    });
-
-    console.log('buffer', buffer);
-    console.log('------------------------------------------\n');
-
-    return temp;
-}
-
 export async function useItems(limit,offset=0) {
-    // console.log('useItems');
-
     const uqc = useQueryClient();
 
     const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
@@ -332,14 +307,13 @@ export async function useItems(limit,offset=0) {
         const res = await grabData(`${baseURL}item/${id}`);
         const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
-        .map(m => ({text: ran(m.text),
+        .map(m => ({text: nofluff(m.text),
                  version: [m.version_group.name]})));
 
         const effect_entries = res.effect_entries
         .filter(f => f.language.name === 'en')
-        .map(m => ({ effect: ran(m.effect),
-               short_effect: ran(m.short_effect)
-        }));
+        .map(m => ({ effect: nofluff(m.effect),
+               short_effect: nofluff(m.short_effect) }));
 
         return ({
             name: res.name,
@@ -348,8 +322,8 @@ export async function useItems(limit,offset=0) {
             cost: res.cost,
             effect_entries,
             flavor_entries: flavor_entries,
-            fling_effect: res.fling_effect,
-            fling_power: res.fling_power,
+            fling_effect: nullObj(res.fling_effect),
+            fling_power: nullObj(res.fling_power),
             sprites: res.sprites,
         })
     }
@@ -368,21 +342,14 @@ export async function useItems(limit,offset=0) {
         items_data.filter(f => extractID(f.url) < 10000) : [],
         items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
-    // let items_finalResults = useQueries(items_listDetailQueries);
-
     if (loadItemsAllowed && itemdata) {
-        console.log('here 1');
         const gc = Math.max(items_listDetailQueries.length / 5, 1);
         for (let i = 0; i < items_listDetailQueries.length - 1;i += gc - 1)
         {
             const currentBatch = items_listDetailQueries.slice(i, i + gc);
-            const results = await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
+            await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
         }
 
         Setitemdata(false);
-        console.log('here 2');
-    }
-
-    // loadItemsAllowed && items_finalResults.every(e =>
-    //     e.status === 'success') && Setitemdata(false);
+   }
 }

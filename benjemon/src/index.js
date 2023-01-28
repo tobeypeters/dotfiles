@@ -36,9 +36,13 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      cacheTime: Infinity,
+      staleTime: Infinity,
       retry: 0
-    }
-  }
+    },
+  },
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

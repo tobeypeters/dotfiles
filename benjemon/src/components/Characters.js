@@ -25,8 +25,17 @@ import { CacheExtract, Charlist, Spinner } from '.';
 export function Characters() {
     const chars = CacheExtract(useQueryClient(),undefined,'charDetail');
 
+    const queryClient = useQueryClient();
+
+    const handleDisableQueries = () => {
+      queryClient.setQueriesConfig({ enabled: false })
+    };
+
     return (
         <>
+        <button onClick={handleDisableQueries}>
+            Disable Queries
+        </button>
         <div>
         { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
         </div>
