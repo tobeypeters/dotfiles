@@ -20,7 +20,7 @@
 */
 import { useQueryClient } from "react-query";
 
-import { CacheExtract, GenericList, MoveeList, Spinner } from '.';
+import { CacheExtract, GenericList, MoveList, Spinner } from '.';
 
 export function Moves() {
     const moves = CacheExtract(useQueryClient(),undefined,'moveDetail');

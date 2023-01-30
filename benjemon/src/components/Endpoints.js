@@ -19,7 +19,7 @@
         Houses all the data endpoints.
 */
 import { useState } from "react";
-import { useQuery, useQueries, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import { grabData } from "../utility";
 
@@ -40,58 +40,59 @@ const nofluff = (str) => {
     return str;
 }
 
-const buildQueries = (iterator,queryFn,enable,type) => {
-    return iterator.map(m => ({
-        queryKey: [{
-        queryType: type,
-        id: extractID(m.url)
-        }],
-        queryFn: queryFn,
-        // enabled: enable,
-    }));
+//#region CacheExtract
+export function CacheExtract(qClient, filter='queryType', forWhat='') {
+    //Sample Query Key : [{"id":"2","queryType":"charDetail"}]
+    //CacheExtract(useQueryClient(),undefined,'charDetail');
+
+    const queryKeys = qClient.getQueryCache()
+    .getAll().map(m => m.queryKey);
+
+    const filterKeys = (type) => queryKeys.map(m => m[0])
+            .filter(f => f[filter] === type);
+    const filterData = (keys) => keys.map(m => qClient
+                            .getQueriesData([m])[0][1]);
+    const res = filterData(filterKeys(forWhat));
+
+    return res.every(e => e !== undefined) ? res : [];
 }
-
-const groupFlavorText = (arr) => {
-    const results = [];
-
-    arr.forEach(f => {
-        const res = results.find(resultValue => resultValue.text === f.text);
-
-        f.text = nofluff(f.text);
-
-        if (!res) {
-          results.push(f);
-        } else {
-          res.version.push(...f.version);
-        }
-    })
-
-    return results;
-}
+//#endregion CacheExtract
 
 //#region Endpoints
-export function Endpoints(limit,offset=0) {
-    console.log('Endpoints');
-
-    const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
-        const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
-        return res.results;
-    }
-
+export async function Endpoints(limit,offset=0) {
     const groupFlavorText = (arr) => {
         const results = [];
 
         arr.forEach(f => {
             const res = results.find(resultValue => resultValue.text === f.text);
 
+            f.text = nofluff(f.text);
+
             if (!res) {
-                results.push(f);
+              results.push(f);
             } else {
-                res.version.push(...f.version);
+              res.version.push(...f.version);
             }
         })
 
         return results;
+    }
+
+    const buildQueries = (iterator,queryFn,enable,type) => {
+        return iterator.map(m => ({
+            queryKey: [{
+            queryType: type,
+            id: extractID(m.url)
+            }],
+            queryFn: queryFn,
+        }));
+    }
+
+    const uqc = useQueryClient();
+
+    const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
+        const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
+        return res.results;
     }
 
     const char_detailQueryFn = async ({ queryKey: [{ id }] }) => {
@@ -178,7 +179,6 @@ export function Endpoints(limit,offset=0) {
 
     const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}item/${id}`);
-
         const flavor_entries = groupFlavorText(res.flavor_text_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({text: nofluff(m.text),
@@ -187,8 +187,7 @@ export function Endpoints(limit,offset=0) {
         const effect_entries = res.effect_entries
         .filter(f => f.language.name === 'en')
         .map(m => ({ effect: nofluff(m.effect),
-               short_effect: nofluff(m.short_effect)
-        }));
+               short_effect: nofluff(m.short_effect) }));
 
         return ({
             name: res.name,
@@ -197,8 +196,8 @@ export function Endpoints(limit,offset=0) {
             cost: res.cost,
             effect_entries,
             flavor_entries: flavor_entries,
-            fling_effect: res.fling_effect,
-            fling_power: res.fling_power,
+            fling_effect: nullObj(res.fling_effect),
+            fling_power: nullObj(res.fling_power),
             sprites: res.sprites,
         })
     }
@@ -251,96 +250,27 @@ export function Endpoints(limit,offset=0) {
         items_data.filter(f => extractID(f.url) < 10000) : [],
         items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
-    let char_finalResults = useQueries(char_listDetailQueries);
-    // let moves_finalResults = useQueries(moves_listDetailQueries);
-    // let items_finalResults = useQueries(items_listDetailQueries);
-
-    loadCharsAllowed && char_finalResults.every(e =>
-        e.status === 'success') && Setchardata(false);
-
-        if (char_data) {
-            // console.log('char_data');
+    if (loadCharsAllowed && chardata) {
+        const gc = Math.max(char_listDetailQueries.length / 5, 1);
+        for (let i = 0; i < char_listDetailQueries.length - 1;i += gc - 1)
+        {
+            const currentBatch = char_listDetailQueries.slice(i, i + gc);
+            await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
         }
 
-    // loadMovesAllowed && moves_finalResults.every(e =>
-    //     e.status === 'success') && Setmovedata(false);
-    //     if (moves_data) {
-    //         // console.log('moves_data');
-    //     }
-
-    // loadItemsAllowed && items_finalResults.every(e =>
-    //     e.status === 'success') && Setitemdata(false);
-}
-//#endregion Endpoints
-
-//#region CacheExtract
-export function CacheExtract(qClient, filter='queryType', forWhat='') {
-    //Sample Query Key : [{"id":"2","queryType":"charDetail"}]
-    //CacheExtract(useQueryClient(),undefined,'charDetail');
-
-    const queryKeys = qClient.getQueryCache()
-    .getAll().map(m => m.queryKey);
-
-    const filterKeys = (type) => queryKeys.map(m => m[0])
-            .filter(f => f[filter] === type);
-    const filterData = (keys) => keys.map(m => qClient
-                            .getQueriesData([m])[0][1]);
-    const res = filterData(filterKeys(forWhat));
-
-    return res.every(e => e !== undefined) ? res : [];
-}
-//#endregion CacheExtract
-
-export async function useItems(limit,offset=0) {
-    const uqc = useQueryClient();
-
-    const listQueryFn = async ({ queryKey: [ {limit, url_part} ] }) => {
-        const res = await grabData(`${baseURL}${url_part}?offset=${offset}&limit=${limit}`);
-        return res.results;
+        Setchardata(false);
     }
 
-    const [ itemdata, Setitemdata ] = useState(true);
+    if (loadMovesAllowed && movedata) {
+        const gc = Math.max(moves_listDetailQueries.length / 5, 1);
+        for (let i = 0; i < moves_listDetailQueries.length - 1;i += gc - 1)
+        {
+            const currentBatch = moves_listDetailQueries.slice(i, i + gc);
+            await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
+        }
 
-    let loadItemsAllowed = itemdata;
-
-    const items_detailQueryFn = async ({ queryKey: [{ id }] }) => {
-        const res = await grabData(`${baseURL}item/${id}`);
-        const flavor_entries = groupFlavorText(res.flavor_text_entries
-        .filter(f => f.language.name === 'en')
-        .map(m => ({text: nofluff(m.text),
-                 version: [m.version_group.name]})));
-
-        const effect_entries = res.effect_entries
-        .filter(f => f.language.name === 'en')
-        .map(m => ({ effect: nofluff(m.effect),
-               short_effect: nofluff(m.short_effect) }));
-
-        return ({
-            name: res.name,
-            attributes: res.attributes.map(m => m.name),
-            category: res.category.name,
-            cost: res.cost,
-            effect_entries,
-            flavor_entries: flavor_entries,
-            fling_effect: nullObj(res.fling_effect),
-            fling_power: nullObj(res.fling_power),
-            sprites: res.sprites,
-        })
+        Setmovedata(false);
     }
-
-    let { data: items_data, IsError: IsItemsError,
-          error: items_error, isSuccess: isItemsSuccess
-        } = useQuery({
-        queryKey: [{queryType: 'itemsList', limit, url_part: 'item' }],
-        queryFn: listQueryFn,
-    }, { enabled: loadItemsAllowed });
-
-    IsItemsError && console.log(`Items Error: ${items_error.message}`);
-
-    loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
-    const items_listDetailQueries = buildQueries(items_data ?
-        items_data.filter(f => extractID(f.url) < 10000) : [],
-        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
     if (loadItemsAllowed && itemdata) {
         const gc = Math.max(items_listDetailQueries.length / 5, 1);
@@ -351,5 +281,6 @@ export async function useItems(limit,offset=0) {
         }
 
         Setitemdata(false);
-   }
+    }
 }
+//#endregion Endpoints

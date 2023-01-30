@@ -39,5 +39,3 @@ export { Items } from './Items';
 
 export { MoveList } from './MoveList';
 export { Moves } from './Moves';
-
-export { useItems } from './Endpoints';

@@ -20,28 +20,17 @@
 */
 import { useQueryClient } from "react-query";
 
-import { CacheExtract, ItemsList, Spinner } from '.';
+import { CacheExtract, GenericList, ItemsList, Spinner } from '.';
 
 export function Items() {
     const items = CacheExtract(useQueryClient(),undefined,'itemDetail');
 
-    console.log('items',items.length);
-
-    const queryClient = useQueryClient();
-
-    const handleDisableQueries = () => {
-      queryClient.setQueriesConfig({ enabled: false })
-    };
-
     return (
         <>
-        <button onClick={handleDisableQueries}>
-            Disable Queries
-        </button>
-        <div>
-            { items.length ? <ItemsList data={ items } /> : <Spinner /> }
-        </div>
-        <br /><br />
+            <div>
+                { items.length ? <GenericList data={ items } /> : <Spinner /> }
+            </div>
+            <br /><br />
         </>
     )
 }
