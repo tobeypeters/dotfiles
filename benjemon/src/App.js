@@ -53,13 +53,13 @@ function App() {
 
    Endpoints(5000,0); //Think, I know how to make this run only once.
 
-  // console.log('match', routes.props.match.pathname);
+  console.log('match', routes.props.match.pathname);
 
   return (
     <>
       <div className="App">
         <Logo />
-        <Navbar />
+        <Navbar location={routes.props.match.pathname}/>
         <br />
 
         { routes }

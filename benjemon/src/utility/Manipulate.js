@@ -14,10 +14,13 @@
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*  index.js
+/*  Manipulate.js
     Description:
-        utility index file
+        Manipulation stuff
 */
-
-export { grabData, prettyjson } from './Data';
-export { titlecase } from './Manipulate';
+export const titlecase = (str) => (
+    str.toLowerCase().split(' ')
+    .map(function(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ')
+)
