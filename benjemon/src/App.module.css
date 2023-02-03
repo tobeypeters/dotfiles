@@ -94,7 +94,7 @@
 
 .backtop { text-decoration: none; }
 .footer { padding: 8px; }
-.footer a, .navbar a { color: lightsalmon; }
+.footer a, .navbar a, .navsep { color: lightsalmon; }
 .footer a:hover, .navbar a:hover { color: black; }
 .legal { text-align: justify; margin: 0px 20px 0px 20px; }
 .logo { text-align: center; }

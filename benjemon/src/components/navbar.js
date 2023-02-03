@@ -6,42 +6,34 @@ import styles from "../App.module.css";
 
 export function Navbar(props) {
   const displocation = (loc,disp) =>
-        props.location === loc ? '' : titlecase(disp.replace('/',''));
+    props.location === loc ? false : titlecase(disp.replace('/',''));
 
   const sep = ' > ';
 
   const urls = ['/home','/characters','/moves','/items'];
-        // <>
-        //   {prevdisp ? sep : ''}
-        //   {/* {displaystring && idx > 0 ? sep : ''} */}
-        //   <NavLink key={idx} to={m}>{displaystring}</NavLink>
-        //   {prevdisp = Boolean(displaystring) && idx < urls.length - 1}
 
   const buildbar = () => {
-    let prevdisp = false;
     let bar = urls.map((m, idx) => {
       let displaystring = displocation(m,m);
-      let last = idx === urls.length - 1;
+
+      /*This is a little janky, on how it works. We don't want to
+        display the page we're on or the extra seperator(s) hiding
+        an item creates.
+
+              loc: '/home'  menu:  Characters > Moves > Items
+        loc: '/characters'  menu:  Home > Moves > Items
+      */
+      let skip =
+        idx === 0 || (idx === 1 && props.location === '/home' )
+                  || !Boolean(displaystring);
 
       return (
         <>
-        {last ? ' gato ' : <>
-          {prevdisp ? sep : ''}
-          {/* {displaystring && idx > 0 ? sep : ''} */}
+          {skip ? '': <span className={styles.navsep}>{sep}</span>}
           <NavLink key={idx} to={m}>{displaystring}</NavLink>
-          {prevdisp = Boolean(displaystring) && idx < urls.length - 1}
-        </>
-      }
         </>
       )
     })
-
-    if (bar[bar.length - 1].props.children[0].includes(sep)) {
-      bar[bar.length - 1].props.children[0].replace(sep,'');
-      // bar[bar.length - 2].props.children[0].replace(sep,'');
-
-      console.log('gato',bar[bar.length - 1].props.children[0]);
-    }
 
     return bar;
   }
