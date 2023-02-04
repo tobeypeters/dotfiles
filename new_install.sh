@@ -140,6 +140,7 @@ sudo apt update
 sudo apt install -y i3
 
 sudo snap install auto-cpufreq
+sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 
 # In case, you want a ramdisk
 # Make sure /mnt/ram_disk exists first
