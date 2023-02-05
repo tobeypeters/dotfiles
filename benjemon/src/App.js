@@ -58,7 +58,7 @@ function App() {
   return (
     <>
       <div className="App">
-        <Logo />
+        {/* <Logo /> */}
         <Navbar location={routes.props.match.pathname}/>
         <br />
 

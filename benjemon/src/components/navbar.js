@@ -12,9 +12,11 @@ export function Navbar(props) {
 
   const urls = ['/home','/characters','/moves','/items'];
 
+  const active = titlecase(props.location.replace('/',''));
+
   const buildbar = () => {
     let bar = urls.map((m, idx) => {
-      let displaystring = displocation(m,m);
+      let displink = displocation(m,m);
 
       /*This is a little janky, on how it works. We don't want to
         display the page we're on or the extra seperator(s) hiding
@@ -24,13 +26,13 @@ export function Navbar(props) {
         loc: '/characters'  menu:  Home > Moves > Items
       */
       let skip =
-        idx === 0 || (idx === 1 && props.location === '/home' )
-                  || !Boolean(displaystring);
+        idx === 0 || (idx === 1 && props.location === urls[0] )
+                  || !Boolean(displink);
 
       return (
         <>
           {skip ? '': <span className={styles.navsep}>{sep}</span>}
-          <NavLink key={idx} to={m}>{displaystring}</NavLink>
+          <NavLink key={idx} to={m}>{displink}</NavLink>
         </>
       )
     })
@@ -44,6 +46,7 @@ export function Navbar(props) {
         <div className={styles.navbutton}></div>
           <div className={styles.navlinks}>
             {buildbar()}
+            <div className={styles.navactivetitle}>{active} - Benjémon</div>
           </div>
       </div>
     </>
