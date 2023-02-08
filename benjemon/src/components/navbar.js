@@ -1,10 +1,21 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
-import { titlecase } from "../utility";
+import { titlecase } from '../utility';
 
-import styles from "../App.module.css";
+import styles from '../App.module.css';
+
+import pball from '../assets/pball.png';
+
+import { useState } from 'react';
 
 export function Navbar(props) {
+  const [angle,setAngle] = useState(0);
+
+  const handleClick = () => {
+    setAngle(prevAngle => (prevAngle === 0 ? -90 : 0));
+//    setMenu((prevMenu) => (prevMenu + 90) % 360);
+  };
+
   const displocation = (loc,disp) =>
     props.location === loc ? false : titlecase(disp.replace('/',''));
 
@@ -12,7 +23,8 @@ export function Navbar(props) {
 
   const urls = ['/home','/characters','/moves','/items'];
 
-  const active = titlecase(props.location.replace('/',''));
+  const active = props.location === '/' ? 'Home' :
+                 titlecase(props.location.replace('/',''));
 
   const buildbar = () => {
     let bar = urls.map((m, idx) => {
@@ -43,12 +55,19 @@ export function Navbar(props) {
   return (
     <>
       <div className={styles.navbar}>
-        <div className={styles.navbutton}></div>
-          <div className={styles.navlinks}>
-            {buildbar()}
-            <div className={styles.navactivetitle}>{active} - Benjémon</div>
-          </div>
+        {/* <div className={styles.navbutton}></div> */}
+        <img  style={{
+            transition: "transform .25s",
+            transform: `rotate(${angle}deg)`,
+          }}
+          className={styles.navbutton} src={pball}
+          alt='pokeball' onClick={handleClick} title={angle === 0 ? 'Hide Menu' : 'Show Menu'} />
+        <div className={styles.navlinks}>
+          {buildbar()}
+          <div className={styles.navactivetitle}>{active} - Benjémon</div>
+        </div>
       </div>
+      <div>testing</div>
     </>
   );
 };
