@@ -98,6 +98,10 @@ export async function Endpoints(limit,offset=0) {
     const char_detailQueryFn = async ({ queryKey: [{ id }] }) => {
         const res = await grabData(`${baseURL}pokemon/${id}`);
 
+        if (res.types.length === 1) res.types.push(
+            {slot: 999, type: {name: 'normal'}}
+        );
+
         return ({
             id: res.id,
             name: res.name,
@@ -126,6 +130,7 @@ export async function Endpoints(limit,offset=0) {
             base_experience: res.base_experience,
             forms: res.forms, //Use to get version_group
             held_items: res.held_items.map(a => a.item.name), //Detail in lookup table
+
             types: res.types.map(t => {
                 return {
                     slot: t.slot,

@@ -92,36 +92,35 @@
     }
 }
 
- .backtop { text-decoration: none; }
+.backtop { text-decoration: none; }
 .footer { padding: 8px; }
 .footer a, .navbar a, .navsep, .navactivetitle { color: lightsalmon; }
 .footer a:hover, .navbar a:hover { color: black; }
 .legal { text-align: justify; margin: 0px 20px 0px 20px; }
-.logo { text-align: center; }
-.navbar { height: 20px; }
-.navbutton { background-color: #00000077; }
-.navactivetitle { margin: 0 auto; }
-
-.navbar, .navbutton, .navlinks {
-    display: flex;
-}
+.navactivetitle { text-align: center; }
+.navlinks,
+.navactivetitle,
+.navinfo { width: 33.33%; }
 
 .horzAlign {
     float: right;
     padding-right: 4px;
 }
 
-.navbar, .navbutton, .footer {
-    border: solid 1px black;
-    border-radius: 10px;
+.navbar {
+    display: flex;
+    height: 20px;
+    width: 100%;
 }
 .navbar, .footer {
+    border: solid 1px black;
+    border-radius: 10px;
     background-color: orangered;
     border-color: lightsalmon #c36b49 #c36b49 lightsalmon;
     color: white;
 }
-
 .navbutton {
+    background-color: #00000077;
     margin: 1px 5px 0px 1px;
     mix-blend-mode: lighten;
     width: 16px;
@@ -129,13 +128,42 @@
     cursor: pointer;
 }
 
-.navbutton2 {
-    width: 8px;
-    height: 8px;
-    border-color: lightsalmon lightsalmon lightsalmon lightsalmon;
-    margin: 5px 0px 0px 5px;
-}
+.flipcard {
+    background-color: transparent;
+    width: 300px;
+    height: 300px;
+    /* perspective: 1000px; */
+  }
 
-.navlinks {
+  .flipcardinner {
+    position: relative;
     width: 100%;
-}
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  }
+
+  .flipcard:hover .flipcardinner {
+    transform: rotateX(180deg);
+  }
+
+  .flipcardfront, .flipcardback {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .flipcardfront {
+    background-color: #bbb;
+    color: black;
+  }
+
+  .flipcardback {
+    background-color: #2980b9;
+    color: white;
+    transform: rotateX(180deg);
+  }

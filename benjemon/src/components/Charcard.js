@@ -76,11 +76,14 @@ const colors = {
   psychic: '#eaeda1',
   rock: '#55524e',
   steel: '#708090',
-  water: '#8ec3cf'
+  water: '#8ec3cf',
+  goblin: '#xxxxxx'
 };
 
 export default function Charcard({char}) {
   const el = char;
+
+  console.log('#818181' < '#808080');
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
@@ -95,11 +98,12 @@ export default function Charcard({char}) {
   // const cardNameID = 'cardName_' + el.name;
   // const cardInfoID = 'cardInfo_' + el.name;
 
-  // const charTypes = el.types.split(', ');
+  const charTypes = el.types.map(m => colors[m.name]);
+
 
   // const charBG = `linear-gradient(${colors[charTypes[0]]},lightgrey)`;
-  // const charTypeBG = `linear-gradient(${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
-
+  // const cardBG = `linear-gradient(${colors[charTypes[0]]},${charTypes.length === 1 ? colors[charTypes[0]]:colors[charTypes[1]]})`;
+  const cardBG = `linear-gradient(${charTypes[0]},${charTypes[1]})`;
   const getElm = eID => document.getElementById(eID);
 
   const imageClick = () => {
@@ -146,14 +150,17 @@ export default function Charcard({char}) {
 
   return (
   <>
-    <div className={styles.glasscard}>
+    <div className={styles.glasscard} style={{ backgroundImage: cardBG }}>
       <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
         onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
-      [{ el.id.toString().padStart(3,'0') }] {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
+      <span style={{ color: `${charTypes[1] < '#808080' ? 'white' : 'black'}` }}>
+        <br />&nbsp;<br />[{ el.id.toString().padStart(3,'0') }]
+        {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
+      </span>
     </div>
   </>
-
   )
+
   //     {/* <div id={cardID} className={styles.card} style={{ backgroundImage: charBG }}
   //     onClick={ showPokeDetail } >
   //       <img id={cardImageID} className={styles.cardimage} loading='lazy' src={el.sprites[0][0]} alt='0'

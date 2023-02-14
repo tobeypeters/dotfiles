@@ -10,16 +10,19 @@ import { useState } from 'react';
 
 export function Navbar(props) {
   const [angle,setAngle] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [flipped, setFlipped] = useState(false);
 
   const handleClick = () => {
     setAngle(prevAngle => (prevAngle === 0 ? -90 : 0));
+    setIsVisible(!isVisible);
 //    setMenu((prevMenu) => (prevMenu + 90) % 360);
   };
 
   const displocation = (loc,disp) =>
     props.location === loc ? false : titlecase(disp.replace('/',''));
 
-  const sep = ' > ';
+  const sep = '>';
 
   const urls = ['/home','/characters','/moves','/items'];
 
@@ -43,7 +46,7 @@ export function Navbar(props) {
 
       return (
         <>
-          {skip ? '': <span className={styles.navsep}>{sep}</span>}
+          {skip ? '': <span className={styles.navsep}>&nbsp;{sep}&nbsp;</span>}
           <NavLink key={idx} to={m}>{displink}</NavLink>
         </>
       )
@@ -55,19 +58,32 @@ export function Navbar(props) {
   return (
     <>
       <div className={styles.navbar}>
-        {/* <div className={styles.navbutton}></div> */}
-        <img  style={{
-            transition: "transform .25s",
-            transform: `rotate(${angle}deg)`,
-          }}
-          className={styles.navbutton} src={pball}
-          alt='pokeball' onClick={handleClick} title={angle === 0 ? 'Hide Menu' : 'Show Menu'} />
+        <img style={{transition: "transform .50s",
+                     transform: `rotate(${angle}deg)`}}
+             className={styles.navbutton} src={pball}
+             alt='pokeball' onClick={handleClick}
+             title={angle === 0 ? 'Hide Menu' : 'Show Menu'} />
         <div className={styles.navlinks}>
-          {buildbar()}
-          <div className={styles.navactivetitle}>{active} - Benjémon</div>
+          {isVisible ?  buildbar() : ''}
         </div>
+        <div className={styles.navactivetitle}>{active} - Benjémon</div>
+        <div className={styles.navinfo}></div>
       </div>
-      <div>testing</div>
+
+      {/* <div className={styles.flipcard}>
+  <div className={styles.flipcardinner}>
+    <div className={styles.flipcardfront}>
+      Front
+    </div>
+    <div className={styles.flipcardback}>
+      Back
+    </div>
+  </div>
+</div> */}
+
+
+
+
     </>
   );
 };
