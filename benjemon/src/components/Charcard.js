@@ -76,14 +76,11 @@ const colors = {
   psychic: '#eaeda1',
   rock: '#55524e',
   steel: '#708090',
-  water: '#8ec3cf',
-  goblin: '#xxxxxx'
+  water: '#8ec3cf'
 };
 
 export default function Charcard({char}) {
   const el = char;
-
-  console.log('#818181' < '#808080');
 
   if (el.sprites[1][0] === null) { // Validate images
   //   el.sprites[0][0] = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${el.id.toString().padStart(3,'0')}.png`;
@@ -148,16 +145,66 @@ export default function Charcard({char}) {
 
   }
 
+  function darkenHex(hex, amount, alpha=`ff`) {
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(1, 3), 16);
+    let g = parseInt(hex.substring(3, 5), 16);
+    let b = parseInt(hex.substring(5, 7), 16);
+
+    // Decrease RGB values by amount (between 0 and 100)
+    r = Math.round(r * (1 - amount / 100));
+    g = Math.round(g * (1 - amount / 100));
+    b = Math.round(b * (1 - amount / 100));
+
+    // Convert the modified RGB color back to a hex code
+    let newHex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b)
+                 .toString(16).slice(1) + alpha;
+    return newHex;
+  }
+
+  const charlabel = {
+    backgroundColor: `${darkenHex(charTypes[1], 25, `44`)}`,
+    color: `${darkenHex(charTypes[1], 75, `aa`)}`,
+    borderRadius: '4px',
+    padding: '4px',
+  }
+
   return (
   <>
-    <div className={styles.glasscard} style={{ backgroundImage: cardBG }}>
+    {/* <div className={styles.flipcard}>
+      <div className={styles.flipcardinner}>
+        <div className={styles.flipcardfront}>
+        </div>
+        <div className={styles.flipcardback}>
+          Back
+        </div>
+      </div>
+    </div> */}
+
+    <div className={styles.flipcard} style={{ backgroundImage: cardBG }}>
+      <div className={styles.flipcardinner}>
+        <div className={styles.flipcardfront}>
+          <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
+            onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
+          <span style={charlabel}>
+            &nbsp;[{ el.id.toString().padStart(3,'0') }]&nbsp;
+            {el.name.charAt(0).toUpperCase() + el.name.slice(1)}&nbsp;
+          </span>
+        </div>
+        <div className={styles.flipcardback}>
+          Back
+        </div>
+      </div>
+    </div>
+
+    {/* <div className={styles.glasscard} style={{ backgroundImage: cardBG }}>
       <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
         onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
-      <span style={{ color: `${charTypes[1] < '#808080' ? 'white' : 'black'}` }}>
-        <br />&nbsp;<br />[{ el.id.toString().padStart(3,'0') }]
-        {el.name.charAt(0).toUpperCase() + el.name.slice(1)}
+      <span style={charlabel}>
+        &nbsp;[{ el.id.toString().padStart(3,'0') }]&nbsp;
+        {el.name.charAt(0).toUpperCase() + el.name.slice(1)}&nbsp;
       </span>
-    </div>
+    </div> */}
   </>
   )
 
