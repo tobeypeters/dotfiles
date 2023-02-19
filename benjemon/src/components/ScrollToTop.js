@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 /*
     The MIT License(MIT)
     Copyright(c), Tobey Peters, https://github.com/tobeypeters
@@ -13,30 +14,42 @@
     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-/*  index.js
+
+/*  ScrollToTop.css
     Description:
-        components index file
+        Displays an arrow, which allows you to scroll to the top
+        of the page.
 */
-export { Endpoints, CacheExtract } from './Endpoints';
+import { FaAngleUp } from 'react-icons/fa';
 
-export { Characters } from './Characters';
-export { default as Charlist } from './Charlst';
-export { default as Charcard } from './Charcard';
-export { Footer } from './Footer';
-export { GenericList } from './GenericList';
-export { Home } from './Home';
-export { Logo } from './Logo';
-export { Page404 } from './Page404';
-export { Spinner } from './Spinner';
+import styles from './ScrollToTop.module.css';
 
-export { Copyright, Hyperlinks, Informational,
-         Privacy, Terms } from './Legal';
-
-export { Navbar } from './navbar';
-
-export { ItemsList } from './ItemsList';
-export { Items } from './Items';
-
-export { MoveList } from './MoveList';
-export { Moves } from './Moves';
-export { ScrollToTop } from './ScrollToTop';
+export function ScrollToTop() {
+    const [showTopBtn, setShowTopBtn] = useState(false);
+    useEffect(() => {
+        window.addEventListener(`scroll`, () => {
+            if (window.scrollY > 400) {
+                setShowTopBtn(true);
+            } else {
+                setShowTopBtn(false);
+            }
+        });
+    }, []);
+    const goToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: `smooth`,
+        });
+    };
+    return (
+        <div className={styles.toptobtm}>
+            {` `}
+            {showTopBtn && (
+                <FaAngleUp
+                    className={`${styles.iconposition} ${styles.iconstyle}`}
+                    onClick={goToTop}
+                />
+            )}{` `}
+        </div>
+    );
+};

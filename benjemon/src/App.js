@@ -39,7 +39,7 @@ import { Endpoints } from './components';
 import { Outlet, useRoutes } from 'react-router-dom';
 
 import { Characters, Footer, Home, Items,
-         Logo, Moves, Navbar } from './components';
+         Logo, Moves, Navbar, ScrollToTop } from './components';
 
 function App() {
   const routes = useRoutes([
@@ -51,14 +51,15 @@ function App() {
     // { path: "*", element: <Page404 /> },
   ])
 
-   Endpoints(5000,0); //Think, I know how to make this run only once.
+  Endpoints(5000,0); //Think, I know how to make this run only once.
 
-  console.log('match', routes.props.match.pathname);
+  // console.log('match', routes.props.match.pathname);
 
   return (
     <>
       <div className="App">
         {/* <Logo /> */}
+        <ScrollToTop />
         <Navbar location={routes.props.match.pathname}/>
         <br />
 

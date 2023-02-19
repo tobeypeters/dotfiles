@@ -13,30 +13,51 @@
     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-/*  index.js
+
+/*  ScrollToTop.module.css
     Description:
-        components index file
+        ScrollToTop.js - css
 */
-export { Endpoints, CacheExtract } from './Endpoints';
-
-export { Characters } from './Characters';
-export { default as Charlist } from './Charlst';
-export { default as Charcard } from './Charcard';
-export { Footer } from './Footer';
-export { GenericList } from './GenericList';
-export { Home } from './Home';
-export { Logo } from './Logo';
-export { Page404 } from './Page404';
-export { Spinner } from './Spinner';
-
-export { Copyright, Hyperlinks, Informational,
-         Privacy, Terms } from './Legal';
-
-export { Navbar } from './navbar';
-
-export { ItemsList } from './ItemsList';
-export { Items } from './Items';
-
-export { MoveList } from './MoveList';
-export { Moves } from './Moves';
-export { ScrollToTop } from './ScrollToTop';
+.toptobtm{
+    position: relative;
+}
+.iconposition{
+    position: fixed;
+    bottom: 40px;
+    right: 25px;
+    z-index: 20;
+}
+.iconstyle{
+    background-color: #404040;
+    border: 2px solid lightsalmon;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    color: lightsalmon;
+    cursor: pointer;
+    animation: movebtn 3s ease-in-out infinite;
+    transition: all .5s ease-in-out;
+}
+.iconstyle:hover{
+    animation: none;
+    background: lightsalmon;
+    color: #404040;
+    border: 2px solid #404040;
+}
+@keyframes movebtn {
+    0%{
+        transform: translateY(0px);
+    }
+    25%{
+        transform: translateY(20px);
+    }
+    50%{
+        transform: translateY(0px);
+    }
+    75%{
+        transform: translateY(-20px);
+    }
+    100%{
+        transform: translateY(0px);
+    }
+}
