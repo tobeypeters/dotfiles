@@ -32,9 +32,11 @@ const nullObj = (obj) => obj ? obj : '<not specified>';
 
 const nofluff = (str) => {
     //Let's make the data prettier
-    str = str.replace(new RegExp('pokémon', 'i'),'Pokémon');
-    str = str.replace(new RegExp('poké ', 'i'),'Poké ');
     str = str.replace(new RegExp('ball', 'i'),'ball');
+    str = str.replace(new RegExp('poké ', 'i'),'Poké ');
+    str = str.replace(new RegExp('pokémon', 'i'),'Pokémon');
+    str = str.replace(new RegExp('great ball', 'i'),'Great Ball');
+    str = str.replace(new RegExp('pokémon ball', 'i'),'Pokémon Ball');
     str = str.replaceAll('\n',' ');
     str = str.replace(/\s+/g,' ');
     return str;

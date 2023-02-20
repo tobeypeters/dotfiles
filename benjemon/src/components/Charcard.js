@@ -58,7 +58,7 @@ const pokemon = Array(res.value).map(p => ({
 }));
 */
 
-const colors = {
+export const colors = {
   bug: '#83a751',
   dragon: '#97b3e6',
   dark: '#36454f',
