@@ -33,64 +33,6 @@
     padding: 10px;
 }
 
-.glasscard {
-    width: min-content;
-    min-height: 222px;
-    list-style: none;
-    text-align: center;
-
-    margin: 10px 10px 10px 10px;
-    padding: 10px 10px 10px 10px;
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 213, 219, 0.3);
-    border-radius: 12px;
-}
-.glasscard:hover {
-    cursor: pointer;
-    animation: bounce 0.5s linear;
-	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.15);
-    transform: rotateX(180deg);
-}
-.glasscardDetail {
-    padding: 200px;
-}
-
-.glasscardimage, .glasscardMiniImage {
-    background: transparent;
-    border-radius: 10px;
-    float: left;
-}
-.glasscardimage {
-    height: 180px;
-    width: 180px;
-    margin: 10px 10px 0px 10px;
-}
-.glasscardimage img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-/* @keyframes bounce {
-    20% {
-        transform: translateY(-6px);
-    }
-    40% {
-        transform: translateY(0px);
-    }
-
-    80% {
-        transform: translateY(-2px);
-    }
-    100% {
-        transform: translateY(0);
-    }
-} */
-
 .backtop { text-decoration: none; }
 .footer { padding: 8px; }
 .footer a, .navbar a, .navsep, .navactivetitle { color: lightsalmon; }
@@ -129,7 +71,6 @@
 
 .flipcard {
     position: relative;
-    /* width: min-content; */
     width: 222px;
     min-height: 222px;
     list-style: none;
@@ -142,37 +83,74 @@
     background-color: rgba(255, 255, 255, 0.25);
     border: 1px solid rgba(255, 213, 219, 0.3);
     border-radius: 12px;
-
     perspective: 1000px;
 }
-
+.flipcard:hover {
+    cursor: pointer;
+    animation: bounce 0.5s linear;
+	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.50);
+}
 .flipcardinner {
     transform-style: preserve-3d;
     transition: .6s .1s;
 }
-
 .flipcard:hover .flipcardinner,
 .flipcard:focus-within .flipcardinner {
-  transform: rotateY(180deg);
+    transform: rotateY(180deg);
 }
-
-  .flipcardfront, .flipcardback {
+.flipcardfront, .flipcardback {
     position: absolute;
     width: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-  }
-
-  .flipcardback {
-    background-color: black;
-    transform: rotateY(180deg);
+}
+.flipcardback {
+background-color: black;
+transform: rotateY(180deg);
     z-index: 1;
-  }
-
-  .flipcardfront {
-    transform: rotateY(0deg);
+}
+.flipcardfront {
+transform: rotateY(0deg);
     z-index: 2;
-  }
+}
+.flipcardimage {
+    height: 180px;
+    width: 180px;
+    margin: 10px 10px 0px 10px;
+}
+@keyframes bounce {
+    20% {
+        transform: translateY(-2px);
+    }
+    20% {
+        transform: translateY(-4px);
+    }
+    30% {
+        transform: translateY(-6px);
+    }
+    40% {
+        transform: translateY(-8px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-8px);
+    }
+    70% {
+        transform: translateY(-6px);
+    }
+    80% {
+        transform: translateY(-4px);
+    }
+    90% {
+        transform: translateY(-2px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
 
   .scroll-to-top-button {
     position: fixed;

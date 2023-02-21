@@ -171,20 +171,10 @@ export default function Charcard({char}) {
 
   return (
   <>
-    {/* <div className={styles.flipcard}>
-      <div className={styles.flipcardinner}>
-        <div className={styles.flipcardfront}>
-        </div>
-        <div className={styles.flipcardback}>
-          Back
-        </div>
-      </div>
-    </div> */}
-
     <div className={styles.flipcard} style={{ backgroundImage: cardBG }}>
       <div className={styles.flipcardinner}>
         <div className={styles.flipcardfront}>
-          <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
+          <img id={cardImageID} className={styles.flipcardimage} loading='lazy'
             onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
           <span style={charlabel}>
             &nbsp;[{ el.id.toString().padStart(3,'0') }]&nbsp;
@@ -196,15 +186,6 @@ export default function Charcard({char}) {
         </div>
       </div>
     </div>
-
-    {/* <div className={styles.glasscard} style={{ backgroundImage: cardBG }}>
-      <img id={cardImageID} className={styles.glasscardimage} loading='lazy'
-        onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
-      <span style={charlabel}>
-        &nbsp;[{ el.id.toString().padStart(3,'0') }]&nbsp;
-        {el.name.charAt(0).toUpperCase() + el.name.slice(1)}&nbsp;
-      </span>
-    </div> */}
   </>
   )
 
