@@ -19,9 +19,16 @@ LICENSE
 #	Upgrade only one specific apt package
 if [ $# -eq 0 ]
 then
-    sudo apt list --upgradeable
-    echo
-    echo "Please specify which apt package you wish to upgrade ..."
+	updates=$(apt list --upgradable 2> /dev/null | wc -l)
+	
+	if [ "$updates" -eq 1 ];
+	then
+		echo "No upgrades available ..."
+	else
+		sudo apt list --upgradeable
+		echo
+		echo "Please specify which apt package you wish to upgrade ..."
+	fi
 else
     sudo apt --only-upgrade install $1
 fi
