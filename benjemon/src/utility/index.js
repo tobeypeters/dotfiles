@@ -20,4 +20,5 @@
 */
 
 export { grabData, prettyjson } from './Data';
+export { saveJSON } from './File';
 export { titlecase } from './Manipulate';

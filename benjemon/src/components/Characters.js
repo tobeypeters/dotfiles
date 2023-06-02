@@ -20,15 +20,19 @@
 */
 import { useQueryClient } from "react-query";
 
-import { CacheExtract, Charlist, Spinner } from '.';
+import { colors, CacheExtract, Charlist, Spinner } from '.';
 
 export function Characters() {
     const chars = CacheExtract(useQueryClient(),undefined,'charDetail');
+    console.log('chars',chars);
 
     return (
         <>
             <div>
-            { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
+                <div style={{ display: `flex` }}>
+                    {Object.values(colors).map((value, idx) => (<div key={idx} style={{color: value}}>&#x2588;</div>))}
+                </div>
+                { chars.length ? <Charlist data={ chars } /> : <Spinner /> }
             </div>
             <br /><br />
         </>

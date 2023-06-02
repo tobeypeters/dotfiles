@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 
 import { grabData } from "../utility";
+import { saveJSON, saveJsonToFile } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -62,6 +63,65 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 
 //#region Endpoints
 export async function Endpoints(limit,offset=0) {
+    const test = async () => {
+        await fetch(`${baseURL}pokemon-species?limit=1`)
+        .then(response => {
+            console.log('response', response)
+            // const dataStr = JSON.stringify(response, null, 2);
+            // const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            // const downloadLink = document.createElement('a');
+
+            // downloadLink.href = dataUri;
+            // downloadLink.download = 'data.json';
+            // document.body.appendChild(downloadLink);
+            // downloadLink.click();
+            // document.body.removeChild(downloadLink);
+        });
+
+
+        // await fetch(`${baseURL}pokemon-species?limit=1`)
+        // .then(response => {
+        //     saveJSON(response,'./test.json');
+        //   });
+        //   const file = './test.json';
+        //   const lastModifiedTimestamp = file.lastModified;
+        //   const modifiedDate = new Date(lastModifiedTimestamp);
+
+        // const response = grabData('/data/characters.json');
+        // if (response) {
+        //     console.log('response',response);
+        // }
+
+
+    }
+
+    test();
+
+
+    // console.log(`${baseURL}pokemon-species?limit=1`);
+
+    // const test = async () => {
+    //     await fetch(`https://example.com/data.json`)
+    //     .then(response => {
+    //         const lastModified = response.headers.get('Last-Modified');
+    //         console.log('Last modified:', lastModified, response.headers);
+    //       });
+    // }
+    // const test = async () => {
+    //     console.log('test');
+    //     await fetch(`${baseURL}pokemon-species?limit=1`)
+    //     // await fetch(`${baseURL}pokemon-species?limit=1`, {
+    //     //    mode: 'no-cors'})
+    //      .then((response) => {
+    //         console.log('test 2', response);
+    //         for (var pair of response.headers.entries()) {
+    //             console.log(pair[0]+ ': '+ pair[1]);
+    //         }
+    //     });
+    // }
+
+    // test();
+
     const groupFlavorText = (arr) => {
         const results = [];
 
@@ -223,6 +283,8 @@ export async function Endpoints(limit,offset=0) {
           queryFn: listQueryFn,
     }, { enabled: loadCharsAllowed });
 
+    console.log('char_data',char_data);
+
     IsCharError && console.log(`Char Error: ${char_error.message}`);
 
     let { data: moves_data, IsError: IsMovesError,
@@ -291,3 +353,48 @@ export async function Endpoints(limit,offset=0) {
     }
 }
 //#endregion Endpoints
+
+// import React, { useState, useEffect } from 'react';
+
+// function MyComponent() {
+//   const [data, setData] = useState([]);
+
+//   useEffect(() => {
+//     const fetchFromJsonFile = async () => {
+//       try {
+//         const response = await fetch('/data.json');
+//         const jsonData = await response.json();
+//         setData(jsonData);
+//       } catch (error) {
+//         console.log(`Error fetching from JSON file: ${error}`);
+//         fetchFromNetwork();
+//       }
+//     };
+
+//     const fetchFromNetwork = async () => {
+//       try {
+//         const response = await fetch('https://api.example.com/data');
+//         const jsonData = await response.json();
+//         setData(jsonData);
+//       } catch (error) {
+//         console.log(`Error fetching from network: ${error}`);
+//       }
+//     };
+
+//     fetchFromJsonFile();
+//   }, []);
+
+//   return (
+//     <div>
+//       <h1>My Data:</h1>
+//       <ul>
+//         {data.map(item => (
+//           <li key={item.id}>{item.name}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// export default MyComponent;
+

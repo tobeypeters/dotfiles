@@ -79,7 +79,9 @@ export const colors = {
   water: '#8ec3cf'
 };
 
-export default function Charcard({char}) {
+export function Charcard({char}) {
+  const frontorback = useRef(0);
+
   const el = char;
 
   if (el.sprites[1][0] === null) { // Validate images
@@ -115,7 +117,9 @@ export default function Charcard({char}) {
     elm.title = el.sprites[idx][1];
   }
 
-  const showPokeDetail = async function (ev) {
+  const showPokeDetail = function (ev) {
+    // console.log(frontorback.current, Math.abs(frontorback.current)+-1, ev);
+
     // if (ev.target instanceof HTMLDivElement) {
       // const elm = getElm('viper');
       // elm.classList.toggle('flipper');
@@ -166,6 +170,7 @@ export default function Charcard({char}) {
     backgroundColor: `${darkenHex(charTypes[1], 25, `44`)}`,
     color: `${darkenHex(charTypes[1], 75, `aa`)}`,
     borderRadius: '4px',
+    cursor: 'pointer',
     padding: '4px',
   }
 
@@ -176,13 +181,19 @@ export default function Charcard({char}) {
         <div className={styles.flipcardfront}>
           <img id={cardImageID} className={styles.flipcardimage} loading='lazy'
             onClick={imageClick} src={el.sprites[0][0]} alt='0' title={el.sprites[0][1]} />
-          <span style={charlabel}>
+          <span style={charlabel} onClick={showPokeDetail}>
             &nbsp;[{ el.id.toString().padStart(3,'0') }]&nbsp;
             {el.name.charAt(0).toUpperCase() + el.name.slice(1)}&nbsp;
           </span>
         </div>
         <div className={styles.flipcardback}>
-          Back
+          Height: {el.height/10}m
+          <br />Weight: {el.weight/10}kg
+          <br />Base XP: {el.base_experience}
+          <br />ability: {el.abilities}
+          <br />{el.formName}
+          {/* <br />Type(s): {el.types} */}
+          <br /><br />
         </div>
       </div>
     </div>

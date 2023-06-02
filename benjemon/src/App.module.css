@@ -18,8 +18,17 @@
     Description:
         App.js - css
 */
+/* :root {
+    --text-color: hsl(145, 63%, 49%);
+}
+
+p {
+    color: var(--text-color);
+} */
+
 * {
     font-size: 16px;
+    quotes: "“" "”";
 }
 .charContainer {
     display: flex;
@@ -86,7 +95,7 @@
     perspective: 1000px;
 }
 .flipcard:hover {
-    cursor: pointer;
+    /* cursor: pointer; */
     animation: bounce 0.5s linear;
 	box-shadow: 0 3px 15px rgba(255, 255, 255, 0.50);
 }
@@ -117,42 +126,33 @@ transform: rotateY(0deg);
     height: 180px;
     width: 180px;
     margin: 10px 10px 0px 10px;
+    filter: drop-shadow(10px 10px 10px #666666);
+}
+.flipcardimage:hover {
+    filter: none;
 }
 @keyframes bounce {
-    20% {
-        transform: translateY(-2px);
-    }
-    20% {
-        transform: translateY(-4px);
+    10% {
+        transform: translateY(0px);
     }
     30% {
-        transform: translateY(-6px);
-    }
-    40% {
-        transform: translateY(-8px);
+        transform: translateY(-0px);
     }
     50% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-8px);
+        transform: translateY(0px);
     }
     70% {
-        transform: translateY(-6px);
-    }
-    80% {
-        transform: translateY(-4px);
+        transform: translateY(0px);
     }
     90% {
-        transform: translateY(-2px);
+        transform: translateY(0px);
     }
     100% {
         transform: translateY(0);
     }
 }
 
-
-  .scroll-to-top-button {
+.scroll-to-top-button {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -167,12 +167,12 @@ transform: rotateY(0deg);
     line-height: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
+}
 
-  .scroll-to-top-button visible {
+.scroll-to-top-button visible {
     display: block;
-  }
+}
 
-  .scroll-to-top-button:hover {
+.scroll-to-top-button:hover {
     background-color: #666;
-  }
+}

@@ -21,7 +21,7 @@ export { Endpoints, CacheExtract } from './Endpoints';
 
 export { Characters } from './Characters';
 export { default as Charlist } from './Charlst';
-export { default as Charcard } from './Charcard';
+export { colors, Charcard } from './Charcard';
 export { Footer } from './Footer';
 export { GenericList } from './GenericList';
 export { Home } from './Home';
