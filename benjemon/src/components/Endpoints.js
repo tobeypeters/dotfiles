@@ -65,8 +65,9 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 export async function Endpoints(limit,offset=0) {
     const test = async () => {
         await fetch(`${baseURL}pokemon-species?limit=1`)
-        .then(response => {
-            console.log('response', response)
+            .then(req => {console.log('req',req.headers.entries()); return req.json()})
+            .then(response => {
+                console.log('response', response)
             // const dataStr = JSON.stringify(response, null, 2);
             // const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
             // const downloadLink = document.createElement('a');
@@ -77,22 +78,6 @@ export async function Endpoints(limit,offset=0) {
             // downloadLink.click();
             // document.body.removeChild(downloadLink);
         });
-
-
-        // await fetch(`${baseURL}pokemon-species?limit=1`)
-        // .then(response => {
-        //     saveJSON(response,'./test.json');
-        //   });
-        //   const file = './test.json';
-        //   const lastModifiedTimestamp = file.lastModified;
-        //   const modifiedDate = new Date(lastModifiedTimestamp);
-
-        // const response = grabData('/data/characters.json');
-        // if (response) {
-        //     console.log('response',response);
-        // }
-
-
     }
 
     test();
