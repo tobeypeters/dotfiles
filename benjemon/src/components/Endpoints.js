@@ -65,7 +65,7 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 export async function Endpoints(limit,offset=0) {
     const test = async () => {
         await fetch(`${baseURL}pokemon-species?limit=1`)
-            .then(req => {console.log('req',req.headers.entries()); return req.json()})
+            .then(req => {console.log('req',req); return req.json()})
             .then(response => {
                 console.log('response', response)
             // const dataStr = JSON.stringify(response, null, 2);
