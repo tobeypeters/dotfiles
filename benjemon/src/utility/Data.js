@@ -28,8 +28,19 @@ export const arrClear = (arr) => {
 
 export const grabData = async (url) => {
   const response = await fetch(url);
-  const results = response.status === 200 ? await response.json() : null
+  const results = response.status === 200 ? response.json() : null;
   return results;
 }
 
 export const prettyjson = (json) => (<JsonPretty json={json} />)
+
+export const getStorage = (key) => {
+  const gettest = JSON.parse(localStorage.getItem(key));
+  // console.log(gettest);
+  return JSON.parse(localStorage.getItem(key));
+}
+
+export const putStorage = (key, value) => {
+  // console.log('puttest',key,value);
+  localStorage.setItem(key, JSON.stringify(value));
+}

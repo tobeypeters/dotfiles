@@ -24,7 +24,8 @@ import { colors, CacheExtract, Charlist, Spinner } from '.';
 
 export function Characters() {
     const chars = CacheExtract(useQueryClient(),undefined,'charDetail');
-    console.log('chars',chars);
+
+    if (chars.length) console.log(`characters`);
 
     return (
         <>

@@ -21,8 +21,8 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 
-import { grabData } from "../utility";
-import { saveJSON, saveJsonToFile } from "../utility";
+import { grabData, getStorage, putStorage } from "../utility";
+// import { saveJSON, saveJsonToFile } from "../utility";
 
 const baseURL = 'https://pokeapi.co/api/v2/';
 
@@ -63,50 +63,6 @@ export function CacheExtract(qClient, filter='queryType', forWhat='') {
 
 //#region Endpoints
 export async function Endpoints(limit,offset=0) {
-    const test = async () => {
-        await fetch(`${baseURL}pokemon-species?limit=1`)
-            .then(req => {console.log('req',req); return req.json()})
-            .then(response => {
-                console.log('response', response)
-            // const dataStr = JSON.stringify(response, null, 2);
-            // const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-            // const downloadLink = document.createElement('a');
-
-            // downloadLink.href = dataUri;
-            // downloadLink.download = 'data.json';
-            // document.body.appendChild(downloadLink);
-            // downloadLink.click();
-            // document.body.removeChild(downloadLink);
-        });
-    }
-
-    test();
-
-
-    // console.log(`${baseURL}pokemon-species?limit=1`);
-
-    // const test = async () => {
-    //     await fetch(`https://example.com/data.json`)
-    //     .then(response => {
-    //         const lastModified = response.headers.get('Last-Modified');
-    //         console.log('Last modified:', lastModified, response.headers);
-    //       });
-    // }
-    // const test = async () => {
-    //     console.log('test');
-    //     await fetch(`${baseURL}pokemon-species?limit=1`)
-    //     // await fetch(`${baseURL}pokemon-species?limit=1`, {
-    //     //    mode: 'no-cors'})
-    //      .then((response) => {
-    //         console.log('test 2', response);
-    //         for (var pair of response.headers.entries()) {
-    //             console.log(pair[0]+ ': '+ pair[1]);
-    //         }
-    //     });
-    // }
-
-    // test();
-
     const groupFlavorText = (arr) => {
         const results = [];
 
@@ -262,47 +218,64 @@ export async function Endpoints(limit,offset=0) {
     let loadMovesAllowed = !loadCharsAllowed && movedata;
     let loadItemsAllowed = !loadMovesAllowed && itemdata;
 
+    const LOCAL_CHARS = 'local_chars';
+    // const LOCAL_ITEMS = 'local_items';
+    // const LOCAL_MOVES = 'local_moves';
+
+    // const buffer = getStorage(LOCAL_CHARS);
+    // if (buffer) {
+    //     console.log('buffer',buffer);
+    //     if (loadCharsAllowed) {
+    //         console.log('localStorage');
+    //         Setchardata(false);
+    //         loadCharsAllowed = false;
+    //     }
+    // }
+    // else {
+    //     console.log('Non localStorage');
+    // }
+
+    // console.log(`LOCAL_CHARS : ${localStorage.getItem(LOCAL_CHARS)}`);
+
     let { data: char_data, IsError: IsCharError,
           error: char_error, isSuccess: isCharSuccess } = useQuery({
           queryKey: [{queryType: 'charList', limit, url_part: `pokemon-species`, offset: {offset} }],
           queryFn: listQueryFn,
     }, { enabled: loadCharsAllowed });
 
-    console.log('char_data',char_data);
-
     IsCharError && console.log(`Char Error: ${char_error.message}`);
 
-    let { data: moves_data, IsError: IsMovesError,
-          error: moves_error, isSuccess: isMovesSuccess
-        } = useQuery({
-          queryKey: [{queryType: 'movesList', limit, url_part: 'move' }],
-          queryFn: listQueryFn,
-    }, { enabled: loadMovesAllowed });
+    // let { data: moves_data, IsError: IsMovesError,
+    //       error: moves_error, isSuccess: isMovesSuccess
+    //     } = useQuery({
+    //       queryKey: [{queryType: 'movesList', limit, url_part: 'move' }],
+    //       queryFn: listQueryFn,
+    // }, { enabled: loadMovesAllowed });
 
-    IsMovesError && console.log(`Moves Error: ${moves_error.message}`);
+    // IsMovesError && console.log(`Moves Error: ${moves_error.message}`);
 
-    let { data: items_data, IsError: IsItemsError,
-          error: items_error, isSuccess: isItemsSuccess
-        } = useQuery({
-        queryKey: [{queryType: 'itemsList', limit, url_part: 'item' }],
-        queryFn: listQueryFn,
-    }, { enabled: loadItemsAllowed });
+    // let { data: items_data, IsError: IsItemsError,
+    //       error: items_error, isSuccess: isItemsSuccess
+    //     } = useQuery({
+    //     queryKey: [{queryType: 'itemsList', limit, url_part: 'item' }],
+    //     queryFn: listQueryFn,
+    // }, { enabled: loadItemsAllowed });
 
-    IsItemsError && console.log(`Items Error: ${items_error.message}`);
+    // IsItemsError && console.log(`Items Error: ${items_error.message}`);
 
     loadCharsAllowed = loadCharsAllowed && isCharSuccess;
     const char_listDetailQueries = buildQueries(char_data ? char_data : [],
         char_detailQueryFn, loadCharsAllowed, 'charDetail');
 
-    loadMovesAllowed = loadMovesAllowed && isMovesSuccess;
-    const moves_listDetailQueries = buildQueries(moves_data ?
-        moves_data.filter(f => extractID(f.url) < 10000) : [],
-        moves_detailQueryFn, loadMovesAllowed, 'moveDetail');
+    // loadMovesAllowed = loadMovesAllowed && isMovesSuccess;
+    // const moves_listDetailQueries = buildQueries(moves_data ?
+    //     moves_data.filter(f => extractID(f.url) < 10000) : [],
+    //     moves_detailQueryFn, loadMovesAllowed, 'moveDetail');
 
-    loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
-    const items_listDetailQueries = buildQueries(items_data ?
-        items_data.filter(f => extractID(f.url) < 10000) : [],
-        items_detailQueryFn, loadItemsAllowed, 'itemDetail');
+    // loadItemsAllowed = loadItemsAllowed && isItemsSuccess;
+    // const items_listDetailQueries = buildQueries(items_data ?
+    //     items_data.filter(f => extractID(f.url) < 10000) : [],
+    //     items_detailQueryFn, loadItemsAllowed, 'itemDetail');
 
     if (loadCharsAllowed && chardata) {
         const gc = Math.max(char_listDetailQueries.length / 5, 1);
@@ -312,74 +285,35 @@ export async function Endpoints(limit,offset=0) {
             await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
         }
 
+        // console.log(`viper armed`);
+
         Setchardata(false);
+        putStorage(LOCAL_CHARS,char_data);
+        // console.log(`boogers 1`);
+        // putStorage('local_chars','Gabby likes boogers')
+        // console.log(`boogers 2`);
     }
 
-    if (loadMovesAllowed && movedata) {
-        const gc = Math.max(moves_listDetailQueries.length / 5, 1);
-        for (let i = 0; i < moves_listDetailQueries.length - 1;i += gc - 1)
-        {
-            const currentBatch = moves_listDetailQueries.slice(i, i + gc);
-            await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
-        }
+    // if (loadMovesAllowed && movedata) {
+    //     const gc = Math.max(moves_listDetailQueries.length / 5, 1);
+    //     for (let i = 0; i < moves_listDetailQueries.length - 1;i += gc - 1)
+    //     {
+    //         const currentBatch = moves_listDetailQueries.slice(i, i + gc);
+    //         await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
+    //     }
 
-        Setmovedata(false);
-    }
+    //     Setmovedata(false);
+    // }
 
-    if (loadItemsAllowed && itemdata) {
-        const gc = Math.max(items_listDetailQueries.length / 5, 1);
-        for (let i = 0; i < items_listDetailQueries.length - 1;i += gc - 1)
-        {
-            const currentBatch = items_listDetailQueries.slice(i, i + gc);
-            await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
-        }
+    // if (loadItemsAllowed && itemdata) {
+    //     const gc = Math.max(items_listDetailQueries.length / 5, 1);
+    //     for (let i = 0; i < items_listDetailQueries.length - 1;i += gc - 1)
+    //     {
+    //         const currentBatch = items_listDetailQueries.slice(i, i + gc);
+    //         await Promise.allSettled(currentBatch.map(query => uqc.prefetchQuery(query)));
+    //     }
 
-        Setitemdata(false);
-    }
+    //     Setitemdata(false);
+    // }
 }
 //#endregion Endpoints
-
-// import React, { useState, useEffect } from 'react';
-
-// function MyComponent() {
-//   const [data, setData] = useState([]);
-
-//   useEffect(() => {
-//     const fetchFromJsonFile = async () => {
-//       try {
-//         const response = await fetch('/data.json');
-//         const jsonData = await response.json();
-//         setData(jsonData);
-//       } catch (error) {
-//         console.log(`Error fetching from JSON file: ${error}`);
-//         fetchFromNetwork();
-//       }
-//     };
-
-//     const fetchFromNetwork = async () => {
-//       try {
-//         const response = await fetch('https://api.example.com/data');
-//         const jsonData = await response.json();
-//         setData(jsonData);
-//       } catch (error) {
-//         console.log(`Error fetching from network: ${error}`);
-//       }
-//     };
-
-//     fetchFromJsonFile();
-//   }, []);
-
-//   return (
-//     <div>
-//       <h1>My Data:</h1>
-//       <ul>
-//         {data.map(item => (
-//           <li key={item.id}>{item.name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default MyComponent;
-

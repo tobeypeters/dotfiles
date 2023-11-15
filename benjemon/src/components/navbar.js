@@ -8,6 +8,8 @@ import pball from '../assets/pball.png';
 
 import { useState } from 'react';
 
+import { Fragment } from 'react';
+
 export function Navbar(props) {
   const [angle,setAngle] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -45,10 +47,10 @@ export function Navbar(props) {
                   || !Boolean(displink);
 
       return (
-        <>
+        <Fragment key={idx}>
           {skip ? '': <span className={styles.navsep}>&nbsp;{sep}&nbsp;</span>}
-          <NavLink key={idx} to={m}>{displink}</NavLink>
-        </>
+          <NavLink key={m} to={m}>{displink}</NavLink>
+        </Fragment>
       )
     })
 
@@ -58,31 +60,17 @@ export function Navbar(props) {
   return (
     <>
       <div className={styles.navbar}>
-        <img style={{transition: "transform .50s",
+        <img style={{transition: `transform .50s`,
                      transform: `rotate(${angle}deg)`}}
              className={styles.navbutton} src={pball}
              alt='pokeball' onClick={handleClick}
-             title={angle === 0 ? 'Hide Menu' : 'Show Menu'} />
+             title={angle === 0 ? `Hide Menu` : `Show Menu`} />
         <div className={styles.navlinks}>
-          {isVisible ?  buildbar() : ''}
+          {isVisible ?  buildbar() : ``}
         </div>
         <div className={styles.navactivetitle}>{active} - Benjémon</div>
         <div className={styles.navinfo}></div>
       </div>
-
-      {/* <div className={styles.flipcard}>
-  <div className={styles.flipcardinner}>
-    <div className={styles.flipcardfront}>
-      Front
-    </div>
-    <div className={styles.flipcardback}>
-      Back
-    </div>
-  </div>
-</div> */}
-
-
-
 
     </>
   );

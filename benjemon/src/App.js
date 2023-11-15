@@ -41,6 +41,8 @@ import { Outlet, useRoutes } from 'react-router-dom';
 import { Characters, Footer, Home, Items,
          Logo, Moves, Navbar, ScrollToTop } from './components';
 
+import { getStorage } from './utility';
+
 function App() {
   const routes = useRoutes([
     { path: "/", exact: true, element: <Home /> },
@@ -51,7 +53,8 @@ function App() {
     // { path: "*", element: <Page404 /> },
   ])
 
-  Endpoints(5000,0); //Think, I know how to make this run only once.
+
+  Endpoints(20,0); //Think, I know how to make this run only once.
 
   // console.log('match', routes.props.match.pathname);
 

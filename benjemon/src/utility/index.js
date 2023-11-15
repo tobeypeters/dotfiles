@@ -19,6 +19,6 @@
         utility index file
 */
 
-export { grabData, prettyjson } from './Data';
+export { getStorage, grabData, prettyjson, putStorage } from './Data';
 export { saveJSON } from './File';
 export { titlecase } from './Manipulate';
