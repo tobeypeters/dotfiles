@@ -196,3 +196,11 @@ sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 #https://css-tricks.com/fetching-data-in-react-using-react-async/
 #npm install react-async --save
 #npm install react react-dom
+
+# VSCode extension stuff to create your own extensions
+#sudo npm install -g yo generator-code
+# yo code - to generate an extension project
+# vsce package - to generate the package
+# vsce publish - to publish the extension
+
+
