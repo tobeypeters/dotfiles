@@ -202,5 +202,6 @@ sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 # yo code - to generate an extension project
 # vsce package - to generate the package
 # vsce publish - to publish the extension
+# npm install -g vsce
 
 
