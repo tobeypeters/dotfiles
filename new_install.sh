@@ -70,6 +70,7 @@ pip3 install pyinstaller
 # sudo update-alternatives --config x-terminal-emulator
 # alacritty end
 
+sudo apt install -y btop
 # sudo apt install -y composer
 sudo apt install -y lxappearance
 sudo apt install -y mc
