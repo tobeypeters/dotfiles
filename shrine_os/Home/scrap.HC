@@ -133,7 +133,7 @@ got_flag("+f", TDf_F);
 got_flag("+f", TDf_D);
 got_flag("+d", TDf_D);
 got_flag("+d", TDf_F);*/
-
+
 
 /*U64 sc = 32,
     scm = 255;
@@ -374,6 +374,6 @@ my_dir;
 
 "\n";
 
-KeyAndCont;
+KeyAndCont;
 
 Exit;

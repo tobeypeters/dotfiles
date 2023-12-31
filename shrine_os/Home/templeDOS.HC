@@ -18,7 +18,6 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-
 #include "./shared.HC"
 
 #define REC_CNT 32
@@ -263,7 +262,7 @@ U8 *defined_flags = Define("ST_TEMPLEDOS_FLAGS")$WW,1$;
 #define FLG_Y 0x1000000 //y
 #define FLG_Z 0x2000000 //z
 
-Bool got_flag(U8 *flag_got=NULL, I64 flag_want, Bool err_disp=TRUE)
+Bool got_flag(U8 *flag_got=NULL, I64 flag_want)
 {//Validate command flag?
   //Make sure we had parsed atleast one flag
   //and we previously found a valid command.
@@ -273,7 +272,8 @@ Bool got_flag(U8 *flag_got=NULL, I64 flag_want, Bool err_disp=TRUE)
 
   my_scanflags(&f,defined_flags,flag_got);
 
-  return (f&flag_want);
+
+  return ToBool((f&flag_want));
 }
 
 U8 execute_cmd(U8 *cmd) {
@@ -380,7 +380,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 14: //ed
 	PopUpEd(buffera);
-
+
         break;
       case 15: //df
 //        viewer("DrvRep;\"\n\";
@@ -407,7 +407,7 @@ U8 execute_cmd(U8 *cmd) {
 
         buffer = tern(fc==0,buffera,bufferb);
 
-        MiniFM(tern(tc == 1,".",buffer),,tf);
+//        MiniFM(tern(tc == 1,".",buffer),,tf);
 
         break;
       case 22: //vol
@@ -557,11 +557,18 @@ done:
 }
 
 //Adam error displayed:
-//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$WARNING:$FG$$BK,0$ Assign U0 in fun 'templeDOS'.
+//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$WARNING:$FG$$BK,0$ Assign U0 in fun //'templeDOS'.
 //
 //  I have not been able to figure out what cause this.
 //  So, I tell Adam to clear itself.
 U0 templeDOS() {
+Adam("DocClear;");
+Adam("\"Herea\";");
+
+Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
+Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
+
+
   DocClear;
 
   //Perhaps, I'll get rid of this:
@@ -598,7 +605,12 @@ U0 templeDOS() {
   }
 
   Free(input);
+
+
+  Adam("\"Hereb\";");
+  KeyAndCont;
 }
+
 
 SettingsPush;
 
@@ -608,12 +620,18 @@ MenuPush(
   "}"
 );
 
-Adam("DocClear;");
+/*Adam("DocClear;");
+Adam("\"Herea\";");
 
-//Adam("\"\nStarting templeDOS...\n\";");
+Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
+Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
+Adam("\"templeDOS [spawn]: Terminated %%D %%T\",Now,Now;");
+*/
 
 templeDOS;
 
 Free(VSAM);
 
+
 SettingsPop;
+

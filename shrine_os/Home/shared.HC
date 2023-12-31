@@ -147,7 +147,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
  //     buffera exists-||
  //                     -- bufferb doesn't 
  //
- //        if (ValidFiles(blah,blah) == 1) {}
+ //        if (ValidFiles(blah,blah) == 1) {}
  //
  //returns:
  //         1	All files are valid
@@ -249,8 +249,18 @@ I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+U8 str_upper(U8 *stra)
+{//Can't find a uppercase function for strings. 
+ //There's ToUpper, but it looks like it's for
+ //single characters.
+  return MStrUtil(stra,SUF_TO_UPPER);
+}
+U8 str_lower(U8 *stra)
+{//Can't find a lowerrcase function for strings. 
+  return MStrUtil(stra,SUF_TO_LOWER);
+}
 
-Bool str_cmp(U8 *stra, U8 *strb)
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
 /*Bool str_cmp(U8 *stra, U8 *strb) {
@@ -269,10 +279,16 @@ Bool str_cmp(U8 *stra, U8 *strb)
 
   return ret_val;
 }*/
+  
+  Bool result = FALSE;
+  if (ignore_case) {
+    result = (!(StrICmp(stra,strb)));
+  }
+  else { 
+    result = (!(StrCmp(stra,strb)));
+  }
 
-  if (!(StrCmp(stra,strb))) return TRUE;
-
-  return FALSE;
+  return result;
 }
 
 U0 zero_mem(U8 *region, U64 size)
@@ -332,9 +348,10 @@ U0 my_dir(U8 *files_find_mask='*')
 
       if (!st[2]) StrCpy(st+2,"/");
 
-      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
-
+//      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
 //      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
+
+      "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",st;
 
       CDateStruct ds, dsc;
       Date2Struct(&dsc,Now+local_time_offset);
@@ -382,4 +399,159 @@ U0 my_dir(U8 *files_find_mask='*')
       "No matching entries\n";
     Free(st);
   }
+}
+
+
+
+
+
+
+U0 lsLineRep(CDoc *doc,CDirEntry *tmpde)
+{
+  while (tmpde) {
+    if (tmpde->attr&RS_ATTR_DIR) {
+      DocPrint(doc,"\t$$$$TR+C,\"%s\"$$$$\n$$$$ID,2$$$$",tmpde->name);
+      lsLineRep(doc,tmpde->sub);
+      DocPrint(doc,"$$$$ID,-2$$$$");
+    } else
+      DocPrint(doc,"$$$$LK,\"%s\",A=\"FI:%s\"$$$$\n",
+	    tmpde->name,tmpde->full_name);
+    tmpde=tmpde->next;
+  }
+}
+
+U0 ls_dir(U8 *files_find_mask='*',Bool tree_mode=FALSE)
+{//Linux'ish style directory listing.
+ //Added a treeview option
+  CDirEntry *tmpde1=NULL,*tmpde2;
+
+if (tree_mode)
+{
+    "tree_mode\n";
+    tmpde1=FilesFind(files_find_mask,FUF_RECURSE);
+}
+else 
+{
+    "no tree_mode\n";
+    tmpde1=FilesFind(files_find_mask);
+}
+
+
+  U8 *st;
+
+  if (!(st=DirCur))
+    PrintErr("Invalid Drive\n");
+  else {
+    if (tmpde1) {
+      st=MAllocIdent(tmpde1->full_name);
+      StrLastRem(st,"/");
+
+      if (!st[2]) StrCpy(st+2,"/");
+
+
+      "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",st;
+
+      CDateStruct ds, dsc;
+      Date2Struct(&dsc,Now+local_time_offset);
+
+      U64 gt = gigatenth,
+           g = gigabyte;
+
+      Bool id = FALSE;
+             
+      while (tmpde1) {
+
+//if (tree_mode)
+//{
+//}
+//else
+//{
+	tmpde2=tmpde1->next;
+//}
+
+	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
+
+	id =tmpde1->attr & RS_ATTR_DIR;
+
+	"%c ",100-(!id*55);
+
+	if (id) {
+	  "%9s",""; goto dir;
+	}
+
+	if (tmpde1->size >= gigabyte)
+	  "%9d.%dg",tmpde1->size/g,
+		    (tmpde1->size-((tmpde1->size/g)*g))/gt;
+	else "%9d",tmpde1->size;
+
+	dir:
+	  " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
+
+	  if (ds.year<dsc.year) "%5d",ds.year;
+	  else "%02d:%02d",ds.hour,ds.min;
+
+	  " ";
+
+	  if (id)
+if (tree_mode)
+{
+lsLineRep(DocPut,tmpde1);
+}
+else {
+	    PutDirLink(tmpde1->name,tmpde1->full_name);
+}
+	  else
+if (tree_mode)
+{
+}
+else {
+	    PutFileLink(tmpde1->name,tmpde1->full_name);
+	  "\n";
+	  DirEntryDel(tmpde1);
+	  tmpde1=tmpde2;
+}
+
+if (tree_mode) {
+tmpde1=tmpde1->next;
+}
+
+      }
+
+
+if (tree_mode) {
+DirTreeDel(tmpde1);
+}
+
+
+    } else
+      "No matching entries\n";
+    Free(st);
+  }
+}
+
+ls_dir(,TRUE);
+
+
+
+
+
+
+
+
+
+
+
+
+
+U0 tree(U8 *dir)
+{
+  CDirEntry *tmpde=FilesFind(dir,FUF_RECURSE);
+
+
+  "\n";
+  "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",dir;
+//  LineRep1(tmpde);
+  DirTreeRep(DocPut,tmpde);
+
+  DirTreeDel(tmpde);
 }
