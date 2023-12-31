@@ -28,5 +28,4 @@
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
  <b>Modied system files ... : copies in - c:/Home/OSBackup</b>
- * Added KeyAndCont().
  
