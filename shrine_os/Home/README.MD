@@ -16,65 +16,17 @@
 
 <b>Description:</b>
               Running list of additions and changes made to my 
-              distribution of Shrine/TempleOS.
+              distribution of Shrine/TempleOS.  
+              
+              <b>Main thing is the new command interpreter : templeDOS.HC</b>
 
 <b>General:</b>
  * Added $LK,"shared.HC",A="FI:C:/Home/shared.HC"$ : Shared HolyC source file.
  * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
-   compositor. Right now it overrides the
-   mouse cursor color.
+   compositor. Right now it overrides the mouse cursor color.
  * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
-<b>C:/Once.HC.Z:</b>
- * Commented out everything.
-
-<b>C:/StartOS.HC.Z:</b>
- * Comment out WallPaperInit
-
-<b>C:/Home/HomeSys.HC.Z:</b>
- * Code restructure.
- * Added theme include.
- * Added TempleDOS execution logic.
-
-<b>C:/Home/Once.HC.Z:</b>
- * Commented out everything.
-
-<b>C:/Adam/AutoComplete/ACTask.HC.Z:</b>
- * Remove all the colors.
-
-<b>C:/Adam/DolDoc/DocEd.HC.Z:</b>
- * Changed window close button(s) 'X' to 'þ'.
- * Changed Window "MENU" to "µMENUÆ".
- * Changed the length of the title display, from 16 to 32.
-   Still haven't figured out, what I need to delete to
-   stop the scrolling.
- * Added a More() function, which displays a document
-   "similar" to how the more caommand works in DOS.
-
-<b>C:/Adam/DolDoc/DocRecalc.HC.Z:</b>
- * Turned off blinking text on the sidebar.
-
-<b>C:/Adam/DolDoc/DocTerm.HC.Z:</b>
- * Changed window close button(s) 'X' to 'þ'.
- * Changed Window "MENU" to "µMENUÆ".
-
-<b>C:/Adam/DolDoc/PutKey.HC.Z:</b>
- * Changed <END> shortcut to move to the end of line.
- * Added <CTRL> + <ESC> shortcut, to move
-   to the end of the document.
- * Unimportant - Fixed a typo.
-
-<b>C:/Adam/Opt/Utils/LineRep.HC.Z:</b>
- * Added in-line file manager. Refactored SizeRep;
-
-<b>C:/Kernel/BlkDev/DskDirB.HC.Z:</b>
- * Added Hack to IsDir(). It was hanging on doing checks
-   for things like 9: ... Pretty sure that was the culprit.
-   Cause, my app doesn't hang anymore.
-
-<b>C:/Kernel/StrB.HC.Z:</b>
+ <b>Modied system files ... : copies in - c:/Home/OSBackup</b>
  * Added KeyAndCont().
-   It displays "Press any key to continue ...". without any newline
-   characters and "clears" the line after you press a key.
-
+ 
