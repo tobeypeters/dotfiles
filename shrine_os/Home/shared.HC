@@ -400,158 +400,86 @@ U0 my_dir(U8 *files_find_mask='*')
     Free(st);
   }
 }
-
-
-
-
-
-
-U0 lsLineRep(CDoc *doc,CDirEntry *tmpde)
-{
-  while (tmpde) {
-    if (tmpde->attr&RS_ATTR_DIR) {
-      DocPrint(doc,"\t$$$$TR+C,\"%s\"$$$$\n$$$$ID,2$$$$",tmpde->name);
-      lsLineRep(doc,tmpde->sub);
-      DocPrint(doc,"$$$$ID,-2$$$$");
-    } else
-      DocPrint(doc,"$$$$LK,\"%s\",A=\"FI:%s\"$$$$\n",
-	    tmpde->name,tmpde->full_name);
-    tmpde=tmpde->next;
-  }
-}
-
-U0 ls_dir(U8 *files_find_mask='*',Bool tree_mode=FALSE)
+U0 ls(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
- //Added a treeview option
-  CDirEntry *tmpde1=NULL,*tmpde2;
-
-if (tree_mode)
-{
-    "tree_mode\n";
-    tmpde1=FilesFind(files_find_mask,FUF_RECURSE);
-}
-else 
-{
-    "no tree_mode\n";
-    tmpde1=FilesFind(files_find_mask);
-}
-
-
   U8 *st;
 
-  if (!(st=DirCur))
+  if (!(st=DirCur))
+  {
     PrintErr("Invalid Drive\n");
-  else {
-    if (tmpde1) {
-      st=MAllocIdent(tmpde1->full_name);
-      StrLastRem(st,"/");
+    return;
+  }
 
-      if (!st[2]) StrCpy(st+2,"/");
+  CDirEntry *tmpde1=NULL,*tmpde2;
+  tmpde1=FilesFind(files_find_mask);
 
 
-      "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",st;
+  if (tmpde1) 
+  {
+    st=MAllocIdent(tmpde1->full_name);
+    StrLastRem(st,"/");
 
-      CDateStruct ds, dsc;
-      Date2Struct(&dsc,Now+local_time_offset);
+    if (!st[2]) StrCpy(st+2,"/");
 
-      U64 gt = gigatenth,
-           g = gigabyte;
+//      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
+//      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
 
-      Bool id = FALSE;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
+
+    CDateStruct ds, dsc;
+    Date2Struct(&dsc,Now+local_time_offset);
+
+    U64 gt = gigatenth,
+         g = gigabyte;
+
+    Bool id = FALSE;
              
-      while (tmpde1) {
+    while (tmpde1)
+    {
+      tmpde2=tmpde1->next;
 
-//if (tree_mode)
-//{
-//}
-//else
-//{
-	tmpde2=tmpde1->next;
-//}
+      Date2Struct(&ds,tmpde1->datetime+local_time_offset);
 
-	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
+      id =tmpde1->attr & RS_ATTR_DIR;
 
-	id =tmpde1->attr & RS_ATTR_DIR;
+      "%c ",100-(!id*55);
 
-	"%c ",100-(!id*55);
-
-	if (id) {
-	  "%9s",""; goto dir;
-	}
-
-	if (tmpde1->size >= gigabyte)
-	  "%9d.%dg",tmpde1->size/g,
-		    (tmpde1->size-((tmpde1->size/g)*g))/gt;
-	else "%9d",tmpde1->size;
-
-	dir:
-	  " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
-
-	  if (ds.year<dsc.year) "%5d",ds.year;
-	  else "%02d:%02d",ds.hour,ds.min;
-
-	  " ";
-
-	  if (id)
-if (tree_mode)
-{
-lsLineRep(DocPut,tmpde1);
-}
-else {
-	    PutDirLink(tmpde1->name,tmpde1->full_name);
-}
-	  else
-if (tree_mode)
-{
-}
-else {
-	    PutFileLink(tmpde1->name,tmpde1->full_name);
-	  "\n";
-	  DirEntryDel(tmpde1);
-	  tmpde1=tmpde2;
-}
-
-if (tree_mode) {
-tmpde1=tmpde1->next;
-}
-
+      if (id)
+      {
+        "%9s",""; goto dir;
       }
 
+      if (tmpde1->size >= gigabyte)
+        "%9d.%dg",tmpde1->size/g,
+                 (tmpde1->size-((tmpde1->size/g)*g))/gt;
+      else "%9d",tmpde1->size;
 
-if (tree_mode) {
-DirTreeDel(tmpde1);
-}
+      dir:
+        " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
 
+        if (ds.year<dsc.year) "%5d",ds.year;
+        else "%02d:%02d",ds.hour,ds.min;
 
-    } else
-      "No matching entries\n";
-    Free(st);
+        " ";
+
+        if (id)
+          PutDirLink(tmpde1->name,tmpde1->full_name);
+        else
+	    PutFileLink(tmpde1->name,tmpde1->full_name);
+
+        "\n";
+
+        DirEntryDel(tmpde1);
+
+        tmpde1=tmpde2;
+    }
   }
+  else "No matching entries\n";
+
+  Free(st);
+
+//  }
+
 }
+ls;
 
-ls_dir(,TRUE);
-
-
-
-
-
-
-
-
-
-
-
-
-
-U0 tree(U8 *dir)
-{
-  CDirEntry *tmpde=FilesFind(dir,FUF_RECURSE);
-
-
-  "\n";
-  "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",dir;
-//  LineRep1(tmpde);
-  DirTreeRep(DocPut,tmpde);
-
-  DirTreeDel(tmpde);
-}

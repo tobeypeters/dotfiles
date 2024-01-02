@@ -339,7 +339,7 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 4: //ls
-        "\n"; my_dir(tern(tc==1,".",buffera));
+        "\n"; ls(tern(tc==1,".",buffera));
 
         break;
       case 8: //mv
@@ -634,4 +634,3 @@ Free(VSAM);
 
 
 SettingsPop;
-
