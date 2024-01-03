@@ -424,13 +424,17 @@ U0 ls(U8 *files_find_mask='*')
 //      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
 //      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
 
     CDateStruct ds, dsc;
     Date2Struct(&dsc,Now+local_time_offset);
 
     U64 gt = gigatenth,
          g = gigabyte;
+
+    I64 fc = 0,
+        dc = 0,
+        bc = 0;
 
     Bool id = FALSE;
              
@@ -463,9 +467,16 @@ U0 ls(U8 *files_find_mask='*')
         " ";
 
         if (id)
+        {
           PutDirLink(tmpde1->name,tmpde1->full_name);
+          dc+=1;
+        }
         else
-	    PutFileLink(tmpde1->name,tmpde1->full_name);
+        {
+          PutFileLink(tmpde1->name,tmpde1->full_name);
+          fc+=1;
+          bc+=tmpde1->size;
+        }
 
         "\n";
 
@@ -473,6 +484,7 @@ U0 ls(U8 *files_find_mask='*')
 
         tmpde1=tmpde2;
     }
+    "%11d File(s) %10dbytes\n%11d Dir(s)\n",fc,bc,dc;
   }
   else "No matching entries\n";
 
