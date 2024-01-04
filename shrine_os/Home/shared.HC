@@ -484,7 +484,7 @@ U0 ls(U8 *files_find_mask='*')
 
         tmpde1=tmpde2;
     }
-    "%11d File(s) %10dbytes\n%11d Dir(s)\n",fc,bc,dc;
+    "%11d File(s) %10dbytes\n%11d Dir(s)\n",fc,bc,dc;
   }
   else "No matching entries\n";
 
@@ -495,3 +495,4 @@ U0 ls(U8 *files_find_mask='*')
 }
 ls;
 
+
