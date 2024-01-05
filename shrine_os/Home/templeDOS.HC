@@ -482,11 +482,18 @@ U8 execute_cmd(U8 *cmd) {
         Type(buffera);
 
         break;
-      case 31: //exit
+      case 31:
+      case 35: //exit
+        // As far as I Know ... You don't can't be notified 
+        // and respond to <shift>+<esc>.  I do have one idea,
+        // and I'll update this section if Ifigure it out.
         //Don't need to worrry about aborting.  OS reclaims
         //all the memory, when the window is closed
         //and what else is there to worrry about?
-        Exit;
+        //Exit;
+
+        return 1; //Changed my mind about how I want to do it.
+                  //But, what I said prior is still true;
 
         break;
       case 33: //mem
@@ -495,10 +502,10 @@ U8 execute_cmd(U8 *cmd) {
                ");
 
         break;
-      case 35: //quit
-        return 1;
+//      case 35: //quit
+//        return 1;
 
-        break;
+//        break;
       case 36: //touch
         //OK ... Angry. I made an attrib command that lets you
         //set file attributes. But, the system ignores them.
@@ -562,11 +569,10 @@ done:
 //  I have not been able to figure out what cause this.
 //  So, I tell Adam to clear itself.
 U0 templeDOS() {
-Adam("DocClear;");
-Adam("\"Herea\";");
+  Adam("DocClear;");
 
-Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
+  Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
+  Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
 
 
   DocClear;
@@ -606,9 +612,7 @@ Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
 
   Free(input);
 
-
-  Adam("\"Hereb\";");
-  KeyAndCont;
+  Adam("\"templeDOS [spawn]: Ended %%D %%T\",Now,Now;");
 }
 
 
@@ -620,17 +624,10 @@ MenuPush(
   "}"
 );
 
-/*Adam("DocClear;");
-Adam("\"Herea\";");
-
-Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
-Adam("\"templeDOS [spawn]: Terminated %%D %%T\",Now,Now;");
-*/
-
 templeDOS;
 
 Free(VSAM);
 
 
 SettingsPop;
+
