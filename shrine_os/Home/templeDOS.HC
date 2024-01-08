@@ -309,7 +309,6 @@ U8 execute_cmd(U8 *cmd) {
     cmd = seg_push(cmd);
   } i = 0;
 
-  I64 f = 0;
 
   Bool tf = FALSE; //General use true/false flag.
 
@@ -482,7 +481,7 @@ U8 execute_cmd(U8 *cmd) {
         Type(buffera);
 
         break;
-      case 31:
+      case 31: //quit
       case 35: //exit
         // As far as I Know ... You don't can't be notified 
         // and respond to <shift>+<esc>.  I do have one idea,
@@ -502,10 +501,6 @@ U8 execute_cmd(U8 *cmd) {
                ");
 
         break;
-//      case 35: //quit
-//        return 1;
-
-//        break;
       case 36: //touch
         //OK ... Angry. I made an attrib command that lets you
         //set file attributes. But, the system ignores them.
@@ -569,13 +564,14 @@ done:
 //  I have not been able to figure out what cause this.
 //  So, I tell Adam to clear itself.
 U0 templeDOS() {
+  Seed;
+  I64 termID = AbsI64(RandI32);
   Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-  Adam("\"templeDOS [spawn]: Start %%D %%T\",Now,Now;");
+  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
 
-
-  DocClear;
+//  DocClear;
 
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffer.
@@ -585,7 +581,9 @@ U0 templeDOS() {
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  //"term: %d\n",HashCodeFor("term");
+//  "term: %d\n",HashCodeFor("term");
+//  "quit: %d\n",HashCodeFor("quit");
+//  "%s\n",VSAM[31][1];
 
   U64 result = 0;
   U8 *input;
@@ -602,7 +600,7 @@ U0 templeDOS() {
     input = seg_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
 
     if (StrLen(input) > 0) {
-      result = execute_cmd(input);
+      result = execute_cmd(input);
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
@@ -612,7 +610,8 @@ U0 templeDOS() {
 
   Free(input);
 
-  Adam("\"templeDOS [spawn]: Ended %%D %%T\",Now,Now;");
+
+  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 }
 
 
@@ -630,4 +629,3 @@ Free(VSAM);
 
 
 SettingsPop;
-

@@ -219,7 +219,11 @@ U0 strcat(U8 **buffer,Bool flush=TRUE,...)
 }
 
 U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
-{ //Stripped down version, of ScanFlags.
+{ //Stripped down version, of ScanFlags. Only allows '-'flags.
+  //For my case, maybe I didn't need to do all this.
+  //Need to test, but should allow for TempleOS style flags.
+  //
+  //Example: CatPrint(buf,"-LE");
   I64 i;
   U8 *buf,*ptr;
   if (src) {
@@ -236,7 +240,7 @@ U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
 	    *ptr++=*src++;
 	  *ptr=0;
 	  i=LstMatch(buf,lst);
-	  if (i>=0)
+	  if (i>=0)
 	    LBts(_dst_flags,i);
 	}
       }
@@ -493,5 +497,5 @@ U0 ls(U8 *files_find_mask='*')
 //  }
 
 }
-//ls;
+//ls;
 
