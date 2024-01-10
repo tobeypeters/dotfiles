@@ -143,12 +143,6 @@ sudo apt install -y i3
 sudo snap install auto-cpufreq
 sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 
-#Pvirtualbox fuse package - allows you to mount vdi files
-# https://launchpad.net/ubuntu/+source/virtualbox/4.1.22-dfsg-0ubuntu2
-#mkdir ~/vdimount
-#sudo vdfuse -f /path/to/your/disk.vdi ~/vdimount
-#sudo umount ~/vdimount
-
 # In case, you want a ramdisk
 # Make sure /mnt/ram_disk exists first
 # new_ram_disk    /mnt/ram_disk   tmpfs    nodev,nosuid,noexec,nodiratime,size=256M   0
