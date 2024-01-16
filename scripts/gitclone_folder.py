@@ -28,7 +28,7 @@
 
         ./gitclone_folder.py https://github.com/tinkeros/Alec_stuff_backup.git help cosmo_engine
     Resources:
-        Get a list of branches available:
+        Get a list of branches available command:
         git ls-remote --heads https://github.com/tinkeros/Alec_stuff_backup.git
 """
 from argparse import ArgumentParser, Namespace as arg_namespace
@@ -51,10 +51,13 @@ class MESSAGES:
     SUCCESS = f'{Colors.GREEN}Successfully{Colors.END}'
     REPO = f'{Colors.GREEN}Repository: {Colors.END}'
 
-def process_exec(command: List[str]) -> None:
+def process_exec(command: List[str], verbose: bool = False) -> None:
     try:
         # result = subprocess.run(command, capture_output=True, text=True)
         result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
+        if verbose:
+            print(f'\nCommand executed: {" ".join(command)}')
+            print(f'          Stdout: {result.stdout}')
         return result
     except subprocess.CalledProcessError as e:
         print(f'Error: {e}')
@@ -62,7 +65,7 @@ def process_exec(command: List[str]) -> None:
 
     return None
 
-def clone_folder(repo_url: str, branch: str, folder_path: str) -> None:
+def clone_folder(args: arg_namespace) -> None:
     command: List[str] = ['']
 
     # Create a temporary directory
@@ -71,26 +74,26 @@ def clone_folder(repo_url: str, branch: str, folder_path: str) -> None:
     command = [
         'git', 'clone',
         # '--depth', '1',
-        '--branch', branch,
-        repo_url,
+        '--branch', args.branch,
+        args.repository_url,
         temp_dir
     ]
     # Clone the repository with --depth 1
     # subprocess.run(command)
-    process_exec(command)
+    process_exec(command, args.verbose)
 
     command = [
         'cp', '-r',
-        f'{temp_dir}/{folder_path}/', '.'
+        f'{temp_dir}/{args.folder_path}/', '.'
     ]
     # Copy the contents of the specified folder
     # subprocess.run(command)
-    process_exec(command)
+    process_exec(command, args.verbose)
 
     # Clean up the temporary directory
     shutil.rmtree(temp_dir)
 
-def get_branches(repo_url: str) -> None:
+def get_branches(repo_url: str, verbose: bool = False) -> None:
     # Construct the Git command to get remote branches
     command: List[str] = [
         'git', 'ls-remote', '--heads', repo_url
@@ -98,10 +101,13 @@ def get_branches(repo_url: str) -> None:
 
     # Run the Git command to get branches
     # result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
-    result = process_exec(command)
+    result = process_exec(command, verbose)
 
     # Extract branch names
     branches: List[str] = [line.split('refs/heads/')[1].strip() for line in result.stdout.splitlines()]
+
+    if verbose:
+        print(f'{Colors.GREEN}Verbose mode:{Colors.END}\nShowing available branches for repository: {repo_url}')
 
     print(MESSAGES.BRANCHES)
     for branch in branches:
@@ -119,18 +125,20 @@ def main() -> None:
     parser.add_argument('repository_url', help='URL of the Git repository')
     parser.add_argument('branch', help='Branch name of the repository. Use "help" to get a list of available branches.')
     parser.add_argument('folder_path', help='Path to the specific folder to clone')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose mode')
+
 
     # Parse the command-line arguments
     args: arg_namespace = parser.parse_args()
 
     # If the user entered "help" for the branch, show available branches
     if args.branch.lower() == 'help':
-        get_branches(args.repository_url)
+        get_branches(args.repository_url, args.verbose)
         return
 
     # Call the function to clone the folder
     print(f'\n{MESSAGES.REPO}{args.repository_url}')
-    clone_folder(args.repository_url, args.branch, args.folder_path)
+    clone_folder(args)
     print(f'\n{MESSAGES.SUCCESS} cloned folder {Colors.GREEN}{args.folder_path}{Colors.END} from {args.repository_url} on branch {Colors.RED}{args.branch}{Colors.END}')
 
     exit(0)
