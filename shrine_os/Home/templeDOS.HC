@@ -600,7 +600,7 @@ U0 templeDOS() {
     input = seg_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
 
     if (StrLen(input) > 0) {
-      result = execute_cmd(input);
+      result = execute_cmd(input);
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
@@ -612,7 +612,7 @@ U0 templeDOS() {
 
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
-}
+}
 
 
 SettingsPush;
@@ -621,6 +621,12 @@ MenuPush(
   "File {"
   "  Exit(,CH_SHIFT_ESC);"
   "}"
+  "View {"
+  "  PlainText(,CH_CTRLT);"
+  "  Border(,CH_CTRLB);"
+  "  FileMgr(,CH_CTRLD);"
+  "}"
+
 );
 
 templeDOS;

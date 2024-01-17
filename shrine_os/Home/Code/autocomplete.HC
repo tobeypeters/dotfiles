@@ -62,7 +62,7 @@ void print(trie *ele, char *slice) {
 
 void autocomplete(trie *ele, char *prefix) {
 
-	int len = strlen (prefix);
+	int len = strlen (prefix);
 	for (int i = 0; i < len; i++) ele = ele->subtrie[prefix[i] % 97];
 
 	print (ele, prefix);
