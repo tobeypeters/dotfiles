@@ -206,7 +206,7 @@ U0 viewer(U8 *cmd)
   PutChars(CH_CTRLY);
 }
 
-U0 strcat(U8 **buffer,Bool flush=TRUE,...)
+U8 strcat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush=TRUE ... buffer will be cleared first.
   U64 i = 0;
@@ -216,6 +216,8 @@ U0 strcat(U8 **buffer,Bool flush=TRUE,...)
   for (;i<argc;i++) {
     CatPrint(buffer,argv[i]);
   }
+
+  return buffer;
 }
 
 U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
@@ -240,7 +242,7 @@ U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
 	    *ptr++=*src++;
 	  *ptr=0;
 	  i=LstMatch(buf,lst);
-	  if (i>=0)
+	  if (i>=0)
 	    LBts(_dst_flags,i);
 	}
       }
