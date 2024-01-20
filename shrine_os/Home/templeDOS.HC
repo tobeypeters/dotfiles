@@ -301,7 +301,7 @@ U8 execute_cmd(U8 *cmd) {
 
   fc = seg_count(cmd,FALSE,'-');
 
-  if ((tc = at - fc) == 0) return 0;
+  if ((tc = at - fc) == 0) return 0;
 
   for (; i < at; i++) {
     seg_trim(cmd,FALSE,TRUE);
@@ -582,8 +582,6 @@ U0 templeDOS() {
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
 //  "term: %d\n",HashCodeFor("term");
-//  "quit: %d\n",HashCodeFor("quit");
-//  "%s\n",VSAM[31][1];
 
   U64 result = 0;
   U8 *input;
@@ -612,7 +610,7 @@ U0 templeDOS() {
 
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
-}
+}
 
 
 SettingsPush;
