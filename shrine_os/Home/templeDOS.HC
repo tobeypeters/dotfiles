@@ -512,7 +512,7 @@ U8 execute_cmd(U8 *cmd) {
         if (valid_files("0",buffera)) {
           // Off-hand, looks like Touch() doesn't create
           // files. I'll look more at it and touchfile().
-          FileWrite(buffera,NULL,0);
+          FileWrite(buffera,NULL,0);
         }
         else {
           Touch(buffera,""); //Updates the time & date.
@@ -571,7 +571,7 @@ U0 templeDOS() {
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
 
-  DocClear;
+  DocClear;
 
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffe`r.
