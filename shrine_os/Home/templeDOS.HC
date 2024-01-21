@@ -84,7 +84,7 @@ I64 cur_IDX = -1;
 
 I64 indexOf(U8 *cmd) {
   U64 i = REC_CNT,
-      h = HashCodeFor(cmd);
+      h = hash_code_for(cmd);
 
   //Right now, the HASH hit stats are 22/10.
   //The collisions are caused from mapping the HASHES,
@@ -212,7 +212,7 @@ Bool err_check(U64 tcmin=1, U64 tcmax=1,
             return FALSE;
         }
         else if (x == -1) {
-          if (ValidFiles("0",seg_peek(i))) {
+          if (valid_files("0",seg_peek(i))) {
             err_print(ERR_FILENF,data[i]);
             return FALSE;
           }
@@ -323,9 +323,9 @@ U8 execute_cmd(U8 *cmd) {
   if (err_check(VSAM[cur_IDX][2],VSAM[cur_IDX][3],
                 VSAM[cur_IDX][4],
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
-    switch (cur_IDX) {
+    switch [cur_IDX] {
       case 0: //view
-        viewer(strcat(buffer,,"Type(\"",
+        viewer(str_cat(buffer,,"Type(\"",
                       buffera,"\");"));
 
         break;
@@ -342,7 +342,7 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 8: //mv
-        if (ValidFiles("10",buffera,bufferb)) { //Don't allow override.
+        if (valid_files("10",buffera,bufferb)) { //Don't allow override.
           if (IsDir(buffera)) {
             CopyTree(buffera,bufferb);
             DelTree(buffera);
@@ -418,7 +418,7 @@ U8 execute_cmd(U8 *cmd) {
       case 24: //cp
         buffer = tern(fc==0,buffera,bufferb);
 
-        if (ValidFiles(,buffer) || (buffer[StrLen(buffer)-1]=='*')) {
+        if (valid_files(,buffer) || (buffer[StrLen(buffer)-1]=='*')) {
           tf = IsDir(buffer);
 
           if (got_flag(buffera,FLG_D)) { // "-d"
@@ -469,7 +469,7 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 28: //mkdir
-        if (ValidFiles("0",buffera)) {
+        if (valid_files("0",buffera)) {
           DirMk(buffera);
         }
         else {
@@ -509,7 +509,7 @@ U8 execute_cmd(U8 *cmd) {
         //validate this and try to figure out if it's me or something.
 
         // Creates an empty file, if it doesn't exist.
-        if (ValidFiles("0",buffera)) {
+        if (valid_files("0",buffera)) {
           // Off-hand, looks like Touch() doesn't create
           // files. I'll look more at it and touchfile().
           FileWrite(buffera,NULL,0);
@@ -525,7 +525,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 38: //help
         if (FileFind(help_file)) {
-          viewer(strcat(buffer,,"Type(\"",
+          viewer(str_cat(buffer,,"Type(\"",
                         help_file,"\");"));
         }
         else {
@@ -559,7 +559,7 @@ done:
 }
 
 //Adam error displayed:
-//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$WARNING:$FG$$BK,0$ Assign U0 in fun //'templeDOS'.
+//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$AWARNING:$FG$$BK,0$ Assign U0 in fun //'templeDOS'.
 //
 //  I have not been able to figure out what cause this.
 //  So, I tell Adam to clear itself.
@@ -571,23 +571,24 @@ U0 templeDOS() {
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
 
-//  DocClear;
+  DocClear;
 
   //Perhaps, I'll get rid of this:
-  DocMax; //Force people to use an unlimited command buffer.
+  DocMax; //Force people to use an unlimited command buffe`r.
           //It's not really unlimited, see $LK,"max_entries",A="FF:::/Adam/DolDoc/DocTerm.HC,max_entries"$.
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
   "(c) 2022 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-//  "term: %d\n",HashCodeFor("term");
+//  "term: %d\n",hash_code_for("term");
 
   U64 result = 0;
   U8 *input;
 
-  while (TRUE)
+  while (result == 0)
   {
+    result += 1;
     data_clean;
 
     DocBottom;
@@ -595,7 +596,8 @@ U0 templeDOS() {
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
-    input = seg_trim(GetStr(,,GSF_SHIFT_ESC_EXIT), FALSE, TRUE);
+    input = GetStr(,,GSF_SHIFT_ESC_EXIT);
+    seg_trim(input, FALSE, TRUE);
 
     if (StrLen(input) > 0) {
       result = execute_cmd(input);

@@ -37,11 +37,11 @@ public CBGR48 gr_palette_test[COLORS_NUM]={
 };
 
 public CBGR48 gr_palette_gruv[COLORS_NUM]={
-//CURRENTLY TRYING FOR AN OLD SCHOOL'ISH DOS LOOK.
   0xffffffffffff, // MOUSE, CURSOR - BLACK
   0xd0d0d2d2d4d4, // BORDERS - BLUE
 
-  0x0000dddd0000, // COMMENTS - GREEN
+  0xf8f8dede7e7e, // COMMENTS - GREEN
+//  0x0000dddd0000, // COMMENTS - GREEN
   0x0000b7b70000, // TYPES - CYAN
 
   0xd0d0d2d2d4d4, // RED - FILE LINKS
@@ -50,29 +50,27 @@ public CBGR48 gr_palette_gruv[COLORS_NUM]={
 
   0x0000ffffffff, // BROWN
 
-  0xffffffff0000, // BRACES - LTGRAY
+  0xcccccccccccc, // BRACES - LTGRAY
 
   0x000000000000, // DKGRAY
 
-  0x0000ffffffff, // Folders, RETURNTYPES - LTBLUE
+  0x99996666cccc, // Folders, RETURNTYPES - LTBLUE
 
   0x000000000000, // LTGREEN
 
-//  0x000087870000, // LTCYAN
-  0x0000ffffffff, // LTCYAN
+  0x0000ffffffff, // LTCYAN
 
   0xffff00000000, // ERRORS-LTRED
   0xd0d0d2d2d4d4, // SELECTION FG - LTPURPLE
-  0x000000000000, // MENU TEXT, SCROLLBARGRIPPERS - YELLOW
 
-  0x00000000ffff  // BG MAIN - WHITE
-//  0x000000000000  // BG MAIN - WHITE
+  0x000000000000, // MENU TEXT, SCROLLBARGRIPPERS - YELLOW
+  0x00000000aaaa, // BG MAIN - WHITE
 };
 
-GrPaletteSet(gr_palette_gruv);
+GrPaletteSet(gr_palette_test);
 
 // NOTE: for whatever reason when you Abort&Exit (Shift+Esc)
 // a User Task (usually a terminal) the theme may reset to
 // gr_palette_std. I could not figure out why and how to fix that.
 // So I just made gr_palette_std to be gr_palette_gruv.
-MemCpy(gr_palette_std, gr_palette_gruv, sizeof(gr_palette_gruv));
+MemCpy(gr_palette_std, gr_palette_test, sizeof(gr_palette_test));

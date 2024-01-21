@@ -19,6 +19,45 @@
       Shared code file.
 */
 
+U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
+{//Build a str, from strings stored in argv.
+ //flush=TRUE ... buffer will be cleared first.
+  U64 i = 0;
+
+  if (flush) *buffer = '\0';
+
+  for (;i<argc;i++) {
+    CatPrint(buffer,argv[i]);
+  }
+
+  return buffer;
+}
+U8 str_upper(U8 *stra)
+{//Can't find a uppercase function for strings. 
+ //There's ToUpper, but it looks like it's for
+ //single characters.
+  return MStrUtil(stra,SUF_TO_UPPER);
+}
+U8 str_lower(U8 *stra)
+{//Can't find a lowerrcase function for strings. 
+  return MStrUtil(stra,SUF_TO_LOWER);
+}
+
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
+{//StrCmp replacement which returns TRUE & FALSE.
+ //Saying !StrCmp() for TRUE, erks me ...  
+  Bool result = FALSE;
+  if (ignore_case) {
+    result = (!(StrICmp(stra,strb)));
+  }
+  else { 
+    result = (!(StrCmp(stra,strb)));
+  }
+
+  return result;
+}
+
+
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
 #define HAS_File 1
@@ -136,13 +175,13 @@ I64 is_drv(U8 *drv)
   return -1;
 }
 
-I64 ValidFiles(U8 *mask="11111111",...) 
+I64 valid_files(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
  //to know, if it exists <1> or doesn't <0>.
  //
  //Usage: 
- //        ValidFiles("10",buffera,bufferb);
+ //        valid_files("10",buffera,bufferb);
  //                    ^^
  //     buffera exists-||
  //                     -- bufferb doesn't 
@@ -179,7 +218,7 @@ I64 ValidFiles(U8 *mask="11111111",...)
   return 1;
 }
 
-U64 HashCodeFor(U8 *str)
+U64 hash_code_for(U8 *str)
 {//Hash code generator for strings.
   U64 hash = 5381,
       i = 0;
@@ -204,20 +243,6 @@ U0 viewer(U8 *cmd)
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
   DocTop;View; DocBottom;
   PutChars(CH_CTRLY);
-}
-
-U8 strcat(U8 **buffer,Bool flush=TRUE,...)
-{//Build a str, from strings stored in argv.
- //flush=TRUE ... buffer will be cleared first.
-  U64 i = 0;
-
-  if (flush) *buffer = '\0';
-
-  for (;i<argc;i++) {
-    CatPrint(buffer,argv[i]);
-  }
-
-  return buffer;
 }
 
 U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
@@ -251,86 +276,9 @@ U0 my_scanflags(U8 *_dst_flags,U8 *lst,U8 *src)
   }
 }
 
-I64 MapValue(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-U8 str_upper(U8 *stra)
-{//Can't find a uppercase function for strings. 
- //There's ToUpper, but it looks like it's for
- //single characters.
-  return MStrUtil(stra,SUF_TO_UPPER);
-}
-U8 str_lower(U8 *stra)
-{//Can't find a lowerrcase function for strings. 
-  return MStrUtil(stra,SUF_TO_LOWER);
-}
-
-Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
-{//StrCmp replacement which returns TRUE & FALSE.
- //Saying !StrCmp() for TRUE, erks me ...
-/*Bool str_cmp(U8 *stra, U8 *strb) {
-  if (StrLen(stra) != StrLen(strb)) return FALSE;
- 
-  U8 *sp1 = stra, *sp2 = strb;
-  Bool ret_val = TRUE;
- 
-  while (stra && stra[0] != '\0') {
-    if (!(stra[0] == strb[0])) ret_val = FALSE;
- 
-    stra++; strb++;
-  }
- 
-  stra = sp1; strb = sp2;
-
-  return ret_val;
-}*/
-  
-  Bool result = FALSE;
-  if (ignore_case) {
-    result = (!(StrICmp(stra,strb)));
-  }
-  else { 
-    result = (!(StrCmp(stra,strb)));
-  }
-
-  return result;
-}
-
-U0 zero_mem(U8 *region, U64 size)
-{//Zero out a memory range.
-  MemSet(region, '\0', sizeof(U8)*size);
-}
-
-#define REVBUF_CNT 64
-U8 num_str(U64 number)
-{//Convert a number to a string.
-  U64 tmp = 0,
-        i = 0,
-        j = 0;
-
-  U8 *buffer[REVBUF_CNT];
-  zero_mem(buffer,REVBUF_CNT);
-
-  i = REVBUF_CNT - 1;
-
-  while (number>0) {
-    tmp = number % 10;
-
-    buffer[i] = tmp;
-    number /= 10;
-
-    i--;
-  }
-
-  i++;
-
-  while (i < REVBUF_CNT) {
-    buffer[j] = 48 + buffer[i];
-    i++; j++;
-  }
-
-  return buffer;
 }
 
 #define gigabyte 1073741824
@@ -338,6 +286,7 @@ U8 num_str(U64 number)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
+//my_dir will be replaced with ls below. However, I decide to write it.
 U0 my_dir(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   CDirEntry *tmpde1=NULL,*tmpde2;
@@ -406,6 +355,9 @@ U0 my_dir(U8 *files_find_mask='*')
     Free(st);
   }
 }
+
+
+
 U0 ls(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   U8 *st;

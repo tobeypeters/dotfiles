@@ -370,10 +370,10 @@ if (str_cmp(a,b)) {
 //fmt_size(1073741825);
 //fmt_size(1395864371);
 
-my_dir;
+//my_dir;
 
-"\n";
+//"\n";
 
-KeyAndCont;
+//KeyAndCont;
 
-Exit;
+//Exit;
