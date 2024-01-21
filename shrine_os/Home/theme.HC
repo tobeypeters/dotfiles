@@ -67,6 +67,13 @@ CBGR48 gr_palette_custom[COLORS_NUM];
      [WHITE] BGMAIN
 */
 
+/* This "theme1()" being a function will go away. I'll just have
+   "structures"...one for each theme.  There'll be a
+   a function to set and list the available themes.
+   Maybe after that, I'll switch it to allow for a
+   theme folder and inside it file will be a theme 
+   structure.  We'll see.
+*/
 U0 theme1()
 {
   rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);

@@ -19,14 +19,14 @@
       Shared code file.
 */
 
-U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
+U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush=TRUE ... buffer will be cleared first.
   U64 i = 0;
 
   if (flush) *buffer = '\0';
 
-  for (;i<argc;i++) {
+  for (;i<argc;i++) {
     CatPrint(buffer,argv[i]);
   }
 

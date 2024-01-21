@@ -325,7 +325,7 @@ U8 execute_cmd(U8 *cmd) {
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch [cur_IDX] {
       case 0: //view
-        viewer(str_cat(buffer,,"Type(\"",
+        viewer(str_cat(buffer,,"Type(\"",
                       buffera,"\");"));
 
         break;
@@ -512,7 +512,7 @@ U8 execute_cmd(U8 *cmd) {
         if (valid_files("0",buffera)) {
           // Off-hand, looks like Touch() doesn't create
           // files. I'll look more at it and touchfile().
-          FileWrite(buffera,NULL,0);
+          FileWrite(buffera,NULL,0);
         }
         else {
           Touch(buffera,""); //Updates the time & date.
