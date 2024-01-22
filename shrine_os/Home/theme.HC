@@ -64,7 +64,7 @@ CBGR48 gr_palette_custom[COLORS_NUM];
    a function to set and list the available themes.
    Maybe after that, I'll switch it to allow for a
    theme folder and inside each file will be a theme 
-   array.  We'll see.
+   array.  We'll see.
  
 */
 U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
@@ -76,10 +76,10 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
 }
 
-U0 set_theme(CBGR48 test)
+U0 set_theme(CBGR48 test)
 {
   GrPaletteSet(test);
-  MemCpy(gr_palette_std,test,sizeof(test));
+  MemCpy(gr_palette_std,test,sizeof(test)*COLORS_NUM);
 }
 
 U0 default_theme()
