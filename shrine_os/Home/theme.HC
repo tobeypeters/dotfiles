@@ -63,7 +63,7 @@ CBGR48 gr_palette_custom[COLORS_NUM];
    "structures"...one for each theme.  There'll be a
    a function to set and list the available themes.
    Maybe after that, I'll switch it to allow for a
-   theme folder and inside it file will be a theme 
+   theme folder and inside each file will be a theme 
    structure.  We'll see.
  
 */
@@ -104,7 +104,7 @@ U0 theme1()
   rgb2_CBGR48(&gr_palette_custom[LTRED],251,73,52);
   rgb2_CBGR48(&gr_palette_custom[LTPURPLE],0,255,255);
   rgb2_CBGR48(&gr_palette_custom[YELLOW],18,18,18);
-  rgb2_CBGR48(&gr_palette_custom[WHITE],255,255,255,-.93);
+  rgb2_CBGR48(&gr_palette_custom[WHITE],255,255,255,-.93);
 }
 
 theme1;
