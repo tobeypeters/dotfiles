@@ -376,4 +376,26 @@ if (str_cmp(a,b)) {
 
 //KeyAndCont;
 
-//Exit;
+//Exit;
+
+
+
+F64 test = 1;
+F64 a = 128;
+
+I64 b = 0;
+
+"%f %f %d\n",test,a,b;
+
+b = ClampI64(ToI64(a * test),0,255);
+
+"%f %f %d\n",test,a,b;
+
+
+
+
+
+
+
+
+

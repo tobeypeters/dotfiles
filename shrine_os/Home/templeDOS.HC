@@ -28,11 +28,10 @@ U8 *VSAM[REC_TOT][7] =
 /*
   Very poor implementation, of a hashtable.
   See how I waste memory & stuff.
-  HASH, command, token min, token max,
-  validate file(s) / dir{s}, flag min,
-  flag max
-*/
 
+  HASH, command, token min, token max,
+  validate file(s) / dir{s}, flag min, flag max
+*/
 {  0,  "view", 2, 2,  TRUE, 0, 0},
 {  1,   "man", 2, 2, FALSE, 0, 0},
 {  2,      "", 0, 0, FALSE, 0, 0},
@@ -325,7 +324,7 @@ U8 execute_cmd(U8 *cmd) {
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
     switch [cur_IDX] {
       case 0: //view
-        viewer(str_cat(buffer,,"Type(\"",
+        viewer(str_cat(buffer,,"Type(\"",
                       buffera,"\");"));
 
         break;
@@ -566,7 +565,7 @@ done:
 U0 templeDOS() {
   Seed;
   I64 termID = AbsI64(RandI32);
-  Adam("DocClear;");
+  Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
