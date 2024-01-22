@@ -398,7 +398,9 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 39: //fm
       case 21: //tree
-        if (fc > 0) {
+        "Currently being reimplemented ...\n";
+
+/*        if (fc > 0) {
         if (!(tf = got_flag(buffera,FLG_F))) { //-f
           goto done;
         }}
@@ -406,7 +408,7 @@ U8 execute_cmd(U8 *cmd) {
         buffer = tern(fc==0,buffera,bufferb);
 
 //        MiniFM(tern(tc == 1,".",buffer),,tf);
-
+*/
         break;
       case 22: //vol
         //Don't think drives have labels in this OS.
@@ -490,7 +492,7 @@ U8 execute_cmd(U8 *cmd) {
         //and what else is there to worrry about?
         //Exit;
 
-        return 1; //Changed my mind about how I want to do it.
+        return 1; //Changed my mind about how I want to do it.
                   //But, what I said prior is still true;
 
         break;
@@ -565,7 +567,7 @@ done:
 U0 templeDOS() {
   Seed;
   I64 termID = AbsI64(RandI32);
-  Adam("DocClear;");
+  Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
@@ -585,9 +587,8 @@ U0 templeDOS() {
   U64 result = 0;
   U8 *input;
 
-  while (result == 0)
+  while (TRUE)
   {
-    result += 1;
     data_clean;
 
     DocBottom;
