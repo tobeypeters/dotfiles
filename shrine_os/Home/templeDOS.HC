@@ -492,7 +492,7 @@ U8 execute_cmd(U8 *cmd) {
         //and what else is there to worrry about?
         //Exit;
 
-        return 1; //Changed my mind about how I want to do it.
+        return 1; //Changed my mind about how I want to do it.
                   //But, what I said prior is still true;
 
         break;
@@ -628,6 +628,8 @@ MenuPush(
   "}"
 
 );
+
+StrCpy(Fs->task_title,"templeDOS_task");
 
 templeDOS;
 

@@ -76,7 +76,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
 }
 
-U0 set_theme(CBGR48 test)
+U0 set_theme(CBGR48* test)
 {
   GrPaletteSet(test);
   MemCpy(gr_palette_std,test,sizeof(test)*COLORS_NUM);
@@ -84,7 +84,7 @@ U0 set_theme(CBGR48 test)
 
 U0 default_theme()
 {
-  PaletteSetStd;
+  PaletteSetStd;
 }
 
 
