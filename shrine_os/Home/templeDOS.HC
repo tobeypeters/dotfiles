@@ -330,7 +330,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 1: //man
         Man(buffera);
-
+
         break;
       case 3: //date
         "%D\n", Now;
@@ -567,12 +567,15 @@ done:
 U0 templeDOS() {
   Seed;
   I64 termID = AbsI64(RandI32);
+
   Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
 
-  DocClear;
+  set_windowinfo("templedos_task","TempleDOS");
+
+//  DocClear;
 
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffe`r.
@@ -583,6 +586,9 @@ U0 templeDOS() {
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
 //  "term: %d\n",hash_code_for("term");
+
+  "tn: %s\n",Fs->task_name;
+  "tt: %s\n",Fs->task_title;
 
   U64 result = 0;
   U8 *input;
@@ -626,14 +632,10 @@ MenuPush(
   "  Border(,CH_CTRLB);"
   "  FileMgr(,CH_CTRLD);"
   "}"
-
 );
-
-StrCpy(Fs->task_title,"templeDOS_task");
 
 templeDOS;
 
 Free(VSAM);
-
 
 SettingsPop;

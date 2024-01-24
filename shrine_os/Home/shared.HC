@@ -19,7 +19,7 @@
       Shared code file.
 */
 
-U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
+U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush=TRUE ... buffer will be cleared first.
   U64 i = 0;
@@ -51,12 +51,19 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
     result = (!(StrICmp(stra,strb)));
   }
   else { 
-    result = (!(StrCmp(stra,strb)));
+    result = (!(StrCmp(stra,strb)));
   }
 
   return result;
 }
 
+U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
+{//Allows you to set Fs values:
+ //Fs->task_name
+ //Fs->task_title
+  if (name) StrCpy(Fs->task_name,name);
+  if (title) StrCpy(Fs->task_title,title);
+}
 
 //NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
 
@@ -452,4 +459,3 @@ U0 ls(U8 *files_find_mask='*')
 
 }
 //ls;
-
