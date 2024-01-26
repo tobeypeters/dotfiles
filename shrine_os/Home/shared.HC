@@ -32,7 +32,7 @@ U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 
   return buffer;
 }
-U8 str_upper(U8 *stra)
+U8 str_upper(U8 *stra)
 {//Can't find a uppercase function for strings. 
  //There's ToUpper, but it looks like it's for
  //single characters.
@@ -51,7 +51,7 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
     result = (!(StrICmp(stra,strb)));
   }
   else { 
-    result = (!(StrCmp(stra,strb)));
+    result = (!(StrCmp(stra,strb)));
   }
 
   return result;

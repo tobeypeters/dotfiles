@@ -330,7 +330,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 1: //man
         Man(buffera);
-
+
         break;
       case 3: //date
         "%D\n", Now;
@@ -490,10 +490,8 @@ U8 execute_cmd(U8 *cmd) {
         //Don't need to worrry about aborting.  OS reclaims
         //all the memory, when the window is closed
         //and what else is there to worrry about?
-        //Exit;
 
-        return 1; //Changed my mind about how I want to do it.
-                  //But, what I said prior is still true;
+        return 1;
 
         break;
       case 33: //mem
@@ -575,7 +573,7 @@ U0 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-//  DocClear;
+  DocClear;
 
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffe`r.
@@ -587,8 +585,8 @@ U0 templeDOS() {
 
 //  "term: %d\n",hash_code_for("term");
 
-  "tn: %s\n",Fs->task_name;
-  "tt: %s\n",Fs->task_title;
+//  "tn: %s\n",Fs->task_name;
+//  "tt: %s\n",Fs->task_title;
 
   U64 result = 0;
   U8 *input;
@@ -602,6 +600,7 @@ U0 templeDOS() {
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
+//    input = GetStr(,,);
     input = GetStr(,,GSF_SHIFT_ESC_EXIT);
     seg_trim(input, FALSE, TRUE);
 
