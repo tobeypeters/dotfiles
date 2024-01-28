@@ -28,7 +28,7 @@
   0xe2e280808a8a, // Honeysuckle
   0xefef7c7c8e8e, // Hot Pink
   0x63638c8c8080, // Spearmint
-  0xf8f8dede7e7e, // Mellow Yellow
+  0xf8f8dede7e7e, // Mellow Yellow
   0x9a9acdcd3232, // Yellow Green
   0x6666ffff0000, // Bright Green
 */
@@ -76,15 +76,15 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
 }
 
-U0 set_theme(CBGR48* test)
+U0 set_theme(CBGR48* in_pal)
 {
-  GrPaletteSet(test);
-  MemCpy(gr_palette_std,test,sizeof(test)*COLORS_NUM);
+  GrPaletteSet(in_pal);
+  MemCpy(gr_palette_std,in_pal,sizeof(in_pal)*COLORS_NUM);
 }
 
 U0 default_theme()
 {
-  PaletteSetStd;
+  PaletteSetStd;
 }
 
 

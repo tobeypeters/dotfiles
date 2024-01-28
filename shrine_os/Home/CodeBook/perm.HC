@@ -13,7 +13,7 @@ Bool NextPermutation(U8 *segs) {
   if (i <= 0) return FALSE;
 
   I64 j = length;
-  while (segs[j] <= segs[i - 1]) j--;
+  while (segs[j] <= segs[i - 1]) j--;
 
   SwapU8(&segs[i - 1], &segs[j]);
 
@@ -35,7 +35,7 @@ do {
   // I don't display the permutations as I go.
   // Cause, TempleOS has a limit on the amount of
   // terminal output lines it holds ... I guess?
-  d++;
+  d++;
 } while(NextPermutation(segs));
 
 "Last: %s\n\nPermutaion Count: %d\n\n", segs, d;

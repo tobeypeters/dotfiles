@@ -17,7 +17,7 @@
 /*templeDOS.HC
   Description:
       Command-line interpreter for TempleOS.
-*/
+*/
 #include "./shared.HC"
 
 #define REC_CNT 32
@@ -381,9 +381,6 @@ U8 execute_cmd(U8 *cmd) {
 
         break;
       case 15: //df
-//        viewer("DrvRep;\"\n\";
-//               drv_free;\"\n\";");
-
         DrvRep; "\n";
         drv_free;
 
@@ -562,7 +559,7 @@ done:
 //
 //  I have not been able to figure out what cause this.
 //  So, I tell Adam to clear itself.
-U0 templeDOS() {
+U8 templeDOS() {
   Seed;
   I64 termID = AbsI64(RandI32);
 
@@ -573,7 +570,7 @@ U0 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear;
+  DocClear;
 
   //Perhaps, I'll get rid of this:
   DocMax; //Force people to use an unlimited command buffe`r.
@@ -600,23 +597,34 @@ U0 templeDOS() {
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
-//    input = GetStr(,,);
-    input = GetStr(,,GSF_SHIFT_ESC_EXIT);
-    seg_trim(input, FALSE, TRUE);
+    input = MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-    if (StrLen(input) > 0) {
+    if (str_cmp(input,"-1"))
+    {
+      result = 2;
+      "result1: %d\n",result;
+      goto done;  
+    }
+
+    if (StrLen(input) > 0)
+    {
+      seg_trim(input, FALSE, TRUE);
+
       result = execute_cmd(input);
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
-
-    if (result) break;
+    done:
+     if (result) break;
   }
 
   Free(input);
 
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
+
+  "resul: %d\n",result;
+  return result-1; // 0: regular exit, 1: <shift>+<esc>
 }
 
 
@@ -633,8 +641,13 @@ MenuPush(
   "}"
 );
 
-templeDOS;
+I64 res=0;
+
+res = templeDOS;
 
 Free(VSAM);
 
 SettingsPop;
+
+"res: %d\n",res;
+if (res) Exit;

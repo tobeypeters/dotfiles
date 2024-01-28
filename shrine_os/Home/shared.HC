@@ -32,7 +32,7 @@ U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 
   return buffer;
 }
-U8 str_upper(U8 *stra)
+U8 str_upper(U8 *stra)
 {//Can't find a uppercase function for strings. 
  //There's ToUpper, but it looks like it's for
  //single characters.
@@ -56,6 +56,94 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 
   return result;
 }
+
+
+//I'm duplicating a lot of code here. :<
+//I want to pull out all the changes, I've made
+//to templeOS files and put them in my own files.
+//But, I need to finish templeOS v1.0 and refactor/
+//restructure the code.  Everything is a mess.
+U8 MyGetStr(I64 flags=0)
+{//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$
+  CDoc *doc;
+  CDocEntry *doc_e,*doc_e_end;
+  U8 *st,*st2,*res;
+  I64 ch,sc;
+  "$$PT$$";
+  do {
+    ch=DocGetKey(&sc);
+    if (ch==CH_ESC) {
+      if (doc=DocPut) {
+	DocLock(doc);
+	if (doc->doc_signature==DOC_SIGNATURE_VAL && doc->cur_entry!=doc) {
+	  doc_e=DocEntryCopy(doc,doc->cur_entry);
+	  DocBottom(doc);
+	  DocEntryRun(doc,doc_e,TRUE);
+	  DocEntryDel(doc,doc_e);
+	}
+	DocUnlock(doc);
+      }
+      if (flags&GSF_WITH_NEW_LINE)
+	break;
+    } if (ch==CH_SHIFT_ESC) {
+      if (flags&GSF_SHIFT_ESC_EXIT) {
+        //Think this messes up windows which is opened by
+        //templedos_task.  I believe, I can later determine
+        //if it's a child window or not.  If so I can,do Exit;
+        res = StrNew("-1");
+        goto gs_done;
+      }
+      else {
+	res=StrNew("");
+	goto gs_done;
+      }
+    }
+//<CTRL-SHIFT-ENTER> is a blank line without entry
+  } while (flags&GSF_WITH_NEW_LINE || ch!='\n' ||
+	sc&SCF_CTRL && sc&SCF_SHIFT);
+
+  doc=DocPut;
+  DocLock(doc);
+  if (flags&GSF_WITH_NEW_LINE) {
+    doc_e=doc->cur_entry;
+    do doc_e=doc_e->last;
+    while (doc_e!=doc && doc_e->type_u8!=DOCT_PMT);
+    doc_e=doc_e->next;
+    if (res=DocScanLine(doc,doc_e,NULL,&doc_e_end)) {
+      while (doc_e_end!=doc && doc_e_end->type_u8==DOCT_NEW_LINE) {
+	st2=MStrPrint("%s\n",res);
+	Free(res);
+	res=st2;
+	if (st=DocScanLine(doc,doc_e_end->next,NULL,&doc_e_end)) {
+	  st2=MStrPrint("%s%s",res,st);
+	  Free(st);
+	  Free(res);
+	  res=st2;
+	}
+      }
+    }
+  } else {
+    doc_e=doc->cur_entry;
+    do doc_e=doc_e->last;
+    while (doc_e!=doc && doc_e->type_u8!=DOCT_NEW_LINE &&
+	  doc_e->type_u8!=DOCT_PMT);
+    if (doc_e!=doc && doc_e->type_u8!=DOCT_PMT) {
+      do doc_e=doc_e->last;
+      while (doc_e!=doc && doc_e->type_u8!=DOCT_NEW_LINE &&
+	    doc_e->type_u8!=DOCT_PMT);
+    }
+    doc_e=doc_e->next;
+    res=DocScanLine(doc,doc_e,NULL);
+  }
+  DocUnlock(doc);
+gs_done:
+  "$$PT$$$$FG$$$$BG$$";
+  return res;
+}
+
+
+
+
 
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
@@ -293,78 +381,6 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-//my_dir will be replaced with ls below. However, I decide to write it.
-U0 my_dir(U8 *files_find_mask='*')
-{//Linux'ish style directory listing.
-  CDirEntry *tmpde1=NULL,*tmpde2;
-  tmpde1=FilesFind(files_find_mask);
-
-  U8 *st;
-
-  if (!(st=DirCur))
-    PrintErr("Invalid Drive\n");
-  else {
-    if (tmpde1) {
-      st=MAllocIdent(tmpde1->full_name);
-      StrLastRem(st,"/");
-
-      if (!st[2]) StrCpy(st+2,"/");
-
-//      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
-//      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-
-      "Listing: $$MA,T=\"%s\",LM=\"\"$$\n",st;
-
-      CDateStruct ds, dsc;
-      Date2Struct(&dsc,Now+local_time_offset);
-
-      U64 gt = gigatenth,
-           g = gigabyte;
-
-      Bool id = FALSE;
-             
-      while (tmpde1) {
-	tmpde2=tmpde1->next;
-
-	Date2Struct(&ds,tmpde1->datetime+local_time_offset);
-
-	id =tmpde1->attr & RS_ATTR_DIR;
-
-	"%c ",100-(!id*55);
-
-	if (id) {
-	  "%9s",""; goto dir;
-	}
-
-	if (tmpde1->size >= gigabyte)
-	  "%9d.%dg",tmpde1->size/g,
-		    (tmpde1->size-((tmpde1->size/g)*g))/gt;
-	else "%9d",tmpde1->size;
-
-	dir:
-	  " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
-
-	  if (ds.year<dsc.year) "%5d",ds.year;
-	  else "%02d:%02d",ds.hour,ds.min;
-
-	  " ";
-
-	  if (id)
-	    PutDirLink(tmpde1->name,tmpde1->full_name);
-	  else
-	    PutFileLink(tmpde1->name,tmpde1->full_name);
-	  "\n";
-	  DirEntryDel(tmpde1);
-	  tmpde1=tmpde2;
-      }
-    } else
-      "No matching entries\n";
-    Free(st);
-  }
-}
-
-
-
 U0 ls(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   U8 *st;
@@ -449,7 +465,7 @@ U0 ls(U8 *files_find_mask='*')
 
         tmpde1=tmpde2;
     }
-    "%11d File(s) %10dbytes\n%11d Dir(s)\n",fc,bc,dc;
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
   }
   else "No matching entries\n";
 

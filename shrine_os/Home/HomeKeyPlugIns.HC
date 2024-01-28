@@ -38,9 +38,11 @@ Bool MyPutKey(I64 ch,I64 sc)
   if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
     !(StrCmp(Fs->task_name,"templedos_task"))) {
 
+    InStr(GetStr("exit\n");
+
 
     //XTalk(Fs,"exit\n"); //works doing it manually in the templeDOS window.
-//    "exit\n";
+//    "exit\n";
 
     //This works, if shift + esc is blocked by input = GetStr(,,);
     /*PostMsg(Fs,MSG_KEY_DOWN_UP,'e',0);
