@@ -20,7 +20,7 @@ cdd	your HOME directory, a specified directory,
 	$FG,2$usage$FG$: cdd
 	       cdd [OPTION] {~}
 	       cdd [DIR]
-	       cdd [DRIVE:] {b|c|d| etc...}
+	       cdd [DRIVE:] {b|c|d| etc...}
 
 	$FG,3$Options:$FG$
 	   ~	    Causes the same effects as
@@ -87,7 +87,7 @@ man	Display the source code for a specified
 	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
 	$FG,2$usage$FG$: man [COMMAND]
 
-mem	Display a "detailed" memory representation.
+mem	Display a "detailed" memory representation.
 	$FG,2$usage$FG$: mem
 
 mkdir	Make directories.

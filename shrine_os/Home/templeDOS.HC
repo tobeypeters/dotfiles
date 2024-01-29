@@ -17,9 +17,11 @@
 /*templeDOS.HC
   Description:
       Command-line interpreter for TempleOS.
-*/
-#include "./shared.HC"
+*/
+#help_file "::/Home/templeDOS.DD"
 
+#include "./shared.HC"
+ 
 #define REC_CNT 32
 #define REC_OVR 11
 #define REC_TOT REC_CNT+REC_OVR
@@ -610,6 +612,10 @@ U8 templeDOS() {
     {
       seg_trim(input, FALSE, TRUE);
 
+
+      DocBottom;
+
+
       result = execute_cmd(input);
     }
 
@@ -640,6 +646,7 @@ MenuPush(
   "  FileMgr(,CH_CTRLD);"
   "}"
 );
+
 
 I64 res=0;
 

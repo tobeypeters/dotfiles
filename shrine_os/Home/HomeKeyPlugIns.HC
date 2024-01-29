@@ -27,45 +27,20 @@ Bool MyPutKey(I64 ch,I64 sc)
   I64 i;
   U8 *st1,*st2;
 
-/*
-[Alterations: start]
-  Author: github/tobeypeters
-    Desc:
-          Stop <esc> and <shift>+<esc> from
-          closing templeDOS windows, without
-          sending a exit shell command to it first. */
-//[+] start
-  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
-    !(StrCmp(Fs->task_name,"templedos_task"))) {
 
-    InStr(GetStr("exit\n");
+//[tpc start]
+//[+] <shift>+<esc> start
+//  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
+//    !(StrCmp(Fs->task_name,"templedos_task"))) {
+//  }
+//[+] <shift>+<esc> end
 
-
-    //XTalk(Fs,"exit\n"); //works doing it manually in the templeDOS window.
-//    "exit\n";
-
-    //This works, if shift + esc is blocked by input = GetStr(,,);
-    /*PostMsg(Fs,MSG_KEY_DOWN_UP,'e',0);
-    PostMsg(Fs,MSG_KEY_DOWN_UP,'x',0);
-    PostMsg(Fs,MSG_KEY_DOWN_UP,'i',0);
-    PostMsg(Fs,MSG_KEY_DOWN_UP,'t',0);
-    PostMsg(Fs,MSG_KEY_DOWN_UP,'\n',0);*/
-
-//    Play("5eC"); //works
-
-//    return TRUE; //Seems to do nothing.  It says to return TRUE
-                 //to say we handled the key press. }
-  }
-//[+] end
-
-/*  Desc: Add <CTRL>+<DEL> shortcut, does  a BootRAM.
-//[+] start*/
+//[+] <CTRL>+<DEL> start
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
     BootRAM;
   }
-/*[+] end
-
-[Alterations: end]*/
+//[+] <CTRL>+<DEL> end
+//[tpc end]
 
   if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
     switch (ch) {

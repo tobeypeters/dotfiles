@@ -18,7 +18,6 @@
   Description:
       Shared code file.
 */
-
 U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush=TRUE ... buffer will be cleared first.
@@ -140,10 +139,6 @@ gs_done:
   "$$PT$$$$FG$$$$BG$$";
   return res;
 }
-
-
-
-
 
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
@@ -381,7 +376,7 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-U0 ls(U8 *files_find_mask='*')
+U0 ls(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   U8 *st;
 
