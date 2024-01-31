@@ -247,6 +247,7 @@ for_window [class="krunner"] move position 1450 20
 for_window [class="system_updater"] move position 1020 40
 
 # windows we want to stay visible, even if you switch workspaces.
+for_window [class="Audacious"] sticky enable
 for_window [class="mpv"] sticky enable
 for_window [class="vlc"] sticky enable
 
@@ -281,7 +282,7 @@ set $exec_always exec_always --no-startup-id
 $exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
 
 # --bg-center --bg-max
-$exec_always feh --bg-center ~/Pictures/apple3-ascii-art.png
+$exec_always feh --bg-center ~/Pictures/apple1-ascii-art.png
 
 $exec_always ~/.config/polybar/launch.sh
 
