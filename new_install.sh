@@ -5,6 +5,8 @@ sudo apt update
 
 #sudo apt upgrade
 
+sudo apt install -y ntfs-3g
+
 sudo apt install -y lightdm
 
 sudo apt install -y curl
