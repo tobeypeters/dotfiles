@@ -1,4 +1,5 @@
 mnt/
 shrineos
+nohup.out
 *.img
 *.iso
