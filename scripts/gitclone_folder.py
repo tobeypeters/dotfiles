@@ -127,7 +127,6 @@ def main() -> None:
     parser.add_argument('folder_path', help='Path to the specific folder to clone')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose mode')
 
-
     # Parse the command-line arguments
     args: arg_namespace = parser.parse_args()
 
