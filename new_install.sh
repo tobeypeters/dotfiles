@@ -66,8 +66,9 @@ pip3 install pyinstaller
 
 # Polybar: https://github.com/polybar/polybar
 
-# alacritty : https://github.com/alacritty/alacritty/blob/master/INSTALL.md
-#
+# alacritty :
+cargo install alacritty
+#https://github.com/alacritty/alacritty/blob/master/INSTALL.md
 # sudo update-alternatives --install /usr/bin/x-terminal-emualtor x-terminal-emulator /usr/local/bin/alacritty 10
 # sudo update-alternatives --config x-terminal-emulator
 # alacritty end
