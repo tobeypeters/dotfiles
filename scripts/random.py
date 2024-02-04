@@ -24,7 +24,6 @@
 from argparse import ArgumentParser, Namespace as arg_namespace
 import os
 import subprocess
-import argparse
 
 # ANSI color escape codes
 class Colors:
@@ -37,10 +36,6 @@ class MESSAGES:
     EPILOG= f'{Colors.GREEN}Example:{Colors.END}'
 
 def choose_random_file(fp: str) -> str:
-    # Check if the folder exists
-    if not os.path.exists(fp):
-        return None
-
     # Use subprocess to run 'ls' and 'shuf' commands
     try:
         rf: str = subprocess.check_output(['find', fp, '-type', 'f'], encoding='utf-8')
@@ -55,12 +50,19 @@ def choose_random_file(fp: str) -> str:
     # Return the full path of the chosen file
     return rfp
 
+def is_valid_folder(parser: ArgumentParser, arg: str) -> str:
+    #Check if the provided folder is valid.
+    if not os.path.exists(arg):
+        parser.error(f"The folder '{arg}' does not exist.")
+        return None
+    return arg
+
 # Create an argument parser
 parser: ArgumentParser = ArgumentParser(
     description=MESSAGES.HELP,
     epilog=f'{MESSAGES.EPILOG} ./random.py ~/Pictures')
 
-parser.add_argument('folder_path', help='Path to the folder containing files.')
+parser.add_argument('folder_path', help='Path to the folder containing files.', type=lambda x: is_valid_folder(parser, x))
 
 # Parse the command-line arguments
 args: arg_namespace = parser.parse_args()
