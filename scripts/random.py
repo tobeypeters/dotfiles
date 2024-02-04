@@ -36,24 +36,24 @@ class MESSAGES:
     HELP = f'{Colors.GREEN}Choose a random file from a folder.{Colors.END}'
     EPILOG= f'{Colors.GREEN}Example:{Colors.END}'
 
-def choose_random_file(folder_path: str) -> str:
+def choose_random_file(fp: str) -> str:
     # Check if the folder exists
-    if not os.path.exists(folder_path):
+    if not os.path.exists(fp):
         return None
 
     # Use subprocess to run 'ls' and 'shuf' commands
     try:
-        random_file = subprocess.check_output(['find', folder_path, '-type', 'f'], encoding='utf-8')
-        random_file = random_file.strip().split('\n')
-        random_file = subprocess.check_output(['shuf', '-n', '1'], input='\n'.join(random_file), encoding='utf-8').strip()
+        rf: str = subprocess.check_output(['find', fp, '-type', 'f'], encoding='utf-8')
+        rf = rf.strip().split('\n')
+        rf = subprocess.check_output(['shuf', '-n', '1'], input='\n'.join(rf), encoding='utf-8').strip()
     except subprocess.CalledProcessError:
         return None
 
     # Construct the full path of the chosen file
-    random_file_path = os.path.join(folder_path, random_file)
+    rfp: str = os.path.join(fp, rf)
 
     # Return the full path of the chosen file
-    return random_file_path
+    return rfp
 
 # Create an argument parser
 parser: ArgumentParser = ArgumentParser(
