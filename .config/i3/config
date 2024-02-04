@@ -281,9 +281,8 @@ set $exec_always exec_always --no-startup-id
 #$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7" "#000000"
 $exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
 
-#cyberpunk1330479.png
-# --bg-center --bg-max
-$exec_always feh --bg-max ~/Pictures/cyberpunk1330479.png
+set $fp ~/Pictures/Wallpapers
+$exec_always feh --bg-max $(./scripts/random.py $fp)
 
 $exec_always ~/.config/polybar/launch.sh
 
