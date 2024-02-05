@@ -384,10 +384,14 @@ if (str_cmp(a,b)) {
 
 //"%f %f %d\n",test,a,b;
 
-#help_index "pubext"
-U0 pubext() {
-  "pubext\n";
-}
+//#help_index "pubext"
+//U0 pubext() {
+//  "pubext\n";
+//}
+
+//I64 age=12;
+//if (13<=age<20) "teenager\n";
+//else "Not a teenager\n";
 
 "\n";
 

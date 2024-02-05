@@ -28,7 +28,7 @@
   0xe2e280808a8a, // Honeysuckle
   0xefef7c7c8e8e, // Hot Pink
   0x63638c8c8080, // Spearmint
-  0xf8f8dede7e7e, // Mellow Yellow
+  0xf8f8dede7e7e, // Mellow Yellow
   0x9a9acdcd3232, // Yellow Green
   0x6666ffff0000, // Bright Green
 */
@@ -111,7 +111,5 @@ theme1;
 
 set_theme(gr_palette_custom);
 
-//This works perfect.  If I do this here, the palette doesn't get
-//reset if I close the window.
-//GrPaletteSet(gr_palette_custom);
+//GrPaletteSet(gr_palette_custom);
 //MemCpy(gr_palette_std,gr_palette_custom,sizeof(gr_palette_custom));
