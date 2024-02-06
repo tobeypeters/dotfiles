@@ -89,7 +89,7 @@ U8 MyGetStr(I64 flags=0)
         //Think this messes up windows which is opened by
         //templedos_task.  I believe, I can later determine
         //if it's a child window or not.  If so I can,do Exit;
-        res = StrNew("-1");
+        res = StrNew("-1");
         goto gs_done;
       }
       else {
@@ -376,7 +376,7 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-U0 ls(U8 *files_find_mask='*')
+U0 ls(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   U8 *st;
 

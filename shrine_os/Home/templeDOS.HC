@@ -596,6 +596,7 @@ U8 templeDOS() {
 
     DocBottom;
 
+//    "\n$$MA,T=\"%c\",LM=\"Dir;\"$$:%s: ",cur_drv,Fs->cur_dir;
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
     // Get user input
@@ -626,7 +627,7 @@ U8 templeDOS() {
 
   Free(input);
 
-
+
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
   "resul: %d\n",result;
@@ -646,7 +647,7 @@ MenuPush(
   "  FileMgr(,CH_CTRLD);"
   "}"
 );
-
+
 
 I64 res=0;
 
