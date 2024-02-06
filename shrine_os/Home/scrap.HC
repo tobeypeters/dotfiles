@@ -223,7 +223,7 @@ U64 HashSpotFor(U8 *str,U64 spots)
   U64 hash = 5381,
       c = 0,
       i = 0;
-  
+
   for (;i < StrLen(str); i++) {
     hash = ((hash << 5) + hash) + str[i];
   }
@@ -391,7 +391,58 @@ if (str_cmp(a,b)) {
 
 //I64 age=12;
 //if (13<=age<20) "teenager\n";
-//else "Not a teenager\n";
+//else "Not a teenager\n";
+
+
+
+//Mouse over a position and press "i" to zoom in, "o" to zoom out
+//Mouse over a position and press "i" to zoom in, "o" to zoom out
+// Keys 1-4 change mapping of iteration values (requires calc)
+//keys 6-9 change palettes (instant, no recalc)
+//Press "m" to double the max iterations
+//Press "p" to toggle printing coords of center, scale and max iterations to screen
+
+/*
+CBGR48 gr_palette_std[16]={
+0x000000000000,0x00000000AAAA,0x0000AAAA0000,0x0000AAAAAAAA,
+0xAAAA00000000,0xAAAA0000AAAA,0xAAAA55550000,0xAAAAAAAAAAAA,
+0x555555555555,0x55555555FFFF,0x5555FFFF5555,0x5555FFFFFFFF,
+0xFFFF55555555,0xFFFF5555FFFF,0xFFFFFFFF5555,0xFFFFFFFFFFFF};
+*/
+//Converts RGB triplets of values (0-63) to CBGR48 TempleOS color value
+CBGR48 RGB2C(U64 red, U64 green, U64 blue) {
+  CBGR48 col=0;
+
+  col.r=ClampI64(red,0,63)<<10;
+  col.g=ClampI64(green,0,63)<<10;
+  col.b=ClampI64(blue,0,63)<<10;
+
+  "%X \n",col;
+
+  return col;
+}
+RGB2C(63,63,63); //Should be 359428E8 ... but, getting FC00FC00FC00
+RGB2C(0,63,0);
+RGB2C(0,0,63);
+
+
+U64 MAP_TYPE=0;
+//U64 PALETTE_TYPE=0;
+
+U64 ColorMapper(U64 in=0) {
+  if (in==0) return 0;
+
+  switch[MAP_TYPE] {
+  case 0:
+   return 1+(in%15);
+  case 2:
+   return 1+Sqrt(in)%15;
+   }
+}
+
+//U0 PaletteMapper(){
+//}
+
 
 "\n";
 
