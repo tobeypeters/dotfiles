@@ -80,7 +80,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
 U0 set_theme(CBGR48* in_pal)
 {
   GrPaletteSet(in_pal);
-  MemCpy(gr_palette_std,in_pal,sizeof(in_pal)*COLORS_NUM);
+  MemCpy(gr_palette_std,in_pal,sizeof(in_pal)*COLORS_NUM);
 }
 
 U0 default_theme()
@@ -94,7 +94,7 @@ U0 theme1()
   rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
   rgb2_CBGR48(&gr_palette_custom[BLUE],200,200,200);
   rgb2_CBGR48(&gr_palette_custom[GREEN],0,255,0, -0.65);
-  rgb2_CBGR48(&gr_palette_custom[CYAN],128,128,0);
+  rgb2_CBGR48(&gr_palette_custom[CYAN],128,128,0);
   rgb2_CBGR48(&gr_palette_custom[RED],200,200,200);
   rgb2_CBGR48(&gr_palette_custom[PURPLE],253,246,227);
   rgb2_CBGR48(&gr_palette_custom[BROWN],215,255,0);
