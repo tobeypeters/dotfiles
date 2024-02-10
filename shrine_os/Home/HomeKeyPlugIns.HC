@@ -39,10 +39,10 @@ Bool MyPutKey(I64 ch,I64 sc)
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
     BootRAM;
   }
-//[+] <CTRL>+<DEL> end
+//[+] <CTRL>+<DEL> end
 //[tpc end]
 
-  if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
+  if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
     switch (ch) {
       case 0:
 	switch (sc.u8[0]) {

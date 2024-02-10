@@ -91,10 +91,10 @@ U0 default_theme()
 
 U0 theme1()
 {
-  rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
+  rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
   rgb2_CBGR48(&gr_palette_custom[BLUE],200,200,200);
   rgb2_CBGR48(&gr_palette_custom[GREEN],0,255,0, -0.65);
-  rgb2_CBGR48(&gr_palette_custom[CYAN],128,128,0);
+  rgb2_CBGR48(&gr_palette_custom[CYAN],128,128,0);
   rgb2_CBGR48(&gr_palette_custom[RED],200,200,200);
   rgb2_CBGR48(&gr_palette_custom[PURPLE],253,246,227);
   rgb2_CBGR48(&gr_palette_custom[BROWN],215,255,0);

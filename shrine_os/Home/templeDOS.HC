@@ -363,6 +363,9 @@ U8 execute_cmd(U8 *cmd) {
         //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
+
+        //Change the Dir; to ls;
+
         Cd(buffera);
 
         if (cur_IDX == 16) shell_execute("Dir;");
@@ -398,6 +401,7 @@ U8 execute_cmd(U8 *cmd) {
       case 39: //fm
       case 21: //tree
         "Currently being reimplemented ...\n";
+        "Building the tree functionality into ls()\n";
 
 /*        if (fc > 0) {
         if (!(tf = got_flag(buffera,FLG_F))) { //-f
@@ -495,7 +499,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 33: //mem
         viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
+                MemPageRep;\"\n\";
                ");
 
         break;
@@ -572,6 +576,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
+
   DocClear;
 
   //Perhaps, I'll get rid of this:
@@ -627,7 +632,7 @@ U8 templeDOS() {
 
   Free(input);
 
-
+
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
   "resul: %d\n",result;

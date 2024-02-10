@@ -410,7 +410,7 @@ CBGR48 gr_palette_std[16]={
 0xFFFF55555555,0xFFFF5555FFFF,0xFFFFFFFF5555,0xFFFFFFFFFFFF};
 */
 //Converts RGB triplets of values (0-63) to CBGR48 TempleOS color value
-CBGR48 RGB2C(U64 red, U64 green, U64 blue) {
+/*CBGR48 RGB2C(U64 red, U64 green, U64 blue) {
   CBGR48 col=0;
 
   col.r=ClampI64(red,0,63)<<10;
@@ -439,11 +439,12 @@ U64 ColorMapper(U64 in=0) {
    return 1+Sqrt(in)%15;
    }
 }
-
+
 //U0 PaletteMapper(){
 //}
+*/
 
-
+
 "\n";
 
 //KeyAndCont;
