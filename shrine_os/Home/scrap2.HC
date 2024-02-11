@@ -1,5 +1,39 @@
-#define gigabyte 1073741824
-#define gigatenth gigabyte / 10
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
+{//StrCmp replacement which returns TRUE & FALSE.
+ //Saying !StrCmp() for TRUE, erks me ...
+  Bool result = FALSE;
+
+  if (ignore_case) {
+    result = (!(StrICmp(stra,strb)));
+  }
+  else { 
+    result = (!(StrCmp(stra,strb)));
+  }
+
+  return result;
+}
+Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
+{//StrCmp replacement which returns TRUE & FALSE.
+ //Saying !StrCmp() for TRUE, erks me ...
+ //Expanded to compare a string to a list of strings.
+  if (!cmp_to || (argc < 1)) return FALSE;
+
+
+  Bool result = FALSE;
+
+  I64 i = 0;
+  for (;i<argc;i++) {
+    result = str_cmp(cmp_to,argv[i],ignore_case);
+
+    if (result) break;
+  }
+
+
+  return result;
+}
+
+#define gb 1073741824
+#define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
@@ -10,15 +44,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   CDateStruct ds, dsc;
   Date2Struct(&dsc,Now+local_time_offset);
 
-  U64 gt = gigatenth,
-       g = gigabyte;
-
-  I64 fc = 0,
-      dc = 0,
-      bc = 0;
-
   Bool id = entry->attr & RS_ATTR_DIR;
-
 
   Date2Struct(&ds,entry->datetime+local_time_offset);
 
@@ -28,9 +54,9 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   if (id) "%9s","";
   else
   {
-    if (entry->size >= gigabyte)
-      "%9d.%dg",entry->size/g,
-                 (entry->size-((entry->size/g)*g))/gt;
+    if (entry->size >= gb)
+      "%9d.%dg",entry->size/gb,
+                 (entry->size-((entry->size/gb)*gb))/gt;
     else "%9d",entry->size;
   }
 
@@ -40,41 +66,40 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   else "%02d:%02d",ds.hour,ds.min;
 
   " ";
+  if (id) PutDirLink(entry->name,entry->full_name);
+  else  PutFileLink(entry->name,entry->full_name);
+
+//  "\n";
 }
-
-/*U0 ls_dir_sub(CDoc *doc,CDirEntry *tmpde)
+U0 ls_dir_sub(CDoc *doc,CDirEntry *entry)
 {
-  while (tmpde) 
+  "\n";
+  while (entry) 
   {
+    "\n";
 
-    if (tmpde->attr & RS_ATTR_DIR)
+    ls_entry_info(entry);
+    if (entry->attr & RS_ATTR_DIR)
     {
-      if (!str_cmpEX(tmpde->name,,".",".."))
+      if (!str_cmpEX(entry->name,,".",".."))
       {
-        DocPrint(doc,"$$TR,\"\"$$");
-        DocPrint(doc,"$$MA,T=\"%s\",LM=\"Cd(\\\"%s\\\");Dir;\n\"$$",
-                 tmpde->name,tmpde->full_name);
-
-        if (tmpde->sub)
+        if (entry->sub)
         {
           DocPrint(doc,"$$ID,+2$$");
-          ls_dir_sub(doc,tmpde->sub);
+          entry->next;
+          ls_dir_sub(doc,entry->sub);
           DocPrint(doc,"$$ID,-2$$");
         }
       }
     }
-
-    DocPrint(doc,"$$LK,\"%s\",A=\"FI:%s\"$$\n",
-             tmpde->name,tmpde->full_name);
-
-    tmpde=tmpde->next;
+    entry=entry->next;
   }
+  "\n";
 
-  DirTreeDel(tmpde);
+  DirTreeDel(entry);
 
   return;
 }
-*/
 U0 ls2(U8 *files_find_mask='*')
 {//Linux'ish style directory listing.
   U8 *st;
@@ -96,17 +121,8 @@ U0 ls2(U8 *files_find_mask='*')
 
     if (!st[2]) StrCpy(st+2,"/");
 
-//      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
-//      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-
     "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
 
-/*    CDateStruct ds, dsc;
-    Date2Struct(&dsc,Now+local_time_offset);
-
-    U64 gt = gigatenth,
-         g = gigabyte;
-*/
     I64 fc = 0,
         dc = 0,
         bc = 0;
@@ -117,65 +133,37 @@ U0 ls2(U8 *files_find_mask='*')
     {
       tmpde2=tmpde1->next;
 
-//      Date2Struct(&ds,tmpde1->datetime+local_time_offset);
-
       id = tmpde1->attr & RS_ATTR_DIR;
 
-/*      "%c ",100-(!id*55);
+      ls_entry_info(tmpde1);
 
       if (id)
       {
-        "%9s",""; goto dir;
+        dc+=1;
+
+        if (!str_cmpEX(tmpde1->name,,".",".."))
+        {
+          "$$TR,\"\"$$";
+          "$$ID,2$$";
+          ls_dir_sub(DocPut,FilesFind(tmpde1->full_name));
+          "$$ID,-2S$$";
+        }
+      }
+      else
+      {
+        fc+=1; bc+=tmpde1->size;
       }
 
-      if (tmpde1->size >= gigabyte)
-        "%9d.%dg",tmpde1->size/g,
-                 (tmpde1->size-((tmpde1->size/g)*g))/gt;
-      else "%9d",tmpde1->size;
+      "\n";
 
-      dir:
-        " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
+      DirEntryDel(tmpde1);
 
-        if (ds.year<dsc.year) "%5d",ds.year;
-        else "%02d:%02d",ds.hour,ds.min;
-
-        " ";
-*/
-        ls_entry_info(tmpde1);
-        if (id)
-        {
-          PutDirLink(tmpde1->name,tmpde1->full_name);
-
-          dc+=1;
-
-/*          if (!str_cmpEX(tmpde1->name,,".",".."))
-          {
-            "$$TR-C,\"\"$$";
-            "$$ID,+2$$";
-            ls_dir_sub(DocPut,FilesFind(tmpde1->full_name));
-            "$$ID,-2S$$";
-          }
-*/        }
-        else
-        {
-          PutFileLink(tmpde1->name,tmpde1->full_name);
-          fc+=1;
-          bc+=tmpde1->size;
-        }
-
-        "\n";
-
-        DirEntryDel(tmpde1);
-
-        tmpde1=tmpde2;
+      tmpde1=tmpde2;
     }
     "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
   }
   else "No matching entries\n";
 
   Free(st);
-
-//  }
-
 }
-
+ls2;

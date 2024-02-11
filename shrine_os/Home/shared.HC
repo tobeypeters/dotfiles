@@ -41,7 +41,7 @@ U8 str_lower(U8 *stra)
 {//Can't find a lowerrcase function for strings. 
   return MStrUtil(stra,SUF_TO_LOWER);
 }
-Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
   Bool result = FALSE;
@@ -496,4 +496,4 @@ U0 ls(U8 *files_find_mask='*')
   Free(st);
 
   }
-
+
