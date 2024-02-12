@@ -224,6 +224,7 @@ for_window [class="(?i)^steam*"] floating enable
 for_window [class="strawberry"] floating enable
 for_window [class="systemsettings"] floating enable
 for_window [class="system_updater"] floating enable
+for_window [class="Thorium-browser"] floating enable
 for_window [class="Tk"] floating enable
 for_window [class="Tp_popup_menu"] floating enable
 for_window [class="(?i)^virtualBox*"] floating enable
@@ -249,7 +250,9 @@ for_window [class="system_updater"] move position 1020 40
 # windows we want to stay visible, even if you switch workspaces.
 for_window [class="Audacious"] sticky enable
 for_window [class="mpv"] sticky enable
+for_window [class="Netflix"] sticky enable
 for_window [class="vlc"] sticky enable
+
 
 # enable titlebar icons
 #for_window [all] title_window_icon on
