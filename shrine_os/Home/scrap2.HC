@@ -72,7 +72,8 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   if (ds.year<dsc.year) "%5d",ds.year;
   else "%02d:%02d",ds.hour,ds.min;
 
-  " "; if (entry->sub) " ";
+  " ";
+//  " "; if (entry->sub) " ";
   //if (pdl) PutDirLink(entry->name,entry->full_name);
   if (!id) PutFileLink(entry->name,entry->full_name);
 
@@ -88,10 +89,11 @@ U0 ls_dir_sub(CDirEntry *entry)
   {
     if (!str_cmpEX(entry->name,,".",".."))
     {
-      "\n";
+      "\n";
       ls_entry_info(entry);
       if (is_dir(entry))
       {
+        
         "$$TR,\"%s\"$$",entry->name;
         "$$ID,2$$";
         ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
@@ -118,13 +120,12 @@ U0 ls2(U8 *files_find_mask='*')
     return;
   }
 
-  CDirEntry *tmpde1=NULL,*tmpde2;
-  tmpde1=FilesFind(files_find_mask);
+  CDirEntry *entry=FilesFind(files_find_mask),
+            *start = NULL;
 
-
-  if (tmpde1)
+  if (entry)
   {
-    st=MAllocIdent(tmpde1->full_name);
+    st=MAllocIdent(entry->full_name);
     StrLastRem(st,"/");
 
     if (!st[2]) StrCpy(st+2,"/");
@@ -137,39 +138,42 @@ U0 ls2(U8 *files_find_mask='*')
 
     Bool id = FALSE;
 
-    while (tmpde1)
+    start = entry;
+
+    while (entry)
     {
-      tmpde2=tmpde1->next;
+      id = is_dir(entry);
 
-      id = is_dir(tmpde1);
-
-      ls_entry_info(tmpde1);
+      ls_entry_info(entry);
 
       if (id)
       {
         dc+=1;
 
-        if (!str_cmpEX(tmpde1->name,,".",".."))
+        if (!str_cmpEX(entry->name,,".",".."))
         {
-         "$$TR,\"%s\"$$",tmpde1->name;
+          "$$TR,\"%s\"$$",entry->name;
           "$$ID,2$$";
-          ls_dir_sub(FilesFind(tmpde1->full_name));
-          "$$ID,-2S$$";
+          ls_dir_sub(FilesFind(entry->full_name));
+          "$$ID,-2S$$";
         }
-        else "%s",tmpde1->name;
+        else "%s",entry->name;
       }
       else
       {
-        fc+=1; bc+=tmpde1->size;
+        fc+=1; bc+=entry->size;
       }
 
       "\n";
 
-      DirEntryDel(tmpde1);
-
-      tmpde1=tmpde2;
+      entry = entry->next;
     }
-    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
+    entry = start;
+
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n\n",fc,bc,dc;
+
+    DirTreeDel(entry);
+
   }
   else "No matching entries\n";
 
