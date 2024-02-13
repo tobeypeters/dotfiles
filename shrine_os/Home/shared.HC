@@ -41,7 +41,7 @@ U8 str_lower(U8 *stra)
 {//Can't find a lowerrcase function for strings. 
   return MStrUtil(stra,SUF_TO_LOWER);
 }
-Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
   Bool result = FALSE;
@@ -60,6 +60,8 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
  //Expanded to compare a string to a list of strings.
+ //
+ //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
   if (!cmp_to || (argc < 1)) return FALSE;
 
 

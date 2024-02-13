@@ -32,7 +32,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 //[+] <shift>+<esc> start
 //  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
 //    !(StrCmp(Fs->task_name,"templedos_task"))) {
-//  }
+//  }
 //[+] <shift>+<esc> end
 
 //[+] <CTRL>+<DEL> start
@@ -42,7 +42,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 //[+] <CTRL>+<DEL> end
 //[tpc end]
 
-  if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
+  if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
     switch (ch) {
       case 0:
 	switch (sc.u8[0]) {

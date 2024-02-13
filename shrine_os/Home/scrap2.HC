@@ -6,7 +6,7 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
   if (ignore_case) {
     result = (!(StrICmp(stra,strb)));
   }
-  else { 
+  else {
     result = (!(StrCmp(stra,strb)));
   }
 
@@ -37,6 +37,13 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
+Bool lsp = FALSE;
+
+Bool is_dir(CDirEntry *what)
+{//This is faster,then IsDir(), for my case.
+  return what->attr & RS_ATTR_DIR;
+}
+
 U0 ls_entry_info(CDirEntry *entry=NULL)
 {
   if (!entry) return;
@@ -44,7 +51,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   CDateStruct ds, dsc;
   Date2Struct(&dsc,Now+local_time_offset);
 
-  Bool id = entry->attr & RS_ATTR_DIR;
+  Bool id = is_dir(entry);
 
   Date2Struct(&ds,entry->datetime+local_time_offset);
 
@@ -65,35 +72,36 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   if (ds.year<dsc.year) "%5d",ds.year;
   else "%02d:%02d",ds.hour,ds.min;
 
-  " ";
-  if (id) PutDirLink(entry->name,entry->full_name);
-  else  PutFileLink(entry->name,entry->full_name);
+  " "; if (entry->sub) " ";
+  //if (pdl) PutDirLink(entry->name,entry->full_name);
+  if (!id) PutFileLink(entry->name,entry->full_name);
 
-//  "\n";
+  return;
 }
-U0 ls_dir_sub(CDoc *doc,CDirEntry *entry)
+U0 ls_dir_sub(CDirEntry *entry)
 {
-  "\n";
-  while (entry) 
-  {
-    "\n";
+  CDirEntry *temp = entry;
 
-    ls_entry_info(entry);
-    if (entry->attr & RS_ATTR_DIR)
+  "\n";
+
+  while (entry)
+  {
+    if (!str_cmpEX(entry->name,,".",".."))
     {
-      if (!str_cmpEX(entry->name,,".",".."))
+      "\n";
+      ls_entry_info(entry);
+      if (is_dir(entry))
       {
-        if (entry->sub)
-        {
-          DocPrint(doc,"$$ID,+2$$");
-          entry->next;
-          ls_dir_sub(doc,entry->sub);
-          DocPrint(doc,"$$ID,-2$$");
-        }
+        "$$TR,\"%s\"$$",entry->name;
+        "$$ID,2$$";
+        ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
+        "$$ID,-2S$$";
       }
     }
     entry=entry->next;
   }
+  entry=temp;
+
   "\n";
 
   DirTreeDel(entry);
@@ -114,7 +122,7 @@ U0 ls2(U8 *files_find_mask='*')
   tmpde1=FilesFind(files_find_mask);
 
 
-  if (tmpde1) 
+  if (tmpde1)
   {
     st=MAllocIdent(tmpde1->full_name);
     StrLastRem(st,"/");
@@ -128,12 +136,12 @@ U0 ls2(U8 *files_find_mask='*')
         bc = 0;
 
     Bool id = FALSE;
-             
+
     while (tmpde1)
     {
       tmpde2=tmpde1->next;
 
-      id = tmpde1->attr & RS_ATTR_DIR;
+      id = is_dir(tmpde1);
 
       ls_entry_info(tmpde1);
 
@@ -143,11 +151,12 @@ U0 ls2(U8 *files_find_mask='*')
 
         if (!str_cmpEX(tmpde1->name,,".",".."))
         {
-          "$$TR,\"\"$$";
+         "$$TR,\"%s\"$$",tmpde1->name;
           "$$ID,2$$";
-          ls_dir_sub(DocPut,FilesFind(tmpde1->full_name));
+          ls_dir_sub(FilesFind(tmpde1->full_name));
           "$$ID,-2S$$";
         }
+        else "%s",tmpde1->name;
       }
       else
       {

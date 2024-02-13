@@ -294,6 +294,8 @@ U8 execute_cmd(U8 *cmd) {
 //UnusedSpaceRep; //Demo
 
 //dump;
+//DrvMap;
+
 
   I64 at = seg_count(cmd),
        i = 0;
@@ -491,7 +493,7 @@ U8 execute_cmd(U8 *cmd) {
         // and respond to <shift>+<esc>.  I do have one idea,
         // and I'll update this section if Ifigure it out.
         //Don't need to worrry about aborting.  OS reclaims
-        //all the memory, when the window is closed
+        //all the memory, when the window is closed
         //and what else is there to worrry about?
 
         return 1;
@@ -499,7 +501,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 33: //mem
         viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
+                MemPageRep;\"\n\";
                ");
 
         break;
