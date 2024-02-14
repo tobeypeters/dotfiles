@@ -444,9 +444,9 @@ U64 ColorMapper(U64 in=0) {
 //}
 */
 
-U8 *mask=MStrPrint("%s/*","C:/Home");
+U8 *mask=MStrPrint("%s/*","C:/Home");
 "mask: %s\n",mask;
-Free(mask);
+Free(mask);
 
 "\n";
 

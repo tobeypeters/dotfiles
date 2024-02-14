@@ -60,7 +60,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
  //Expanded to compare a string to a list of strings.
- //
+ //
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
   if (!cmp_to || (argc < 1)) return FALSE;
 
@@ -392,12 +392,79 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-#define gigabyte 1073741824
-#define gigatenth gigabyte / 10
+#define gb 1073741824
+#define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-U0 ls(U8 *files_find_mask='*')
+U0 tree_top(U8 *name) { "$$TR,\"%s\"$$",name; "$$ID,2$$"; }
+U0 tree_trunk() "$$ID,-2S$$";
+
+//Faster than IsDir(); for my case use.
+Bool is_dir(CDirEntry *what) return what->attr & RS_ATTR_DIR;
+
+U0 ls_entry_info(CDirEntry *entry=NULL)
+{
+  if (!entry) return;
+
+  CDateStruct ds, dsc;
+  Date2Struct(&dsc,Now+local_time_offset);
+
+  Bool id = is_dir(entry);
+
+  Date2Struct(&ds,entry->datetime+local_time_offset);
+
+  "%c ",100-(!id*55);
+
+  if (id) "%9s","";
+  else
+  {
+    if (entry->size >= gb)
+      "%9d.%dg",entry->size/gb,
+                 (entry->size-((entry->size/gb)*gb))/gt;
+    else "%9d",entry->size;
+  }
+
+  " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
+
+  if (ds.year<dsc.year) "%5d",ds.year;
+  else "%02d:%02d",ds.hour,ds.min;
+
+  " ";
+  if (!id) PutFileLink(entry->name,entry->full_name);
+
+  return;
+}
+U0 ls_dir_sub(CDirEntry *entry)
+{
+  CDirEntry *temp=entry;
+
+  "\n";
+
+  while (entry)
+  {
+    if (!str_cmpEX(entry->name,,".",".."))
+    {
+      "\n";
+      ls_entry_info(entry);
+      if (is_dir(entry))
+      {
+        tree_top(entry->name);        
+        ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
+        tree_trunk;
+      }
+    }
+    entry=entry->next;
+  }
+  entry=temp;
+
+  "\n";
+
+  DirTreeDel(entry);
+
+  return;
+}
+U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 {//Linux'ish style directory listing.
   U8 *st;
 
@@ -407,95 +474,69 @@ U0 ls(U8 *files_find_mask='*')
     return;
   }
 
-  CDirEntry *tmpde1=NULL,*tmpde2;
-  tmpde1=FilesFind(files_find_mask);
+  CDirEntry *entry=FilesFind(files_find_mask),
+            *start=NULL;
 
-
-  if (tmpde1) 
+  if (entry)
   {
-    st=MAllocIdent(tmpde1->full_name);
+    st=MAllocIdent(entry->full_name);
     StrLastRem(st,"/");
 
     if (!st[2]) StrCpy(st+2,"/");
 
-//      "Listing: $$MA,T=\"%s\",LM=\"MiniFM;\n\"$$\n",st;
-//      "$$MA,T=\"Directory\",LM=\"PopUpCd;Dir;\n\"$$of%s\n",st;
-
     "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
 
-    CDateStruct ds, dsc;
-    Date2Struct(&dsc,Now+local_time_offset);
+    I64 fc=0,
+        dc=0,
+        bc=0;
 
-    U64 gt = gigatenth,
-         g = gigabyte;
+    Bool id=FALSE;
 
-    I64 fc = 0,
-        dc = 0,
-        bc = 0;
-
-    Bool id = FALSE;
-             
-    while (tmpde1)
+    start=entry;
+    while (entry)
     {
-      tmpde2=tmpde1->next;
+      id=is_dir(entry);
 
-      Date2Struct(&ds,tmpde1->datetime+local_time_offset);
-
-      id = tmpde1->attr & RS_ATTR_DIR;
-
-      "%c ",100-(!id*55);
+      ls_entry_info(entry);
 
       if (id)
       {
-        "%9s",""; goto dir;
-      }
+        dc+=1;
 
-      if (tmpde1->size >= gigabyte)
-        "%9d.%dg",tmpde1->size/g,
-                 (tmpde1->size-((tmpde1->size/g)*g))/gt;
-      else "%9d",tmpde1->size;
-
-      dir:
-        " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
-
-        if (ds.year<dsc.year) "%5d",ds.year;
-        else "%02d:%02d",ds.hour,ds.min;
-
-        " ";
-
-//        ls_entry_info(tmpde1);
-        if (id)
+        if (tree_mode)
         {
-          PutDirLink(tmpde1->name,tmpde1->full_name);
-
-          dc+=1;
-
-/*          if (!str_cmpEX(tmpde1->name,,".",".."))
+          if (!str_cmpEX(entry->name,,".",".."))
           {
-            "$$TR-C,\"\"$$";
-            "$$ID,+2$$";
-            ls_dir_sub(DocPut,FilesFind(tmpde1->full_name));
-            "$$ID,-2S$$";
+            "$$LTBLUE$$";
+            tree_top(entry->name);
+            ls_dir_sub(FilesFind(entry->full_name));
+            tree_trunk;
+            "$$FG$$";
           }
-*/        }
+          else "%s",entry->name;
+        }
         else
         {
-          PutFileLink(tmpde1->name,tmpde1->full_name);
-          fc+=1;
-          bc+=tmpde1->size;
+          PutDirLink(entry->name,entry->full_name);
         }
+      }
+      else
+      {
+        fc+=1; bc+=entry->size;
+      }
 
-        "\n";
+      "\n";
 
-        DirEntryDel(tmpde1);
-
-        tmpde1=tmpde2;
+      entry=entry->next;
     }
-    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
+    entry=start;
+
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n\n",fc,bc,dc;
+
+    DirTreeDel(entry);
+
   }
   else "No matching entries\n";
 
   Free(st);
-
-  }
-
+}

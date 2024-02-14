@@ -38,7 +38,7 @@ U8 *VSAM[REC_TOT][7] =
 {  1,   "man", 2, 2, FALSE, 0, 0},
 {  2,      "", 0, 0, FALSE, 0, 0},
 {  3,  "date", 1, 1, FALSE, 0, 0},
-{  4,    "ls", 1, 2,  TRUE, 0, 0},
+{  4,    "ls", 1, 2, FALSE, 0, 0},
 {  5,      "", 0, 0, FALSE, 0, 0},
 {  6,      "", 0, 0, FALSE, 0, 0},
 {  7,      "", 0, 0, FALSE, 0, 0},
@@ -55,7 +55,7 @@ U8 *VSAM[REC_TOT][7] =
 { 18,      "", 0, 0, FALSE, 0, 0},
 { 19,  "grep", 2, 2, FALSE, 0, 0},
 { 20,  "time", 1, 1, FALSE, 0, 0},
-{ 21,  "tree", 1, 3,  TRUE, 0, 1},
+{ 21,  "tree", 1, 2,  TRUE, 0, 0},
 { 22,   "vol", 1, 1, FALSE, 0, 0},
 { 23,      "", 0, 0, FALSE, 0, 0},
 { 24,    "cp", 3, 3, FALSE, 0, 1},
@@ -402,8 +402,9 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 39: //fm
       case 21: //tree
-        "Currently being reimplemented ...\n";
-        "Building the tree functionality into ls()\n";
+//        "Currently being reimplemented ...\n";
+//        "Building the tree functionality into ls()\n";
+        "\n"; ls(tern(tc==1,".",buffera),TRUE);
 
 /*        if (fc > 0) {
         if (!(tf = got_flag(buffera,FLG_F))) { //-f
@@ -493,7 +494,7 @@ U8 execute_cmd(U8 *cmd) {
         // and respond to <shift>+<esc>.  I do have one idea,
         // and I'll update this section if Ifigure it out.
         //Don't need to worrry about aborting.  OS reclaims
-        //all the memory, when the window is closed
+        //all the memory, when the window is closed
         //and what else is there to worrry about?
 
         return 1;

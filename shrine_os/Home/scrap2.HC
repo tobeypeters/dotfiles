@@ -31,18 +31,17 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 
   return result;
 }
-
+
 #define gb 1073741824
 #define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
-Bool lsp = FALSE;
+U0 tree_top(U8 *name) { "$$TR,\"%s\"$$",name; "$$ID,2$$"; }
+U0 tree_trunk() "$$ID,-2S$$";
 
-Bool is_dir(CDirEntry *what)
-{//This is faster,then IsDir(), for my case.
-  return what->attr & RS_ATTR_DIR;
-}
+//Faster than IsDir(); for my case use.
+Bool is_dir(CDirEntry *what) return what->attr & RS_ATTR_DIR;
 
 U0 ls_entry_info(CDirEntry *entry=NULL)
 {
@@ -54,7 +53,6 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   Bool id = is_dir(entry);
 
   Date2Struct(&ds,entry->datetime+local_time_offset);
-
 
   "%c ",100-(!id*55);
 
@@ -73,15 +71,13 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   else "%02d:%02d",ds.hour,ds.min;
 
   " ";
-//  " "; if (entry->sub) " ";
-  //if (pdl) PutDirLink(entry->name,entry->full_name);
   if (!id) PutFileLink(entry->name,entry->full_name);
 
   return;
 }
 U0 ls_dir_sub(CDirEntry *entry)
 {
-  CDirEntry *temp = entry;
+  CDirEntry *temp=entry;
 
   "\n";
 
@@ -93,11 +89,9 @@ U0 ls_dir_sub(CDirEntry *entry)
       ls_entry_info(entry);
       if (is_dir(entry))
       {
-        
-        "$$TR,\"%s\"$$",entry->name;
-        "$$ID,2$$";
+        tree_top(entry->name);        
         ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
-        "$$ID,-2S$$";
+        tree_trunk;
       }
     }
     entry=entry->next;
@@ -110,7 +104,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   return;
 }
-U0 ls2(U8 *files_find_mask='*')
+U0 ls2(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 {//Linux'ish style directory listing.
   U8 *st;
 
@@ -121,7 +115,7 @@ U0 ls2(U8 *files_find_mask='*')
   }
 
   CDirEntry *entry=FilesFind(files_find_mask),
-            *start = NULL;
+            *start=NULL;
 
   if (entry)
   {
@@ -132,17 +126,16 @@ U0 ls2(U8 *files_find_mask='*')
 
     "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
 
-    I64 fc = 0,
-        dc = 0,
-        bc = 0;
+    I64 fc=0,
+        dc=0,
+        bc=0;
 
-    Bool id = FALSE;
+    Bool id=FALSE;
 
-    start = entry;
-
+    start=entry;
     while (entry)
     {
-      id = is_dir(entry);
+      id=is_dir(entry);
 
       ls_entry_info(entry);
 
@@ -150,14 +143,22 @@ U0 ls2(U8 *files_find_mask='*')
       {
         dc+=1;
 
-        if (!str_cmpEX(entry->name,,".",".."))
+        if (tree_mode)
         {
-          "$$TR,\"%s\"$$",entry->name;
-          "$$ID,2$$";
-          ls_dir_sub(FilesFind(entry->full_name));
-          "$$ID,-2S$$";
+          if (!str_cmpEX(entry->name,,".",".."))
+          {
+            "$$LTBLUE$$";
+            tree_top(entry->name);
+            ls_dir_sub(FilesFind(entry->full_name));
+            tree_trunk;
+            "$$FG$$";
+          }
+          else "%s",entry->name;
         }
-        else "%s",entry->name;
+        else
+        {
+          PutDirLink(entry->name,entry->full_name);
+        }
       }
       else
       {
@@ -166,9 +167,9 @@ U0 ls2(U8 *files_find_mask='*')
 
       "\n";
 
-      entry = entry->next;
+      entry=entry->next;
     }
-    entry = start;
+    entry=start;
 
     "%11d File(s) %10d byte(s)\n%11d Dir(s)\n\n",fc,bc,dc;
 
@@ -180,3 +181,4 @@ U0 ls2(U8 *files_find_mask='*')
   Free(st);
 }
 ls2;
+//ls2(,TRUE);
