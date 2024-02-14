@@ -402,19 +402,8 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 39: //fm
       case 21: //tree
-//        "Currently being reimplemented ...\n";
-//        "Building the tree functionality into ls()\n";
-        "\n"; ls(tern(tc==1,".",buffera),TRUE);
+        "\n"; ls(tern(tc==1,".",buffera),TRUE);
 
-/*        if (fc > 0) {
-        if (!(tf = got_flag(buffera,FLG_F))) { //-f
-          goto done;
-        }}
-
-        buffer = tern(fc==0,buffera,bufferb);
-
-//        MiniFM(tern(tc == 1,".",buffer),,tf);
-*/
         break;
       case 22: //vol
         //Don't think drives have labels in this OS.
@@ -563,11 +552,6 @@ done:
   return 0;
 }
 
-//Adam error displayed:
-//$PT$$FG$$BG$  &LexWarn OptPass012 COCCompile PrsFun $FG,4$$BK,1$AWARNING:$FG$$BK,0$ Assign U0 in fun //'templeDOS'.
-//
-//  I have not been able to figure out what cause this.
-//  So, I tell Adam to clear itself.
 U8 templeDOS() {
   Seed;
   I64 termID = AbsI64(RandI32);
@@ -576,6 +560,7 @@ U8 templeDOS() {
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
+  Adam("\"\n$$LTBLUE$$TODO:$$FG$$ Trap <ctrl>+<shift>+x\n\n\";");
 
   set_windowinfo("templedos_task","TempleDOS");
 
@@ -587,7 +572,7 @@ U8 templeDOS() {
           //It's not really unlimited, see $LK,"max_entries",A="FF:::/Adam/DolDoc/DocTerm.HC,max_entries"$.
 
   "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
-  "(c) 2022 No rights reserved. For Public Domain use.\n";
+  "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
 //  "term: %d\n",hash_code_for("term");
