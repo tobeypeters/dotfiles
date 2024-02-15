@@ -31,7 +31,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 
   return result;
 }
-
+
 #define gb 1073741824
 #define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
@@ -89,7 +89,7 @@ U0 ls_dir_sub(CDirEntry *entry)
       ls_entry_info(entry);
       if (is_dir(entry))
       {
-        tree_top(entry->name);        
+        tree_top(entry->name);
         ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
         tree_trunk;
       }
@@ -180,5 +180,7 @@ U0 ls2(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
-ls2;
+//ls2;
 //ls2(,TRUE);
+
+

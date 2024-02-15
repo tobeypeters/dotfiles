@@ -559,8 +559,8 @@ U8 templeDOS() {
   Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
-  Adam("\"\n$$LTBLUE$$TODO:$$FG$$ Trap <ctrl>+<shift>+x\n\n\";");
+  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
+  Adam("\"\n$$LTBLUE$$TODO:$$FG$$ Trap <ctrl>+<alt>+x\n\n\";");
 
   set_windowinfo("templedos_task","TempleDOS");
 

@@ -18,9 +18,12 @@
   Description:
       Shared code file.
 */
+DocClear;
+U0 debug_snd() Noise(1000,75,1000);
+
 U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
- //flush=TRUE ... buffer will be cleared first.
+ //flush clears the buffer first.
   U64 i = 0;
 
   if (flush) *buffer = '\0';
@@ -83,15 +86,45 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 //to templeOS files and put them in my own files.
 //But, I need to finish templeOS v1.0 and refactor/
 //restructure the code.  Everything is a mess.
+I64 sc_x;
 U8 MyGetStr(I64 flags=0)
 {//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$
   CDoc *doc;
   CDocEntry *doc_e,*doc_e_end;
   U8 *st,*st2,*res;
   I64 ch,sc;
+
+
   "$$PT$$";
   do {
     ch=DocGetKey(&sc);
+
+  sc_x = Char2ScanCode('p');
+//  sc_x = Char2ScanCode('P');
+if (sc&SCF_CTRL && sc&SCF_ALT)
+{
+ /*using p instead of x here, for testing.
+  if (sc.u8[0] == 'p') "abe\n";
+  if (sc.u8[0] == 'P') "lincoln\n";
+  if (sc.u8[0] == "p") "George\n";
+  if (sc.u8[0] == "P") "Washington\n";
+
+  if (ch == 'p') "lemon\n";
+  if (ch == 'P') "lime\n";
+  if (ch == "p") "sour\n";
+  if (ch == "P") "grape\n";
+
+  if (sc&sc_x) "grey\n";
+*/
+
+//  if (sc&sc_x) { //Goes in the if, just hitting ctrl+alt
+//  if (sc.u8[0]==sc_x) {
+  if (sc.u8[0]==sc&SCF_CTRL && sc&SCF_ALT && sc&sc_x) {
+    Adam("\"Hello\n\";");
+    debug_snd;
+  }
+};
+
     if (ch==CH_ESC) {
       if (doc=DocPut) {
 	DocLock(doc);
@@ -464,7 +497,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   return;
 }
-U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
+U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 {//Linux'ish style directory listing.
   U8 *st;
 
@@ -540,3 +573,4 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
+

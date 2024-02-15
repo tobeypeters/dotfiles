@@ -444,11 +444,11 @@ U64 ColorMapper(U64 in=0) {
 //}
 */
 
-U8 *mask=MStrPrint("%s/*","C:/Home");
-"mask: %s\n",mask;
-Free(mask);
+//U8 *mask=MStrPrint("%s/*","C:/Home");
+//"mask: %s\n",mask;
+//Free(mask);
 
-"\n";
+"\n";
 
 //KeyAndCont;
 PressA$BK,1$Key;
