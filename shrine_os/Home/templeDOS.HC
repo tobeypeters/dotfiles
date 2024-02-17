@@ -20,7 +20,8 @@
 */
 #help_file "::/Home/templeDOS.DD"
 
-#include "./shared.HC"
+//#include "./shared.HC"
+#include "C:/Home/shared.HC"
  
 #define REC_CNT 32
 #define REC_OVR 11
@@ -83,25 +84,20 @@ U8 *VSAM[REC_TOT][7] =
 
 I64 cur_IDX = -1;
 
-I64 indexOf(U8 *cmd) {
+I64 indexOf(U8 *cmd)
+{
   U64 i = REC_CNT,
       h = hash_code_for(cmd);
-
-  //Right now, the HASH hit stats are 22/10.
-  //The collisions are caused from mapping the HASHES,
-  //down to the 0-REC_CNT range.  Before the mapping,
-  //i don't generate ANY collisionstion ... YET ...
 
   if (str_cmp(VSAM[h][1],cmd)) return h;
 
   for (;i<REC_TOT;i++) {
     if (str_cmp(VSAM[i][1],cmd)) return i;
   }
-
   return -1;
 }
 
-U8 *help_file = "~/templeDOS.DD"; //Right now, this path is "hard-coded"
+U8 *help_file = "~/templeDOS.DD";
 
 U64 seg_beg = 0,
        segs = 0;
@@ -553,14 +549,13 @@ done:
 }
 
 U8 templeDOS() {
-  Seed;
-  I64 termID = AbsI64(RandI32);
+  Seed; I64 termID = AbsI64(RandI32);
 
   Adam("DocClear;");
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
-  Adam("\"\n$$LTBLUE$$TODO:$$FG$$ Trap <ctrl>+<alt>+x\n\n\";");
+  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
+//  Adam("\"\n$$LTBLUE$$TODO:$$FG$$ Trap <ctrl>+<alt>+x\n\n\";");
 
   set_windowinfo("templedos_task","TempleDOS");
 
@@ -592,13 +587,13 @@ U8 templeDOS() {
 //    "\n$$MA,T=\"%c\",LM=\"Dir;\"$$:%s: ",cur_drv,Fs->cur_dir;
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
 
-    // Get user input
+    // Get user input, If I keep the callback,
+    // I could switch this back to just use GetStr();
     input = MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1"))
     {
       result = 2;
-      "result1: %d\n",result;
       goto done;  
     }
 
@@ -623,10 +618,13 @@ U8 templeDOS() {
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
-  "resul: %d\n",result;
   return result-1; // 0: regular exit, 1: <shift>+<esc>
 }
 
+U0 stop_ctrl_alt_x()
+{//Until Ifigure out how to trap it properly.
+  XTalk(Fs,"exit\n");
+}
 
 SettingsPush;
 
@@ -642,13 +640,10 @@ MenuPush(
 );
 
 
-I64 res=0;
+Fs->task_end_cb=&stop_ctrl_alt_x;
 
-res = templeDOS;
+templeDOS;
 
 Free(VSAM);
 
 SettingsPop;
-
-"res: %d\n",res;
-if (res) Exit;
