@@ -183,4 +183,15 @@ U0 ls2(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 //ls2;
 //ls2(,TRUE);
 
-
+U0 unfun()
+{
+  I64 reg R15 i;
+
+  MOV R15,5
+
+  "%d\n",i;
+  
+}
+unfun;
+
+Uf("unfun");
