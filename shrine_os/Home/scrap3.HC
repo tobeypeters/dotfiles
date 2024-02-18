@@ -4,7 +4,7 @@
 class CArgs
 {
   U0 (*parse)(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0);
-  U0 (*init)(CArgs *in);
+  U0 (*init)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 
@@ -13,25 +13,25 @@ class CArgs
   I64 count,cidx;
 };
 
-U0 parse(CArgs *in_cargs,U8 *cmd,U8 delim=32,U64 ins_idx=0)
+U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 {//Parse command buffer
-  if (cmd[0]=='\0') return;
+  if (cmd[0]=='\0') return;
 
   U64 p=0;
 
-  in_cargs->count=ins_idx;
+  in->count=ins_idx;
 
   while (cmd[0] != '\0')
   {
     if (cmd[0]==delim)
     {
       ins_idx++; p=0; cmd++;
-      parse(in_cargs,cmd,,ins_idx);
+      parse(in,cmd,,ins_idx);
 
       break;
     }
 
-    in_cargs->data[ins_idx][p]=cmd[0]; p++;
+    in->data[ins_idx][p]=cmd[0]; p++;
 
     cmd++;
   }
@@ -39,19 +39,11 @@ U0 parse(CArgs *in_cargs,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
   MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  in->count = 0;
-  in->cidx = 0;
+  in->count = in->cidx = 0;
 }
-U0 next(CArgs *in)
-{
-  in->cidx++;
-  in->cidx=Min(in->count,in->cidx);
-}
-U0 prev(CArgs *in)
-{
-  in->cidx--;
-  in->cidx=Max(0,in->cidx);
-}
+
+U0 next(CArgs *in) { in->cidx=Min(in->count,++in->cidx); }
+U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
 CArgs *a=MAlloc(sizeof(CArgs));
   a->init=&init;
