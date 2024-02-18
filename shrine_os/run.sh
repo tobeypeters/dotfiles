@@ -13,4 +13,4 @@ set -xe
 sync
 sudo umount $QEMU_IMG_MOUNT_DIR || true
 #$QEMU_SYSTEM_X86_64 $QEMU_FLAGS "$1"
-nohup $QEMU_SYSTEM_X86_64 $QEMU_FLAGS shrineos > /dev/null 2>%1 &
+nohup $QEMU_SYSTEM_X86_64 $QEMU_FLAGS shrineos > /dev/null 2>&1 &
