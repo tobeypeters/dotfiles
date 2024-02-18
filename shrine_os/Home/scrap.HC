@@ -429,7 +429,7 @@ RGB2C(0,0,63);
 U64 MAP_TYPE=0;
 //U64 PALETTE_TYPE=0;
 
-U64 ColorMapper(U64 in=0) {
+U64 ColorMapper(U64 in=0) {
   if (in==0) return 0;
 
   switch[MAP_TYPE] {
@@ -448,7 +448,7 @@ U64 ColorMapper(U64 in=0) {
 //"mask: %s\n",mask;
 //Free(mask);
 
-"\n";
+"\n";
 
 //KeyAndCont;
 PressA$BK,1$Key;

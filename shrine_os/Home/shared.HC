@@ -101,7 +101,7 @@ U8 MyGetStr(I64 flags=0)
 
   sc_x = Char2ScanCode('p');
 //  sc_x = Char2ScanCode('P');
-if (sc&SCF_CTRL && sc&SCF_ALT)
+if (sc&SCF_CTRL && sc&SCF_ALT)
 {
  /*using p instead of x here, for testing.
   if (sc.u8[0] == 'p') "abe\n";
@@ -476,7 +476,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   while (entry)
   {
-    if (!str_cmpEX(entry->name,,".",".."))
+    if (!str_cmpEX(entry->name,,".",".."))
     {
       "\n";
       ls_entry_info(entry);

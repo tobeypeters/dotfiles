@@ -97,7 +97,7 @@ I64 indexOf(U8 *cmd)
   return -1;
 }
 
-U8 *help_file = "~/templeDOS.DD";
+U8 *help_file = "~/templeDOS.DD";
 
 U64 seg_beg = 0,
        segs = 0;
@@ -131,7 +131,7 @@ U8 seg_push(U8 *si, U8 delim=' ')
 }
 
 U8 seg_peek(I64 idx=-1)
-{//Peek at a segment from the data stack.
+{//Peek at a segment from the data stack.
  if (idx >= SEG_CNT) return NULL;
 
  return data[tern(idx == -1, seg_beg, idx)];
