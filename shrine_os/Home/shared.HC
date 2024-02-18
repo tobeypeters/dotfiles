@@ -476,7 +476,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   while (entry)
   {
-    if (!str_cmpEX(entry->name,,".",".."))
+    if (!str_cmpEX(entry->name,,".",".."))
     {
       "\n";
       ls_entry_info(entry);
@@ -517,7 +517,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;Dir;\n\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,

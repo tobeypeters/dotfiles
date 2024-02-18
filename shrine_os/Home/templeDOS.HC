@@ -22,7 +22,7 @@
 
 //#include "./shared.HC"
 #include "C:/Home/shared.HC"
-
+ 
 #define REC_CNT 32
 #define REC_OVR 11
 #define REC_TOT REC_CNT+REC_OVR
@@ -358,7 +358,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 12: //cd
       case 16: //cdd
-        //TODO:
+        //TODO: 
         //      * In linux, you can do "cd -" and it'll take
         //        to the directory, you were previously in.
 
@@ -475,7 +475,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 31: //quit
       case 35: //exit
-        // As far as I Know ... You don't can't be notified
+        // As far as I Know ... You don't can't be notified 
         // and respond to <shift>+<esc>.  I do have one idea,
         // and I'll update this section if Ifigure it out.
         //Don't need to worrry about aborting.  OS reclaims
@@ -594,7 +594,7 @@ U8 templeDOS() {
     if (str_cmp(input,"-1"))
     {
       result = 2;
-      goto done;
+      goto done;  
     }
 
     if (StrLen(input) > 0)
@@ -649,3 +649,4 @@ DocBottom; "$$FG$$";
 Free(VSAM);
 
 SettingsPop;
+
