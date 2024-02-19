@@ -22,12 +22,18 @@
 
 //#include "./shared.HC"
 #include "C:/Home/shared.HC"
+
+#define HASH_TABLE_SIZE 256 // Increased size of the hash table
+
+U64 hash_for(U8 *what)
+{//Generates a hash for a string and returns an array index
+  U64 hash = 0;
+
+  while (*what) hash+=*what++;
+
+  return hash % HASH_TABLE_SIZE;
+}
  
-#define REC_CNT 32
-#define REC_OVR 11
-#define REC_TOT REC_CNT+REC_OVR
-U8 *VSAM[REC_TOT][7] =
-{
 /*
   Very poor implementation, of a hashtable.
   See how I waste memory & stuff.
@@ -35,51 +41,43 @@ U8 *VSAM[REC_TOT][7] =
   HASH, command, token min, token max,
   validate file(s) / dir{s}, flag min, flag max
 */
-{  0,  "view", 2, 2,  TRUE, 0, 0},
-{  1,   "man", 2, 2, FALSE, 0, 0},
-{  2,      "", 0, 0, FALSE, 0, 0},
-{  3,  "date", 1, 1, FALSE, 0, 0},
-{  4,    "ls", 1, 2, FALSE, 0, 0},
-{  5,      "", 0, 0, FALSE, 0, 0},
-{  6,      "", 0, 0, FALSE, 0, 0},
-{  7,      "", 0, 0, FALSE, 0, 0},
-{  8,    "mv", 3, 3, FALSE, 0, 0},
-{  9,      "", 0, 0, FALSE, 0, 0},
-{ 10,      "", 0, 0, FALSE, 0, 0},
-{ 11, "tasks", 1, 1, FALSE, 0, 0},
-{ 12,    "cd", 1, 2,  TRUE, 0, 0},
-{ 13,   "cpu", 1, 1, FALSE, 0, 1},
-{ 14,    "ed", 2, 2, FALSE, 0, 0},
-{ 15,    "df", 1, 1, FALSE, 0, 0},
-{ 16,   "cdd", 1, 2,  TRUE, 0, 0},
-{ 17,      "", 0, 0, FALSE, 0, 0},
-{ 18,      "", 0, 0, FALSE, 0, 0},
-{ 19,  "grep", 2, 2, FALSE, 0, 0},
-{ 20,  "time", 1, 1, FALSE, 0, 0},
-{ 21,  "tree", 1, 2,  TRUE, 0, 0},
-{ 22,   "vol", 1, 1, FALSE, 0, 0},
-{ 23,      "", 0, 0, FALSE, 0, 0},
-{ 24,    "cp", 3, 3, FALSE, 0, 1},
-{ 25,   "now", 1, 1, FALSE, 0, 0},
-{ 26,   "run", 2, 2,  TRUE, 0, 0},
-{ 27,    "rd", 2, 2,  TRUE, 0, 1},
-{ 28, "mkdir", 2, 2, FALSE, 0, 0},
-{ 29,   "cat", 2, 2,  TRUE, 0, 0},
-{ 30,      "", 0, 0, FALSE, 0, 0},
-{ 31,  "exit", 1, 1, FALSE, 0, 0},
+U8 *cmds[HASH_TABLE_SIZE][7];
+MemSet(cmds, '\0', sizeof(U8)*HASH_TABLE_SIZE*7);
 
-{  3, "rmdir", 2, 2,  TRUE, 0, 1},
-{  4,   "mem", 1, 1, FALSE, 0, 0},
-{  4,    "rm", 2, 2,  TRUE, 0, 1},
-{  8,  "quit", 1, 1, FALSE, 0, 0},
-{  8, "touch", 2, 2, FALSE, 0, 0},
-{ 12, "clear", 1, 1, FALSE, 0, 0},
-{ 14,  "help", 1, 1, FALSE, 0, 0},
-{ 24,    "fm", 1, 3,  TRUE, 0, 1},
-{ 24,  "more", 2, 2,  TRUE, 0, 0},
-{ 27,  "dump", 2, 2,  TRUE, 0, 0},
-{ 29,  "term", 1, 1, FALSE, 0, 0}
-
+{
+  { 56,   "cat", 2, 2,  TRUE, 0, 0},
+  {199,    "cd", 1, 2,  TRUE, 0, 0},
+  { 43,   "cdd", 1, 2,  TRUE, 0, 0},
+  {  7, "clear", 1, 1, FALSE, 0, 0},
+  {211,    "cp", 3, 3, FALSE, 0, 1},
+  { 72,   "cpu", 1, 1, FALSE, 0, 1},
+  {158,  "date", 1, 1, FALSE, 0, 0},
+  {202,    "df", 1, 1, FALSE, 0, 0},
+  {182,  "dump", 2, 2,  TRUE, 0, 0},
+  {201,    "ed", 2, 2, FALSE, 0, 0},
+  {186,  "exit", 1, 1, FALSE, 0, 0},
+  {211,    "fm", 1, 3,  TRUE, 0, 1},
+  {174,  "grep", 2, 2, FALSE, 0, 0},
+  {169,  "help", 1, 1, FALSE, 0, 0},
+  {223,    "ls", 1, 2, FALSE, 0, 0},
+  { 60,   "man", 2, 2, FALSE, 0, 0},
+  { 63,   "mem", 1, 1, FALSE, 0, 0},
+  { 23, "mkdir", 2, 2, FALSE, 0, 0},
+  {179,  "more", 2, 2,  TRUE, 0, 0},
+  {127,    "mv", 3, 3, FALSE, 0, 0},
+  { 84,   "now", 1, 1, FALSE, 0, 0},
+  {195,  "quit", 1, 1, FALSE, 0, 0},
+  {214,    "rd", 2, 2,  TRUE, 0, 1},
+  {223,    "rm", 2, 2,  TRUE, 0, 1},
+  { 30, "rmdir", 2, 2,  TRUE, 0, 1},
+  { 85,   "run", 2, 2,  TRUE, 0, 0},
+  { 38, "tasks", 1, 1, FALSE, 0, 0},
+  {184,  "term", 1, 1, FALSE, 0, 0}
+  {175,  "time", 1, 1, FALSE, 0, 0},
+  { 35, "touch", 2, 2, FALSE, 0, 0},
+  {176,  "tree", 1, 2,  TRUE, 0, 0},
+  {187,  "view", 2, 2,  TRUE, 0, 0},
+  { 81,   "vol", 1, 1, FALSE, 0, 0},
 };
 
 I64 cur_IDX = -1;
