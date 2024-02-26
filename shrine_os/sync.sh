@@ -41,3 +41,5 @@ case "$SUBCOMMAND" in
         ;;
 esac
 
+sudo umount "$IMAGE_PATH"
+

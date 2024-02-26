@@ -448,7 +448,7 @@ U0 ls_dir_link(U8 *dirname,U8 *full_name=NULL)
     Free(st);
   }
 }
-
+
 //Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *what) return what->attr & RS_ATTR_DIR;
 
@@ -590,3 +590,4 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
   Free(st);
 }
 
+

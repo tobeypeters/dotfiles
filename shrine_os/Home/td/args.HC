@@ -37,15 +37,15 @@ U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
   }
 }
 U0 init(CArgs *in)
-{//Initizlizer and reset CArgs function
-  MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
+{//Initizlizer and reset CArgs function
+  MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
   in->count = in->cidx = 0;
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count,++in->cidx); }
 U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
-CArgs *a=MAlloc(sizeof(CArgs));
+/*CArgs *a=MAlloc(sizeof(CArgs));
   a->init=&init;
   a->parse=&parse;
   a->next=&next;
@@ -66,4 +66,4 @@ CArgs *a=MAlloc(sizeof(CArgs));
 
   a->init(a);
 Free(a);
-
+*/

@@ -18,158 +18,20 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-#help_file "::/Home/templeDOS.DD"
+#help_file ".//Home/templeDOS.DD"
 
-//#include "./shared.HC"
-#include "C:/Home/shared.HC"
-
-#define HASH_TABLE_SIZE 256 // Increased size of the hash table
-
-U64 hash_for(U8 *what)
-{//Generates a hash for a string and returns an array index
-  U64 hash = 0;
-
-  while (*what) hash+=*what++;
-
-  return hash % HASH_TABLE_SIZE;
-}
- 
-/*
-  Very poor implementation, of a hashtable.
-  See how I waste memory & stuff.
-
-  HASH, command, token min, token max,
-  validate file(s) / dir{s}, flag min, flag max
-*/
-U8 *cmds[HASH_TABLE_SIZE][7];
-MemSet(cmds, '\0', sizeof(U8)*HASH_TABLE_SIZE*7);
-
-{
-  { 56,   "cat", 2, 2,  TRUE, 0, 0},
-  {199,    "cd", 1, 2,  TRUE, 0, 0},
-  { 43,   "cdd", 1, 2,  TRUE, 0, 0},
-  {  7, "clear", 1, 1, FALSE, 0, 0},
-  {211,    "cp", 3, 3, FALSE, 0, 1},
-  { 72,   "cpu", 1, 1, FALSE, 0, 1},
-  {158,  "date", 1, 1, FALSE, 0, 0},
-  {202,    "df", 1, 1, FALSE, 0, 0},
-  {182,  "dump", 2, 2,  TRUE, 0, 0},
-  {201,    "ed", 2, 2, FALSE, 0, 0},
-  {186,  "exit", 1, 1, FALSE, 0, 0},
-  {211,    "fm", 1, 3,  TRUE, 0, 1},
-  {174,  "grep", 2, 2, FALSE, 0, 0},
-  {169,  "help", 1, 1, FALSE, 0, 0},
-  {223,    "ls", 1, 2, FALSE, 0, 0},
-  { 60,   "man", 2, 2, FALSE, 0, 0},
-  { 63,   "mem", 1, 1, FALSE, 0, 0},
-  { 23, "mkdir", 2, 2, FALSE, 0, 0},
-  {179,  "more", 2, 2,  TRUE, 0, 0},
-  {127,    "mv", 3, 3, FALSE, 0, 0},
-  { 84,   "now", 1, 1, FALSE, 0, 0},
-  {195,  "quit", 1, 1, FALSE, 0, 0},
-  {214,    "rd", 2, 2,  TRUE, 0, 1},
-  {223,    "rm", 2, 2,  TRUE, 0, 1},
-  { 30, "rmdir", 2, 2,  TRUE, 0, 1},
-  { 85,   "run", 2, 2,  TRUE, 0, 0},
-  { 38, "tasks", 1, 1, FALSE, 0, 0},
-  {184,  "term", 1, 1, FALSE, 0, 0}
-  {175,  "time", 1, 1, FALSE, 0, 0},
-  { 35, "touch", 2, 2, FALSE, 0, 0},
-  {176,  "tree", 1, 2,  TRUE, 0, 0},
-  {187,  "view", 2, 2,  TRUE, 0, 0},
-  { 81,   "vol", 1, 1, FALSE, 0, 0},
-};
-
-I64 cur_IDX = -1;
-
-I64 indexOf(U8 *cmd)
-{
-  U64 i = REC_CNT,
-      h = hash_code_for(cmd);
-
-  if (str_cmp(VSAM[h][1],cmd)) return h;
-
-  for (;i<REC_TOT;i++) {
-    if (str_cmp(VSAM[i][1],cmd)) return i;
-  }
-  return -1;
-}
+#include "shared.HC"
+#include "args.HC"
+#include "hash.HC"
 
 U8 *help_file = "~/templeDOS.DD";
 
-U64 seg_beg = 0,
-       segs = 0;
-
-#define SEG_CNT 256
-#define SEG_LEN 256
-U8 data[SEG_CNT][SEG_LEN];
-U0 data_clean()
-{
-  MemSet(data, '\0', sizeof(U8)*SEG_CNT*SEG_LEN);
-
-  segs = seg_beg = 0;
-}
-
-U8 seg_push(U8 *si, U8 delim=' ')
-{//Push a segment into the data stack.
-  if (StrLen(si) > 0) {
-    U64 i = 0;
-
-    while (si[0] != '\0' && si[0] != delim) {
-      data[segs][i] = si[0];
-      si++; i++;
-    }
-
-    segs++;
-
-    while (*si == delim) si++;
-  }
-
-  return si; //Updated pointer position.
-}
-
-U8 seg_peek(I64 idx=-1)
-{//Peek at a segment from the data stack.
- if (idx >= SEG_CNT) return NULL;
-
- return data[tern(idx == -1, seg_beg, idx)];
-}
-
-U64 seg_count(U8 *seg_buf, Bool count_segs=TRUE, U8 delim=32)
-{//Parse and count either the number of data segments or
- //occurrences of a specific delimeter.
-  I64 q = StrLen(seg_buf)-1;
-
-  if (q < 1) return 0;
-
-  U64 count = 0;
-
-  while (q > -1) {
-    if (seg_buf[q] == delim) count++;
-    q--;
-  }
-
-  return count + count_segs;
+U8 execute_cmd(U8 *cmd) {
+  return 0;
 }
 
 
-U0 seg_trim(U8 *seg, Bool left=TRUE, Bool both=FALSE)
-{//Trims leading or trailing spaces from a data segment.
- //left = TRUE : left trim
- //left = FALSE : right trim
- //both = TRUE : left &right trim
-  if (StrLen(seg) == 0) return;
-
-  if (left || both) {
-    StrUtil(seg, SUF_REM_LEADING);
-  }
-
-  if (!left || both) {
-    StrUtil(seg, SUF_REM_TRAILING);
-  }
-}
-
-U64 tc = 0,
+/*U64 tc = 0,
     fc = 0;
 
 //Yes, I'm handing error checking and validation HORRIBLY.
@@ -545,6 +407,7 @@ U8 execute_cmd(U8 *cmd) {
 done:
   return 0;
 }
+*/
 
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
@@ -578,7 +441,7 @@ U8 templeDOS() {
 
   while (TRUE)
   {
-    data_clean;
+/*    data_clean;
 
     DocBottom;
 
@@ -587,9 +450,9 @@ U8 templeDOS() {
 
     // Get user input, If I keep the callback,
     // I could switch this back to just use GetStr();
-    input = MyGetStr(GSF_SHIFT_ESC_EXIT);
+*/    input = MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-    if (str_cmp(input,"-1"))
+/*    if (str_cmp(input,"-1"))
     {
       result = 2;
       goto done;  
@@ -609,7 +472,7 @@ U8 templeDOS() {
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
     done:
      if (result) break;
-  }
+*/  }
 
   Free(input);
 
@@ -644,6 +507,6 @@ templeDOS;
 
 DocBottom; "$$FG$$";
 
-Free(VSAM);
+//Free(VSAM);
 
 SettingsPop;

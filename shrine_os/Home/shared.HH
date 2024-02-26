@@ -1,1 +1,0 @@
-public extern U0 ls_dir_sub(CDoc *doc,CDirEntry *tmpde);
