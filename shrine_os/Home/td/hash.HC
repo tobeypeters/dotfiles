@@ -3,7 +3,7 @@
 #define CMD_CNT  33
 #define CMD_ARGS  6
 
-U8 cmds[HASH_TABLE_SIZE][CMD_ARGS];
+U8 *cmds[HASH_TABLE_SIZE][CMD_ARGS];
 
 /*HASH, command, token min, token max,
   validate file(s) / dir{s}, flag max */
@@ -45,14 +45,14 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
 
 class CHCMDS
 {
-  U8 data[HASH_TABLE_SIZE][CMD_ARGS];
+  U8 *data[HASH_TABLE_SIZE][CMD_ARGS];
   U0 (* init)(CHCMDS *in);
   I64 (* hashdx)(U8 *cmd);
   U0 (* parse)(CHCMDS *in);
 };
 U0 init(CHCMDS *in)
 {
-  MemSet(in->data, "\0", sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
+  MemSet(in->data, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
 }
 I64 hashDX(U8 *cmd)
 {//Return the index in the hash table, fo a given command.
@@ -80,10 +80,17 @@ U0 parse(CHCMDS *in)
 
     h = hashed[i][0];
 
+//    "%d\n",h;
     for(;j<CMD_ARGS;j++)
-//      "%s",*hashed[i][j];
+{
       in->data[h][j]=hashed[i][j];
-//    "\n";
+//      "%s i%d j%d \n",in->data[h][1],i,j;
+//      "%d %d %s\n",i,j,in->data[h][j];
+//      "%4d %4d",in->data[h][j],hashed[i][j];
+//      "%d\n",in->data[h][j];
+}
+"%s\n",in->data[h][1];
+
   }
 }
 CHCMDS *c = MAlloc(sizeof(CHCMDS));
@@ -100,17 +107,11 @@ CHCMDS *c = MAlloc(sizeof(CHCMDS));
 
   for(;i<HASH_TABLE_SIZE;i++)
   {
-    "%s\n", c->data[0][0];
+//    if (i==0 || c->data[i][0])
+//      "%d %s\n", c->data[i][0],c->data[i][2];
 //   "%d %s %d %d %d %d\n",c->data[i][0],c->data[i][1],c->data[i][2],c->data[i][3],c->data[i][4],c->data[i][5];
  }  
 Free(c);
-
-
-
-
-
-
-
 
 MemSet(hashed, "\0", sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
 Free(hashed);

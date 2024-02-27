@@ -83,7 +83,7 @@ U8 *VSAM[REC_TOT][7] =
 };
 
 I64 cur_IDX = -1;
-
+
 I64 indexOf(U8 *cmd)
 {
   U64 i = REC_CNT,
@@ -636,7 +636,7 @@ MenuPush(
   "  PlainText(,CH_CTRLT);"
   "  Border(,CH_CTRLB);"
   "  FileMgr(,CH_CTRLD);"
-  "}"
+  "}"
 );
 
 
