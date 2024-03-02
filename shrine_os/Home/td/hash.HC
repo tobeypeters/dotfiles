@@ -62,10 +62,10 @@ I64 hashDX(U8 *cmd)
   while (*cmd) hash+=*cmd++;
   idx=hash % HASH_TABLE_SIZE;
 
-  while (idx < HASH_TABLE_SIZE)
+  for(;idx < HASH_TABLE_SIZE;idx++)
   {
     if (!StrCmp(cmds[idx][1],cmd)) return idx;
-    idx++;
+//    idx++;
   }
 
   return -1;
@@ -80,17 +80,8 @@ U0 parse(CHCMDS *in)
 
     h = hashed[i][0];
 
-//    "%d\n",h;
     for(;j<CMD_ARGS;j++)
-{
       in->data[h][j]=hashed[i][j];
-//      "%s i%d j%d \n",in->data[h][1],i,j;
-//      "%d %d %s\n",i,j,in->data[h][j];
-//      "%4d %4d",in->data[h][j],hashed[i][j];
-//      "%d\n",in->data[h][j];
-}
-"%s\n",in->data[h][1];
-
   }
 }
 CHCMDS *c = MAlloc(sizeof(CHCMDS));
@@ -103,14 +94,12 @@ CHCMDS *c = MAlloc(sizeof(CHCMDS));
 
   U64 i=0;
 
-//  U8 *test;
-
   for(;i<HASH_TABLE_SIZE;i++)
   {
-//    if (i==0 || c->data[i][0])
-//      "%d %s\n", c->data[i][0],c->data[i][2];
+    if (i==0 || c->data[i][0])
+      "%d %s\n", c->data[i][0],c->data[i][1];
 //   "%d %s %d %d %d %d\n",c->data[i][0],c->data[i][1],c->data[i][2],c->data[i][3],c->data[i][4],c->data[i][5];
- }  
+  }
 Free(c);
 
 MemSet(hashed, "\0", sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
