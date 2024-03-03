@@ -18,7 +18,7 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-#help_file ".//Home/templeDOS.DD"
+#help_file ".//Home/templeDOS.DD"
 
 #include "shared.HC"
 #include "args.HC"
