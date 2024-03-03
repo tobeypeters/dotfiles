@@ -20,7 +20,7 @@
 */
 #help_file ".//Home/templeDOS.DD"
 
-#include "shared.HC"
+#include "shared.HC"
 #include "args.HC"
 #include "hash.HC"
 

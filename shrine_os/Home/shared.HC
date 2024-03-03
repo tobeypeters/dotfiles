@@ -432,7 +432,7 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 
 U0 tree_top(U8 *name) { "$$TR,\"%s\"$$",name; "$$ID,2$$"; }
 U0 tree_trunk() "$$ID,-2S$$";
-
+
 U0 ls_dir_link(U8 *dirname,U8 *full_name=NULL)
 {//Put $LK,"DolDoc",A="FI:::/Doc/DolDocOverview.DD"$ dir macro to StdOut, $LK,"DocPut",A="MN:DocPut"$.
   U8 *st;
@@ -448,7 +448,7 @@ U0 ls_dir_link(U8 *dirname,U8 *full_name=NULL)
     Free(st);
   }
 }
-
+
 //Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *what) return what->attr & RS_ATTR_DIR;
 

@@ -17,5 +17,5 @@ sudo umount $QEMU_IMG_MOUNT_DIR || true
 
 $QEMU_SYSTEM_X86_64 $QEMU_FLAGS &
 
-sleep .5
+sleep 1
 wmctrl -r "QEMU" -T "shrineOS"

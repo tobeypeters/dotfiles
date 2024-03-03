@@ -5,7 +5,7 @@
 
 U8 *cmds[HASH_TABLE_SIZE][CMD_ARGS];
 
-/*HASH, command, token min, token max,
+/*HASH idx, command, token min, token max,
   validate file(s) / dir{s}, flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 56,   "cat", 2, 2, 1, 0},
@@ -46,14 +46,12 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
 class CHCMDS
 {
   U8 *data[HASH_TABLE_SIZE][CMD_ARGS];
-  U0 (* init)(CHCMDS *in);
+
   I64 (* hashdx)(U8 *cmd);
   U0 (* parse)(CHCMDS *in);
+
+  U0 (* print_arr)(CHCMDS *in);  
 };
-U0 init(CHCMDS *in)
-{
-  MemSet(in->data, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
-}
 I64 hashDX(U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   U64 hash=0, 
@@ -62,51 +60,46 @@ I64 hashDX(U8 *cmd)
   while (*cmd) hash+=*cmd++;
   idx=hash % HASH_TABLE_SIZE;
 
-  for(;idx < HASH_TABLE_SIZE;idx++)
+  for(idx=0;idx < HASH_TABLE_SIZE;idx++)
   {
     if (!StrCmp(cmds[idx][1],cmd)) return idx;
-//    idx++;
   }
 
   return -1;
 }
-U0 parse(CHCMDS *in)
+U0 print_arr(CHCMDS *in)
 {
-  U64 h, i=0, j=0;
-
-  for(;i<CMD_CNT;i++)
-  {
-    j=0;
-
-    h = hashed[i][0];
-
-    for(;j<CMD_ARGS;j++)
-      in->data[h][j]=hashed[i][j];
-  }
-}
-CHCMDS *c = MAlloc(sizeof(CHCMDS));
-  c->init=&init;
-  c->hashdx=&hashDX;
-  c->parse=&parse;
-
-  c->init(c);
-  c->parse(c);
-
-  U64 i=0;
+  U64 i;
 
   for(;i<HASH_TABLE_SIZE;i++)
+    if (in->data[i][0]) "%3d%6s%2d%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4],in->data[i][5];
+}
+U0 parse(CHCMDS *in)
+{
+  U64 h,i,j;
+
+  for(i=0;i<CMD_CNT;i++)
   {
-    if (i==0 || c->data[i][0])
-      "%d %s\n", c->data[i][0],c->data[i][1];
-//   "%d %s %d %d %d %d\n",c->data[i][0],c->data[i][1],c->data[i][2],c->data[i][3],c->data[i][4],c->data[i][5];
+    h=hashed[i][0];
+
+    for(j=0;j<CMD_ARGS;j++)
+      in->data[h][j]=hashed[i][j];
   }
+  in->print_arr(in);
+
+  MemSet(hashed, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
+  Free(hashed);
+
+}
+CHCMDS *c = CAlloc(sizeof(CHCMDS));
+  c->hashdx=&hashDX;
+  c->parse=&parse;
+  c->print_arr=&print_arr;
+
+  c->parse(c);
 Free(c);
 
-MemSet(hashed, "\0", sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
-Free(hashed);
-
-
-//MemCpy(cmds[56],(U8 *[]){56,"cat",2,2,TRUE,0,0},sizeof(U8 *[]));
+//MemCpy(????);
 /*First value is the index of the array, I need to put the values;
 {
 
@@ -114,7 +107,7 @@ Free(hashed);
   { 23, "mkdir", 2, 2, FALSE, 0, 0},
   { 30, "rmdir", 2, 2,  TRUE, 0, 1},
   { 35, "touch", 2, 2, FALSE, 0, 0},
-  { 38, "tasks", 1, 1, FALSE, 0, 0},
+  { 38, "tasks", 1, 1, FALSE, 0, 0},
   { 43,   "cdd", 1, 2,  TRUE, 0, 0},
   { 56,   "cat", 2, 2,  TRUE, 0, 0},
   { 60,   "man", 2, 2, FALSE, 0, 0},
