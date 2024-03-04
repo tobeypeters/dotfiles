@@ -267,7 +267,7 @@ Bool got_flag(U8 *flag_got=NULL, I64 flag_want)
 
   I64 f = 0;
 
-  my_scanflags(&f,defined_flags,flag_got);
+  my_scanflags(&f,defined_flags,flag_got);
 
 
   return ToBool((f&flag_want));
@@ -636,7 +636,7 @@ MenuPush(
   "  PlainText(,CH_CTRLT);"
   "  Border(,CH_CTRLB);"
   "  FileMgr(,CH_CTRLD);"
-  "}"
+  "}"
 );
 
 

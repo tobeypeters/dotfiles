@@ -16,7 +16,7 @@
 
 /*args.HC
   Description:
-      Parse a string, into individual arguments.
+      Parse a string, into individual arguments.
 */
 
 #define ARG_CNT 64
@@ -57,7 +57,7 @@ U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
   MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  in->count=in->cidx=0;
+  in->count=in->cidx=0;
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
@@ -69,6 +69,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
+/*
 //  a->init(a); //Clear data before each proceeding parse() call
     a->parse(a,"one two three four five");
 
@@ -88,3 +89,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
+*/
