@@ -146,6 +146,8 @@ sudo apt install -y i3
 sudo snap install auto-cpufreq
 sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 
+# https://christitus.com/quickemu/
+
 # In case, you want a ramdisk
 # Make sure /mnt/ram_disk exists first
 # new_ram_disk    /mnt/ram_disk   tmpfs    nodev,nosuid,noexec,nodiratime,size=256M   0
