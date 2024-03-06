@@ -220,6 +220,7 @@ for_window [class="Pavucontrol"] floating enable
 for_window [class="Snap-store"] floating enable
 for_window [class="Software-properties-gtk"] floating enable
 for_window [class="Sonata"] floating enable
+for_window [class="Spicy"] floating enable
 for_window [class="(?i)^steam*"] floating enable
 for_window [class="strawberry"] floating enable
 for_window [class="systemsettings"] floating enable
