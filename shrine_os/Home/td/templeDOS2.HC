@@ -22,17 +22,19 @@
 
 Cd(__DIR__);;
 
-#include "shared.HC"
+/*#include "shared.HC"
 #include "args.HC"
 #include "hash.HC"
-
+#include "flags.HC"
+#include "strings.HC"
+*/
 U8 *help_file = "~/templeDOS.DD";
 
 U8 execute_cmd(U8 *cmd) {
   a->init(a);
   a->parse(a, cmd);
 
-  return 0;
+  return 0;
 }
 
 U8 templeDOS() {
@@ -92,7 +94,7 @@ MenuPush(
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
 
-templeDOS;
+Cd; templeDOS;
 
 a->init(a);
 Free(a);

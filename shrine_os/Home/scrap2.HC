@@ -1,12 +1,12 @@
-U8 *gato[1][3];
+/*U8 *gato[1][3];
 MemSet(gato,'\0',sizeof(gato));
 
 gato[0][0]=0;
 gato[0][1]="happy";
 gato[0][2]=1;
 
-"%d %s %d\n",gato[0][0],gato[0][1],gato[0][2];
-
+"%d %s %d\n",gato[0][0],gato[0][1],gato[0][2];
+*/
 /*U8 gato[5];
 MemSet(gato,'\0',sizeof(gato));
 
@@ -30,3 +30,8 @@ test("one two three four");
 
 "%s\n",gato;
 */
+
+U8 *test = '1';
+
+if (test) "\nyes\n\n";
+

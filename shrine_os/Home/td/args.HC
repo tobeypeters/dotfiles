@@ -57,7 +57,7 @@ U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
   MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  in->count=in->cidx=0;
+  in->count=in->cidx=0;
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }

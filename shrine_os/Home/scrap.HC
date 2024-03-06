@@ -11,8 +11,6 @@
 
 DocClear;
 
-"\n";
-
 /*"IsDir(): %d %d %d %d\n",'-','~',IsDir("/"),IsDir("~");
 "FileFind(): %d %d %d %d\n",'-','~',FileFind('/'),FileFind("~");
 //And before you say duh ... you CAN use FileFind on
@@ -429,7 +427,7 @@ RGB2C(0,0,63);
 U64 MAP_TYPE=0;
 //U64 PALETTE_TYPE=0;
 
-U64 ColorMapper(U64 in=0) {
+U64 ColorMapper(U64 in=0) {
   if (in==0) return 0;
 
   switch[MAP_TYPE] {
@@ -447,6 +445,38 @@ U64 ColorMapper(U64 in=0) {
 //U8 *mask=MStrPrint("%s/*","C:/Home");
 //"mask: %s\n",mask;
 //Free(mask);
+
+
+F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
+{//Display free space for each mounted drive
+ //or a specified mounted drive
+ //Or reeturn the free space, for a specific mounted drive.
+  CDrv *dv;
+  I64 c = 0,
+      i = 0;
+  F64 s = 0;
+
+  for (i=0;i<26;i++) {
+    if ((dv=Let2Drv(i+'A',FALSE)) &&
+	  (dv->fs_type==FSt_FAT32 || dv->fs_type==FSt_REDSEA)) {
+      c = Drv2Let(dv);
+      s = DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
+
+      if (drv == '' && !ret_free) {
+        "%C: %7.2f%% Free\n",c,s;
+      }
+      else {
+        if (drv == c) {
+          if (drv == c && ret_free) return s;
+
+         "%C: %7.2f%% Free\n",c,s;
+          return 0;
+        }
+      }      
+    }
+  }
+}
+drv_free;
 
 "\n";
 

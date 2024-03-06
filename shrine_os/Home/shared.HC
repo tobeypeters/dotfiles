@@ -270,7 +270,7 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
           return 0;
         }
       }      
-    }
+    }
   }
 }
 
@@ -432,7 +432,7 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 
 U0 tree_top(U8 *name) { "$$TR,\"%s\"$$",name; "$$ID,2$$"; }
 U0 tree_trunk() "$$ID,-2S$$";
-
+
 U0 ls_dir_link(U8 *dirname,U8 *full_name=NULL)
 {//Put $LK,"DolDoc",A="FI:::/Doc/DolDocOverview.DD"$ dir macro to StdOut, $LK,"DocPut",A="MN:DocPut"$.
   U8 *st;
