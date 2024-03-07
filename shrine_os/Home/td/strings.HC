@@ -16,7 +16,7 @@
 
 /*strings.HC
   Description:
-      String related functions.
+      String related functions.
 */
 
 U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
@@ -60,7 +60,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
  //to a list of strings.
  //
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
-  if (!cmp_to || (argc < 1)) return FALSE;
+  if (!cmp_to || (argc < 1)) return FALSE;
 
 
   Bool result = FALSE;

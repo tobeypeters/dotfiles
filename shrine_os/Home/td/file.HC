@@ -56,26 +56,21 @@ F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
 }
 
 Bool drv_mounted(U8 *drv)
-{//Valid mounted drive?
-  if (!drv) return FALSE;
+{//Valid mounted drive. Must be passed in 
+  if ((!drv) || 
+      (!(StrLen(drv)==2))) return FALSE; //Force format "C:"
 
-  return Let2Drv(ToUpper(drv),FALSE);
+  return ToBool(Let2Drv(ToUpper(drv[0]),FALSE));
 }
 
-//Faster than IsDir(); for my case use.
+//Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
-Bool is_dirEX(U8 *dir, U8 **r)
-{//Validation version
-  if (IsDir(dir)) "id yes\n"; else "id no\n";
-
-  if (!dir) return FALSE;
-
-  return FALSE;
+Bool is_dirEX(U8 *dir_name)
+{//Is a str a valid, existing Dir?
+ //Had to wrap this in a try, IsDir throws exceptions
+  try return IsDir(dir_name);
+  catch return FALSE;
 }
-U64 a=0;
-is_dirEX("~/check2",&a.u8[0]);
-"\na.u8[0]: %d\n\n",a.u8[0];
-//valid_files(,"~/Home/test.HC","~/Home/valid.HC");
 
 I64 valid_files(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
@@ -103,22 +98,34 @@ I64 valid_files(U8 *mask="11111111",...)
   I64 i=0,
       x=0;
 
-  for (;i<argc;i++) {
-    x.u8[0]=drv_mounted(argv[i]);
-    "x.u[0]: %d   mounted %s\n",x.u8[0],argv[i];
-    x.u8[1]=FileFind(argv[i]);
-    "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
-    x.u8[2]=FileFind(argv[i]);
-    "x.u[2]: %d      file %s\n",x.u8[2],argv[i];
+  for (;i<argc;i++)
+  {
+//    x.u8[0]=drv_mounted(argv[i]);
+//    "x.u[0]: %d   mounted %s\n",x.u8[0],argv[i];
+//    x.u8[1]=is_dirEX(argv[i]);
+//    "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
+
+//FileFindEX(argv[i]);
+
+//  else if (!CFileNameTo(dname,name))
+//    PrintErr("Invalid FileName: \"%s\".\n",name);
+
+    try {
+x.u8[2]=FileFind(argv[i]);
+} catch {x.u8[2]=0;}
+
+//    x.u8[2]=try FileFind(argv[i]); catch 
+//    "x.u[2]: %d      file %s\n",x.u8[2],argv[i];
     "\n";
 
+"%d\n",mask;
 //    if ((x.u8[0] || x.u8[1] || x.u8[2]) != mask[i]-48) {
 //      return 0 - i; //Return a "FALSE" value
 //    }
   }
   return 1;
 }
-//valid_files(,"~/test.HC","~/valid.HC");
+valid_files(,"~/test.HC","~/valid.HC","c:");
 
 #define gb 1073741824
 #define gt gb / 10
