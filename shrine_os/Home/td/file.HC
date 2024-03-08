@@ -20,7 +20,7 @@
 */
 
 #include "~/td/strings"
-#include "~/td/debug"
+#include "~/td/debug"
 
 //Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
@@ -68,6 +68,7 @@ Bool drv_mounted(U8 *drv)
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 Bool is_dirEX(U8 *dir_name)
 {//Validator() support function
+  "is_dirEX\n";
   try return IsDir(dir_name); //IsDir() throws exceptions
   catch return FALSE;
 }
@@ -93,25 +94,29 @@ I64 validator(U8 *mask="11111111",...)
   I64 i=0,
       x=0;
 
+//  "arc %d\n",argc;
+  "%d\n\n",mask;
   for (;i<argc;i++)
   {
-    x.u8[0]=drv_mounted(argv[i]);
+//    "here 2 %d\n",i;
+//    x.u8[0]=drv_mounted(argv[i]);
     if (x.u8[0]) x.u8[1]=0; else x.u8[1]=is_dirEX(argv[i]);
-    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=file_find(argv[i]);   
+//    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=file_find(argv[i]);   
 
     "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
-    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
+//    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
     "\n";
 
-"%d\n",mask;
 //    if ((x.u8[0] || x.u8[1] || x.u8[2]) != mask[i]-48) {
 //      return 0 - i; //Return a "FALSE" value
-//    }
+//    }
   }
   return 1;
 }
-validator(,"~/test.HC","~/valid.HC","c:");
+validator("011","~/test.HC","~/valid.HC","1:");
+//I64 ret=validator("011","~/test.HC","~/valid.HC","1:");
+//"ret: %d \n",ret;
 
 #define gb 1073741824
 #define gt gb / 10
