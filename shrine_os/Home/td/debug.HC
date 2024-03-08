@@ -14,62 +14,11 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*utils.HC
+/*debug.HC
   Description:
-      Miscellaneous functions.
+      Miscellaneous debug functions.
 */
-
-U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
-{//Allows you to set Fs values:
- //Fs->task_name
- //Fs->task_title
-  if (name) StrCpy(Fs->task_name,name);
-  if (title) StrCpy(Fs->task_title,title);
-}
 
-//NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
+U0 debug_snd() Noise(1000,75,1000);
 
-
-Bool I64_IN(I64 inval,...)
-{//Check to see if an I64 is in a given argv list.
-  U64 i = 0;
-
-  for (;i<argc;i++) {
-    if (inval == argv[i]) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-U8 tern(Bool condition, U64 *first, U64 *second)
-{//Ternary operator like function.
-  if (condition) return first;
-
-  return second;
-}
-
-
-
-U0 shell_execute(U8 *cmd)
-{//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
-}
-
-U0 viewer(U8 *cmd)
-{//Execute a specified command and examine the results
- //in "view" mode.
-  DocClear; DocTop;
-  ExePutS(cmd);
-  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);
-}
-
-I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-{//Map one range to another range.
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-
+U0 debug_YN(Bool state) { if (state) "YES"; else "NO"; "\n"; }

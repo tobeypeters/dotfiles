@@ -20,6 +20,7 @@
 */
 
 #include "~/td/strings"
+#include "~/td/debug"
 
 //Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
@@ -66,19 +67,22 @@ Bool drv_mounted(U8 *drv)
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 Bool is_dirEX(U8 *dir_name)
-{//Is a str a valid, existing Dir?
- //Had to wrap this in a try, IsDir throws exceptions
-  try return IsDir(dir_name);
+{//Validator() support function
+  try return IsDir(dir_name); //IsDir() throws exceptions
   catch return FALSE;
 }
-
-I64 valid_files(U8 *mask="11111111",...) 
+Bool file_find(U8 *file)
+{//Validator() support function
+  if (str_len(file)==2) return FALSE;
+  return FileFind(file);
+}
+I64 validator(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
- //to know, if it exists <1> or doesn't <0>.
+ //to know, if it is valid/exists <1> or doesn't <0>.
  //
  //Usage: 
- //        valid_files("10",buffera,bufferb);
+ //        validator("10",buffera,bufferb);
  //
  //returns:
  //         1	All files are valid
@@ -86,36 +90,18 @@ I64 valid_files(U8 *mask="11111111",...)
  //
  //         When you check the return value in an if,
  //         you need to make sure you do:
-
- //CAMEBACKINHEREANDTRYINGTOFIGUREOUTWHY???
- //I MADETHIS.BUT,REALIZEDITWASSOiCOULDVALID
- //WHATEVERINEEDEDANDEASILYRETURNWHICHEVERONE
- //ISINVALID. SOICOULDDISPLAYITINTHEERRORMESSAGE.
- //THINK, I WAS GOING TO JUST SET BITS OF AN I64. THIS IS
- //SIMPLIER AND NO FUNCTION CALLS.
-
-
   I64 i=0,
       x=0;
 
   for (;i<argc;i++)
   {
-//    x.u8[0]=drv_mounted(argv[i]);
-//    "x.u[0]: %d   mounted %s\n",x.u8[0],argv[i];
-//    x.u8[1]=is_dirEX(argv[i]);
-//    "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
+    x.u8[0]=drv_mounted(argv[i]);
+    if (x.u8[0]) x.u8[1]=0; else x.u8[1]=is_dirEX(argv[i]);
+    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=file_find(argv[i]);   
 
-//FileFindEX(argv[i]);
-
-//  else if (!CFileNameTo(dname,name))
-//    PrintErr("Invalid FileName: \"%s\".\n",name);
-
-    try {
-x.u8[2]=FileFind(argv[i]);
-} catch {x.u8[2]=0;}
-
-//    x.u8[2]=try FileFind(argv[i]); catch 
-//    "x.u[2]: %d      file %s\n",x.u8[2],argv[i];
+    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
+    "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
+    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
     "\n";
 
 "%d\n",mask;
@@ -125,7 +111,7 @@ x.u8[2]=FileFind(argv[i]);
   }
   return 1;
 }
-valid_files(,"~/test.HC","~/valid.HC","c:");
+validator(,"~/test.HC","~/valid.HC","c:");
 
 #define gb 1073741824
 #define gt gb / 10

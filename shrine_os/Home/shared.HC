@@ -270,7 +270,7 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
           return 0;
         }
       }      
-    }
+    }
   }
 }
 
@@ -335,11 +335,7 @@ I64 valid_files(U8 *mask="11111111",...)
  //returns:
  //         1	All files are valid
  //      -IDX	IDX where it failed in negative form.
- //
- //         When you check the return value in an if,
- //         you need to make sure you do:
- //
- //
+ //
   I64 i = 0,
       x = 0;
 

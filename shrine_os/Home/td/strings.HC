@@ -19,26 +19,26 @@
       String related functions.
 */
 
-U8 *str_cat(U8 **buffer,Bool flush=TRUE,...)
+U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
   U64 i = 0;
 
-  if (flush) *buffer = '\0';
+  if (flush) *str = '\0';
 
   for (;i<argc;i++) {
-    CatPrint(buffer,argv[i]);
+    CatPrint(str,argv[i]);
   }
 
-  return buffer;
+  return str;
 }
-U8 str_upper(U8 *stra)
+U8 str_upper(U8 *str)
 {//Convert a string to uppercase.
-  return MStrUtil(stra,SUF_TO_UPPER);
+  return MStrUtil(str,SUF_TO_UPPER);
 }
-U8 str_lower(U8 *stra)
+U8 str_lower(U8 *str)
 {//Convert a string to lowercase. 
-  return MStrUtil(stra,SUF_TO_LOWER);
+  return MStrUtil(str,SUF_TO_LOWER);
 }
 Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
@@ -60,7 +60,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
  //to a list of strings.
  //
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
-  if (!cmp_to || (argc < 1)) return FALSE;
+  if (!cmp_to || (argc < 1)) return FALSE;
 
 
   Bool result = FALSE;
@@ -76,6 +76,8 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
   return result;
 }
 
+U64 str_len(U8 *str) return StrLen(str);
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
