@@ -335,7 +335,7 @@ I64 valid_files(U8 *mask="11111111",...)
  //returns:
  //         1	All files are valid
  //      -IDX	IDX where it failed in negative form.
- //
+ //
   I64 i = 0,
       x = 0;
 
@@ -586,3 +586,4 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
   Free(st);
 }
 
+

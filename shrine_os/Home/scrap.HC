@@ -477,50 +477,7 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
 }
 drv_free;
 */
-
-/*Bool IsDurp(U8 *dir_name)
-{//Is a str a valid, existing Dir?
-
-  U8 *mask=MStrPrint("%s/*",dir_name);
-  Bool res=FALSE;
-
-  "mask %s\n",mask;
-  if (!dir_name) goto cleanup;
-
-  if (StrLen(dir_name)>=2)
-  { 
-"goblin %d\n",StrLen(dir_name);
-   if (dir_name[1]==':')
-   {
-     U64 drv=ToUpper(dir_name[0]);
-     if (!('A'<=drv<='Z')) goto cleanup;
-     if (!Let2Drv(drv,FALSE)) goto cleanup;
-   }
-  }
-  Bool old_silent=Silent;
-  CDirContext *dirc;
-  if (dirc=DirContextNew(mask)) {
-    DirContextDel(dirc);
-    res=TRUE;
-  } else
-    res=FALSE;
-
-cleanup:
-  Free(mask);
-  Silent(old_silent);
-  return res;
-}
-
-if (IsDurp("")) "yes\n"; else "no\n";
-if (IsDurp("~")) "yes\n"; else "no\n";
-if (IsDurp("/")) "yes\n"; else "no\n";
-if (IsDurp("c")) "yes\n"; else "no\n";
-if (IsDurp("C:")) "yes\n"; else "no\n";
-
-*/
-*/
-
-U8 *occ_buffer="one two three four five";
+/*U8 *occ_buffer="one two three four five";
 U64 count=StrOcc(occ_buffer,' ');
 U8 *occ_array[count+1][50];
 MemSet(occ_array,'\0',(sizeof(U8)*(count+1)*50));
@@ -536,7 +493,53 @@ StrCpy(occ_array[i],occ_buffer);
 "occ_array[2] %s\n",occ_array[2];
 "occ_array[3] %s\n",occ_array[3];
 "occ_array[4] %s\n",occ_array[4];
-
+*/
+
+Bool IsDurp(U8 *dir_name)
+{//Is a str a valid, existing Dir?
+  U8 *mask=MStrPrint("%s/*",dir_name);
+  Bool res=FALSE;
+
+  U64 len=StrLen(dir_name);
+
+  if (!len) { goto cleanup; "gato\n"; }
+
+  if (len>=2)
+  { 
+   if (dir_name[1]==':')
+   {
+     U64 drv=ToUpper(dir_name[0]);
+     if (!('A'<=drv<='Z')) goto cleanup;
+     if (!Let2Drv(drv,FALSE)) goto cleanup;
+   }
+  }
+  Bool old_silent=Silent;
+  CDirContext *dirc;
+  if (dirc=DirContextNew(mask)) {
+    DirContextDel(dirc);
+    res=TRUE;
+  } else
+    res=FALSE;
+
+  Silent(old_silent);
+cleanup:
+  Free(mask);
+  return res;
+}
+
+if (IsDurp('')) "yes\n"; else "no\n";
+if (IsDurp("")) "yes\n"; else "no\n";
+if (IsDurp("~")) "yes\n"; else "no\n";
+if (IsDurp("/")) "yes\n"; else "no\n";
+if (IsDurp("c")) "yes\n"; else "no\n";
+if (IsDurp("C:")) "yes\n"; else "no\n";
+
+U8 *command="exit";
+
+if (command=="exit") "test1\n"; //Doesn't print
+if (!(StrCmp(command,"exit"))) "test2\n"; //prints
+
+
 "\n";
 
 KeyAndCont;
