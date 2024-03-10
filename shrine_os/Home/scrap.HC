@@ -495,7 +495,7 @@ StrCpy(occ_array[i],occ_buffer);
 "occ_array[4] %s\n",occ_array[4];
 */
 
-/*U8 *p[50][50];
+/*U8 *p[50][50];
 *p=CAlloc(sizeof(U8)*50*50);
 
 U0 parse(U8 *cmd)
@@ -521,17 +521,23 @@ U0 main()
     "> "; 
     cmd=GetStr(,,GSF_SHIFT_ESC_EXIT);
 
+    if (StrLen(cmd)>0){
+      StrUtil(cmd, SUF_REM_LEADING);
+      StrUtil(cmd, SUF_REM_TRAILING);
+    }
+
     if(!(StrCmp(MStrUtil(cmd,SUF_TO_UPPER),"EXIT"))) break;
 
     parse(cmd);
 
     MemSet(cmd, '\0', sizeof(U8)*StrLen(cmd));
+    MemSet(p, '\0', sizeof(U8)*StrLen(p));
   }
   Free(cmd);
 }
 main();
 MemSet(p, '\0', sizeof(U8)*StrLen(p));
-Free(p);
+Free(p);
 */
 
 
