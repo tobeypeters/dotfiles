@@ -29,9 +29,4 @@ U0 test(U8 *buffer)
 test("one two three four");
 
 "%s\n",gato;
-*/
-
-U8 *test = '1';
-
-if (test) "\nyes\n\n";
-
+*/

@@ -445,8 +445,7 @@ U64 ColorMapper(U64 in=0) {
 //U8 *mask=MStrPrint("%s/*","C:/Home");
 //"mask: %s\n",mask;
 //Free(mask);
-
-
+/*
 F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
 {//Display free space for each mounted drive
  //or a specified mounted drive
@@ -477,8 +476,67 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
   }
 }
 drv_free;
+*/
 
+/*Bool IsDurp(U8 *dir_name)
+{//Is a str a valid, existing Dir?
+
+  U8 *mask=MStrPrint("%s/*",dir_name);
+  Bool res=FALSE;
+
+  "mask %s\n",mask;
+  if (!dir_name) goto cleanup;
+
+  if (StrLen(dir_name)>=2)
+  { 
+"goblin %d\n",StrLen(dir_name);
+   if (dir_name[1]==':')
+   {
+     U64 drv=ToUpper(dir_name[0]);
+     if (!('A'<=drv<='Z')) goto cleanup;
+     if (!Let2Drv(drv,FALSE)) goto cleanup;
+   }
+  }
+  Bool old_silent=Silent;
+  CDirContext *dirc;
+  if (dirc=DirContextNew(mask)) {
+    DirContextDel(dirc);
+    res=TRUE;
+  } else
+    res=FALSE;
+
+cleanup:
+  Free(mask);
+  Silent(old_silent);
+  return res;
+}
+
+if (IsDurp("")) "yes\n"; else "no\n";
+if (IsDurp("~")) "yes\n"; else "no\n";
+if (IsDurp("/")) "yes\n"; else "no\n";
+if (IsDurp("c")) "yes\n"; else "no\n";
+if (IsDurp("C:")) "yes\n"; else "no\n";
+
+*/
+*/
+
+U8 *occ_buffer="one two three four five";
+U64 count=StrOcc(occ_buffer,' ');
+U8 *occ_array[count+1][50];
+MemSet(occ_array,'\0',(sizeof(U8)*(count+1)*50));
+U64 i=0;
+for (;i<count;i++)
+{
+  StrFirstRem(occ_buffer," ",occ_array[i]);
+}
+StrCpy(occ_array[i],occ_buffer);
+
+"occ_array[0] %s\n",occ_array[0];
+"occ_array[1] %s\n",occ_array[1];
+"occ_array[2] %s\n",occ_array[2];
+"occ_array[3] %s\n",occ_array[3];
+"occ_array[4] %s\n",occ_array[4];
+
 "\n";
 
-//KeyAndCont;
-PressA$BK,1$Key;
+KeyAndCont;

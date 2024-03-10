@@ -81,7 +81,7 @@ Bool Cd(U8 *dirname=NULL,Bool make_dirs=FALSE)
   Free(buf);
   Free(chg_to_buf);
   Free(new_cur_dir);
-  return res;
+  return res;
 }
 
 Bool IsDir(U8 *dir_name)
@@ -175,7 +175,7 @@ Bool DirMk(U8 *filename,I64 entry_cnt=0)
 	"Make Directory:%s\n",filename;
 	name=MStrUtil(dirc->mask,
 	      SUF_REM_LEADING|SUF_REM_TRAILING|SUF_REM_CTRL_CHARS);
-	switch (dirc->dv->fs_type) {
+	switch (dirc->dv->fs_type) {
 	  case FSt_REDSEA:
 	    res=RedSeaMkDir(dirc->dv,Fs->cur_dir,name,entry_cnt);
 	    break;

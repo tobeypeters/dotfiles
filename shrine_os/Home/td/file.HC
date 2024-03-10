@@ -110,8 +110,8 @@ I64 validator(U8 *mask="11111111",...)
 
 //    if ((x.u8[0] || x.u8[1] || x.u8[2]) != mask[i]-48) {
 //      return 0 - i; //Return a "FALSE" value
-//    }
-  }
+//    }
+  }
   return 1;
 }
 validator("011","~/test.HC","~/valid.HC","1:");
