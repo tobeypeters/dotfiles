@@ -495,6 +495,47 @@ StrCpy(occ_array[i],occ_buffer);
 "occ_array[4] %s\n",occ_array[4];
 */
 
+/*U8 *p[50][50];
+*p=CAlloc(sizeof(U8)*50*50);
+
+U0 parse(U8 *cmd)
+{
+  U64 c=StrOcc(cmd,' ');
+  "%d %s\n",c,cmd;
+  
+  U64 i=0;
+  for (;i<c;i++)
+  {
+    StrFirstRem(cmd," ",p[i]);
+    "%s p[%d]\n",p[i],i;
+  }
+  StrCpy(p[i],cmd);
+  "%s p[%d]\n",p[i],i;
+}
+
+U0 main()
+{
+  U8 *cmd;
+  while (TRUE) 
+  {
+    "> "; 
+    cmd=GetStr(,,GSF_SHIFT_ESC_EXIT);
+
+    if(!(StrCmp(MStrUtil(cmd,SUF_TO_UPPER),"EXIT"))) break;
+
+    parse(cmd);
+
+    MemSet(cmd, '\0', sizeof(U8)*StrLen(cmd));
+  }
+  Free(cmd);
+}
+main();
+MemSet(p, '\0', sizeof(U8)*StrLen(p));
+Free(p);
+*/
+
+
+/*
 Bool IsDurp(U8 *dir_name)
 {//Is a str a valid, existing Dir?
   U8 *mask=MStrPrint("%s/*",dir_name);
@@ -534,13 +575,11 @@ if (IsDurp("/")) "yes\n"; else "no\n";
 if (IsDurp("c")) "yes\n"; else "no\n";
 if (IsDurp("C:")) "yes\n"; else "no\n";
 
-U8 *command="exit";
+U8 *command="ext";
 
 if (command=="exit") "test1\n"; //Doesn't print
 if (!(StrCmp(command,"exit"))) "test2\n"; //prints
-
-if (*command==*"exit") "test3\n";
-
+*/
 
 "\n";
 

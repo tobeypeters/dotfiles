@@ -267,7 +267,7 @@ Bool got_flag(U8 *flag_got=NULL, I64 flag_want)
 
   I64 f = 0;
 
-  my_scanflags(&f,defined_flags,flag_got);
+  my_scanflags(&f,defined_flags,flag_got);
 
 
   return ToBool((f&flag_want));
@@ -610,7 +610,7 @@ U8 templeDOS() {
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));
     done:
-     if (result) break;
+     if (result) break;
   }
 
   Free(input);
