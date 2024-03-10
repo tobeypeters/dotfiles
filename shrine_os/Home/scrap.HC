@@ -537,7 +537,9 @@ if (IsDurp("C:")) "yes\n"; else "no\n";
 U8 *command="exit";
 
 if (command=="exit") "test1\n"; //Doesn't print
-if (!(StrCmp(command,"exit"))) "test2\n"; //prints
+if (!(StrCmp(command,"exit"))) "test2\n"; //prints
+
+if (*command==*"exit") "test3\n";
 
 
 "\n";
