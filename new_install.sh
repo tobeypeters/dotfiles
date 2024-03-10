@@ -43,6 +43,7 @@ sudo apt install -y libxcb-xfixes0-dev libxcb-xkb-dev libxcb-xrm-dev libxcomposi
 sudo apt install -y libxft-dev libxinerama-dev libxtst-dev pkg-config python3-sphinx
 sudo apt install -y python3-xcbgen x11proto-xinerama-dev xboxdrv xcb-proto
 sudo apt install -y libstartup-notification0-dev
+sudo apt install -y libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
 
 # i3: https://i3wm.org/
 # i3ipc :
