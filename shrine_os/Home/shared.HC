@@ -529,7 +529,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,
@@ -586,4 +586,3 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
   Free(st);
 }
 
-

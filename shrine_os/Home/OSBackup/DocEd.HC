@@ -104,7 +104,7 @@ public Bool DocEd(CDoc *doc,I64 dof_flags=0)
 
 
 // Change[Start]:
-// Autohr: github/tobeypeters
+// Author: github/tobeypeters
 // Desc:
 //       Changed window border stuff.
 // [-] : start
@@ -325,6 +325,6 @@ U0 More(U8 *filename)
   "\n";
 
   Free(buffer);
-}
+}
 // [+] : end
 // Change[end]:

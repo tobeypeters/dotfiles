@@ -112,13 +112,13 @@ Bool AreYouSure()
   return YorN;
 }
 // Change[Start]:
-// Autohr: github/tobeypeters
+// Author: github/tobeypeters
 // Desc:
 //       Print "Press any key to continue ..." and wait for non-zero $LK,"ASCII",A="MN:CH_CTRLA"$ key.
 //       Doesn't print any newline characters and "clears" the line after you
 //       press a key.
 // [+] : start
-U0 KeyAndCont()
+U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $LK,"ASCII",A="MN:CH_CTRLA"$ key.
  //Doesn't print any newline characters and "clears" the line after you
  //press a key.

@@ -540,45 +540,43 @@ MemSet(p, '\0', sizeof(U8)*StrLen(p));
 Free(p);
 */
 
+//Bool IsDurp(U8 *dir_name)
+//{//Is a str a valid, existing Dir?
+//  U8 *mask=MStrPrint("%s/*",dir_name);
+//  Bool res=FALSE;
 
-Bool IsDurp(U8 *dir_name)
-{//Is a str a valid, existing Dir?
-  U8 *mask=MStrPrint("%s/*",dir_name);
-  Bool res=FALSE;
+//  U64 len=StrLen(dir_name);
+//  if (!len) goto cleanup;
+//  if (len>=2) { 
+//   if (dir_name[1]==':') {
+//     U64 drv=ToUpper(dir_name[0]);
+//     if (!('A'<=drv<='Z')) goto cleanup;
+//     if (!Let2Drv(drv,FALSE)) goto cleanup;
+//   }
+//  }
 
-  U64 len=StrLen(dir_name);
-  if (!len) goto cleanup;
-  if (len>=2) { 
-   if (dir_name[1]==':') {
-     U64 drv=ToUpper(dir_name[0]);
-     if (!('A'<=drv<='Z')) goto cleanup;
-     if (!Let2Drv(drv,FALSE)) goto cleanup;
-   }
-  }
+//  Bool old_silent=Silent;
+//  CDirContext *dirc;
+//  if (dirc=DirContextNew(mask)) {
+//    DirContextDel(dirc);
+//    res=TRUE;
+//  }
 
-  Bool old_silent=Silent;
-  CDirContext *dirc;
-  if (dirc=DirContextNew(mask)) {
-    DirContextDel(dirc);
-    res=TRUE;
-  }
+//  Silent(old_silent);
+//cleanup:
+//  Free(mask);
+//  return res;
+//}
 
-  Silent(old_silent);
-cleanup:
-  Free(mask);
-  return res;
-}
-
-if (IsDurp('')) "yes\n"; else "no\n";
-if (IsDurp("")) "yes\n"; else "no\n";
-if (IsDurp("~")) "yes\n"; else "no\n";
-if (IsDurp("/")) "yes\n"; else "no\n";
-if (IsDurp("c")) "yes\n"; else "no\n";
-if (IsDurp("C:")) "yes\n"; else "no\n";
-if (IsDurp("1")) "yes\n"; else "no\n";
-if (IsDurp("e:")) "yes\n"; else "no\n";
-
-
+//if (IsDurp('')) "yes\n"; else "no\n";
+//if (IsDurp("")) "yes\n"; else "no\n";
+//if (IsDurp("~")) "yes\n"; else "no\n";
+//if (IsDurp("/")) "yes\n"; else "no\n";
+//if (IsDurp("c")) "yes\n"; else "no\n";
+//if (IsDurp("C:")) "yes\n"; else "no\n";
+//if (IsDurp("1")) "yes\n"; else "no\n";
+//if (IsDurp("e:")) "yes\n"; else "no\n";
+
 "\n";
 
 KeyAndCont;

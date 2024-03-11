@@ -168,7 +168,7 @@ U0 seg_trim(U8 *seg, Bool left=TRUE, Bool both=FALSE)
 
   if (!left || both) {
     StrUtil(seg, SUF_REM_TRAILING);
-  }
+  }
 }
 
 U64 tc = 0,
@@ -605,7 +605,7 @@ U8 templeDOS() {
       DocBottom;
 
 
-      result = execute_cmd(input);
+      result = execute_cmd(input);
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));

@@ -66,7 +66,7 @@ Bool drv_mounted(U8 *drv)
 
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
-Bool is_dirEX(U8 *dir_name)
+/*Bool is_dirEX(U8 *dir_name)
 {//Validator() support function
   "is_dirEX\n";
   try return IsDir(dir_name); //IsDir() throws exceptions
@@ -76,7 +76,7 @@ Bool file_find(U8 *file)
 {//Validator() support function
   if (str_len(file)==2) return FALSE;
   return FileFind(file);
-}
+}*/
 I64 validator(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
@@ -94,29 +94,24 @@ I64 validator(U8 *mask="11111111",...)
   I64 i=0,
       x=0;
 
-//  "arc %d\n",argc;
-  "%d\n\n",mask;
   for (;i<argc;i++)
   {
-//    "here 2 %d\n",i;
-//    x.u8[0]=drv_mounted(argv[i]);
-    if (x.u8[0]) x.u8[1]=0; else x.u8[1]=is_dirEX(argv[i]);
-//    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=file_find(argv[i]);   
+    x.u8[0]=drv_mounted(argv[i]);
+    if (x.u8[0]) x.u8[1]=0; else x.u8[1]=IsDir(argv[i]);
+    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=FileFind(argv[i]);   
 
     "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
-//    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
+    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
     "\n";
 
 //    if ((x.u8[0] || x.u8[1] || x.u8[2]) != mask[i]-48) {
 //      return 0 - i; //Return a "FALSE" value
 //    }
-  }
+  }
   return 1;
 }
-validator("011","~/test.HC","~/valid.HC","1:");
-//I64 ret=validator("011","~/test.HC","~/valid.HC","1:");
-//"ret: %d \n",ret;
+validator("111","~/test.HC","~/valid.HC","c:");
 
 #define gb 1073741824
 #define gt gb / 10

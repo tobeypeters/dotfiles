@@ -81,22 +81,55 @@ Bool Cd(U8 *dirname=NULL,Bool make_dirs=FALSE)
   Free(buf);
   Free(chg_to_buf);
   Free(new_cur_dir);
-  return res;
+  return res;
 }
 
 Bool IsDir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
+// Change[Start]:
+// Author: github/tobeypeters
+// Desc: Added validation code and restructed the code,
+//       to prevent infinite loops and exceptions
+// [+] : Start
   U8 *mask=MStrPrint("%s/*",dir_name);
-  Bool res,old_silent=Silent;
+  Bool res=FALSE;
+
+  U64 len=StrLen(dir_name);
+  if (!len) goto cleanup;
+  if (len>=2) { 
+   if (dir_name[1]==':') {
+     if (!DrvIsWritable(dir_name[0])) goto cleanup;
+
+     U64 drv=ToUpper(dir_name[0]);
+     if (!('A'<=drv<='Z')) goto cleanup;
+     if (!Let2Drv(drv,FALSE)) goto cleanup;
+   }
+  }
+
+  Bool old_silent=Silent;
   CDirContext *dirc;
   if (dirc=DirContextNew(mask)) {
     DirContextDel(dirc);
     res=TRUE;
-  } else
-    res=FALSE;
-  Free(mask);
+  }
+
   Silent(old_silent);
+cleanup:
+  Free(mask);
   return res;
+// [+] : End
+
+//  U8 *mask=MStrPrint("%s/*",dir_name);
+//  Bool res,old_silent=Silent;
+//  CDirContext *dirc;
+//  if (dirc=DirContextNew(mask)) {
+//    DirContextDel(dirc);
+//    res=TRUE;
+//  } else
+//    res=FALSE;
+//  Free(mask);
+//  Silent(old_silent);
+//  return res;
 }
 
 I64 Dir(U8 *files_find_mask,Bool full)

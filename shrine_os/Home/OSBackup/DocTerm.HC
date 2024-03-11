@@ -34,7 +34,7 @@ public CDoc *DocBorderNew(CDoc *pdoc)
 
 
 // Change[Start]:
-// Autohr: github/tobeypeters
+// Author: github/tobeypeters
 // Desc:
 //       Changed window border stuff.
 // [-] : start
@@ -58,7 +58,7 @@ public U0 DocTermNew()
   Fs->border_src=BDS_CUR_DRV;
 
 // Change[Start]:
-// Autohr: github/tobeypeters
+// Author: github/tobeypeters
 // Desc:
 //       Changed window border stuff.
 // [-] : end
@@ -85,7 +85,7 @@ public U0 DocTermNew()
 #define RIGHT_DELETE	4
 #define RIGHT_TYPE	5
 #define RIGHT_ED	6
-#define RIGHT_MOUNT	7
+#define RIGHT_MOUNT	7
 #define RIGHT_PLAIN	8
 #define RIGHT_INFILE	9
 

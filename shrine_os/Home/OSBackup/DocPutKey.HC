@@ -56,7 +56,7 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
 //Fall Through to SC_END
 // Change[Start]:
 
-// Autohr: github/tobeypeters
+// Author: github/tobeypeters
 // Desc:
 //       Make the END key work like CTRL/RIght Arrow.
 //       I'm use to it, in other editors.
@@ -560,7 +560,7 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
 	    else
 	      DocCollapse(TRUE,doc);
 	  } else {
-	    if (sc&SCF_KEY_DESC)
+	    if (sc&SCF_KEY_DESC)
 	      KeyDescSet("Edit/Uncollapse");
 	    else
 	      DocCollapse(FALSE,doc);
