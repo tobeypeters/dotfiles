@@ -576,6 +576,17 @@ Free(p);
 //if (IsDurp("C:")) "yes\n"; else "no\n";
 //if (IsDurp("1")) "yes\n"; else "no\n";
 //if (IsDurp("e:")) "yes\n"; else "no\n";
+
+U64 i=0;
+
+for(;i<10;i++)
+{
+  "%d\n",i;
+
+  if (i==5) break;
+}
+
+"i %d\n",i;
 
 "\n";
 

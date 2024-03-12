@@ -24,7 +24,7 @@
 #define CMD_CNT  33
 #define CMD_ARGS  6
 
-U8 *cmds[HASH_TABLE_SIZE][CMD_ARGS];
+//U8 *cmds[HASH_TABLE_SIZE][CMD_ARGS];
 
 /*HASH idx, command, token min, token max,
   validate file(s) / dir{s}, flag max */
@@ -68,23 +68,23 @@ class CHCMDS
 {
   U8 *data[HASH_TABLE_SIZE][CMD_ARGS];
 
-  I64 (* hashdx)(U8 *cmd);
+  I64 (* hashdx)(CHCMDS *in,U8 *cmd);
   U0 (* parse)(CHCMDS *in);
 
   U0 (* print_arr)(CHCMDS *in);
   U0 (* test)();
 };
-I64 hashDX(U8 *cmd)
+I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
-  U64 hash=0, 
-      idx=0;
+  U64 hash=0,
+       idx=0;
 
   while (*cmd) hash+=*cmd++;
-  idx=hash % HASH_TABLE_SIZE;
+  idx=(hash % HASH_TABLE_SIZE);
 
-  for(idx=0;idx < HASH_TABLE_SIZE;idx++)
+  for(;idx < HASH_TABLE_SIZE;idx++)
   {
-    if (!StrCmp(cmds[idx][1],cmd)) return idx;
+    if (!StrCmp(in->data[idx-1][1],cmd)) return idx;
   }
 
   return -1;
@@ -107,7 +107,7 @@ U0 parse(CHCMDS *in)
     for(j=0;j<CMD_ARGS;j++)
       in->data[h][j]=hashed[i][j];
   }
-//  in->print_arr(in);
+  in->print_arr(in);
 
   MemSet(hashed, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
   Free(hashed);
@@ -124,9 +124,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->test=&test;
 
   c->parse(c);
-
-//"%s\n",c->data[0][0];
-//Free(c);
+//Free(c);
 
 /*Wanna move a whole row into an array element
   at once

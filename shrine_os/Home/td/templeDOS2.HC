@@ -23,13 +23,11 @@ U8 *help_file = "~/templeDOS.DD";
 U8 execute_cmd(U8 *cmd) {
   a->init(a);
   a->parse(a, cmd);
-  c->print_arr(c);
+  c->print_arr(c);
 
-//  c->hashdx(cmd);
+  "%d\n",c->hashdx(c,cmd);
 
-//  "%s\n",c->data[0];
-
-  return 0;
+  return 0;
 }
 
 U8 templeDOS() {
