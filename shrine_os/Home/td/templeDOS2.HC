@@ -18,21 +18,16 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-#help_file ".//Home/templeDOS.DD"
-
-Cd(__DIR__);;
-
-/*#include "shared.HC"
-#include "args.HC"
-#include "hash.HC"
-#include "flags.HC"
-#include "strings.HC"
-*/
 U8 *help_file = "~/templeDOS.DD";
 
 U8 execute_cmd(U8 *cmd) {
   a->init(a);
   a->parse(a, cmd);
+  c->print_arr(c);
+
+//  c->hashdx(cmd);
+
+//  "%s\n",c->data[0];
 
   return 0;
 }

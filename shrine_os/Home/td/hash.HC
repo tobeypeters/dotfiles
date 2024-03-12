@@ -71,7 +71,8 @@ class CHCMDS
   I64 (* hashdx)(U8 *cmd);
   U0 (* parse)(CHCMDS *in);
 
-  U0 (* print_arr)(CHCMDS *in);  
+  U0 (* print_arr)(CHCMDS *in);
+  U0 (* test)();
 };
 I64 hashDX(U8 *cmd)
 {//Return the index in the hash table, fo a given command.
@@ -90,7 +91,7 @@ I64 hashDX(U8 *cmd)
 }
 U0 print_arr(CHCMDS *in)
 {
-  U64 i;
+  U64 i=0;
 
   for(;i<HASH_TABLE_SIZE;i++)
     if (in->data[i][0]) "%3d%6s%2d%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4],in->data[i][5];
@@ -106,19 +107,26 @@ U0 parse(CHCMDS *in)
     for(j=0;j<CMD_ARGS;j++)
       in->data[h][j]=hashed[i][j];
   }
-  in->print_arr(in);
+//  in->print_arr(in);
 
   MemSet(hashed, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
   Free(hashed);
 
 }
+U0 test()
+{
+  "test\n";
+}
 CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->hashdx=&hashDX;
   c->parse=&parse;
   c->print_arr=&print_arr;
+  c->test=&test;
 
   c->parse(c);
-Free(c);
+
+//"%s\n",c->data[0][0];
+//Free(c);
 
 /*Wanna move a whole row into an array element
   at once
@@ -163,7 +171,7 @@ Free(c);
   {211,    "fm", 1, 3,  TRUE, 0, 1},
 
   {214,    "rd", 2, 2,  TRUE, 0, 1},
-
+
   {223,    "ls", 1, 2, FALSE, 0, 0},
   {223,    "rm", 2, 2,  TRUE, 0, 1},
 };

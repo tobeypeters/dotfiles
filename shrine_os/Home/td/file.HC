@@ -19,8 +19,8 @@
       File system related functions.
 */
 
-#include "~/td/strings"
-#include "~/td/debug"
+//#include "~/td/strings"
+//#include "~/td/debug"
 
 //Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
@@ -91,27 +91,43 @@ I64 validator(U8 *mask="11111111",...)
  //
  //         When you check the return value in an if,
  //         you need to make sure you do:
-  I64 i=0,
-      x=0;
+  I64 res=0,
+        i=0,
+        m=0,
+        x=0;
 
   for (;i<argc;i++)
   {
     x.u8[0]=drv_mounted(argv[i]);
-    if (x.u8[0]) x.u8[1]=0; else x.u8[1]=IsDir(argv[i]);
-    if (x.u8[1]) x.u8[1]=0; else x.u8[2]=FileFind(argv[i]);   
+    x.u8[1]=IsDir(argv[i]);
+    x.u8[2]=FileFind(argv[i]);   
 
-    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
+/*    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
-    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
-    "\n";
+    "x.u[2]: %d file %s\n",x.u8[2],argv[i];*/
 
-//    if ((x.u8[0] || x.u8[1] || x.u8[2]) != mask[i]-48) {
-//      return 0 - i; //Return a "FALSE" value
-//    }
+    if (m=(mask[i]-48))
+    {
+      x=ToBool(x);
+      if (!(m&x)) res.u8[i]=1; //result has reverse results
+    }
   }
-  return 1;
+  return res;
 }
-validator("111","~/test.HC","~/valid.HC","c:");
+/*I64 ret=0,
+      e=0;
+ret=validator("1111","~/test.HC","~/valid.HC","c:","1:");
+"\n";
+"ret.u8[0] %d\n",ret.u8[0];
+"ret.u8[1] %d\n",ret.u8[1];
+"ret.u8[2] %d\n",ret.u8[2];
+"ret.u8[3] %d\n",ret.u8[3];
+"\n";
+"$$LTRED$$";
+if (ret) "Errors: "; else "no errors\n";
+"$$FG$$";
+while(e<8) {if (ret.u8[e]) "%d ",ret.u8[e]; e++;}
+"\n\n";*/
 
 #define gb 1073741824
 #define gt gb / 10
