@@ -118,9 +118,9 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
   c->parse(c);
 
-//Free(c);
+//Free(c);
 
-U8 w[33][6]={
+/*U8 w[33][6]={
 "clear",
 "mkdir",
 "rmdir",
@@ -159,6 +159,4 @@ U64 i=0;
 for(;*w[i]!='\0';i++)
 {
   "%d %s\n",c->hashdx(c,w[i]),w[i];
-//  "    case %3d: //%s\n      break;\n",c->hashdx(c,w[i]),w[i];
-//  "case %d:\nbreak;\n",w[i],c->hashdx(c,w[i]);
-}
+}*/
