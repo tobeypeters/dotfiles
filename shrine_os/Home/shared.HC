@@ -461,13 +461,13 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
 
   "%c ",100-(!id*55);
 
-  if (id) "%9s","";
+  if (id) "%8s","";
   else
   {
     if (entry->size >= gb)
-      "%9d.%dg",entry->size/gb,
+      "%8d.%dg",entry->size/gb,
                  (entry->size-((entry->size/gb)*gb))/gt;
-    else "%9d",entry->size;
+    else "%8d",entry->size;
   }
 
   " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
@@ -529,7 +529,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,

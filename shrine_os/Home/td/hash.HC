@@ -66,14 +66,13 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
 
 class CHCMDS
 {
-  U8 *data[HASH_TABLE_SIZE][CMD_ARGS];
+  U8 *data[HASH_TABLE_SIZE+1][CMD_ARGS];
 
   I64 (* hashdx)(CHCMDS *in,U8 *cmd);
   U0 (* parse)(CHCMDS *in);
 
   U0 (* print_arr)(CHCMDS *in);
-  U0 (* test)();
-};
+};
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   U64 hash=0,
@@ -107,70 +106,59 @@ U0 parse(CHCMDS *in)
     for(j=0;j<CMD_ARGS;j++)
       in->data[h][j]=hashed[i][j];
   }
-  in->print_arr(in);
+//  in->print_arr(in);
 
   MemSet(hashed, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
   Free(hashed);
 
 }
-U0 test()
-{
-  "test\n";
-}
 CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->hashdx=&hashDX;
   c->parse=&parse;
   c->print_arr=&print_arr;
-  c->test=&test;
 
   c->parse(c);
-//Free(c);
+//Free(c);
 
-/*Wanna move a whole row into an array element
-  at once
-  ample:   {  7, "clear", 1, 1, FALSE, 0, 0},
-  MemCpy(cmds[7] ???????????????);
-  or any function to do it???????????
-*/
 
-/*First value is the index of the array,
-  I need to put the values;
-{
-  {  7, "clear", 1, 1, FALSE, 0, 0},
-  { 23, "mkdir", 2, 2, FALSE, 0, 0},
-  { 30, "rmdir", 2, 2,  TRUE, 0, 1},
-  { 35, "touch", 2, 2, FALSE, 0, 0},
-  { 38, "tasks", 1, 1, FALSE, 0, 0},
-  { 43,   "cdd", 1, 2,  TRUE, 0, 0},
-  { 56,   "cat", 2, 2,  TRUE, 0, 0},
-  { 60,   "man", 2, 2, FALSE, 0, 0},
-  { 63,   "mem", 1, 1, FALSE, 0, 0},
-  { 72,   "cpu", 1, 1, FALSE, 0, 1},
-  { 81,   "vol", 1, 1, FALSE, 0, 0},
-  { 84,   "now", 1, 1, FALSE, 0, 0},
-  { 85,   "run", 2, 2,  TRUE, 0, 0},
-  {127,    "mv", 3, 3, FALSE, 0, 0},
-  {158,  "date", 1, 1, FALSE, 0, 0},
-  {169,  "help", 1, 1, FALSE, 0, 0},
-  {174,  "grep", 2, 2, FALSE, 0, 0},
-  {175,  "time", 1, 1, FALSE, 0, 0},
-  {176,  "tree", 1, 2,  TRUE, 0, 0},
-  {179,  "more", 2, 2,  TRUE, 0, 0},
-  {182,  "dump", 2, 2,  TRUE, 0, 0},
-  {184,  "term", 1, 1, FALSE, 0, 0}
-  {186,  "exit", 1, 1, FALSE, 0, 0},
-  {187,  "view", 2, 2,  TRUE, 0, 0},
-  {195,  "quit", 1, 1, FALSE, 0, 0},
-  {199,    "cd", 1, 2,  TRUE, 0, 0},
-  {201,    "ed", 2, 2, FALSE, 0, 0},
-  {202,    "df", 1, 1, FALSE, 0, 0},
-
-  {211,    "cp", 3, 3, FALSE, 0, 1},
-  {211,    "fm", 1, 3,  TRUE, 0, 1},
-
-  {214,    "rd", 2, 2,  TRUE, 0, 1},
-
-  {223,    "ls", 1, 2, FALSE, 0, 0},
-  {223,    "rm", 2, 2,  TRUE, 0, 1},
+/*U8 w[33][6]={
+"clear",
+"mkdir",
+"rmdir",
+"touch",
+"tasks",
+"cdd",
+"cat",
+"man",
+"mem",
+"cpu",
+"vol",
+"now",
+"run",
+"mv",
+"date",
+"help",
+"grep",
+"time",
+"tree",
+"more",
+"dump",
+"term",
+"exit",
+"view",
+"quit",
+"cd",
+"ed",
+"df",
+"cp",
+"fm",
+"rd",
+"ls",
+"rm",
 };
-*/
+U64 i=0;
+while(*w[i]!='\0')
+{
+  "%s %d\n",w[i],c->hashdx(c,w[i]);
+  i++;
+}*/

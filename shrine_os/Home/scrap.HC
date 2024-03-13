@@ -428,7 +428,7 @@ U64 MAP_TYPE=0;
 //U64 PALETTE_TYPE=0;
 
 U64 ColorMapper(U64 in=0) {
-  if (in==0) return 0;
+  if (in==0) return 0;
 
   switch[MAP_TYPE] {
   case 0:
@@ -476,23 +476,6 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
   }
 }
 drv_free;
-*/
-/*U8 *occ_buffer="one two three four five";
-U64 count=StrOcc(occ_buffer,' ');
-U8 *occ_array[count+1][50];
-MemSet(occ_array,'\0',(sizeof(U8)*(count+1)*50));
-U64 i=0;
-for (;i<count;i++)
-{
-  StrFirstRem(occ_buffer," ",occ_array[i]);
-}
-StrCpy(occ_array[i],occ_buffer);
-
-"occ_array[0] %s\n",occ_array[0];
-"occ_array[1] %s\n",occ_array[1];
-"occ_array[2] %s\n",occ_array[2];
-"occ_array[3] %s\n",occ_array[3];
-"occ_array[4] %s\n",occ_array[4];
 */
 /*
 U8 *p[50][50];
@@ -577,17 +560,6 @@ Free(p);
 //if (IsDurp("1")) "yes\n"; else "no\n";
 //if (IsDurp("e:")) "yes\n"; else "no\n";
 
-U64 i=0;
-
-for(;i<10;i++)
-{
-  "%d\n",i;
-
-  if (i==5) break;
-}
-
-"i %d\n",i;
-
 "\n";
 
 KeyAndCont;

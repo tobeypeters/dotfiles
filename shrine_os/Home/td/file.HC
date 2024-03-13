@@ -19,10 +19,7 @@
       File system related functions.
 */
 
-//#include "~/td/strings"
-//#include "~/td/debug"
-
-//Return the current drive letter.
+//Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
 
 F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
@@ -166,13 +163,13 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
 
   "%c ",100-(!id*55);
 
-  if (id) "%9s","";
+  if (id) "%8s","";
   else
   {
     if (entry->size >= gb)
-      "%9d.%dg",entry->size/gb,
+      "%8d.%dg",entry->size/gb,
                  (entry->size-((entry->size/gb)*gb))/gt;
-    else "%9d",entry->size;
+    else "%8d",entry->size;
   }
 
   " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;

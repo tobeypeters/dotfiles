@@ -27,7 +27,7 @@ U8 execute_cmd(U8 *cmd) {
 
   "%d\n",c->hashdx(c,cmd);
 
-  return 0;
+  return 0;
 }
 
 U8 templeDOS() {
@@ -68,7 +68,7 @@ U8 templeDOS() {
 
 U0 stop_ctrl_alt_x()
 {//Until Ifigure out how to trap it properly.
-  XTalk(Fs,"exit\n");
+//  XTalk(Fs,"exit\n");
 }
 
 SettingsPush;
@@ -91,7 +91,8 @@ Cd; templeDOS;
 
 a->init(a);
 Free(a);
-
+Free(c);
+
 DocBottom; "$$FG$$";
 
 SettingsPop;
