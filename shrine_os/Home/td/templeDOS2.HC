@@ -25,7 +25,78 @@ U8 execute_cmd(U8 *cmd) {
   a->parse(a, cmd);
   c->print_arr(c);
 
-  "%d\n",c->hashdx(c,cmd);
+  switch[c->hashdx(c,cmd)]
+  {
+$FG$$BG$$PT$$FG$$BG$    case   7: //clear
+      break;
+    case  23: //mkdir
+      break;
+    case  30: //rmdir
+      break;
+    case  35: //touch
+      break;
+    case  38: //tasks
+      break;
+    case  43: //cdd
+      break;
+    case  56: //cat
+      break;
+    case  60: //man
+      break;
+    case  63: //mem
+      break;
+    case  72: //cpu
+      break;
+    case  81: //vol
+      break;
+    case  84: //now
+      break;
+    case  87: //run
+      break;
+    case 227: //mv
+      break;
+    case 158: //date
+      break;
+    case 169: //help
+      break;
+    case 174: //grep
+      break;
+    case 178: //time
+      break;
+    case 178: //tree
+      break;
+    case 179: //more
+      break;
+    case 182: //dump
+      break;
+    case 184: //term
+      break;
+    case 186: //exit
+      break;
+    case 189: //view
+      break;
+    case 195: //quit
+      break;
+    case 199: //cd
+      break;
+    case 201: //ed
+      break;
+    case 204: //df
+      break;
+    case 211: //cp
+      break;
+    case 211: //fm
+      break;
+    case 214: //rd
+      break;
+    case 223: //ls
+      break;
+    case 223: //rm
+      break;
+    default:
+      "default\n";
+      break;
+  }
 
   return 0;
 }
@@ -54,7 +125,6 @@ U8 templeDOS() {
     input = GetStr(,,GSF_SHIFT_ESC_EXIT);
 
     result=execute_cmd(input);
-
 
     if (str_cmp(input,"exit")) break;
   }
@@ -92,7 +162,7 @@ Cd; templeDOS;
 a->init(a);
 Free(a);
 Free(c);
-
+
 DocBottom; "$$FG$$";
 
 SettingsPop;
