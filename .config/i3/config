@@ -217,6 +217,7 @@ for_window [class="Nyxt"] floating enable
 for_window [class="Opera"] floating enable
 for_window [class="Org.gnome.Software"] floating enable
 for_window [class="Pavucontrol"] floating enable
+for_window [class="Quickgui"] floating enable
 for_window [class="Snap-store"] floating enable
 for_window [class="Software-properties-gtk"] floating enable
 for_window [class="Sonata"] floating enable
