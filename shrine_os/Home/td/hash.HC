@@ -58,10 +58,10 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {203,    "df", 1, 1, 0, 0},
   {211,    "cp", 3, 3, 0, 1},
   {212,    "fm", 1, 3, 1, 1},
-  {223,    "ls", 1, 2, 0, 0},
-  {227,    "mv", 3, 3, 0, 0},
   {214,    "rd", 2, 2, 1, 1},
+  {223,    "ls", 1, 2, 0, 0},
   {224,    "rm", 2, 2, 1, 1},
+  {227,    "mv", 3, 3, 0, 0},
 };
 
 class CHCMDS
@@ -105,7 +105,7 @@ U0 parse(CHCMDS *in)
     for(j=0;j<CMD_ARGS;j++)
       in->data[h][j]=hashed[i][j];
   }
-  in->print_arr(in);
+  //in->print_arr(in);
 
   MemSet(hashed, '\0', sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
   Free(hashed);
@@ -120,7 +120,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
 //Free(c);
 
-/*U8 w[33][6]={
+/*U8 w[33][6]={
 "clear",
 "mkdir",
 "rmdir",
@@ -158,5 +158,6 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 U64 i=0;
 for(;*w[i]!='\0';i++)
 {
-  "%d %s\n",c->hashdx(c,w[i]),w[i];
-}*/
+///  "    case %3d: //%s\n       break;\n",c->hashdx(c,w[i]),w[i];
+  "%3d %s\n",c->hashdx(c,w[i]),w[i];
+}*/

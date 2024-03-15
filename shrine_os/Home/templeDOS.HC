@@ -456,7 +456,7 @@ U8 execute_cmd(U8 *cmd) {
           }
           else {
             Del(buffera);
-          }
+          }
         }
 
         break;
@@ -605,7 +605,7 @@ U8 templeDOS() {
       DocBottom;
 
 
-      result = execute_cmd(input);
+      result = execute_cmd(input);
     }
 
     MemSet(input, '\0', sizeof(U8)*StrLen(input));

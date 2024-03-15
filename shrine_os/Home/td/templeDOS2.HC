@@ -21,24 +21,35 @@
 U8 *help_file = "~/templeDOS.DD";
 
 U8 execute_cmd(U8 *cmd) {
+  U8 res=0;
+
   a->init(a);
   a->parse(a, cmd);
-  c->print_arr(c);
+
+  if (!a->count) goto done;
+  a->next(c);
 
   switch[c->hashdx(c,cmd)]
   {
-$FG$$BG$$PT$$FG$$BG$    case   7: //clear
+$PT$$FG$$BG$    case   7: //clear
+      DocClear;
       break;
     case  23: //mkdir
       break;
-    case  30: //rmdir
+    case  30: //rmdir
+    case 214: //rd
+      break;
+    case 224: //rm
       break;
     case  35: //touch
       break;
     case  38: //tasks
       break;
+
     case  43: //cdd
+    case 199: //cd
       break;
+
     case  56: //cat
       break;
     case  60: //man
@@ -50,8 +61,10 @@ $FG$$BG$$PT$$FG$$BG$    case   7: //clear
     case  81: //vol
       break;
     case  84: //now
+      "%D %T\n",
+      Now, Now;
       break;
-    case  87: //run
+    case  86: //run
       break;
     case 227: //mv
       break;
@@ -61,44 +74,42 @@ $FG$$BG$$PT$$FG$$BG$    case   7: //clear
       break;
     case 174: //grep
       break;
-    case 178: //time
+    case 177: //time
       break;
-    case 178: //tree
+    case 176: //tree
       break;
     case 179: //more
       break;
     case 182: //dump
       break;
     case 184: //term
+      User;
       break;
+
     case 186: //exit
-      break;
-    case 189: //view
-      break;
     case 195: //quit
-      break;
-    case 199: //cd
+      res=1;
+//      break;
+
+    case 187: //view
       break;
     case 201: //ed
       break;
-    case 204: //df
+    case 203: //df
       break;
     case 211: //cp
       break;
-    case 211: //fm
-      break;
-    case 214: //rd
+    case 212: //fm
       break;
     case 223: //ls
-      break;
-    case 223: //rm
+      ls;
       break;
     default:
       "default\n";
-      break;
   }
 
-  return 0;
+done:
+  return res;
 }
 
 U8 templeDOS() {
