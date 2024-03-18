@@ -19,7 +19,7 @@
       File system related functions.
 */
 
-//Return the current drive letter.
+//Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
 
 F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
@@ -85,9 +85,10 @@ I64 validator(U8 *mask="11111111",...)
  //returns:
  //         1	All files are valid
  //      -IDX	IDX where it failed in negative form.
- //
- //         When you check the return value in an if,
- //         you need to make sure you do:
+
+ //COULD modify this to take in a FifoU8 and update it,
+ //to emulate returning a TUPLE.  Think, I'm pretty much,
+ //emulating a Fifo. But, i'm restricted to 8 bytes.
   I64 res=0,
         i=0,
         m=0,

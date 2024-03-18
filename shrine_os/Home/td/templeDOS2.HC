@@ -22,6 +22,7 @@ U8 *help_file = "~/templeDOS.DD";
 
 U8 execute_cmd(U8 *cmd) {
   U8 res=0;
+  I64 idx=-1;
 
   a->init(a);
   a->parse(a, cmd);
@@ -29,7 +30,10 @@ U8 execute_cmd(U8 *cmd) {
   if (!a->count) goto done;
   a->next(c);
 
-  switch[c->hashdx(c,cmd)]
+  idx=c->hashdx(c,a->data[0]);
+  "(%s %d)\n",a->data[0],a->count;
+
+  switch[idx]
   {
 $PT$$FG$$BG$    case   7: //clear
       DocClear;
@@ -85,7 +89,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 184: //term
       User;
       break;
-
+
     case 186: //exit
     case 195: //quit
       res=1;
@@ -147,10 +151,10 @@ U8 templeDOS() {
   return result; // 0: regular exit, 1: <shift>+<esc>
 }
 
-U0 stop_ctrl_alt_x()
-{//Until Ifigure out how to trap it properly.
+//U0 stop_ctrl_alt_x()
+//{//Until Ifigure out how to trap it properly.
 //  XTalk(Fs,"exit\n");
-}
+//}
 
 SettingsPush;
 
@@ -166,7 +170,7 @@ MenuPush(
 );
 
 
-Fs->task_end_cb=&stop_ctrl_alt_x;
+//Fs->task_end_cb=&stop_ctrl_alt_x;
 
 Cd; templeDOS;
 
