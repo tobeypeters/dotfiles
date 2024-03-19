@@ -29,14 +29,15 @@ class CArgs
 
   U8 data[ARG_CNT][ARG_LEN];
 
-  U0 (*parse)(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0);
+  U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0);
   U0 (*init)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
 
-U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
-{//Parse command buffer
+U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0)
+{//Parse command buffer.  This version uses
+ //space as the delimeter.
   StrUtil(cmd, SUF_REM_LEADING);
   if (!cmd[0]) return;
 
@@ -46,9 +47,9 @@ U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 
   while(*cmd)
   {
-    if(cmd[0]==delim){
+    if(cmd[0]==32){
       ins_idx++; cmd++;
-      parse(in,cmd,,ins_idx);
+      parse(in,cmd,ins_idx);
       break;
     }
     in->data[ins_idx][p]=cmd[0];
@@ -69,8 +70,8 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->parse=&parse;
   a->next=&next;
   a->prev=&prev; 
-
-/*
+
+/*
 //  a->init(a); //Clear data before each proceeding parse() call
     a->parse(a,"one two three four five");
 
