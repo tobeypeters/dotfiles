@@ -37,6 +37,7 @@ class CArgs
 
 U0 parse(CArgs *in,U8 *cmd,U8 delim=32,U64 ins_idx=0)
 {//Parse command buffer
+  StrUtil(cmd, SUF_REM_LEADING);
   if (!cmd[0]) return;
 
   U64 p=0;
@@ -69,7 +70,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
-/*
+/*
 //  a->init(a); //Clear data before each proceeding parse() call
     a->parse(a,"one two three four five");
 
@@ -89,4 +90,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
-*/
+*/
