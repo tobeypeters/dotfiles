@@ -322,7 +322,7 @@ U8 execute_cmd(U8 *cmd) {
   if (err_check(VSAM[cur_IDX][2],VSAM[cur_IDX][3],
                 VSAM[cur_IDX][4],
                 VSAM[cur_IDX][5],VSAM[cur_IDX][6])) {
-    switch [cur_IDX] {
+    switch (cur_IDX) {
       case 0: //view
         viewer(str_cat(buffer,,"Type(\"",
                       buffera,"\");"));
@@ -456,7 +456,7 @@ U8 execute_cmd(U8 *cmd) {
           }
           else {
             Del(buffera);
-          }
+          }
         }
 
         break;
@@ -521,7 +521,7 @@ U8 execute_cmd(U8 *cmd) {
         else {
           err_print(ERR_FILENF,help_file);
         }
-
+
         break;
       case 40: //more
         More(buffera);

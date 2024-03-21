@@ -375,7 +375,7 @@ U0 shell_execute(U8 *cmd)
   "\n"; ExePutS(cmd); "\n";
 }
 
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
  //in "view" mode.
   DocClear; DocTop;
@@ -461,7 +461,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
 
   "%c ",100-(!id*55);
 
-  if (id) "%8s","";
+  if (id) "%8s","";
   else
   {
     if (entry->size >= gb)

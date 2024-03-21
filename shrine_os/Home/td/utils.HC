@@ -18,7 +18,7 @@
   Description:
       Miscellaneous functions.
 */
-
+
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
@@ -63,7 +63,7 @@ U0 viewer(U8 *cmd)
   DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
+  DocTop;View; DocBottom;
   PutChars(CH_CTRLY);
 }
 

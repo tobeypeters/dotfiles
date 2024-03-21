@@ -67,7 +67,7 @@ CBGR48 gr_palette_custom[COLORS_NUM];
    array.  We'll see.
  
 */
-U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
+U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
 {//Get a color: bgr->r = ToI64(r*255);
   I64 clamp_max = 65025;
 
@@ -80,7 +80,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
 U0 set_theme(CBGR48* in_pal)
 {
   GrPaletteSet(in_pal);
-  MemCpy(gr_palette_std,in_pal,sizeof(in_pal)*COLORS_NUM);
+  MemCpy(gr_palette_std,in_pal,sizeof(in_pal)*COLORS_NUM);
 }
 
 U0 default_theme()

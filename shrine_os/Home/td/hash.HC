@@ -49,7 +49,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {177,  "time", 1, 1, 0, 0},
   {179,  "more", 2, 2, 1, 0},
   {182,  "dump", 2, 2, 1, 0},
-  {184,  "term", 1, 1, 0, 0},
+  {184,  "term", 1, 1, 0, 0},
   {186,  "exit", 1, 1, 0, 0},
   {187,  "view", 2, 2, 1, 0},
   {195,  "quit", 1, 1, 0, 0},
@@ -120,7 +120,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
 //Free(c);
 
-/*U8 w[33][6]={
+/*U8 w[33][6]={
 "clear",
 "mkdir",
 "rmdir",

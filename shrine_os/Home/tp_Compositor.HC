@@ -13,14 +13,14 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
 public U0 DrawStdMs(CDC *dc,I64 x,I64 y) 
 {// Override the mouse cursor.
-  dc->color=LTRED;
+  dc->color=LTRED;
 
   dc->thick=1;
   dc->flags&=~(DCF_TRANSFORMATION|DCF_SYMMETRY);
-  GrArrow3(dc,x+8,y+8,0,x,y,0);
+  GrArrow3(dc,x+6,y+6,0,x,y,0);
 }
 
 gr.fp_draw_ms=&DrawStdMs;
+

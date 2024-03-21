@@ -27,13 +27,15 @@ U8 execute_cmd(U8 *cmd) {
   a->init(a);
   a->parse(a, cmd);
 
-  if (!a->count) goto done;
-  a->next(c);
+  if (a->count==0) goto done;
+  if (idx=c->hashdx(c,a->data[0])) idx=999; //try to "shell" execute it
 
-  idx=c->hashdx(c,a->data[0]);
-  "(%s %d)\n",a->data[0],a->count;
+  U8 *bufa, *bufb;
 
-  switch[idx]
+  a->next(c);bufa=a->current(a);
+  a->next(c);bufa=a->current(a);
+
+  switch(idx)
   {
 $PT$$FG$$BG$    case   7: //clear
       DocClear;
@@ -48,71 +50,94 @@ $PT$$FG$$BG$    case   7: //clear
     case  35: //touch
       break;
     case  38: //tasks
+      TaskRep;
       break;
-
     case  43: //cdd
     case 199: //cd
+      //TODO: 
+      //      * In linux, you can do "cd -" and it'll take
+      //        to the directory, you were previously in.
+      Cd(bufa);
+      if (cur_IDX==199) ls;
       break;
-
     case  56: //cat
+      Type(bufa);
       break;
     case  60: //man
+      Man(bufa);
       break;
     case  63: //mem
+        viewer("MemRep;\"\n\";
+                MemPageRep;\"\n\";
+               ");
       break;
     case  72: //cpu
       break;
     case  81: //vol
+        //Don't think drives have labels in this OS.
+        "Volume in drive %c: has no label.\n",cur_drv;
+        "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
       break;
     case  84: //now
-      "%D %T\n",
-      Now, Now;
+      "%D %T\n",Now,Now;
       break;
     case  86: //run
+      ExeFile(bufa);
       break;
     case 227: //mv
       break;
     case 158: //date
+      "%D\n",Now;
       break;
     case 169: //help
       break;
     case 174: //grep
+      F(bufa);
       break;
     case 177: //time
+      "%T\n",Now;
       break;
     case 176: //tree
       break;
     case 179: //more
+      More(bufa);
       break;
     case 182: //dump
+      Dump(bufa);
       break;
     case 184: //term
       User;
       break;
-
     case 186: //exit
     case 195: //quit
       res=1;
-//      break;
-
+      break;
     case 187: //view
       break;
     case 201: //ed
+      PopUpEd(buffera);
       break;
     case 203: //df
+      DrvRep; "\n";
+      drv_free;
       break;
     case 211: //cp
       break;
     case 212: //fm
+      //We'll just call Terrys Filemanager
       break;
     case 223: //ls
       ls;
       break;
+    case 999: //dummy
     default:
       "default\n";
   }
 
 done:
+  Free(bufa);
+  Free(bufb);
+
   return res;
 }
 
@@ -123,6 +148,8 @@ U8 templeDOS() {
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
+
+  Adam("$$LTCYAN$$TODO:$$FG$$ Add the cd - support");
 
   set_windowinfo("templedos_task","TempleDOS");
 

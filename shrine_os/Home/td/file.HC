@@ -88,7 +88,7 @@ I64 validator(U8 *mask="11111111",...)
 
  //COULD modify this to take in a FifoU8 and update it,
  //to emulate returning a TUPLE.  Think, I'm pretty much,
- //emulating a Fifo. But, i'm restricted to 8 bytes.
+ //emulating a Fifo. But, i'm restricted to 8 bytes.
   I64 res=0,
         i=0,
         m=0,
@@ -245,7 +245,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     {
       id=is_dir(entry);
 
-      ls_entry_info(entry);
+      ls_entry_info(entry);
 
       if (id)
       {

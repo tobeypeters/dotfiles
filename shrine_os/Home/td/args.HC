@@ -31,6 +31,7 @@ class CArgs
 
   U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0);
   U0 (*init)(CArgs *in);
+  U0 (*get_current)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
@@ -61,16 +62,22 @@ U0 init(CArgs *in)
   MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
   in->count=in->cidx=0;
 }
-
+U8 get_current(CArgs *in)
+{
+  if (in->count>0) return in->data[in->count];
+  else return NULL;
+}
+
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
 U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
 CArgs *a=CAlloc(sizeof(CArgs));
   a->init=&init;
   a->parse=&parse;
+  a->get_current=&get_current;
   a->next=&next;
   a->prev=&prev; 
-
+
 /*
 //  a->init(a); //Clear data before each proceeding parse() call
     a->parse(a,"one two three four five");
