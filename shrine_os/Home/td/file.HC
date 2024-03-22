@@ -74,17 +74,16 @@ Bool file_find(U8 *file)
   if (str_len(file)==2) return FALSE;
   return FileFind(file);
 }*/
-I64 validator(U8 *mask="11111111",...) 
+I64 files_valid(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
  //to know, if it is valid/exists <1> or doesn't <0>.
  //
  //Usage: 
- //        validator("10",buffera,bufferb);
+ //        files_valid("10",buffera,bufferb);
  //
  //returns:
- //         1	All files are valid
- //      -IDX	IDX where it failed in negative form.
+ //        res.u[0] - res.u[7] with 0 or 1
 
  //COULD modify this to take in a FifoU8 and update it,
  //to emulate returning a TUPLE.  Think, I'm pretty much,
@@ -98,24 +97,26 @@ I64 validator(U8 *mask="11111111",...)
   {
     x.u8[0]=drv_mounted(argv[i]);
     x.u8[1]=IsDir(argv[i]);
-    x.u8[2]=FileFind(argv[i]);   
+    x.u8[2]=FileFind(argv[i]);
 
-/*    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
+    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
-    "x.u[2]: %d file %s\n",x.u8[2],argv[i];*/
+    "x.u[2]: %d file %s\n",x.u8[2],argv[i];
+    "\n";
 
     if (m=(mask[i]-48))
     {
       x=ToBool(x);
-      if (!(m&x)) res.u8[i]=1; //result has reverse results
+      if (m&x) res.u8[i]=1; //result has reverse results
     }
   }
   return res;
 }
 /*I64 ret=0,
       e=0;
-ret=validator("1111","~/test.HC","~/valid.HC","c:","1:");
+ret=files_valid("1111","~/test.HC","~/valid.HC","c:","1:");
 "\n";
+"1111,~/test.HC,~/valid.HC,c:,1:\n";
 "ret.u8[0] %d\n",ret.u8[0];
 "ret.u8[1] %d\n",ret.u8[1];
 "ret.u8[2] %d\n",ret.u8[2];
@@ -125,8 +126,8 @@ ret=validator("1111","~/test.HC","~/valid.HC","c:","1:");
 if (ret) "Errors: "; else "no errors\n";
 "$$FG$$";
 while(e<8) {if (ret.u8[e]) "%d ",ret.u8[e]; e++;}
-"\n\n";*/
-
+"\n\n";
+*/
 #define gb 1073741824
 #define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
@@ -245,7 +246,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     {
       id=is_dir(entry);
 
-      ls_entry_info(entry);
+      ls_entry_info(entry);
 
       if (id)
       {
@@ -287,4 +288,4 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
-
+

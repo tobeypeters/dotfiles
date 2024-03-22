@@ -63,7 +63,7 @@ U0 viewer(U8 *cmd)
   DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
+  DocTop;View; DocBottom;
   PutChars(CH_CTRLY);
 }
 
@@ -73,3 +73,4 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 }
 
 
+

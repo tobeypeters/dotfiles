@@ -64,10 +64,10 @@ U0 init(CArgs *in)
 }
 U8 get_current(CArgs *in)
 {
-  if (in->count>0) return in->data[in->count];
+  if (in->count>0) return in->data[in->cidx];
   else return NULL;
 }
-
+
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
 U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
@@ -98,4 +98,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
-*/
+*/

@@ -49,7 +49,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {177,  "time", 1, 1, 0, 0},
   {179,  "more", 2, 2, 1, 0},
   {182,  "dump", 2, 2, 1, 0},
-  {184,  "term", 1, 1, 0, 0},
+  {184,  "term", 1, 1, 0, 0},
   {186,  "exit", 1, 1, 0, 0},
   {187,  "view", 2, 2, 1, 0},
   {195,  "quit", 1, 1, 0, 0},
@@ -94,7 +94,7 @@ U0 print_arr(CHCMDS *in)
   for(;i<HASH_TABLE_SIZE;i++)
     if (in->data[i][0]) "%3d%6s%2d%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4],in->data[i][5];
 }
-U0 parse(CHCMDS *in)
+U0 parse(CHCMDS *in)
 {
   U64 h,i,j;
 

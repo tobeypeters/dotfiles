@@ -428,7 +428,7 @@ U64 MAP_TYPE=0;
 //U64 PALETTE_TYPE=0;
 
 U64 ColorMapper(U64 in=0) {
-  if (in==0) return 0;
+  if (in==0) return 0;
 
   switch[MAP_TYPE] {
   case 0:
@@ -560,6 +560,6 @@ Free(p);
 //if (IsDurp("1")) "yes\n"; else "no\n";
 //if (IsDurp("e:")) "yes\n"; else "no\n";
 
-"\n";
+"\n";
 
 KeyAndCont;

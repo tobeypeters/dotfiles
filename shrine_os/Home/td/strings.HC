@@ -24,7 +24,7 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
  //flush clears the buffer first.
   U64 i = 0;
 
-  if (flush) *str = '\0';
+  if (flush) *str = '\0';
 
   for (;i<argc;i++) {
     CatPrint(str,argv[i]);
@@ -43,16 +43,16 @@ U8 str_lower(U8 *str)
 Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
-  Bool result = FALSE;
+  Bool res = FALSE;
 
   if (ignore_case) {
-    result = (!(StrICmp(stra,strb)));
+    res = (!(StrICmp(stra,strb)));
   }
   else { 
-    result = (!(StrCmp(stra,strb)));
+    res = (!(StrCmp(stra,strb)));
   }
 
-  return result;
+  return res;
 }
 
 Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
@@ -62,8 +62,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
   if (!cmp_to || (argc < 1)) return FALSE;
 
-
-  Bool result = FALSE;
+  Bool res = FALSE;
 
   I64 i = 0;
   for (;i<argc;i++) {
@@ -72,19 +71,24 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
     if (result) break;
   }
 
-
-  return result;
+  return res;
 }
 
 U64 str_len(U8 *str) return StrLen(str);
-
+
+U0 str_zero(U8 *str,Bool free=TRUE)
+{//Memset a string
+  MemSet(str,'\0',sizeof(str));
+  if (free) Free(str);
+  return;
+}
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
   CDocEntry *doc_e,*doc_e_end;
   U8 *st,*st2,*res;
   I64 ch,sc;
-
 
   "$$PT$$";
   do {

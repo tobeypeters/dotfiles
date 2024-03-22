@@ -18,22 +18,29 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-U8 *help_file = "~/templeDOS.DD";
+U8 *help_file="~/templeDOS.DD";
+
+U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
   U8 res=0;
-  I64 idx=-1;
-
+  I64 idx;
+
   a->init(a);
   a->parse(a, cmd);
 
   if (a->count==0) goto done;
-  if (idx=c->hashdx(c,a->data[0])) idx=999; //try to "shell" execute it
+
+  if (!(idx=c->hashdx(c,a->data[0]))) idx=999; //try to "shell" execute it
 
   U8 *bufa, *bufb;
 
-  a->next(c);bufa=a->current(a);
-  a->next(c);bufa=a->current(a);
+//  "gce %s\n",a->get_current(a);
+
+  a->next(a);bufa=StrNew(a->get_current(a));
+  a->next(a);bufb=StrNew(a->get_current(a));
+//  "bufa %s\n",bufa;
+//  "bufb %s\n",bufb;
 
   switch(idx)
   {
@@ -41,6 +48,7 @@ $PT$$FG$$BG$    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
+      validator("1",bufa);
       break;
     case  30: //rmdir
     case 214: //rd
@@ -57,8 +65,10 @@ $PT$$FG$$BG$    case   7: //clear
       //TODO: 
       //      * In linux, you can do "cd -" and it'll take
       //        to the directory, you were previously in.
+      "%s\n",prev_dir;
+      prev_dir=Fs->cur_dir;
       Cd(bufa);
-      if (cur_IDX==199) ls;
+      if (idx==199) ls;
       break;
     case  56: //cat
       Type(bufa);
@@ -115,7 +125,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       break;
     case 201: //ed
-      PopUpEd(buffera);
+      PopUpEd(bufa);
       break;
     case 203: //df
       DrvRep; "\n";
@@ -135,8 +145,8 @@ $PT$$FG$$BG$    case   7: //clear
   }
 
 done:
-  Free(bufa);
-  Free(bufb);
+  str_zero(bufa);
+  str_zero(bufb);
 
   return res;
 }
@@ -155,27 +165,31 @@ U8 templeDOS() {
 
   DocClear; DocMax;
 
-  "\n$FG,3$TempleDOS [Version 1.0]$FG$\n";
+  "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
-  U64 result = 0;
-  U8 *input;
+  U64 res=0;
+  U8 *input=NULL;
 
   while (TRUE)
   {
+    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input = GetStr(,,GSF_SHIFT_ESC_EXIT);
 
-    result=execute_cmd(input);
+    res=execute_cmd(input);
 
     if (str_cmp(input,"exit")) break;
+
+    str_zero(input,FALSE);
+//    MemSet(input,'\0',sizeof(input));
   }
 
-  Free(input);
+  str_zero(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
-  return result; // 0: regular exit, 1: <shift>+<esc>
+  return res; // 0: regular exit, 1: <shift>+<esc>
 }
 
 //U0 stop_ctrl_alt_x()
@@ -199,11 +213,16 @@ MenuPush(
 
 //Fs->task_end_cb=&stop_ctrl_alt_x;
 
-Cd; templeDOS;
+Cd;
+prev_dir=Fs->cur_dir;
+
+templeDOS;
 
 a->init(a);
 Free(a);
 Free(c);
+
+//Free(prev_dir);
 
 DocBottom; "$$FG$$";
 
