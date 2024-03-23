@@ -24,7 +24,7 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
  //flush clears the buffer first.
   U64 i = 0;
 
-  if (flush) *str = '\0';
+  if (flush) *str = '\0';
 
   for (;i<argc;i++) {
     CatPrint(str,argv[i]);
@@ -66,10 +66,9 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 
   I64 i = 0;
   for (;i<argc;i++) {
-    result = str_cmp(cmp_to,argv[i],ignore_case);
-
-    if (result) break;
-  }
+    if (res = str_cmp(cmp_to,argv[i],ignore_case))
+      break;
+  }
 
   return res;
 }

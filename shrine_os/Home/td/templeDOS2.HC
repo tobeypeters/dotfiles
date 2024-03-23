@@ -24,8 +24,8 @@ U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
   U8 res=0;
-  I64 idx;
-
+  I64 idx,v;
+
   a->init(a);
   a->parse(a, cmd);
 
@@ -34,21 +34,24 @@ U8 execute_cmd(U8 *cmd) {
   if (!(idx=c->hashdx(c,a->data[0]))) idx=999; //try to "shell" execute it
 
   U8 *bufa, *bufb;
+  bufa=bufb=NULL;
 
 //  "gce %s\n",a->get_current(a);
 
   a->next(a);bufa=StrNew(a->get_current(a));
-  a->next(a);bufb=StrNew(a->get_current(a));
+  a->next(a);bufb=StrNew(a->get_current(a));
 //  "bufa %s\n",bufa;
 //  "bufb %s\n",bufb;
 
+  v=files_valid(,bufa,bufb);
+  "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+  
   switch(idx)
   {
 $PT$$FG$$BG$    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
-      validator("1",bufa);
       break;
     case  30: //rmdir
     case 214: //rd

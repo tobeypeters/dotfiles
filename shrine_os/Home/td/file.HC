@@ -99,10 +99,10 @@ I64 files_valid(U8 *mask="11111111",...)
     x.u8[1]=IsDir(argv[i]);
     x.u8[2]=FileFind(argv[i]);
 
-    "x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
+    /*"x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
     "x.u[2]: %d file %s\n",x.u8[2],argv[i];
-    "\n";
+    "\n";*/
 
     if (m=(mask[i]-48))
     {
@@ -288,4 +288,3 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
-

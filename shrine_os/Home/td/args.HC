@@ -64,7 +64,7 @@ U0 init(CArgs *in)
 }
 U8 get_current(CArgs *in)
 {
-  if (in->count>0) return in->data[in->cidx];
+  if (in->count>1) return in->data[in->cidx];
   else return NULL;
 }
 
@@ -98,4 +98,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
-*/
+*/
