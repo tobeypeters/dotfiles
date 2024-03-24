@@ -34,7 +34,7 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 }
 U8 str_upper(U8 *str)
 {//Convert a string to uppercase.
-  return MStrUtil(str,SUF_TO_UPPER);
+  return MStrUtil(str,SUF_TO_UPPER);
 }
 U8 str_lower(U8 *str)
 {//Convert a string to lowercase. 
@@ -43,13 +43,13 @@ U8 str_lower(U8 *str)
 Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.
  //Saying !StrCmp() for TRUE, erks me ...
-  Bool res = FALSE;
+  Bool res=FALSE;
 
   if (ignore_case) {
-    res = (!(StrICmp(stra,strb)));
+    res=(!(StrICmp(stra,strb)));
   }
   else { 
-    res = (!(StrCmp(stra,strb)));
+    res=(!(StrCmp(stra,strb)));
   }
 
   return res;
@@ -62,13 +62,13 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
   if (!cmp_to || (argc < 1)) return FALSE;
 
-  Bool res = FALSE;
+  Bool res=FALSE;
 
-  I64 i = 0;
+  I64 i=0;
   for (;i<argc;i++) {
-    if (res = str_cmp(cmp_to,argv[i],ignore_case))
+    if (res=str_cmp(cmp_to,argv[i],ignore_case))
       break;
-  }
+  }
 
   return res;
 }

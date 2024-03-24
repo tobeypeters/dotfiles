@@ -63,17 +63,9 @@ Bool drv_mounted(U8 *drv)
 
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
-/*Bool is_dirEX(U8 *dir_name)
-{//Validator() support function
-  "is_dirEX\n";
-  try return IsDir(dir_name); //IsDir() throws exceptions
-  catch return FALSE;
-}
-Bool file_find(U8 *file)
-{//Validator() support function
-  if (str_len(file)==2) return FALSE;
-  return FileFind(file);
-}*/
+
+if (is_flag("-FART")) "yes flag\n"; else "no flag\n";
+
 I64 files_valid(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
@@ -102,7 +94,7 @@ I64 files_valid(U8 *mask="11111111",...)
     /*"x.u[0]: %d mounted %s\n",x.u8[0],argv[i];
     "x.u[1]: %d directory %s\n",x.u8[1],argv[i];
     "x.u[2]: %d file %s\n",x.u8[2],argv[i];
-    "\n";*/
+    "\n";*/
 
     if (m=(mask[i]-48))
     {

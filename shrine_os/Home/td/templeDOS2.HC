@@ -36,15 +36,29 @@ U8 execute_cmd(U8 *cmd) {
   U8 *bufa, *bufb;
   bufa=bufb=NULL;
 
-//  "gce %s\n",a->get_current(a);
-
   a->next(a);bufa=StrNew(a->get_current(a));
-  a->next(a);bufb=StrNew(a->get_current(a));
-//  "bufa %s\n",bufa;
-//  "bufb %s\n",bufb;
+  a->next(a);bufb=StrNew(a->get_current(a));
 
   v=files_valid(,bufa,bufb);
   "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+/*
+HASH idx,
+command,
+token min,
+token max,
+validate file(s) / dir{s},
+flag max */
+
+/*  a->data[idx][0]
+  a->data[idx][1]
+
+  a->data[idx][2]
+  a->data[idx][3]
+
+  a->data[idx][4]
+
+  a->data[idx][5]
+*/
   
   switch(idx)
   {

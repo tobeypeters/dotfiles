@@ -50,6 +50,30 @@ U8 *defined_flags = Define("ST_FLAGS")$WW,1$;
 #define FLG_Y 0x1000000 //y
 #define FLG_Z 0x2000000 //z
 
+#include "C:/Home/td/utils"
+
+U64 is_flag(U8 *flag)
+{
+  "%s",flag;
+  U64 res=0,
+        i=0;
+
+  if (!(*flag=='-')) return res;
+
+  flag=MStrUtil(flag,SUF_TO_UPPER);
+
+  flag++;
+  while (*flag)
+  {
+    res.u8[i]=I64_between(*flag,'A','Z');
+
+    i++;flag++;
+  }
+  res.u8[7]=i; //flag count
+
+  return res;
+}
+
 U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 { //Stripped down version, of ScanFlags. '-'style flags only.
   //Keep TempleOS style flags.
@@ -79,4 +103,3 @@ U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
     Free(buf);
   }
 }
-

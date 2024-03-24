@@ -23,7 +23,7 @@
 #define ARG_LEN 256
 
 class CArgs
-{
+{
   I64 count,
       cidx;
 
@@ -64,7 +64,7 @@ U0 init(CArgs *in)
 }
 U8 get_current(CArgs *in)
 {
-  if (in->count>1) return in->data[in->cidx];
+  if (in->count>1) return in->data[in->cidx];
   else return NULL;
 }
 

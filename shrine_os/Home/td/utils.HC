@@ -18,6 +18,7 @@
   Description:
       Miscellaneous functions.
 */
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
@@ -27,15 +28,12 @@ U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
   if (title) StrCpy(Fs->task_title,title);
 }
 
-//NOTE: MIGHT MOVE SOME OF THESE INTO THE OS FILES.
-
-
 Bool I64_IN(I64 inval,...)
 {//Check to see if an I64 is in a given argv list.
-  U64 i = 0;
+  U64 i=0;
 
   for (;i<argc;i++) {
-    if (inval == argv[i]) {
+    if (inval==argv[i]) {
       return TRUE;
     }
   }
@@ -53,7 +51,7 @@ U8 tern(Bool condition, U64 *first, U64 *second)
 
 
 U0 shell_execute(U8 *cmd)
-{//Execute a templeOS shell command.
+{//Execute a templeOS shell command.
   "\n"; ExePutS(cmd); "\n";
 }
 
@@ -71,6 +69,3 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-
-
-
