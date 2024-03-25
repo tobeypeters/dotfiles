@@ -18,13 +18,13 @@
   Description:
       App includes.
 */
-
+
 #include "errors.HH"
 
 #include "strings"
 
 #include "args"
-#include "file"
-#include "hash"
 #include "flags"
+#include "file"
+#include "hash"
 #include "utils"

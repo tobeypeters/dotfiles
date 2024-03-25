@@ -23,24 +23,26 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  U8 res=0;
-  I64 idx,v;
+  U64 res=0;
+  I64 idx;
+//  I64 idx,v;
 
   a->init(a);
   a->parse(a, cmd);
 
-  if (a->count==0) goto done;
+/*  if (a->count==0) goto done;
 
   if (!(idx=c->hashdx(c,a->data[0]))) idx=999; //try to "shell" execute it
-
+*/
   U8 *bufa, *bufb;
   bufa=bufb=NULL;
-
+/*
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
   v=files_valid(,bufa,bufb);
   "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+*/
 /*
 HASH idx,
 command,
@@ -58,7 +60,7 @@ flag max */
   a->data[idx][4]
 
   a->data[idx][5]
-*/
+*/
   
   switch(idx)
   {
@@ -167,7 +169,7 @@ done:
 
   return res;
 }
-
+
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
 
@@ -180,7 +182,8 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear; DocMax;
+//  DocClear; DocMax;
+  DocMax;
 
   "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";

@@ -23,20 +23,20 @@
 #define ARG_LEN 256
 
 class CArgs
-{
+{
   I64 count,
       cidx;
 
   U8 data[ARG_CNT][ARG_LEN];
+  U8 *flags;
 
-  U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0);
+  U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE);
   U0 (*init)(CArgs *in);
   U0 (*get_current)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
-
-U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0)
+U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 {//Parse command buffer.  This version uses
  //space as the delimeter.
   StrUtil(cmd, SUF_REM_LEADING);
@@ -50,16 +50,30 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0)
   {
     if(cmd[0]==32){
       ins_idx++; cmd++;
-      parse(in,cmd,ins_idx);
+      parse(in,cmd,ins_idx,FALSE);
       break;
     }
     in->data[ins_idx][p]=cmd[0];
     p++;cmd++;
   }
+
+  //Sorting time
+  if (init)
+  {
+    p=0;
+    while (*in->data[p])
+    {
+      if (in->data[p][0]=='-') break;
+      p++;
+    }
+    in->flags=StrNew(in->data[p]);
+    "here %s\n",in->flags;
+  }
 }
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
   MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
+  MemSet(in->flags, '\0', sizeof(U8)*ARG_LEN);
   in->count=in->cidx=0;
 }
 U8 get_current(CArgs *in)
@@ -78,9 +92,9 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
-/*
+
 //  a->init(a); //Clear data before each proceeding parse() call
-    a->parse(a,"one two three four five");
+    a->parse(a,"one -TWO three four five");
 
     "\na->count: %d\n\n$$GREEN$$start:$$FG$$\n",a->count;
     a->prev(a);"%6s\n",a->data[a->cidx];
@@ -98,4 +112,3 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
-*/
