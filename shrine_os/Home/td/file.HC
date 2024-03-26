@@ -64,7 +64,7 @@ Bool drv_mounted(U8 *drv)
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 
-//if (is_flag("-FART")) "yes flag\n"; else "no flag\n";
+//if (is_flag("-FART")) "yes flag\n"; else "no flag\n";
 
 I64 files_valid(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.

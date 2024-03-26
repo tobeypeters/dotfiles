@@ -24,25 +24,26 @@ U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
   U64 res=0;
-  I64 idx;
-//  I64 idx,v;
+  I64 idx,v;
 
   a->init(a);
   a->parse(a, cmd);
 
-/*  if (a->count==0) goto done;
+  if (a->count==0) goto done;
 
-  if (!(idx=c->hashdx(c,a->data[0]))) idx=999; //try to "shell" execute it
-*/
+  if (!(idx=c->hashdx(c,a->args[0]))) idx=999; //try to "shell" execute it
+
   U8 *bufa, *bufb;
   bufa=bufb=NULL;
-/*
+
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
-  v=files_valid(,bufa,bufb);
-  "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
-*/
+  "bufa: %s bufb: %s\n",bufa,bufb;
+
+//  v=files_valid(,bufa,bufb);
+// "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+
 /*
 HASH idx,
 command,
@@ -51,15 +52,15 @@ token max,
 validate file(s) / dir{s},
 flag max */
 
-/*  a->data[idx][0]
-  a->data[idx][1]
+/*  a->args[idx][0]
+  a->args[idx][1]
 
-  a->data[idx][2]
-  a->data[idx][3]
+  a->args[idx][2]
+  a->args[idx][3]
 
-  a->data[idx][4]
+  a->args[idx][4]
 
-  a->data[idx][5]
+  a->args[idx][5]
 */
   
   switch(idx)
@@ -169,7 +170,7 @@ done:
 
   return res;
 }
-
+
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
 

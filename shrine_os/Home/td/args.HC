@@ -27,12 +27,12 @@ class CArgs
   I64 count,
       cidx;
 
-  U8 data[ARG_CNT][ARG_LEN];
+  U8 args[ARG_CNT][ARG_LEN];
   U8 *flags;
 
   U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE);
   U0 (*init)(CArgs *in);
-  U0 (*get_current)(CArgs *in);
+  U8 (*get_current)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
@@ -53,33 +53,56 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
       parse(in,cmd,ins_idx,FALSE);
       break;
     }
-    in->data[ins_idx][p]=cmd[0];
+    in->args[ins_idx][p]=cmd[0];
     p++;cmd++;
   }
 
   //Sorting time
   if (init)
   {
+    Bool f=FALSE;
+
     p=0;
-    while (*in->data[p])
+    while (*in->args[p])
     {
-      if (in->data[p][0]=='-') break;
+      if (in->args[p][0]=='-')
+      {
+        in->flags=StrNew(in->args[p]);
+        f=TRUE;goto done;
+      }
+
+      if (f) StrCpy(in->args[p-1],in->args[p]);
+
+      done:
+        p++;
+    }
+    if (f) MemSet(in->args[p-1],'\0',sizeof(U8)*ARG_LEN);
+
+/*    StrCpy(in->args[p-1],"dummy");
+    "\n";
+    "--------------------------\n";
+    "flags: %s\n",in->flags;
+    "--------------------------\n";
+    p=0;
+    while(*in->args[p])
+    {
+      "%d %s\n",p,in->args[p];
       p++;
     }
-    in->flags=StrNew(in->data[p]);
-    "here %s\n",in->flags;
+    "\n";*/
   }
 }
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
-  MemSet(in->data, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  MemSet(in->flags, '\0', sizeof(U8)*ARG_LEN);
+  MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
+  MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
   in->count=in->cidx=0;
 }
 U8 get_current(CArgs *in)
 {
-  if (in->count>1) return in->data[in->cidx];
-  else return NULL;
+  if (in->count<1) return NULL;
+
+  return in->args[in->cidx];
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
@@ -92,23 +115,29 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
-
-//  a->init(a); //Clear data before each proceeding parse() call
-    a->parse(a,"one -TWO three four five");
+//  a->init(a); //Clear args before each proceeding parse() call
+/*    a->parse(a,"one -TWO three four five");
+    a->init(a);
+    a->parse(a,"one TWO three four five");
+    a->init(a);
+    a->parse(a,"-one two three four five");
+    a->init(a);
+    a->parse(a,"-one");
 
     "\na->count: %d\n\n$$GREEN$$start:$$FG$$\n",a->count;
-    a->prev(a);"%6s\n",a->data[a->cidx];
-    a->prev(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
+    a->prev(a);"%6s\n",a->args[a->cidx];
+    a->prev(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
 
-    "$$LTRED$$\nSet a->idx to 1,\nback to \"a->data[2]\"$$FG$$\n\n";
+    "$$LTRED$$\nSet a->idx to 1,\nback to \"a->args[2]\"$$FG$$\n\n";
     a->cidx=1;
-    a->next(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
-    a->next(a);"%6s\n",a->data[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
+    a->next(a);"%6s\n",a->args[a->cidx];
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
+*/
