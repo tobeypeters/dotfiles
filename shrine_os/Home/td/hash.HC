@@ -59,7 +59,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {211,    "cp", 3, 3, 0, 1},
   {212,    "fm", 1, 3, 1, 1},
   {214,    "rd", 2, 2, 1, 1},
-  {223,    "ls", 1, 2, 0, 0},
+  {223,    "ls", 1, 2, 0, 0},
   {224,    "rm", 2, 2, 1, 1},
   {227,    "mv", 3, 3, 0, 0},
 };
@@ -136,7 +136,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 "run",
 "mv",
 "date",
-"help",
+"help",
 "grep",
 "time",
 "tree",

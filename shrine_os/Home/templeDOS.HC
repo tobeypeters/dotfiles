@@ -300,7 +300,7 @@ U8 execute_cmd(U8 *cmd) {
 
   fc = seg_count(cmd,FALSE,'-');
 
-  if ((tc = at - fc) == 0) return 0;
+  if ((tc = at - fc) == 0) return 0;
 
   for (; i < at; i++) {
     seg_trim(cmd,FALSE,TRUE);
@@ -471,7 +471,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 29: //cat
         Type(buffera);
-
+
         break;
       case 31: //quit
       case 35: //exit

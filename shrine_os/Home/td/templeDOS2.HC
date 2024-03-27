@@ -23,15 +23,31 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  U64 res=0;
-  I64 idx,v;
+  I64 res,idx,fc,v;
+  idx=fc=v=res=0;
 
   a->init(a);
   a->parse(a, cmd);
 
   if (a->count==0) goto done;
 
-  if (!(idx=c->hashdx(c,a->args[0]))) idx=999; //try to "shell" execute it
+  if (!(idx=c->hashdx(c,a->args[0])))
+  {//try to "shell" execute it
+    idx=999; 
+    goto switchit;
+  }
+
+  //errors:
+  ////Flags entered between 0 & max
+  if (!(I64_between(fc,0,c->data[idx][5])))
+  {
+    err_print(ERR_FLGC);
+  }
+  //Tokens entered between min & max
+  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3])))
+  {
+    err_print(ERR_ARGC);
+  }
 
   U8 *bufa, *bufb;
   bufa=bufb=NULL;
@@ -40,9 +56,9 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufb=StrNew(a->get_current(a));
 
   "bufa: %s bufb: %s\n",bufa,bufb;
-
-//  v=files_valid(,bufa,bufb);
-// "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+
+  v=files_valid(,bufa,bufb);
+  "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
 
 /*
 HASH idx,
@@ -62,7 +78,7 @@ flag max */
 
   a->args[idx][5]
 */
-  
+  switchit:  
   switch(idx)
   {
 $PT$$FG$$BG$    case   7: //clear
