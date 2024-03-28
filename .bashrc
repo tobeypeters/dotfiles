@@ -21,6 +21,9 @@ alias ..='cd ..'
 alias ls='ls -A --group-directories-first --color=auto'
 alias ll='ls -l'
 
+# Import the colors.
+. "${HOME}/.cache/wal/colors.sh"
+
 alias myip='curl ip.appspot.com'         # Public facing IP Address
 alias ports='sudo lsof -i -P'            # Display open sockets
 alias openports='ports | grep LISTEN'    # All listening connections
@@ -36,6 +39,7 @@ alias machineinfo='sudo dmidecode'       # Hardware info. You have hwinfo to
 #alias vim="nvim -c 'startinsert'"
 alias nvim='vim'                         # Use nvim instead of vim
 
+alias cda='cd ~/.config/alacrityy'       # Quickly jump my alacritty folder
 alias cdi='cd ~/.config/i3'	             # Quickly jump my i3 folder
 alias cdp='cd ~/.config/polybar'         # Quickly jump my polybar folder
 alias cds='cd ~/.config/polybar/scripts' # Quickly jump my polybar scripts folder
@@ -93,27 +97,22 @@ h2d() {
 }
 
 complete -cf sudo
+# NC="\[\033[00m\]"
+# COLOR1=`xrdb -query | awk '/prompt.color1':'/ { print substr($2,2) }'`
+# qq=';2;'$( h2d ${COLOR1:0:2} )';'$( h2d ${COLOR1:2:2} )';'$( h2d ${COLOR1:4:2} )'m\]'
+# COLOR1='\[\033[48'$qq
+# COLOR2='\[\033[38'$qq
+# if [ ${EUID:-$(id -u) } -ne 0 ]; then
+#     COLOR1=${COLOR2}
+#     # cat /etc/os-release
+#     hostnamectl
+# else
+#     COLOR1=${COLOR1}
+# fi
+# export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h: ${NC}\W ${COLOR2}]${NC} "
 
-NC="\[\033[00m\]"
-
-COLOR1=`xrdb -query | awk '/prompt.color1':'/ { print substr($2,2) }'`
-
-qq=';2;'$( h2d ${COLOR1:0:2} )';'$( h2d ${COLOR1:2:2} )';'$( h2d ${COLOR1:4:2} )'m\]'
-
-COLOR1='\[\033[48'$qq
-COLOR2='\[\033[38'$qq
-
-if [ ${EUID:-$(id -u) } -ne 0 ]; then
-    COLOR1=${COLOR2}
-
-    # cat /etc/os-release
-
-    hostnamectl
-else
-    COLOR1=${COLOR1}
-fi
-
-export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h: ${NC}\W ${COLOR2}]${NC} "
+hostnamectl
+export PS1="\n  \u\h: \W ] "
 
 # NVIM START ---------------------------
 export NVM_DIR="$HOME/.nvm"
@@ -121,6 +120,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 #trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-#export CPU_TDLE=$(for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done | grep k10temp | awk '{ print $3 }')source ~/.bash_completion/alacritty
+#export CPU_TDLE=$(for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done | grep k10temp | awk '{ print $3 }')
 
 source ~/.bash_completion/alacritty
+
+#NIX ------------------------------------
+if [ -n "$__HM_SESS_VARS_SOURCED" ]; then return; fi
+export __HM_SESS_VARS_SOURCED=1
+
+export LOCALE_ARCHIVE_2_27="/nix/store/j1ba2w87aq4bcvv47mvrnss2ashfrzbk-glibc-locales-2.38-44/lib/locale/locale-archive"
+#NIX ------------------------------------
+
+export PATH=/home/tibagato/WorkSpace/Tool/android-studio-ide-181.5056338-linux/android-studio/bin:/home/tibegato/Android/Sdk/platform-tools:/home/tibegato/Android/Sdk/tools:$PATH
