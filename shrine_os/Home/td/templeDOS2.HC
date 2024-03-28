@@ -37,16 +37,24 @@ U8 execute_cmd(U8 *cmd) {
     goto switchit;
   }
 
+  fc=flags_val(a->flags);
+  fc=fc.u8[7];
+
+  "\nA->COUNT: %d ",a->count;
   //errors:
+  //Tokens entered between min & max
+  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
+  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3])))
+  {
+    err_print(ERR_ARGC);
+  }
+  
   ////Flags entered between 0 & max
+  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
+  "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
   if (!(I64_between(fc,0,c->data[idx][5])))
   {
     err_print(ERR_FLGC);
-  }
-  //Tokens entered between min & max
-  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3])))
-  {
-    err_print(ERR_ARGC);
   }
 
   U8 *bufa, *bufb;
@@ -55,10 +63,10 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
-  "bufa: %s bufb: %s\n",bufa,bufb;
+  "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
   v=files_valid(,bufa,bufb);
-  "%s %s %d %d\n",bufa,bufb,v.u8[0],v.u8[1];
+  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
 
 /*
 HASH idx,

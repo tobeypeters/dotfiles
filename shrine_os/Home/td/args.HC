@@ -18,7 +18,7 @@
   Description:
       Parse a string, into individual arguments.
 */
-
+
 #define ARG_CNT 64
 #define ARG_LEN 256
 
@@ -114,6 +114,10 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->get_current=&get_current;
   a->next=&next;
   a->prev=&prev; 
+
+//  a->parse(a,"-a");
+//  "flags: %s\n",a->flags;
+
 
 //  a->init(a); //Clear args before each proceeding parse() call
 /*    a->parse(a,"one -TWO three four five");

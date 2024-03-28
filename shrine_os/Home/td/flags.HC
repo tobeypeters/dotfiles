@@ -52,7 +52,7 @@ U8 *defined_flags = Define("ST_FLAGS")$WW,1$;
 
 #include "C:/Home/td/utils"
 
-U64 is_flag(U8 *flag)
+U64 flags_val(U8 *flag)
 {
   "%s",flag;
   U64 res=0,
@@ -73,7 +73,7 @@ U64 is_flag(U8 *flag)
 
   return res;
 }
-
+
 U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 { //Stripped down version, of ScanFlags. '-'style flags only.
   //Keep TempleOS style flags.
