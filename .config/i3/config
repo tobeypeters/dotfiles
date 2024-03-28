@@ -1,6 +1,6 @@
 # The MIT License(MIT)
 # Copyright(c), Tobey Peters, https://github.com/tobeypeters
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+# is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
 # including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
@@ -126,26 +126,27 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # set default colors
-set_from_resource $bg color0 #ff0000
-set_from_resource $fg color1 #ffffff
-set_from_resource $bg-color color0 #ff0000
-set_from_resource $text-color color1 #ffffff
-set_from_resource $inactive-bg-color color2 #00ff00
-set_from_resource $inactive-text-color color1 #ffffff
-set_from_resource $urgent-bg-color color2 #0000ff
+# Set colors from Xresources
+# Change 'color7' and 'color2' to whatever colors you want i3 to use
+# from the generated scheme.
+# NOTE: The '#f0f0f0' in the lines below is the color i3 will use if
+# it fails to get colors from Xresources.
+set_from_resource $bg i3wm.color0 #f0f0f0
+set_from_resource $fg i3wm.color1 #f0f0f0
 
-# window colors         border                  background              text                    indicator
-client.focused          $bg-color               $bg-color               $text-color             #00ff00
-client.unfocused        $inactive-bg-color      $inactive-bg-color      $inactive-text-color    #00ff00
-client.focused_inactive $inactive-bg-color      $inactive-bg-color      $inactive-text-color    #00ff00
-client.urgent           $urgent-bg-color        $urgent-bg-color        $text-color             #00ff00
-client.placeholder      $bg-color               $bg-color               $text-color             #00ff00
-client.background       $bg-color
+# class                 border  backgr. text indicator child_border
+client.focused          $fg     $bg     $fg  $bg       $fg
+client.focused_inactive $bg     $bg     $fg  $bg       $bg
+client.unfocused        $bg     $bg     $fg  $bg       $bg
+client.urgent           $bg     $bg     $fg  $bg       $bg
+client.placeholder      $bg     $bg     $fg  $bg       $bg
 
-set $editor code
+client.background       $bg
+
+set $editor code"/bin/sh 1: Bad substitution"
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
 
 # kill focused window
 bindsym $mod+F4 kill
@@ -162,7 +163,7 @@ bindsym --whole-window $mod+button2 kill
 # bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
 
 # Display the system menu, defined in polybar. So, polybar must be running obviously ...
-bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "#FFFFFF" "#000000" "#000000" "#FFFFFF"
+bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$fg" "$bg" "$bg" "$fg"
 
 
 # Spawn Nemo file manager
@@ -285,11 +286,12 @@ bindsym Print exec spectacle
 set $exec exec --no-startup-id
 set $exec_always exec_always --no-startup-id
 
-#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#B7B7B7" "#000000"
-$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
+$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$fg" "$bg" "$bg" "$fg"
 
 set $fp ~/Pictures/Wallpapers
 $exec_always feh --bg-max $(./scripts/random.py $fp)
+$exec_always wal -i $fp
 
 $exec_always ~/.config/polybar/launch.sh
 
