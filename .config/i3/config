@@ -1,3 +1,4 @@
+
 # The MIT License(MIT)
 # Copyright(c), Tobey Peters, https://github.com/tobeypeters
 # is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -125,6 +126,10 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+set $fp ~/Pictures/Wallpapers
+$exec_always feh --bg-max $(./scripts/random.py $fp) &
+$exec_always wal -i $fp &
+
 # set default colors
 # Set colors from Xresources
 # Change 'color7' and 'color2' to whatever colors you want i3 to use
@@ -143,7 +148,7 @@ client.placeholder      $bg     $bg     $fg  $bg       $bg
 
 client.background       $bg
 
-set $editor code"/bin/sh 1: Bad substitution"
+set $editor code
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
@@ -163,7 +168,7 @@ bindsym --whole-window $mod+button2 kill
 # bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
 
 # Display the system menu, defined in polybar. So, polybar must be running obviously ...
-bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$fg" "$bg" "$bg" "$fg"
+bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$bg" "$fg" "$fg" "$bg"
 
 
 # Spawn Nemo file manager
@@ -286,13 +291,8 @@ bindsym Print exec spectacle
 set $exec exec --no-startup-id
 set $exec_always exec_always --no-startup-id
 
-#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "#FFFFFF" "#000000" "#000000" "#FFFFFF"
-$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$fg" "$bg" "$bg" "$fg"
-
-set $fp ~/Pictures/Wallpapers
-$exec_always feh --bg-max $(./scripts/random.py $fp)
-$exec_always wal -i $fp
-
+#$exec_always kill $(pgrep -f "cycle.py")
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg"
 $exec_always ~/.config/polybar/launch.sh
 
 # $exec mintupdate-launcher
