@@ -127,8 +127,8 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 set $fp ~/Pictures/Wallpapers
-$exec_always feh --bg-max $(./scripts/random.py $fp) &
-$exec_always wal -i $fp &
+#$exec_always feh --bg-max $(./scripts/random.py $fp) &
+$exec_always wal -i $(./scripts/random.py $fp) &
 
 # set default colors
 # Set colors from Xresources
