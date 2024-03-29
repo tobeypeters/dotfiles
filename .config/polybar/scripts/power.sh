@@ -28,7 +28,8 @@ choice=$(echo "${options[@]}" | dmenu -l -i -p 'System:')
 
 case $choice in
 	lock)
-		exec i3lock -c '#000000'
+#		exec i3lock -c '#000000'
+		exec i3lock
 	;;
 	logout)
 		exec i3-msg exit
