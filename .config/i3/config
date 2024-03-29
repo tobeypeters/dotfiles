@@ -321,22 +321,19 @@ $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://w
 
 $exec picom &
 
-# # Flake.nix
-
 # {
 #   description = "My NixOS configuration with Wallust";
 #   inputs = {
 #     nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-#     wallust.url = github:yourusername/wallust;
 #   };
 
-#   outputs = { self, nixpkgs, wallust, ... }: {
+#   outputs = { self, nixpkgs, ... }: {
 #     nixosConfigurations.myConfiguration = nixpkgs.lib.nixosSystem {
 #       system = "x86_64-linux";
 #       modules = [
 #         ({ config, pkgs, ... }: {
-#           # Install Wallust as a system package
-#           environment.systemPackages = [ wallust.package ];
+#           # Install Wallust as a system package from Nixpkgs
+#           environment.systemPackages = [ pkgs.wallust ];
 
 #           # Configure Wallust as needed
 #           # Example configuration:
