@@ -111,7 +111,9 @@ complete -cf sudo
 # fi
 # export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h: ${NC}\W ${COLOR2}]${NC} "
 
-hostnamectl
+#hostnamectl
+echo "-------------------------" | lolcat
+neofetch --off --color_blocks off | lolcat -F 0.06
 export PS1="\n  \u\h: \W ] "
 
 # NVIM START ---------------------------
