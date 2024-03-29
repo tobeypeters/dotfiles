@@ -306,7 +306,7 @@ $exec indicator-sensors
 
 $exec mpd
 
-# $exec cava -p ~/.config/cava/polybar.conf
+$exec cava -p ~/.config/cava/polybar.conf
 
 # $exec conky &
 # Change own-window to false, own-window-type to override
