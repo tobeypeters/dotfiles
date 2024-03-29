@@ -21,7 +21,13 @@ sudo apt install -y ninja-build
 sudo apt install -y yarn
 sudo apt install -y clang
 sudo apt install -y nodejs
+
 sudo apt install -y npm
+npm config set prefix "${HOME}/.cache/npm/global"
+mkdir -p "${HOME}/.cache/npm/global"
+mkdir -p "${HOME}/.cache/npm/global/libnpm/global"
+"
+
 sudo apt install -y python3
 sudo apt install -y python3-pip
 sudo apt install -y python3-tk
@@ -143,6 +149,8 @@ sudo apt install apt-transport-https --yes
 echo "deb https://baltocdn.com/i3-window-manager/i3/i3-autobuild/ all main" | sudo tee /etc/apt/sources.list.d/i3-autobuild.list
 sudo apt update
 sudo apt install -y i3
+
+sudo apt install -y lolcat #terminal gradient
 
 sudo snap install auto-cpufreq
 sudo apt install indicator-sensors #cpu and gpu temps, etc ...
