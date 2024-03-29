@@ -19,4 +19,5 @@ polybar-msg cmd quit >/dev/null 2>&1
 while pgrep -x polybar >/dev/null; do sleep 1; done
 
 # Launch main-i3 bar
+sleep 1
 polybar -c ~/.config/polybar/config.ini main-i3 2>&1 | tee -a /mnt/ram_disk/polybar.log & disown
