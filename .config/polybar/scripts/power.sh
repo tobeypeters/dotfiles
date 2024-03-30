@@ -18,12 +18,18 @@ LICENSE
 
 # Power Options - logout, reboot, shutdown
 
+# Check the number of arguments
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <background color> <foreground color>"
+    exit 1
+fi
+
 declare -a options=("lock
 logout
 reboot
 shutdown")
 
-choice=$(echo "${options[@]}" | dmenu -l -i -p 'System:')
+choice=$(echo "${options[@]}" | dmenu -nb $2 -nf $1 -sb $1 -sf $2 -l -i -p 'System:')
 #'Shutdown' 'systemctl poweroff' -b 'Reboot' 'systemctl reboot' -b 'Logout' 'i3-msg exit'"
 
 case $choice in
