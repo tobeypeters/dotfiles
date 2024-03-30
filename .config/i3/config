@@ -274,7 +274,7 @@ for_window [class="system_updater"] border normal
 bindsym $mod+F2 exec krunner
 
 # power options
-bindsym $mod+p exec ~/.config/polybar/scripts/power.sh
+bindsym $mod+p exec ~/.config/polybar/scripts/power.sh "$bg" "$fg"
 
 # window selector
 bindsym $mod+Tab nop window next
