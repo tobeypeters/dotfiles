@@ -320,31 +320,3 @@ $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
 
 $exec picom &
-
-# {
-#   description = "My NixOS configuration with Wallust";
-#   inputs = {
-#     nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-#   };
-
-#   outputs = { self, nixpkgs, ... }: {
-#     nixosConfigurations.myConfiguration = nixpkgs.lib.nixosSystem {
-#       system = "x86_64-linux";
-#       modules = [
-#         ({ config, pkgs, ... }: {
-#           # Install Wallust as a system package from Nixpkgs
-#           environment.systemPackages = [ pkgs.wallust ];
-
-#           # Configure Wallust as needed
-#           # Example configuration:
-#           services.wallust = {
-#             enable = true;
-#             # Add Wallust configuration here if required
-#           };
-
-#           # Other system configurations
-#         })
-#       ];
-#     };
-#   };
-# }
