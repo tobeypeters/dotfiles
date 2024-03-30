@@ -320,3 +320,23 @@ $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
 
 $exec picom &
+# # Import the Home Manager module
+# let
+#   home-manager = import <home-manager> {};
+# in
+# {
+#   # Configure Home Manager
+#   programs.home-manager.enable = true;
+
+#   # Specify global packages to be installed
+#   environment.systemPackages = with pkgs; [
+#     # Example packages
+#     emacs
+#     neovim
+#     git
+#     curl
+#     wget
+#     # Add more packages as needed
+#   ];
+# }
+
