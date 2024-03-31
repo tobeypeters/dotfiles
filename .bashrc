@@ -124,8 +124,10 @@ source ~/.bash_completion/alacritty
 cat ~/.cache/wal/sequences &
 
 #hostnamectl
-echo "-------------------------" | lolcat
-neofetch --off --color_blocks off | lolcat -F 0.06
+#echo "-------------------------" | lolcat
+#neofetch --off --color_blocks off | lolcat -F 0.06
+echo "-------------------------"
+neofetch --off --color_blocks off
 export PS1="\n  \u\h: \W ] "
 
 export PATH=/home/tibagato/WorkSpace/Tool/android-studio-ide-181.5056338-linux/android-studio/bin:/home/tibegato/Android/Sdk/platform-tools:/home/tibegato/Android/Sdk/tools:$PATH
