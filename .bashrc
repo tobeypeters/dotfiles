@@ -111,11 +111,6 @@ complete -cf sudo
 # fi
 # export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h: ${NC}\W ${COLOR2}]${NC} "
 
-#hostnamectl
-echo "-------------------------" | lolcat
-neofetch --off --color_blocks off | lolcat -F 0.06
-export PS1="\n  \u\h: \W ] "
-
 # NVIM START ---------------------------
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -125,12 +120,12 @@ export NVM_DIR="$HOME/.nvm"
 #export CPU_TDLE=$(for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done | grep k10temp | awk '{ print $3 }')
 
 source ~/.bash_completion/alacritty
+#wal - alacritty background fix
+cat ~/.cache/wal/sequences &
 
-#NIX ------------------------------------
-if [ -n "$__HM_SESS_VARS_SOURCED" ]; then return; fi
-export __HM_SESS_VARS_SOURCED=1
-
-export LOCALE_ARCHIVE_2_27="/nix/store/j1ba2w87aq4bcvv47mvrnss2ashfrzbk-glibc-locales-2.38-44/lib/locale/locale-archive"
-#NIX ------------------------------------
+#hostnamectl
+echo "-------------------------" | lolcat
+neofetch --off --color_blocks off | lolcat -F 0.06
+export PS1="\n  \u\h: \W ] "
 
 export PATH=/home/tibagato/WorkSpace/Tool/android-studio-ide-181.5056338-linux/android-studio/bin:/home/tibegato/Android/Sdk/platform-tools:/home/tibegato/Android/Sdk/tools:$PATH
