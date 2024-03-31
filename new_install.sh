@@ -137,6 +137,7 @@ sudo apt install -y sonata
 # Playstation controller install instructions, in 99-steam-controller-perms.rules
 sudo apt install -y steam
 
+sudo apt install -y net-tools
 sudo apt install -y tldr
 # sudo apt install -y virtualbox
 sudo apt install -y virt-manager
