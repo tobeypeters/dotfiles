@@ -320,3 +320,41 @@ $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
 
 $exec picom &
+
+# { config, lib, ... }:
+
+# {
+#   # Define the URL of the tarball containing the fonts
+#   fontsTarballUrl = "https://example.com/fonts-repo/archive/master.tar.gz";
+#   # Specify the SHA256 hash of the tarball for verification
+#   fontsTarballSha256 = "<sha256 hash of the tarball>";
+
+#   # Define the directory where you want to place the fonts
+#   fontsDirectory = "/usr/share/fonts/my_fonts";
+
+#   # Fetch the tarball containing the fonts
+#   fontsRepo = fetchTarball {
+#     url = fontsTarballUrl;
+#     sha256 = fontsTarballSha256;
+#   };
+
+#   # Define a function to unpack and copy fonts to the fonts directory
+#   unpackAndCopyFonts = path: {
+#     mkdir -p $fontsDirectory;
+#     cd $fontsDirectory;
+#     tar xzf $path;
+#   };
+
+#   # Execute the function to unpack and copy fonts
+#   fonts = unpackAndCopyFonts fontsRepo;
+
+#   # Configure the system to include the fonts in the system font path
+#   fontsConfig = {
+#     fontconfig = {
+#       fonts = [ fontsDirectory ];
+#     };
+#   };
+
+#   # Merge fonts configuration with existing system configuration
+#   config = lib.mkMerge config fontsConfig;
+# }
