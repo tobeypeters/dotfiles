@@ -358,3 +358,5 @@ $exec picom &
 #   # Merge fonts configuration with existing system configuration
 #   config = lib.mkMerge config fontsConfig;
 # }
+#nix-env -iA nixpkgs.nix-prefetch-url
+#nix-prefetch-url --unpack https://github.com/example/fonts-repo/archive/master.zip
