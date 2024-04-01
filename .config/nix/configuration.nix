@@ -111,6 +111,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     home-manager
+    cinnamon.nemo  
     vim
     git
   ];
