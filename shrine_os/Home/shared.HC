@@ -232,7 +232,7 @@ Bool I64_IN(I64 inval,...)
   return FALSE;
 }
 
-U8 tern(Bool condition, U64 *first, U64 *second)
+U8 tern(Bool condition, U64 *first, U64 *second)
 {//Ternary operator like function.
   if (condition) return first;
 
@@ -375,7 +375,7 @@ U0 shell_execute(U8 *cmd)
   "\n"; ExePutS(cmd); "\n";
 }
 
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
  //in "view" mode.
   DocClear; DocTop;

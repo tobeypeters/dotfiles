@@ -27,7 +27,7 @@
 #define ERR_FLGI "Invalid option provided"
 #define ERR_FILEAF "File / Directory already exists"
 #define ERR_FILEFF "File / Directory found"
-#define ERR_FILENF "File / Directory not found"
+#define ERR_FILENF "File / Directory not found"
 #define ERR_DRVIM "Invalid drive specified or drive is not mounted"
 #define ERR_DIRIFILE "Directory provided instead of a file"
 #define ERR_FILEIDIR "File provided instead of a directory"
@@ -37,4 +37,3 @@ U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
   "`$FG,3$%s$FG$`: %s ...\n", link, msg;
 }
-

@@ -64,9 +64,47 @@ Bool drv_mounted(U8 *drv)
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 
-//if (is_flag("-FART")) "yes flag\n"; else "no flag\n";
+U64 files_valid(U8 *ddfa,U8 *ddfb) 
+{//Validate two given file arguments.
+ //This was made primarily for templeDOS and no commands
+ //will have more than two arguments and this lets me
+ //save if it's valid and if it was a drv/dir/file.  
+  U64 res=0;
 
-I64 files_valid(U8 *mask="11111111",...) 
+  res.u8[2]=drv_mounted(ddfa);
+  res.u8[3]=IsDir(ddfa);res.u8[3]*=res.u8[2];
+  res.u8[4]=FileFind(ddfa);res.u8[4]*=res.u8[3];
+  res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
+
+  res.u8[5]=drv_mounted(ddfb);
+  res.u8[6]=IsDir(ddfb);res.u8[6]*=res.u8[5];
+  res.u8[7]=FileFind(ddfb);res.u8[7]*=res.u8[6];
+  res.u8[1]=res.u8[5]|res.u8[6]|res.u8[7];
+
+  return res;
+}
+I64 ret=0;
+
+//ret=files_valid("","~/valid.HC");
+ret=files_valid("~","~/valid.HC");
+//ret=files_valid("1","~/valid.HC");
+//ret=files_valid("C:/Home","~/valid.HC");
+//ret=files_valid("C:/Homez","~/valid.HC");
+//ret=files_valid("C:/Home","~/valid.HC");
+
+"\n";
+"ret.u8[0] %d\n",ret.u8[0];
+"ret.u8[2]  drv %d\n",ret.u8[2];
+"ret.u8[3]  dir %d\n",ret.u8[3];
+"ret.u8[4] file %d\n",ret.u8[4];
+"\n";
+"ret.u8[1] %d\n",ret.u8[1];
+"ret.u8[5]  drv %d\n",ret.u8[5];
+"ret.u8[6]  dir %d\n",ret.u8[6];
+"ret.u8[7] file %d\n",ret.u8[7];
+"\n";
+
+/*I64 files_valid(U8 *mask="11111111",...) 
 {//Validate argv list of drives, files & directories.
  //It uses a mask to determine, whether you want
  //to know, if it is valid/exists <1> or doesn't <0>.
@@ -103,7 +141,7 @@ I64 files_valid(U8 *mask="11111111",...)
     }
   }
   return res;
-}
+}*/
 /*I64 ret=0,
       e=0;
 ret=files_valid("1111","~/test.HC","~/valid.HC","c:","1:");

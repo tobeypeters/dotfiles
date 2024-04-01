@@ -367,7 +367,7 @@ U8 execute_cmd(U8 *cmd) {
         Cd(buffera);
 
         if (cur_IDX == 16) shell_execute("Dir;");
-
+
         break;
       case 13: //cpu
         if (fc == 1) {
@@ -471,7 +471,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 29: //cat
         Type(buffera);
-
+
         break;
       case 31: //quit
       case 35: //exit

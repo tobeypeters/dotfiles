@@ -44,48 +44,26 @@ U8 execute_cmd(U8 *cmd) {
   //errors:
   //Tokens entered between min & max
   "ERR_ARGC_MAX: %d\n",c->data[idx][3];
-  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3])))
-  {
-    err_print(ERR_ARGC);
-  }
-  
+  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
+    err_print(ERR_ARGC); goto error; }
+
   ////Flags entered between 0 & max
   "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
   "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
-  if (!(I64_between(fc,0,c->data[idx][5])))
-  {
-    err_print(ERR_FLGC);
-  }
+  if (!(I64_between(fc,0,c->data[idx][5]))) {
+    err_print(ERR_FLGC); goto error; }
 
   U8 *bufa, *bufb;
   bufa=bufb=NULL;
-
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
-  "BUFA: %s   BUFB: %s\n",bufa,bufb;
+  "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
   v=files_valid(,bufa,bufb);
+  U8 bav=v.u8[0]; bbv=v.u8[1];
   "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
 
-/*
-HASH idx,
-command,
-token min,
-token max,
-validate file(s) / dir{s},
-flag max */
-
-/*  a->args[idx][0]
-  a->args[idx][1]
-
-  a->args[idx][2]
-  a->args[idx][3]
-
-  a->args[idx][4]
-
-  a->args[idx][5]
-*/
   switchit:  
   switch(idx)
   {
@@ -93,13 +71,35 @@ $PT$$FG$$BG$    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
+      if (bav) {
+        DirMk(buffera);
+      }
+      else {
+        err_print(ERR_FILEAF,"info");
+      }      
       break;
     case  30: //rmdir
     case 214: //rd
-      break;
     case 224: //rm
+      if (I64_IN(30,214) || (idx==224&&fc)) {
+        if (flag_got(a->flags,FLG_D))
+          if (bav) DelTree(bufa);
+          else err_print(ERR_FILENF,"info");
+        else
+          err_print(ERR_FLGI);
+      }
+      else
+      {
+        if (bav)
+          err_print(ERR_DIRIFILE,"info");
+        else
+          Del(bufa);
+      }
       break;
     case  35: //touch
+      if (bav) Touch(buffera,""); //Updates the time & date.
+      else FileWrite(buffera,NULL,0);
+
       break;
     case  38: //tasks
       TaskRep;
@@ -139,6 +139,16 @@ $PT$$FG$$BG$    case   7: //clear
       ExeFile(bufa);
       break;
     case 227: //mv
+      if (bav)
+      {
+        if (IsDir(bufa)) {
+          CopyTree(buffera,bufferb);
+          DelTree(buffera);
+        }
+        else Move(buffera,bufferb);
+      }
+      else
+        err_print(ERR_FILENF,"info");
       break;
     case 158: //date
       "%D\n",Now;
@@ -191,7 +201,7 @@ $PT$$FG$$BG$    case   7: //clear
 done:
   str_zero(bufa);
   str_zero(bufb);
-
+error:
   return res;
 }
 

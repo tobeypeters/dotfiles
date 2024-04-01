@@ -52,7 +52,7 @@ U8 *defined_flags = Define("ST_FLAGS")$WW,1$;
 
 #include "C:/Home/td/utils"
 
-U64 flags_val(U8 *flag)
+U64 flags_val(U8 *flag)
 {
   "%s",flag;
   U64 res=0,
@@ -102,4 +102,14 @@ U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
     }
     Free(buf);
   }
+}
+
+Bool flag_got(U8 *flag_got=NULL, I64 flag_want)
+{//Search for a certain flag.
+  I64 f = 0;
+
+  flag_scan(&f,defined_flags,flag_got);
+
+
+  return ToBool((f&flag_want));
 }
