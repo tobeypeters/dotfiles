@@ -123,17 +123,19 @@ $exec_always cat ~/.cache/wal/sequences &
 
 # Set colors from Xresources
 # Change 'color7' and 'color2' to whatever you want i3 to use
-set_from_resource $bg i3wm.color0 #Default : f0f0f0
-set_from_resource $fg i3wm.color1 #Default : f0f0f0
+#Default : f0f0f0
+set_from_resource $bg i3wm.color0
+set_from_resource $fg i3wm.color1
 
-#client.background       $bg
-# class                 border  backgr. text indicator child_border
+# class                 border  backgr. text    indicator child_border
 client.focused          $fg     $bg     $fg  $bg       $fg
 client.focused_inactive $bg     $bg     $fg  $bg       $bg
 client.unfocused        $bg     $bg     $fg  $bg       $bg
 client.urgent           $bg     $bg     $fg  $bg       $bg
 client.placeholder      $bg     $bg     $fg  $bg       $bg
 # ----------------------------------------
+
+client.background       $bg
 
 bindsym $mod+Shift+r restart # restart
 
