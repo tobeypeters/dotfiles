@@ -119,7 +119,7 @@ for_window [class="system_updater"] border normal
 
 # Colors and Wallpaper -------------------
 set $fp ~/Pictures/Wallpapers
-$exec_always wal -i $(./scripts/random.py $fp) &
+$exec_always wal -i $(./scripts/random_wall.py $fp) &
 $exec_always cat ~/.cache/wal/sequences &
 
 # Set colors from Xresources
