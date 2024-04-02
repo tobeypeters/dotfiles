@@ -52,21 +52,6 @@ def choose_random_file(fp: str) -> str:
     except OSError:
         return None
 
-# def choose_random_file(fp: str) -> str:
-#     # Use subprocess to run 'ls' and 'shuf' commands
-#     try:
-#         rf: str = subprocess.check_output(['find', fp, '-type', 'f'], encoding='utf-8')
-#         rf = rf.strip().split('\n')
-#         rf = subprocess.check_output(['shuf', '-n', '1'], input='\n'.join(rf), encoding='utf-8').strip()
-#     except subprocess.CalledProcessError:
-#         return None
-
-#     # Construct the full path of the chosen file
-#     rfp: str = os.path.join(fp, rf)
-
-#     # Return the full path of the chosen file
-#     return rfp
-
 def is_valid_folder(parser: ArgumentParser, arg: str) -> str:
     #Check if the provided folder is valid.
     if not os.path.exists(arg):
