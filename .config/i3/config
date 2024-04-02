@@ -16,172 +16,27 @@
 
 # i3 configuration
 
-# mod
 set $mod Mod4
+set $editor code
+set $exec exec --no-startup-id
+set $exec_always exec_always --no-startup-id
 
-# border stuff
-hide_edge_borders both
-
+# Window---------------------------------
 new_window pixel 1
 new_float normal
-
-focus_follows_mouse no
-
+hide_edge_borders both
 show_marks yes
 
-# Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
-
-# Font for window titles.
+# Font -----------------------------------
 font pango:System San Francisco Display 10
 
-# Change the system default terminal, with the following:
-# sudo update-alternatives --config x-terminal-emulator
-# start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+# Mouse----------------------------------
+focus_follows_mouse no
+# Use Mouse+$mod to drag floating windows
+floating_modifier $mod
 
-# change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
-
-# move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Right move right
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Down move down
-
-# split in horizontal orientation
-bindsym $mod+h split h
-# split in vertical orientation
-bindsym $mod+v split v
-
-# enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
-
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking, exec polybar-msg cmd hide
-bindsym $mod+w layout tabbed, exec polybar-msg cmd hide
-bindsym $mod+e layout toggle split, exec polybar-msg cmd show
-
-#bindsym $mod+s layout stacking, exec xdo hide -N "Polybar"
-#bindsym $mod+w layout tabbed, exec xdo hide -N "Polybar"
-#bindsym $mod+e layout toggle split, exec xdo show -N "Polybar"
-
-# toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
-
-# change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
-
-# switch to workspace
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
-
-# move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace 1
-bindsym $mod+Shift+2 move container to workspace 2
-bindsym $mod+Shift+3 move container to workspace 3
-bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+5 move container to workspace 5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
-bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Shift+0 move container to workspace 10
-
-# restart i3 inplace
-bindsym $mod+Shift+r restart
-
-# resize window
-mode "resize" {
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym semicolon resize grow width 10 px or 10 ppt
-
-        # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
-
-        # back to normal: Enter or Escape
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-bindsym $mod+r mode "resize"
-
-set $fp ~/Pictures/Wallpapers
-#$exec_always feh --bg-max $(./scripts/random.py $fp) &
-$exec_always wal -i $(./scripts/random.py $fp) &
-
-# set default colors
-# Set colors from Xresources
-# Change 'color7' and 'color2' to whatever colors you want i3 to use
-# from the generated scheme.
-# NOTE: The '#f0f0f0' in the lines below is the color i3 will use if
-# it fails to get colors from Xresources.
-set_from_resource $bg i3wm.color0 #f0f0f0
-set_from_resource $fg i3wm.color1 #f0f0f0
-
-# class                 border  backgr. text indicator child_border
-client.focused          $fg     $bg     $fg  $bg       $fg
-client.focused_inactive $bg     $bg     $fg  $bg       $bg
-client.unfocused        $bg     $bg     $fg  $bg       $bg
-client.urgent           $bg     $bg     $fg  $bg       $bg
-client.placeholder      $bg     $bg     $fg  $bg       $bg
-
-client.background       $bg
-
-set $editor code
-
-# start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
-
-# kill focused window
-bindsym $mod+F4 kill
-# The middle button and a modifer over any part of the window kills the window
-bindsym --whole-window $mod+button2 kill
-
-# The middle button over a titlebar kills the window
-# bindsym --release button2 kill
-# The right button toggles floating
-# bindsym $mod+button3 floating toggle
-
-# Make sure to intall jq, if you want to use this marking & focus method
-# bindsym $mod+m exec i3-input -F 'mark --toggle --add %s' -P 'Mark: '
-# bindsym $mod+Shift+m exec i3-msg -t get_marks | jq -r '.[]' | dmenu -p 'Focus:' | xargs -I{} i3-msg '[con_mark="{}"] focus'
-
-# Display the system menu, defined in polybar. So, polybar must be running obviously ...
-bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$bg" "$fg" "$fg" "$bg"
-
-
-# Spawn Nemo file manager
-bindsym $mod+n exec nemo
-
-bindsym Ctrl+$mod+Delete exec gnome-system-monitor
-
-# Open the i3 config file
-bindsym $mod+c exec $editor ~/.config/i3/config
-# Open the polybar - i3 config file
-bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini
-
-# enable floating mode for certain windows
+# Rules-----------------------------------
+# Float:
 for_window [class="Alacritty"] floating enable
 for_window [class="ark"] floating enable
 for_window [class="ckb-next"] floating enable
@@ -241,126 +96,143 @@ for_window [class="vlc"] floating enable
 for_window [class="x-terminal-emulator"] floating enable
 for_window [class="XTerm"] floating enable
 for_window [class="Yad"] floating enable
-
-# resize specific windows
+# Resize:
 for_window [class="Alacritty"] resize set 900 500
 for_window [class="Gnome-system-monitor"] resize set 900 500
 for_window [class="konsole"] resize set 900 500
 for_window [class="system_updater"] resize set 900 500
 for_window [class="x-terminal-emulator"] resize set 900 500
 for_window [class="XTerm"] resize set 900 500
-
-# move specific windows
+# Move:
 for_window [class="krunner"] move position 1450 20
 for_window [class="Netflix"] move container to workspace 9
 for_window [class="system_updater"] move position 1020 40
-
 for_window [title="shrineOS"] move container to workspace 3
-
-# windows we want to stay visible, even if you switch workspaces.
+# Sticky:
 for_window [class="Audacious"] sticky enable
 for_window [class="mpv"] sticky enable
 for_window [class="Netflix"] sticky enable
 for_window [class="vlc"] sticky enable
-
-
-# enable titlebar icons
-#for_window [all] title_window_icon on
-
-# enable title bar for the system updater script
+# Titlebar:
 for_window [class="system_updater"] border normal
+# ----------------------------------------
 
-# Starts krunner - alt + f2 is the global shortcut in KDE
+# Colors and Wallpaper -------------------
+set $fp ~/Pictures/Wallpapers
+$exec_always wal -i $(./scripts/random.py $fp) &
+$exec_always cat ~/.cache/wal/sequences &
+
+# Set colors from Xresources
+# Change 'color7' and 'color2' to whatever you want i3 to use
+set_from_resource $bg i3wm.color0 #Default : f0f0f0
+set_from_resource $fg i3wm.color1 #Default : f0f0f0
+
+client.background       $bg
+# class                 border  backgr. text indicator child_border
+client.focused          $fg     $bg     $fg  $bg       $fg
+client.focused_inactive $bg     $bg     $fg  $bg       $bg
+client.unfocused        $bg     $bg     $fg  $bg       $bg
+client.urgent           $bg     $bg     $fg  $bg       $bg
+client.placeholder      $bg     $bg     $fg  $bg       $bg
+# ----------------------------------------
+
+bindsym $mod+Shift+r restart # restart
+
+# Edit-----------------------------------
+bindsym $mod+c exec $editor ~/.config/i3/config
+bindsym $mod+Shift+c exec $editor ~/.config/polybar/config.ini
+# ----------------------------------------
+
+# Window----------------------------------
+# Fullscreen:
+bindsym $mod+f fullscreen toggle
+
+# Kill:
+bindsym $mod+F4 kill
+bindsym --whole-window $mod+button2 kill
+
+# Floating:
+# Toggle tiling / floating / fullscreen -
+bindsym $mod+Shift+space floating toggle
+
+# Focus:
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+bindsym $mod+space focus mode_toggle
+
+# Layout:
+bindsym $mod+s layout stacking, exec polybar-msg cmd hide
+bindsym $mod+w layout tabbed, exec polybar-msg cmd hide
+bindsym $mod+e layout toggle split, exec polybar-msg cmd show
+
+# Workspace------------------------------
+# switch:
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+# Move Container:
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+# ----------------------------------------
+
+bindsym $mod+n exec nemo
 bindsym $mod+F2 exec krunner
 
-# power options
-bindsym $mod+p exec ~/.config/polybar/scripts/power.sh "$bg" "$fg"
+bindsym Ctrl+$mod+Delete exec gnome-system-monitor
 
-# window selector
+# sudo update-alternatives --config x-terminal-emulator
+bindsym $mod+Return exec i3-sensible-terminal
+
+# Menus-----------------------------------
+bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
+bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$bg" "$fg" "$fg" "$bg"
+bindsym $mod+p exec ~/.config/polybar/scripts/power.sh "$bg" "$fg"
+# ----------------------------------------
+
+# Cycle.py--------------------------------
 bindsym $mod+Tab nop window next
 bindsym $mod+Shift+Tab nop window prev
 bindsym $mod+Ctrl+Tab nop window selector
 bindsym $mod+Shift+a nop window swap
+# ----------------------------------------
 
-# open an empty window container
-bindsym $mod+z exec i3-msg open
+bindsym $mod+z exec i3-msg open # empty window container
+bindsym Print exec spectacle # screenshot
 
-# Take a screenshot
-bindsym Print exec spectacle
-
-set $exec exec --no-startup-id
-set $exec_always exec_always --no-startup-id
-
-#$exec_always kill $(pgrep -f "cycle.py")
-#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg"
-$exec_always ~/.config/polybar/launch.sh
-
-# $exec mintupdate-launcher
-$exec nm-applet
-
-# Corsair keyboard RGB software
-$exec ckb-next -b
-
-# CPU & GPU temps
-$exec indicator-sensors
-
-$exec mpd
-
-$exec cava -p ~/.config/cava/polybar.conf
-
-# $exec conky &
-# Change own-window to false, own-window-type to override
-# $exec picom -c --shadow-exclude "! name~=''" --blur-background-exclude  "! name~=''" &
-
+# Execs-----------------------------------
 # A fix to get it to ask for sudo password when launching apps like mintupdate
 # sudo apt install policykit-desktop-privileges
 # sudo apt install policykit-1-gnome
 $exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+$exec nm-applet #network applet
+
+$exec ckb-next -b
+$exec indicator-sensors # CPU & GPU temps
+
+$exec mpd
+$exec cava -p ~/.config/cava/polybar.conf
 
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
 
 $exec picom &
 
-# { config, lib, ... }:
-
-# {
-#   # Define the URL of the tarball containing the fonts
-#   fontsTarballUrl = "https://example.com/fonts-repo/archive/master.tar.gz";
-#   # Specify the SHA256 hash of the tarball for verification
-#   fontsTarballSha256 = "<sha256 hash of the tarball>";
-
-#   # Define the directory where you want to place the fonts
-#   fontsDirectory = "/usr/share/fonts/my_fonts";
-
-#   # Fetch the tarball containing the fonts
-#   fontsRepo = fetchTarball {
-#     url = fontsTarballUrl;
-#     sha256 = fontsTarballSha256;
-#   };
-
-#   # Define a function to unpack and copy fonts to the fonts directory
-#   unpackAndCopyFonts = path: {
-#     mkdir -p $fontsDirectory;
-#     cd $fontsDirectory;
-#     tar xzf $path;
-#   };
-
-#   # Execute the function to unpack and copy fonts
-#   fonts = unpackAndCopyFonts fontsRepo;
-
-#   # Configure the system to include the fonts in the system font path
-#   fontsConfig = {
-#     fontconfig = {
-#       fonts = [ fontsDirectory ];
-#     };
-#   };
-
-#   # Merge fonts configuration with existing system configuration
-#   config = lib.mkMerge config fontsConfig;
-# }
-#nix-env -iA nixpkgs.nix-prefetch-url
-#nix-prefetch-url --unpack https://github.com/example/fonts-repo/archive/master.zip
-# home.file.".local/share/libretro/info".source = fetchTarball {
-#     url = "https://github.com/libretro/libretro-core-info/archive/refs/tags/v1.15.0.tar.gz";
-#     sha256 = "004kgbsgbk7hn1v01jg3vj4b6dfb2cp3kcp5hgjyl030wqg1r22q";
-#   };
+#$exec_always kill $(pgrep -f "cycle.py")
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg"
+$exec_always ~/.config/polybar/launch.sh
