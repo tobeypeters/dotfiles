@@ -23,7 +23,8 @@
 """
 from argparse import ArgumentParser, Namespace as arg_namespace
 import os
-import subprocess
+from random import choice
+#import subprocess
 
 # ANSI color escape codes
 class Colors:
@@ -36,19 +37,35 @@ class MESSAGES:
     EPILOG= f'{Colors.GREEN}Example:{Colors.END}'
 
 def choose_random_file(fp: str) -> str:
-    # Use subprocess to run 'ls' and 'shuf' commands
     try:
-        rf: str = subprocess.check_output(['find', fp, '-type', 'f'], encoding='utf-8')
-        rf = rf.strip().split('\n')
-        rf = subprocess.check_output(['shuf', '-n', '1'], input='\n'.join(rf), encoding='utf-8').strip()
-    except subprocess.CalledProcessError:
+        # Get a list of all files in the directory
+        files = [f for f in os.listdir(fp) if os.path.isfile(os.path.join(fp, f))]
+
+        # Choose a random file from the list
+        random_file = choice(files)
+
+        # Construct the full path of the chosen file
+        rfp = os.path.join(fp, random_file)
+
+        # Return the full path of the chosen file
+        return rfp
+    except OSError:
         return None
 
-    # Construct the full path of the chosen file
-    rfp: str = os.path.join(fp, rf)
+# def choose_random_file(fp: str) -> str:
+#     # Use subprocess to run 'ls' and 'shuf' commands
+#     try:
+#         rf: str = subprocess.check_output(['find', fp, '-type', 'f'], encoding='utf-8')
+#         rf = rf.strip().split('\n')
+#         rf = subprocess.check_output(['shuf', '-n', '1'], input='\n'.join(rf), encoding='utf-8').strip()
+#     except subprocess.CalledProcessError:
+#         return None
 
-    # Return the full path of the chosen file
-    return rfp
+#     # Construct the full path of the chosen file
+#     rfp: str = os.path.join(fp, rf)
+
+#     # Return the full path of the chosen file
+#     return rfp
 
 def is_valid_folder(parser: ArgumentParser, arg: str) -> str:
     #Check if the provided folder is valid.
