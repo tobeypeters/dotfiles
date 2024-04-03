@@ -1,0 +1,2 @@
+xrandr --output DisplayPort-0 --mode 1920x1080
+xset s 0 0
