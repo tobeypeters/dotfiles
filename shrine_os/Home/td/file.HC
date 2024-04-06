@@ -68,12 +68,12 @@ Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 #define DIR  3
 #define FILE 4
 
-Bool type_got(U64 fvb, U64 type, U64 warg=1)
+Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
 {
   if ((!(1<=warg<=2)) || 
-  if  (!(DRV<=type<=FILE))) return FALSE;
+  if  (!(DRV<=type<=FILE))) return FALSE;
   return fvb.u8[(type*warg)-(warg&1)];
-}
+}
 
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
 {//Validate two given file arguments.

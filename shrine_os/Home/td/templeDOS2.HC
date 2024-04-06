@@ -83,29 +83,20 @@ $PT$$FG$$BG$    case   7: //clear
     case 224: //rm
       if (bav)
       {
-
-      if (I64_IN(30,214) || (idx==224&&fc)) {
-
-        if (flag_got(a->flags,FLG_D))
+        if (I64_IN(30,214) || (idx==224&&fc))
         {
-          if (type_got(v,DIR)) DelTree(bufa);
-          else err_print(ERR_DRVFILEIDIR);
+          if (!flag_err(a->flags,FLG_D)) {
+            if (type_got(v,DIR)) DelTree(bufa);
+            else err_print(ERR_DRVFILEIDIR);
+          }
         }
-        else err_print(ERR_FLGI);
+        else {
+          if (type_got(v,FILE) Del(bufa);
+          else err_print(ERR_DRVDIRIFILE);
+        }
       }
-      else err_print(ERR_FILENF,"info");
+      else err_print(ERR_FILEDIRNF,"info");
 
-
-
-      }
-
-      else
-      {
-        if (bav)
-          err_print(ERR_DIRIFILE,"info");
-        else
-          Del(bufa);
-      }
       break;
     case  35: //touch
       if (bav) Touch(bufa,""); //Updates the time & date.
