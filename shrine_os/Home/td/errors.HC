@@ -1,3 +1,23 @@
+
+#define ERR_ARGC "Invalid number of arguments provided"
+#define ERR_FLGC "Invalid number of options provided"
+#define ERR_FLGI "Invalid option provided"
+#define ERR_FILEAF "File / Directory already exists"
+#define ERR_FILEFF "File / Directory found"
+#define ERR_FILENF "File / Directory not found"
+#define ERR_DRVIM "Invalid drive specified or drive is not mounted"
+
+#define ERR_DIRFILEIDRV "Directory or file provided instead of a drv"
+#define ERR_DRVFILEIDIR "Drive or file provided instead of a directory"
+#define ERR_DRVDIRIFILE "Drive or directory provided instead of a file"
+
+#define ERR_UNKNOWN "Unrecognized command provided"
+
+U0 err_print(U8 *msg, U8 *link="Usage")
+{//Print our err_msg.
+  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
+}
+
 /*
   The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
@@ -18,22 +38,4 @@
   Description:
       Error message definitions and print routine.
 */
-#define HAS_File 1
-#define HAS_Dir  2
-#define HAS_Drv  4
-
-#define ERR_ARGC "Invalid number of arguments provided"
-#define ERR_FLGC "Invalid number of options provided"
-#define ERR_FLGI "Invalid option provided"
-#define ERR_FILEAF "File / Directory already exists"
-#define ERR_FILEFF "File / Directory found"
-#define ERR_FILENF "File / Directory not found"
-#define ERR_DRVIM "Invalid drive specified or drive is not mounted"
-#define ERR_DIRIFILE "Directory provided instead of a file"
-#define ERR_FILEIDIR "File provided instead of a directory"
-#define ERR_UNKNOWN "Unrecognized command provided"
-
-U0 err_print(U8 *msg, U8 *link="Usage")
-{//Print our err_msg.
-  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
-}
+

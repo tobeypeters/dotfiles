@@ -23,8 +23,8 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx,fc,v;
-  idx=fc=v=res=0;
+  I64 res,idx,fc;
+  res=idx=fc=0;
 
   a->init(a);
   a->parse(a, cmd);
@@ -60,8 +60,8 @@ U8 execute_cmd(U8 *cmd) {
 
   "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
-  v=files_valid(,bufa,bufb);
-  U8 bav=v.u8[0]; bbv=v.u8[1];
+  v=files_valid(bufa,bufb);
+  U8 bav=v.u8[0], bbv=v.u8[1];
   "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
 
   switchit:  
@@ -71,8 +71,8 @@ $PT$$FG$$BG$    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
-      if (bav) {
-        DirMk(buffera);
+      if (!bav) {
+        DirMk(bufa);
       }
       else {
         err_print(ERR_FILEAF,"info");
@@ -81,13 +81,24 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (I64_IN(30,214) || (idx==224&&fc)) {
+      if (bav)
+      {
+
+      if (I64_IN(30,214) || (idx==224&&fc)) {
+
         if (flag_got(a->flags,FLG_D))
-          if (bav) DelTree(bufa);
-          else err_print(ERR_FILENF,"info");
-        else
-          err_print(ERR_FLGI);
+        {
+          if (type_got(v,DIR)) DelTree(bufa);
+          else err_print(ERR_DRVFILEIDIR);
+        }
+        else err_print(ERR_FLGI);
       }
+      else err_print(ERR_FILENF,"info");
+
+
+
+      }
+
       else
       {
         if (bav)
@@ -97,8 +108,8 @@ $PT$$FG$$BG$    case   7: //clear
       }
       break;
     case  35: //touch
-      if (bav) Touch(buffera,""); //Updates the time & date.
-      else FileWrite(buffera,NULL,0);
+      if (bav) Touch(bufa,""); //Updates the time & date.
+      else FileWrite(bufa,NULL,0);
 
       break;
     case  38: //tasks
@@ -142,13 +153,13 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav)
       {
         if (IsDir(bufa)) {
-          CopyTree(buffera,bufferb);
-          DelTree(buffera);
+          CopyTree(bufa,bufb);
+          DelTree(bufa);
         }
-        else Move(buffera,bufferb);
+        else Move(bufa,bufb);
       }
       else
-        err_print(ERR_FILENF,"info");
+        err_print(ERR_FILENF,"info");
       break;
     case 158: //date
       "%D\n",Now;

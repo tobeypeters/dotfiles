@@ -64,13 +64,24 @@ Bool drv_mounted(U8 *drv)
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 
+#define DRV  2
+#define DIR  3
+#define FILE 4
+
+Bool type_got(U64 fvb, U64 type, U64 warg=1)
+{
+  if ((!(1<=warg<=2)) || 
+  if  (!(DRV<=type<=FILE))) return FALSE;
+  return fvb.u8[(type*warg)-(warg&1)];
+}
+
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
 {//Validate two given file arguments.
  //This was made primarily for templeDOS and no commands
  //will have more than two arguments and this lets me
  //save if it's valid and if it was a drv/dir/file.
  //
- //NOTE: Could be expanded to accept and use a fifo.
+ //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
 
   res.u8[2]=drv_mounted(ddfa);
@@ -89,6 +100,10 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
 /*I64 ret=0;
 
 ret=files_valid("c:","~");
+"Got %d\n",type_got(ret,DRV);
+"Got %d\n",type_got(ret,DRV,2);
+
+
 //ret=files_valid("","~/valid.HC");
 //ret=files_valid("~","~/valid.HC");
 //ret=files_valid("1","~/valid.HC");
