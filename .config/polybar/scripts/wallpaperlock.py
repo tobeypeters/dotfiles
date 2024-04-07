@@ -29,7 +29,7 @@ wallpaper  = "not specified"
 
 # Check if the variable exists in the environment
 if os.path.exists(filename):
-    os.chmod(filename, 0o644)
+#    os.chmod(filename, 0o644)
     os.remove(filename)
 else:
     if wall_name in os.environ:
@@ -37,4 +37,4 @@ else:
 
     with open(filename, 'w') as file:
         file.write(wallpaper)
-        os.chmod(filename, 0o400)
+#        os.chmod(filename, 0o400)
