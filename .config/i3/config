@@ -118,15 +118,19 @@ for_window [class="system_updater"] border normal
 
 # Colors and Wallpaper -------------------
 set $fp ~/Pictures/Wallpapers
-$exec_always wal -i $(./scripts/random_wall.py $fp) &
-$exec_always cat ~/.cache/wal/sequences &
+set $fl ~/Pictures/Wallpapers/wallpaper.lock
+set $flp  ~/Pictures/Wallpapers/wallpaper.prev
+
+$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
+$exec_always [ -f $fl ] && wal -i $(cat $flp) &
+#$exec_always [ -f $fl ] && echo $fp > $fl &
+#$exec_always wal -i $(./scripts/random_wall.py $fp) &
+#$exec_always cat ~/.cache/wal/sequences &
 
 # Set colors from Xresources
 # Change 'color7' and 'color2' to whatever you want i3 to use
 set_from_resource $bg i3wm.color0 #f0f0f0
 set_from_resource $fg i3wm.color1 #f0f0f0
-
-$exec_always notify-send "hello $bg $fg world"
 
 # class                 border  backgr. text    indicator child_border
 client.focused          $fg     $bg     $fg  $bg       $fg
