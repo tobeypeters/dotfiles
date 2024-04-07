@@ -7,6 +7,11 @@ dynamic_title = true
 [font]
 size = 10.0
 
+[keyboard]
+bindings = [
+   { key = "Return", mods = "Control|Shift", action = "SpawnNewInstance" }
+]
+
 [colors.cursor]
 cursor = "#ff0000"
 
