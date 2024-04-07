@@ -123,9 +123,7 @@ set $flp  ~/Pictures/Wallpapers/wallpaper.prev
 
 $exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
 $exec_always [ -f $fl ] && wal -i $(cat $flp) &
-#$exec_always [ -f $fl ] && echo $fp > $fl &
-#$exec_always wal -i $(./scripts/random_wall.py $fp) &
-#$exec_always cat ~/.cache/wal/sequences &
+$exec_always cat ~/.cache/wal/sequences &
 
 # Set colors from Xresources
 # Change 'color7' and 'color2' to whatever you want i3 to use
