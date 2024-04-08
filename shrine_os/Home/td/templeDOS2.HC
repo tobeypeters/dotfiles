@@ -23,8 +23,8 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx,fc;
-  res=idx=fc=0;
+  I64 res,idx,v,fc;
+  res=idx=v=fc=0;
 
   a->init(a);
   a->parse(a, cmd);
@@ -40,16 +40,16 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
-  "\nA->COUNT: %d ",a->count;
+//  "\nA->COUNT: %d ",a->count;
   //errors:
   //Tokens entered between min & max
-  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
+//  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
   if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
     err_print(ERR_ARGC); goto error; }
 
   ////Flags entered between 0 & max
-  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
-  "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
+//  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
+//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
   if (!(I64_between(fc,0,c->data[idx][5]))) {
     err_print(ERR_FLGC); goto error; }
 
@@ -58,11 +58,13 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
-  "BUFA: %s   BUFB: %s\n",bufa,bufb;
+//  "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
   v=files_valid(bufa,bufb);
   U8 bav=v.u8[0], bbv=v.u8[1];
-  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
+//  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
+
+  Bool tf=FALSE; //General use true/false flag.
 
   switchit:  
   switch(idx)
@@ -71,12 +73,12 @@ $PT$$FG$$BG$    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
-      if (!bav) {
-        DirMk(bufa);
-      }
+      if (!bav) DirMk(bufa);
       else {
-        err_print(ERR_FILEAF,"info");
-      }      
+        if (type_got(v,DIR,FALSE)) err_print(ERR_DIR_EXISTS,bufa);
+        if (type_got(v,DRV,FALSE)) err_print(ERR_DRV_SPEC);
+        if (type_got(v,FILE,FALSE)) err_print(ERR_FILE_SPEC);
+      }
       break;
     case  30: //rmdir
     case 214: //rd
@@ -85,42 +87,47 @@ $PT$$FG$$BG$    case   7: //clear
       {
         if (I64_IN(30,214) || (idx==224&&fc))
         {
-          if (!flag_err(a->flags,FLG_D)) {
+          if (!flag_err(a->flags,FLG_D))
             if (type_got(v,DIR)) DelTree(bufa);
-            else err_print(ERR_DRVFILEIDIR);
-          }
+            
         }
-        else {
-          if (type_got(v,FILE) Del(bufa);
-          else err_print(ERR_DRVDIRIFILE);
-        }
+        else if (type_got(v,FILE)) Del(bufa);
       }
-      else err_print(ERR_FILEDIRNF,"info");
-
+      else err_print(ERR_NF,bufa);
+      
       break;
     case  35: //touch
-      if (bav) Touch(bufa,""); //Updates the time & date.
-      else FileWrite(bufa,NULL,0);
 
+//NEED TO FIGURE OUT HOW TO KINDA ATLEAST VALIDATE THE FORMAT OF BUFA
+//FOR FILEWRITE
+
+      if (bav) { 
+        if (type_got(v,FILE) Touch(bufa,"");  //Updates the time & date.
+      } 
+      else FileWrite(bufa,NULL,0);
       break;
     case  38: //tasks
       TaskRep;
       break;
     case  43: //cdd
     case 199: //cd
-      //TODO: 
-      //      * In linux, you can do "cd -" and it'll take
-      //        to the directory, you were previously in.
-      "%s\n",prev_dir;
-      prev_dir=Fs->cur_dir;
-      Cd(bufa);
-      if (idx==199) ls;
+      if (str_cmp(a->flags,"-")) Cd(prev_dir);
+      else {
+        if (bav) {
+          if (type_got(v,DIR)) {
+            Cd(bufa);
+            if (idx==199) ls;
+            prev_dir=Fs->cur_dir;
+          }
+        }
+        else err_print(ERR_NF,bufa);
+      }
       break;
     case  56: //cat
-      Type(bufa);
+      if (bav) if (type_got(v,FILE)) Type(bufa);
       break;
     case  60: //man
-      Man(bufa);
+      if (bab) if (type_got(v,FILE)) Man(bufa);
       break;
     case  63: //mem
         viewer("MemRep;\"\n\";
@@ -128,6 +135,11 @@ $PT$$FG$$BG$    case   7: //clear
                ");
       break;
     case  72: //cpu
+        tf=!flag_err(a->flags,FLG_F);
+
+
+        CPURep(tf);
+
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
@@ -138,19 +150,21 @@ $PT$$FG$$BG$    case   7: //clear
       "%D %T\n",Now,Now;
       break;
     case  86: //run
-      ExeFile(bufa);
+      if (bav) if (type_got(v,FILE)) ExeFile(bufa);
       break;
     case 227: //mv
       if (bav)
       {
-        if (IsDir(bufa)) {
-          CopyTree(bufa,bufb);
+        if (type_got(v,DIR)) {
+          CopyTree(bufa,bufb);
           DelTree(bufa);
         }
         else Move(bufa,bufb);
       }
       else
-        err_print(ERR_FILENF,"info");
+        err_print(ERR_FILEDIRNF,"info");
+
+
       break;
     case 158: //date
       "%D\n",Now;
@@ -199,6 +213,10 @@ $PT$$FG$$BG$    case   7: //clear
     default:
       "default\n";
   }
+  goto done;
+
+drverr:
+  err_print(ERR_DRV_SPEC);
 
 done:
   str_zero(bufa);
@@ -270,8 +288,7 @@ MenuPush(
 
 //Fs->task_end_cb=&stop_ctrl_alt_x;
 
-Cd;
-prev_dir=Fs->cur_dir;
+Cd;prev_dir=Fs->cur_dir;
 
 templeDOS;
 
