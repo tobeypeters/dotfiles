@@ -50,7 +50,7 @@ U8 execute_cmd(U8 *cmd) {
   ////Flags entered between 0 & max
 //  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
 //  "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
-  if (!(I64_between(fc,0,c->data[idx][5]))) {
+  if (!(I64_between(fc,0,c->data[idx][4]))) {
     err_print(ERR_FLGC); goto error; }
 
   U8 *bufa, *bufb;
@@ -66,6 +66,8 @@ U8 execute_cmd(U8 *cmd) {
 
   Bool tf=FALSE; //General use true/false flag.
 
+  "idx: %d\n",idx;
+
   switchit:  
   switch(idx)
   {
@@ -75,9 +77,9 @@ $PT$$FG$$BG$    case   7: //clear
     case  23: //mkdir
       if (!bav) DirMk(bufa);
       else {
-        if (type_got(v,DIR,FALSE)) err_print(ERR_DIR_EXISTS,bufa);
-        if (type_got(v,DRV,FALSE)) err_print(ERR_DRV_SPEC);
-        if (type_got(v,FILE,FALSE)) err_print(ERR_FILE_SPEC);
+        if (type_got(v,DIR,,FALSE)) err_print(ERR_DIR_EXISTS,bufa);
+        if (type_got(v,DRV,,FALSE)) err_print(ERR_DRV_SPEC);
+        if (type_got(v,FILE,,FALSE)) err_print(ERR_FILE_SPEC);
       }
       break;
     case  30: //rmdir
@@ -102,7 +104,7 @@ $PT$$FG$$BG$    case   7: //clear
 //FOR FILEWRITE
 
       if (bav) { 
-        if (type_got(v,FILE) Touch(bufa,"");  //Updates the time & date.
+        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
       else FileWrite(bufa,NULL,0);
       break;
@@ -111,7 +113,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (str_cmp(a->flags,"-")) Cd(prev_dir);
+      if (file_char("-")) Cd(prev_dir);
       else {
         if (bav) {
           if (type_got(v,DIR)) {
@@ -127,7 +129,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) if (type_got(v,FILE)) Type(bufa);
       break;
     case  60: //man
-      if (bab) if (type_got(v,FILE)) Man(bufa);
+      if (bav) if (type_got(v,FILE)) Man(bufa);
       break;
     case  63: //mem
         viewer("MemRep;\"\n\";
@@ -156,13 +158,13 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav)
       {
         if (type_got(v,DIR)) {
-          CopyTree(bufa,bufb);
+          CopyTree(bufa,bufb);
           DelTree(bufa);
         }
         else Move(bufa,bufb);
       }
       else
-        err_print(ERR_FILEDIRNF,"info");
+        err_print(ERR_NF,bufa);
 
 
       break;
@@ -176,8 +178,6 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 177: //time
       "%T\n",Now;
-      break;
-    case 176: //tree
       break;
     case 179: //more
       More(bufa);
@@ -202,12 +202,35 @@ $PT$$FG$$BG$    case   7: //clear
       drv_free;
       break;
     case 211: //cp
+
+/*        if (valid_files(,buffer) || (buffer[StrLen(buffer)-1]=='*')) {
+          tf = IsDir(buffer);
+
+          if (got_flag(buffera,FLG_D)) { // "-d"
+            if (tf) {
+              CopyTree(buffer,bufferc);
+              goto done;
+            }
+          }
+          else {
+            if (!tf) {
+              Copy(buffer,bufferb);
+              goto done;
+            }
+          }
+
+          err_print(tern(tf,ERR_DIRIFILE,ERR_FILEIDIR),buffer);
+*/
       break;
     case 212: //fm
+      FileMgr;
       //We'll just call Terrys Filemanager
       break;
+    case 176: //tree
     case 223: //ls
+      "here ls\n";
       ls;
+//      ls(bufa,(idx==176));
       break;
     case 999: //dummy
     default:

@@ -34,7 +34,7 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 }
 U8 str_upper(U8 *str)
 {//Convert a string to uppercase.
-  return MStrUtil(str,SUF_TO_UPPER);
+  return MStrUtil(str,SUF_TO_UPPER);
 }
 U8 str_lower(U8 *str)
 {//Convert a string to lowercase. 
@@ -74,14 +74,13 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 }
 
 U64 str_len(U8 *str) return StrLen(str);
-
 U0 str_zero(U8 *str,Bool free=TRUE)
 {//Memset a string
   MemSet(str,'\0',sizeof(str));
   if (free) Free(str);
   return;
 }
-
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;

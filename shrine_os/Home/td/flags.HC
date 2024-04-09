@@ -50,7 +50,7 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 
 U64 flags_val(U8 *flag)
 {
-  U64 res=0,
+  U64 res=0,
         i=0;
 
   if (!(*flag=='-')) return res;
@@ -68,7 +68,6 @@ U64 flags_val(U8 *flag)
 
   return res;
 }
-
 U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 { //Stripped down version of ScanFlags. '-'flags only
   //'-' is '+' and multiple flags are combined.
@@ -115,7 +114,6 @@ U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
   }
 */
 }
-
 Bool flag_got(U8 *flags=NULL, I64 flag_want)
 {//Search for a certain flag.
   I64 f=0;
@@ -123,7 +121,7 @@ Bool flag_got(U8 *flags=NULL, I64 flag_want)
   flag_scan(&f,Define("ST_FLAGS"),flags);
 
   return ToBool((f&flag_want));
-}
+}
 Bool flag_err(U8 *flags=NULL, I64 flag_want,Bool print_err=TRUE)
 {
   Bool res=FALSE;

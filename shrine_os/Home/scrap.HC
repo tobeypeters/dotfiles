@@ -560,15 +560,17 @@ Free(p);
 //if (IsDurp("1")) "yes\n"; else "no\n";
 //if (IsDurp("e:")) "yes\n"; else "no\n";
 
-U8 old[4]="car";
+/*U8 old[4]="car";
 "%s\n",old;
 U8 *new=CAlloc(sizof(U8)*2);
 new[0]=old[0]; //Doesn't work
-//new=StrNew(char[0]); //Doesn't work
+//new=StrNew(char[0]); //Doesn't work
 //new=StrNew("c"); //Works just like expected
 "%s\n",new;
 Free(new);
+*/
 
+//"LstMatch: %d\n",LstMatch("o","~\0*\0::\0",LMF_EXACT);
 "\n";
 
 KeyAndCont;

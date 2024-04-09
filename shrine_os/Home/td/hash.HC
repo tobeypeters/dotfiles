@@ -22,46 +22,46 @@
 #define HASH_TABLE_SIZE 256
 
 #define CMD_CNT  33
-#define CMD_ARGS  6
+#define CMD_ARGS  5
 
 //U8 *cmds[HASH_TABLE_SIZE][CMD_ARGS];
 
 /*HASH idx, command, token min, token max,
   validate file(s) / dir{s}, flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
-  {  7, "clear", 1, 1, 0, 0},
-  { 23, "mkdir", 2, 2, 0, 0},
-  { 30, "rmdir", 2, 2, 1, 1},
-  { 35, "touch", 2, 2, 0, 0},
-  { 38, "tasks", 1, 1, 0, 0},
-  { 43,   "cdd", 1, 2, 1, 0},
-  { 56,   "cat", 2, 2, 1, 0},
-  { 60,   "man", 2, 2, 0, 0},
-  { 63,   "mem", 1, 1, 0, 0},
-  { 72,   "cpu", 1, 1, 0, 1},
-  { 81,   "vol", 1, 1, 0, 0}
-  { 84,   "now", 1, 1, 0, 0},
-  { 86,   "run", 2, 2, 1, 0},
-  {158,  "date", 1, 1, 0, 0},
-  {169,  "help", 1, 1, 0, 0},
-  {174,  "grep", 2, 2, 0, 0},
-  {176,  "tree", 1, 2, 1, 0},
-  {177,  "time", 1, 1, 0, 0},
-  {179,  "more", 2, 2, 1, 0},
-  {182,  "dump", 2, 2, 1, 0},
-  {184,  "term", 1, 1, 0, 0},
-  {186,  "exit", 1, 1, 0, 0},
-  {187,  "view", 2, 2, 1, 0},
-  {195,  "quit", 1, 1, 0, 0},
-  {199,    "cd", 1, 2, 1, 0},
-  {201,    "ed", 2, 2, 0, 0},
-  {203,    "df", 1, 1, 0, 0},
-  {211,    "cp", 3, 3, 0, 1},
-  {212,    "fm", 1, 3, 1, 1},
-  {214,    "rd", 2, 2, 1, 1},
-  {223,    "ls", 1, 2, 0, 0},
-  {224,    "rm", 2, 2, 1, 1},
-  {227,    "mv", 3, 3, 0, 0},
+  {  7, "clear", 1, 1, 0},
+  { 23, "mkdir", 2, 2, 0},
+  { 30, "rmdir", 2, 2, 0},
+  { 35, "touch", 2, 2, 0},
+  { 38, "tasks", 1, 1, 0},
+  { 43,   "cdd", 1, 2, 0},
+  { 56,   "cat", 2, 2, 0},
+  { 60,   "man", 2, 2, 0},
+  { 63,   "mem", 1, 1, 0},
+  { 72,   "cpu", 1, 1, 1},
+  { 81,   "vol", 1, 1, 0},
+  { 84,   "now", 1, 1, 0},
+  { 86,   "run", 2, 2, 0},
+  {158,  "date", 1, 1, 0},
+  {169,  "help", 1, 1, 0},
+  {174,  "grep", 2, 2, 0},
+  {176,  "tree", 1, 2, 0},
+  {177,  "time", 1, 1, 0},
+  {179,  "more", 2, 2, 0},
+  {182,  "dump", 2, 2, 0},
+  {184,  "term", 1, 1, 0},
+  {186,  "exit", 1, 1, 0},
+  {187,  "view", 2, 2, 0},
+  {195,  "quit", 1, 1, 0},
+  {199,    "cd", 1, 2, 0},
+  {201,    "ed", 2, 2, 0},
+  {203,    "df", 1, 1, 0},
+  {211,    "cp", 3, 3, 1},
+  {212,    "fm", 1, 1, 0},
+  {214,    "rd", 2, 2, 1},
+  {223,    "ls", 1, 2, 0},
+  {224,    "rm", 2, 2, 1},
+  {227,    "mv", 3, 3, 0},
 };
 
 class CHCMDS
@@ -73,6 +73,7 @@ class CHCMDS
 
   U0 (* print_arr)(CHCMDS *in);
 };
+
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   U64 hash=0,
@@ -92,7 +93,7 @@ U0 print_arr(CHCMDS *in)
   U64 i=0;
 
   for(;i<HASH_TABLE_SIZE;i++)
-    if (in->data[i][0]) "%3d%6s%2d%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4],in->data[i][5];
+    if (in->data[i][0]) "%3d%6s%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4];
 }
 U0 parse(CHCMDS *in)
 {
@@ -161,3 +162,4 @@ for(;*w[i]!='\0';i++)
 ///  "    case %3d: //%s\n       break;\n",c->hashdx(c,w[i]),w[i];
   "%3d %s\n",c->hashdx(c,w[i]),w[i];
 }*/
+

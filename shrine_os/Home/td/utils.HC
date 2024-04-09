@@ -49,9 +49,8 @@ U8 tern(Bool condition, U64 *first, U64 *second)
 }
 
 
-
 U0 shell_execute(U8 *cmd)
-{//Execute a templeOS shell command.
+{//Execute a templeOS shell command.
   "\n"; ExePutS(cmd); "\n";
 }
 
@@ -69,3 +68,4 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+

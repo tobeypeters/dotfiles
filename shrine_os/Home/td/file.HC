@@ -81,7 +81,7 @@ Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
   { 
     U64 err=0;
 
-    if (type==DRV)  err=ERR_DIRFILEIDRV;
+    if (type==DRV)  err=ERR_DIRFILEIDRV;
     if (type==DIR)  err=ERR_DRVFILEIDIR;
     if (type==FILE) err=ERR_DRVDIRIFILE;
 
@@ -91,6 +91,9 @@ Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
   return res;
 }
 
+Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::",LMF_EXACT)>0);
+
+
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
 {//Validate two given file arguments.
  //This was made primarily for templeDOS and no commands
@@ -98,7 +101,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //save if it's valid and if it was a drv/dir/file.
  //
  //NOTE: Could be expanded to accept and use a fifo.
-  U64 res=0;
+  U64 res=0;
 
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));

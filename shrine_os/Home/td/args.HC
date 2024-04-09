@@ -93,7 +93,7 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
   }
 }
 U0 init(CArgs *in)
-{//Initizlizer and reset CArgs function
+{//Initizlizer and reset CArgs function
   MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
   MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
   in->count=in->cidx=0;
@@ -116,7 +116,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->prev=&prev; 
 
 //  a->parse(a,"-a");
-//  "flags: %s\n",a->flags;
+//  "flags: %s\n",a->flags;
 
 
 //  a->init(a); //Clear args before each proceeding parse() call
