@@ -23,8 +23,8 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx,v,fc;
-  res=idx=v=fc=0;
+  I64 res,idx,v,ac,fc;
+  res=idx=v=ac=fc=0;
 
   a->init(a);
   a->parse(a, cmd);
@@ -44,12 +44,12 @@ U8 execute_cmd(U8 *cmd) {
   //errors:
   //Tokens entered between min & max
 //  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
-  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
+  if (!(I64_between(ac=a->count,c->data[idx][2],c->data[idx][3]))) {
     err_print(ERR_ARGC); goto error; }
 
   ////Flags entered between 0 & max
 //  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
-//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][5];
+//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
   if (!(I64_between(fc,0,c->data[idx][4]))) {
     err_print(ERR_FLGC); goto error; }
 
@@ -61,12 +61,11 @@ U8 execute_cmd(U8 *cmd) {
 //  "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
   v=files_valid(bufa,bufb);
-  U8 bav=v.u8[0], bbv=v.u8[1];
+  U8 bav=v.u8[0];
+//  U8 bav=v.u8[0], bbv=v.u8[1];
 //  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
 
-  Bool tf=FALSE; //General use true/false flag.
-
-  "idx: %d\n",idx;
+  v=(ac==1|v);
 
   switchit:  
   switch(idx)
@@ -95,18 +94,14 @@ $PT$$FG$$BG$    case   7: //clear
         }
         else if (type_got(v,FILE)) Del(bufa);
       }
-      else err_print(ERR_NF,bufa);
-      
+      else err_print(ERR_NF,bufa);     
       break;
     case  35: //touch
-
-//NEED TO FIGURE OUT HOW TO KINDA ATLEAST VALIDATE THE FORMAT OF BUFA
-//FOR FILEWRITE
-
       if (bav) { 
         if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
-      else FileWrite(bufa,NULL,0);
+      else if (FilesFindMatch(bav,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
+           else err_print(ERR_FILEI,"info");
       break;
     case  38: //tasks
       TaskRep;
@@ -137,11 +132,7 @@ $PT$$FG$$BG$    case   7: //clear
                ");
       break;
     case  72: //cpu
-        tf=!flag_err(a->flags,FLG_F);
-
-
-        CPURep(tf);
-
+        CPURep(!flag_err(a->flags,FLG_F));
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
@@ -155,18 +146,14 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) if (type_got(v,FILE)) ExeFile(bufa);
       break;
     case 227: //mv
-      if (bav)
-      {
+      if (bav) {
         if (type_got(v,DIR)) {
           CopyTree(bufa,bufb);
           DelTree(bufa);
         }
         else Move(bufa,bufb);
       }
-      else
-        err_print(ERR_NF,bufa);
-
-
+      else err_print(ERR_NF,bufa);
       break;
     case 158: //date
       "%D\n",Now;
@@ -195,51 +182,36 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       break;
     case 201: //ed
-      PopUpEd(bufa);
+      if (bav) PopUpEd(bufa);
       break;
     case 203: //df
       DrvRep; "\n";
       drv_free;
       break;
     case 211: //cp
-
-/*        if (valid_files(,buffer) || (buffer[StrLen(buffer)-1]=='*')) {
-          tf = IsDir(buffer);
-
-          if (got_flag(buffera,FLG_D)) { // "-d"
-            if (tf) {
-              CopyTree(buffer,bufferc);
-              goto done;
-            }
-          }
-          else {
-            if (!tf) {
-              Copy(buffer,bufferb);
-              goto done;
-            }
-          }
-
-          err_print(tern(tf,ERR_DIRIFILE,ERR_FILEIDIR),buffer);
-*/
+      if (bav)
+      {
+        if (!flag_err(a->flags,FLG_D)) {
+          if (type_got(v,DIR)) CopyTree(bufa,bufb);
+        }
+        else if (type_got(v,FILE)) Copy(bufa,bufb);
+      }
+      else err_print(ERR_NF,bufa);
       break;
     case 212: //fm
       FileMgr;
-      //We'll just call Terrys Filemanager
       break;
     case 176: //tree
     case 223: //ls
-      "here ls\n";
-      ls;
-//      ls(bufa,(idx==176));
+      if (bav) {
+        if (ac==1) bufa=StrNew(".");
+        ls(bufa,(idx==176));
+      }
       break;
     case 999: //dummy
     default:
       "default\n";
   }
-  goto done;
-
-drverr:
-  err_print(ERR_DRV_SPEC);
 
 done:
   str_zero(bufa);
@@ -272,7 +244,7 @@ U8 templeDOS() {
 
   while (TRUE)
   {
-    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
+    "\n%c:%s: $$PT$$",(cur_drv),Fs->cur_dir; // Display prompt
     input = GetStr(,,GSF_SHIFT_ESC_EXIT);
 
     res=execute_cmd(input);
@@ -280,7 +252,6 @@ U8 templeDOS() {
     if (str_cmp(input,"exit")) break;
 
     str_zero(input,FALSE);
-//    MemSet(input,'\0',sizeof(input));
   }
 
   str_zero(input);
