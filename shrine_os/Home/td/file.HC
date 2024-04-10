@@ -81,7 +81,7 @@ Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
   { 
     U64 err=0;
 
-    if (type==DRV)  err=ERR_DIRFILEIDRV;
+    if (type==DRV)  err=ERR_DIRFILEIDRV;
     if (type==DIR)  err=ERR_DRVFILEIDIR;
     if (type==FILE) err=ERR_DRVDIRIFILE;
 
@@ -249,7 +249,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
+    "\n$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,
@@ -296,7 +296,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     }
     entry=start;
 
-    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n\n",fc,bc,dc;
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
 
     DirTreeDel(entry);
   }

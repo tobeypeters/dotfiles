@@ -23,13 +23,14 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx,v,ac,fc;
-  res=idx=v=ac=fc=0;
+  I64 res,idx,v,fc;
+  res=idx=v=fc=0;
 
   a->init(a);
   a->parse(a, cmd);
 
-  if (a->count==0) goto done;
+  if (a->count==0) goto error;
+
 
   if (!(idx=c->hashdx(c,a->args[0])))
   {//try to "shell" execute it
@@ -44,12 +45,15 @@ U8 execute_cmd(U8 *cmd) {
   //errors:
   //Tokens entered between min & max
 //  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
-  if (!(I64_between(ac=a->count,c->data[idx][2],c->data[idx][3]))) {
+  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
     err_print(ERR_ARGC); goto error; }
 
-  ////Flags entered between 0 & max
-//  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
-//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
+"here\n";
+
+  ////Flags entered between 0 & max
+  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
+  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
+
   if (!(I64_between(fc,0,c->data[idx][4]))) {
     err_print(ERR_FLGC); goto error; }
 
@@ -61,11 +65,11 @@ U8 execute_cmd(U8 *cmd) {
 //  "BUFA: %s   BUFB: %s\n",bufa,bufb;
 
   v=files_valid(bufa,bufb);
-  U8 bav=v.u8[0];
+  U64 bav=v.u8[0];
 //  U8 bav=v.u8[0], bbv=v.u8[1];
 //  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
 
-  v=(ac==1|v);
+  bav=(bav|a->count==1);
 
   switchit:  
   switch(idx)
@@ -100,7 +104,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) { 
         if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
-      else if (FilesFindMatch(bav,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
+      else if (FilesFindMatch(bav,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
            else err_print(ERR_FILEI,"info");
       break;
     case  38: //tasks
@@ -114,7 +118,7 @@ $PT$$FG$$BG$    case   7: //clear
           if (type_got(v,DIR)) {
             Cd(bufa);
             if (idx==199) ls;
-            prev_dir=Fs->cur_dir;
+            prev_dir=StrNew(Fs->cur_dir);
           }
         }
         else err_print(ERR_NF,bufa);
@@ -204,8 +208,8 @@ $PT$$FG$$BG$    case   7: //clear
     case 176: //tree
     case 223: //ls
       if (bav) {
-        if (ac==1) bufa=StrNew(".");
-        ls(bufa,(idx==176));
+        if (a->count==1) bufa=StrNew(".");
+        ls(bufa,(idx==176|(!flag_err(a->flags,FLG_T,FALSE))));
       }
       break;
     case 999: //dummy
@@ -213,7 +217,6 @@ $PT$$FG$$BG$    case   7: //clear
       "default\n";
   }
 
-done:
   str_zero(bufa);
   str_zero(bufb);
 error:
@@ -227,8 +230,6 @@ U8 templeDOS() {
 
   Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
   Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
-
-  Adam("$$LTCYAN$$TODO:$$FG$$ Add the cd - support");
 
   set_windowinfo("templedos_task","TempleDOS");
 
@@ -282,7 +283,7 @@ MenuPush(
 
 //Fs->task_end_cb=&stop_ctrl_alt_x;
 
-Cd;prev_dir=Fs->cur_dir;
+Cd;prev_dir=StrNew(Fs->cur_dir);
 
 templeDOS;
 
@@ -290,7 +291,7 @@ a->init(a);
 Free(a);
 Free(c);
 
-//Free(prev_dir);
+Free(prev_dir);
 
 DocBottom; "$$FG$$";
 

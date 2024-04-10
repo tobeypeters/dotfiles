@@ -21,4 +21,4 @@
 
 U0 debug_snd() Noise(1000,75,1000);
 
-U0 debug_YN(Bool state) { if (state) "YES"; else "NO"; "\n"; }
+U0 debug_YN(Bool state) { if (state) "YES"; else "NO"; "\n"; }
