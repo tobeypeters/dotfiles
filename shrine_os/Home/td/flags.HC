@@ -48,7 +48,7 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 #define FLG_Y 0x1000000 //y
 #define FLG_Z 0x2000000 //z
 
-U64 flags_val(U8 *flag)
+U64 flags_val(U8 *flag)
 {
   U64 res=0,
         i=0;
@@ -121,20 +121,20 @@ Bool flag_got(U8 *flags=NULL, I64 flag_want)
   flag_scan(&f,Define("ST_FLAGS"),flags);
 
   return ToBool((f&flag_want));
-}
+}
 Bool flag_err(U8 *flags=NULL, I64 flag_want,Bool print_err=TRUE)
 {
   Bool res=FALSE;
 
-  if (!(res=flag_got(flags,flag_want)))
+  if ((res=!flag_got(flags,flag_want)))
     if (print_err) err_print(ERR_FLGI);
 
   return res;
 }
 /*"--------------------------------\n";
-if (!flag_err("-afb",FLG_A)) "yes a\n";
-if (!flag_err("-afb",FLG_Q,FALSE)) "yes q\n";
-if (!flag_err("-afb",FLG_B)) "yes b\n";
-if (!flag_err("-afb",FLG_T)) "yes t\n";
-if (!flag_err("-afb",FLG_F)) "yes g\n";
+if (flag_err("-afb",FLG_A)) "yes a\n";
+if (flag_err("-afb",FLG_Q,FALSE)) "yes q\n";
+if (flag_err("-afb",FLG_B)) "yes b\n";
+if (flag_err("-afb",FLG_T,FALSE)) "yes t\n";
+if (flag_err("-afb",FLG_F)) "yes g\n";
 "--------------------------------\n";*/

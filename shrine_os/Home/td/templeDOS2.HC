@@ -31,8 +31,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (a->count==0) goto error;
 
-
-  if (!(idx=c->hashdx(c,a->args[0])))
+  if ((idx=c->hashdx(c,a->args[0]))==-1)
   {//try to "shell" execute it
     idx=999; 
     goto switchit;
@@ -48,11 +47,9 @@ U8 execute_cmd(U8 *cmd) {
   if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
     err_print(ERR_ARGC); goto error; }
 
-"here\n";
-
-  ////Flags entered between 0 & max
-  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
-  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
+  ////Flags entered between 0 & max
+//  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
+//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
 
   if (!(I64_between(fc,0,c->data[idx][4]))) {
     err_print(ERR_FLGC); goto error; }
@@ -163,6 +160,11 @@ $PT$$FG$$BG$    case   7: //clear
       "%D\n",Now;
       break;
     case 169: //help
+      if (bav) {
+          viewer(str_cat(bufa,,"Type(\"",
+                        help_file,"\");"));
+      }
+      else err_print(ERR_NF,help_file);
       break;
     case 174: //grep
       F(bufa);
@@ -207,14 +209,16 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 176: //tree
     case 223: //ls
-      if (bav) {
+      if (bav||((a->count==2)&&(fc==1))) {
         if (a->count==1) bufa=StrNew(".");
-        ls(bufa,(idx==176|(!flag_err(a->flags,FLG_T,FALSE))));
+        ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
       }
       break;
     case 999: //dummy
     default:
+//      shell_execute(a->args[0]); //User is trying to normally run a OS command?
       "default\n";
+      goto error;
   }
 
   str_zero(bufa);
