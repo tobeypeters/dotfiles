@@ -205,13 +205,13 @@ $PT$$FG$$BG$    case   7: //clear
       else err_print(ERR_NF,bufa);
       break;
     case 212: //fm
-      FileMgr;
+      FileMgr;
       break;
     case 176: //tree
     case 223: //ls
       if (bav||((a->count==2)&&(fc==1))) {
         if (a->count==1) bufa=StrNew(".");
-        ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
+        ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
       }
       break;
     case 999: //dummy
