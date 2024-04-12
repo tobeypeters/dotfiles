@@ -20,9 +20,6 @@ LICENSE
 
 sudo apt update
 echo ''
-#sudo apt upgrade -y
-#echo ''
-# update-manager;
 sudo apt dist-upgrade -y
 echo ''
 polybar-msg action updater module_hide
