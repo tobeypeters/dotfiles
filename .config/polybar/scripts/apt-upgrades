@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-#
-# Copyright (C) 2015 James Murphy
-# Licensed under the terms of the GNU GPL v2 only.
-#
-# i3blocks blocklet script to display pending system upgrades
+
+#file: /etc/apt/apt.conf.d/80polybar
+#contents:
+#APT::Update::Post-Invoke { "polybar-msg -p $(pgrep -x polybar) action subscriber hook 0 2>/dev/null || true"; };
+#DPkg::Post-Invoke { "polybar-msg -p $(pgrep -x polybar) action subscriber hook 0 2>/dev/null || true"; };
 
 # FontAwesome refresh symbol, change if you do not want to install FontAwesome
 PENDING_SYMBOL=${PENDING_SYMBOL:-"\uf021 "}
