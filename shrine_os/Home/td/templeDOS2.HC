@@ -40,16 +40,8 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
-//  "\nA->COUNT: %d ",a->count;
-  //errors:
-  //Tokens entered between min & max
-//  "ERR_ARGC_MAX: %d\n",c->data[idx][3];
   if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
     err_print(ERR_ARGC); goto error; }
-
-  ////Flags entered between 0 & max
-//  "A->FLAGS: %s FLAGS_COUNT: %d ",a->flags,fc;
-//  "ERR_FLGC_MAX: %d\n\n",c->data[idx][4];
 
   if (!(I64_between(fc,0,c->data[idx][4]))) {
     err_print(ERR_FLGC); goto error; }
@@ -59,13 +51,9 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufa=StrNew(a->get_current(a));
   a->next(a);bufb=StrNew(a->get_current(a));
 
-//  "BUFA: %s   BUFB: %s\n",bufa,bufb;
-
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
-//  U8 bav=v.u8[0], bbv=v.u8[1];
-//  "BUFAV: %d BUFAV: %d\n\n",v.u8[0],v.u8[1];
-
+
   bav=(bav|a->count==1);
 
   switchit:  
@@ -77,32 +65,29 @@ $PT$$FG$$BG$    case   7: //clear
     case  23: //mkdir
       if (!bav) DirMk(bufa);
       else {
-        if (type_got(v,DIR,,FALSE)) err_print(ERR_DIR_EXISTS,bufa);
-        if (type_got(v,DRV,,FALSE)) err_print(ERR_DRV_SPEC);
-        if (type_got(v,FILE,,FALSE)) err_print(ERR_FILE_SPEC);
+        if (type_got(v,DIR))
+          err_print(ERR_DIR_EXISTS,bufa);
       }
       break;
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (bav)
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+
+      if (I64_IN(30,214) || (idx==224&&fc))
       {
-        if (I64_IN(30,214) || (idx==224&&fc))
-        {
-          if (!flag_err(a->flags,FLG_D))
-            if (type_got(v,DIR)) DelTree(bufa);
-            
-        }
-        else if (type_got(v,FILE)) Del(bufa);
+        if (!flag_err(a->flags,FLG_D))
+          if (type_got(v,DIR)) DelTree(bufa);            
       }
-      else err_print(ERR_NF,bufa);     
+      else if (type_got(v,FILE)) Del(bufa);
       break;
     case  35: //touch
       if (bav) { 
         if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
-      else if (FilesFindMatch(bav,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
-           else err_print(ERR_FILEI,"info");
+      else
+       if (FilesFindMatch(bufa,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
+       else err_print(ERR_FILEI,"info");
       break;
     case  38: //tasks
       TaskRep;
@@ -128,9 +113,8 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) if (type_got(v,FILE)) Man(bufa);
       break;
     case  63: //mem
-        viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
-               ");
+      viewer("MemRep;\"\n\";
+              MemPageRep;\"\n\";");
       break;
     case  72: //cpu
         CPURep(!flag_err(a->flags,FLG_F));
@@ -147,14 +131,12 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) if (type_got(v,FILE)) ExeFile(bufa);
       break;
     case 227: //mv
-      if (bav) {
-        if (type_got(v,DIR)) {
-          CopyTree(bufa,bufb);
-          DelTree(bufa);
-        }
-        else Move(bufa,bufb);
+      if (!bav) err_print(ERR_NF,bufa);
+      if (type_got(v,DIR)) {
+        CopyTree(bufa,bufb);
+        DelTree(bufa);
       }
-      else err_print(ERR_NF,bufa);
+      else Move(bufa,bufb);
       break;
     case 158: //date
       "%D\n",Now;
@@ -173,7 +155,8 @@ $PT$$FG$$BG$    case   7: //clear
       "%T\n",Now;
       break;
     case 179: //more
-      More(bufa);
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (type_got(v,FILE)) More(bufa);
       break;
     case 182: //dump
       Dump(bufa);
@@ -188,7 +171,8 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       break;
     case 201: //ed
-      if (bav) PopUpEd(bufa);
+       if (FilesFindMatch(bufa,FILEMASK_TXT)) PopUpEd(bufa);;
+       else err_print(ERR_FILEI,"info");
       break;
     case 203: //df
       DrvRep; "\n";
@@ -205,7 +189,7 @@ $PT$$FG$$BG$    case   7: //clear
       else err_print(ERR_NF,bufa);
       break;
     case 212: //fm
-      FileMgr;
+      FileMgr;
       break;
     case 176: //tree
     case 223: //ls

@@ -19,7 +19,7 @@
       File system related functions.
 */
 
-//Return the current drive letter.
+//Return the current drive letter.
 U8 cur_drv() return Drv2Let(Fs->cur_dv);
 
 F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
@@ -91,8 +91,7 @@ Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
   return res;
 }
 
-Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::",LMF_EXACT)>0);
-
+Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-",LMF_EXACT)>0);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
 {//Validate two given file arguments.
@@ -296,7 +295,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     }
     entry=start;
 
-    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
 
     DirTreeDel(entry);
   }
