@@ -45,10 +45,10 @@ aptitude full-upgrade --simulate --assume-yes |\
     grep '[0-9]\+' |\
     xargs echo)
 
-if [[ $upgraded != 0 ]] || [[ $new != 0 ]] || [[ $removed != 0 ]] || [[ $held != 0 ]]; then
-  polybar-msg action updater module_show
+if [[ $upgraded != 0 ]] || [[ $new != 0 ]]; then
   echo -e ""
+  polybar-msg action updater module_show
 else
-  polybar-msg action updater module_hide
   echo -e ""
+  polybar-msg action updater module_hide
 fi
