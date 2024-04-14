@@ -26,6 +26,7 @@ U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
  //Fs->task_title
   if (name) StrCpy(Fs->task_name,name);
   if (title) StrCpy(Fs->task_title,title);
+  return;
 }
 
 Bool I64_IN(I64 inval,...)
@@ -48,10 +49,13 @@ U8 tern(Bool condition, U64 *first, U64 *second)
   return second;
 }
 
-
-U0 shell_execute(U8 *cmd)
+U0 shell_execute(U8 *cmd,U8 *args=NULL)
 {//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
+  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(args)+5));
+  str_cat(buf,,cmd,"(\"",args,"\");");
+  "\n"; ExePutS(buf); "\n";
+  Free(buf);
+  return;
 }
 
 U0 viewer(U8 *cmd)
@@ -62,10 +66,10 @@ U0 viewer(U8 *cmd)
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
   DocTop;View; DocBottom;
   PutChars(CH_CTRLY);
+  return;
 }
 
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-

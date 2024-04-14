@@ -53,7 +53,7 @@ U8 execute_cmd(U8 *cmd) {
 
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
-
+
   bav=(bav|a->count==1);
 
   switchit:  
@@ -77,13 +77,16 @@ $PT$$FG$$BG$    case   7: //clear
       if (I64_IN(30,214) || (idx==224&&fc))
       {
         if (!flag_err(a->flags,FLG_D))
-          if (type_got(v,DIR)) DelTree(bufa);            
+          if (type_got(v,DIR)) DelTree(bufa);
+        break;
       }
-      else if (type_got(v,FILE)) Del(bufa);
+      type_exec(v,FILE,,"Del",bufa);
       break;
     case  35: //touch
       if (bav) { 
-        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
+      type_exec(v,FILE,,"Del",bufa);
+
+        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
       else
        if (FilesFindMatch(bufa,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
