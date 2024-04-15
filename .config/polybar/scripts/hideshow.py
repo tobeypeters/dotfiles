@@ -41,4 +41,4 @@ on_ShowHide('', '')
 
 i3.main()
 
-sendBarMessage('show')
+#sendBarMessage('show')
