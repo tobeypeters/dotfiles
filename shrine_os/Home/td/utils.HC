@@ -72,22 +72,21 @@ U0 shell_exec(U8 *cmd,...)
  //Example:
  //  shell_exec("Touch","\"C:/Home/valid.HC\"","\"\"");
 
-  U8 *as=arg_str(argv,argc);
+  U8 *as;
 
-  "as: %s\n",as;
+  if (argc) as=arg_str(argv,argc);
+  else as=StrNew("");
 
   U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+3));
 
   str_cat(buf,FALSE,cmd,"(",as,");");
-
-  "buf: %s\n",buf;
 
   "\n"; ExePutS(buf); "\n";
   Free(as);
   Free(buf);
   return;
 }
-
+
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
  //in "view" mode.

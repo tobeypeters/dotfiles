@@ -55,9 +55,7 @@ U8 execute_cmd(U8 *cmd) {
   U64 bav=v.u8[0];
 
   bav=(bav|a->count==1);
-
-  shell_exec("DrvRep;");
-
+
   switchit:  
   switch(idx)
   {
