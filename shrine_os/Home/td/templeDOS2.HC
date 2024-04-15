@@ -56,6 +56,8 @@ U8 execute_cmd(U8 *cmd) {
 
   bav=(bav|a->count==1);
 
+  shell_exec("DrvRep;");
+
   switchit:  
   switch(idx)
   {
@@ -86,7 +88,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) { 
       type_exec(v,FILE,,"Del",bufa);
 
-        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
+        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
       } 
       else
        if (FilesFindMatch(bufa,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
@@ -174,7 +176,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       break;
     case 201: //ed
-       if (FilesFindMatch(bufa,FILEMASK_TXT)) PopUpEd(bufa);;
+       if (FilesFindMatch(bufa,FILEMASK_TXT)) PopUpEd(bufa);
        else err_print(ERR_FILEI,"info");
       break;
     case 203: //df
@@ -203,8 +205,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 999: //dummy
     default:
-//      shell_execute(a->args[0]); //User is trying to normally run a OS command?
-      "default\n";
+      shell_exec(a->args[0]); //User is trying to normally run a OS command?
       goto error;
   }
 

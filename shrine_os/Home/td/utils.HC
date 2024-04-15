@@ -49,11 +49,41 @@ U8 tern(Bool condition, U64 *first, U64 *second)
   return second;
 }
 
-U0 shell_execute(U8 *cmd,U8 *args=NULL)
+U8 arg_str(U8 **args,U64 cnt)
+{
+  U64 i=0,
+      s=cnt;
+
+  for(;i<cnt;i++)
+    s+=str_len(args[i]);
+
+  U8 *buf=CAlloc(sizeof(U8)*s);
+
+  for(i=0;i<cnt;i++)
+  {
+    if (i>0) str_cat(buf,FALSE,",");
+    str_cat(buf,FALSE,args[i]);
+  }
+
+  return buf;
+}
+U0 shell_exec(U8 *cmd,...)
 {//Execute a templeOS shell command.
-  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(args)+5));
-  str_cat(buf,,cmd,"(\"",args,"\");");
+ //Example:
+ //  shell_exec("Touch","\"C:/Home/valid.HC\"","\"\"");
+
+  U8 *as=arg_str(argv,argc);
+
+  "as: %s\n",as;
+
+  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+3));
+
+  str_cat(buf,FALSE,cmd,"(",as,");");
+
+  "buf: %s\n",buf;
+
   "\n"; ExePutS(buf); "\n";
+  Free(as);
   Free(buf);
   return;
 }

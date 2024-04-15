@@ -66,7 +66,7 @@ Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 #define DIR  3
 #define FILE 4
 
-Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
+Bool type_got(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE)
 {
   Bool res=FALSE;
 
@@ -88,10 +88,16 @@ Bool type_got(U64 fvb, U64 type, U64 warg=1,Bool print_err=TRUE)
 
   return res;
 }
+#include "C:/Home/td/utils"
+U0 type_exec(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE,U8 *cmd,...)
+{
+  U8 *as=arg_str(argv,argc);
 
-U0 type_exec(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE,U8 *cmd,U8 *args=NULL) {
-  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,args); return; }
-
+  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,as);
+
+  Free(as);
+}
+
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-",LMF_EXACT)>0);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
