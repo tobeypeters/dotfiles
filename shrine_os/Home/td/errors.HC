@@ -1,28 +1,3 @@
-#define ERR_ARGC        "Invalid number of arguments provided"
-#define ERR_FLGC        "Invalid number of options provided"
-#define ERR_FLGI        "Invalid option provided"
-#define ERR_FILEI       "Invalid filename"
-
-#define ERR_NF          "Not found"
-
-#define ERR_DRV_SPEC    "Drive was specified"
-#define ERR_DIR_SPEC    "Directory was specified"
-#define ERR_FILE_SPEC   "File was specified"
-
-#define ERR_DIR_EXISTS  "Directory already exists"
-#define ERR_FILE_EXISTS "File already exists"
-
-#define ERR_DIRFILEIDRV "Directory or file provided instead of a drv"
-#define ERR_DRVFILEIDIR "Drive or file provided instead of a directory"
-#define ERR_DRVDIRIFILE "Drive or directory provided instead of a file"
-
-#define ERR_UNKNOWN     "Unrecognized command provided"
-
-U0 err_print(U8 *msg, U8 *link="Usage")
-{//Print our err_msg.
-  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
-}
-
 /*
   The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
@@ -43,4 +18,29 @@ U0 err_print(U8 *msg, U8 *link="Usage")
   Description:
       Error message definitions and print routine.
 */
+#define ERR_ARGC        "Invalid number of arguments provided"
+#define ERR_FLGC        "Invalid number of options provided"
+#define ERR_FLGI        "Invalid option provided"
+#define ERR_FILEI       "Invalid filename"
 
+#define ERR_NF          "Not found"
+
+#define ERR_DRVIU       "Invalid or unmounted drive"
+
+#define ERR_DRV_SPEC    "Drive was specified"
+#define ERR_DIR_SPEC    "Directory was specified"
+#define ERR_FILE_SPEC   "File was specified"
+
+#define ERR_DIR_EXISTS  "Directory already exists"
+#define ERR_FILE_EXISTS "File already exists"
+
+#define ERR_DIRFILEIDRV "Directory or file provided instead of a drv"
+#define ERR_DRVFILEIDIR "Drive or file provided instead of a directory"
+#define ERR_DRVDIRIFILE "Drive or directory provided instead of a file"
+
+#define ERR_UNKNOWN     "Unrecognized command provided"
+
+U0 err_print(U8 *msg, U8 *link="Usage")
+{//Print our err_msg.
+  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
+}

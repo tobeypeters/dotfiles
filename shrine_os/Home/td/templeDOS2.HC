@@ -23,16 +23,25 @@ U8 *help_file="~/templeDOS.DD";
 U8 *prev_dir=NULL;
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx,v,fc;
-  res=idx=v=fc=0;
-
   a->init(a);
   a->parse(a, cmd);
 
   if (a->count==0) goto error;
 
+  I64 res,idx,v,fc;
+  res=idx=v=fc=0;
+
   if ((idx=c->hashdx(c,a->args[0]))==-1)
-  {//try to "shell" execute it
+  {
+    //Switching drives DOS style?
+    if (str_len(a->args[0])==2) {
+      if (a->args[0][1]==':')
+        if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
+        else err_print(ERR_DRVIU,"info");
+      goto error;
+    }
+
+    //try to "shell" execute it
     idx=999; 
     goto switchit;
   }
@@ -55,7 +64,7 @@ U8 execute_cmd(U8 *cmd) {
   U64 bav=v.u8[0];
 
   bav=(bav|a->count==1);
-
+
   switchit:  
   switch(idx)
   {
@@ -77,19 +86,16 @@ $PT$$FG$$BG$    case   7: //clear
       if (I64_IN(30,214) || (idx==224&&fc))
       {
         if (!flag_err(a->flags,FLG_D))
-          if (type_got(v,DIR)) DelTree(bufa);
+          type_exec(v,DIR,,"DelTree",bufa);
         break;
       }
       type_exec(v,FILE,,"Del",bufa);
       break;
     case  35: //touch
-      if (bav) { 
-      type_exec(v,FILE,,"Del",bufa);
-
-        if (type_got(v,FILE)) Touch(bufa,"");  //Updates the time & date.
-      } 
+      if (bav)
+        type_exec(v,FILE,,"Touch",bufa,"\"\""); //Update time & date
       else
-       if (FilesFindMatch(bufa,FILEMASK_TXT)) FileWrite(bufa,NULL,0);
+       if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");
       break;
     case  38: //tasks
@@ -100,7 +106,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (file_char("-")) Cd(prev_dir);
       else {
         if (bav) {
-          if (type_got(v,DIR)) {
+          if (!type_got(v,FILE)) {
             Cd(bufa);
             if (idx==199) ls;
             prev_dir=StrNew(Fs->cur_dir);
@@ -110,7 +116,7 @@ $PT$$FG$$BG$    case   7: //clear
       }
       break;
     case  56: //cat
-      if (bav) if (type_got(v,FILE)) Type(bufa);
+      if (bav) type_exec(v,FILE,,"Type",bufa);
       break;
     case  60: //man
       if (bav) if (type_got(v,FILE)) Man(bufa);
@@ -131,7 +137,7 @@ $PT$$FG$$BG$    case   7: //clear
       "%D %T\n",Now,Now;
       break;
     case  86: //run
-      if (bav) if (type_got(v,FILE)) ExeFile(bufa);
+      if (bav) type_exec(v,FILE,,"ExeFile",bufa);
       break;
     case 227: //mv
       if (!bav) err_print(ERR_NF,bufa);
@@ -174,8 +180,8 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       break;
     case 201: //ed
-       if (FilesFindMatch(bufa,FILEMASK_TXT)) PopUpEd(bufa);
-       else err_print(ERR_FILEI,"info");
+      if (filenameOK(bufa)) PopUpEd(bufa);
+      else err_print(ERR_FILEI,"info");
       break;
     case 203: //df
       DrvRep; "\n";
@@ -185,9 +191,9 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav)
       {
         if (!flag_err(a->flags,FLG_D)) {
-          if (type_got(v,DIR)) CopyTree(bufa,bufb);
+          type_exec(v,DIR,,"CopyTree",bufa,bufb);
         }
-        else if (type_got(v,FILE)) Copy(bufa,bufb);
+        else type_exec(v,FILE,,"Copy",bufa,bufb);
       }
       else err_print(ERR_NF,bufa);
       break;
