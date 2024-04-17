@@ -58,6 +58,19 @@ parser.add_argument('--menu_colors', '--mc', nargs=4, type=str,
                      help='Override the colors, of the popup menu.  Colors must be specified in hex format and in the order: bg fg highlightbg highlightfg')
 args: arg_namespace = parser.parse_args()
 
+def dhc(hex_color):
+    # Remove '#' if present and convert hex to RGB
+    hex_color = hex_color.lstrip('#')
+    rgb = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+
+    # Darken each component by 90%
+    new_rgb = tuple(int(max(0, c * 0.1)) for c in rgb)
+
+    # Convert RGB back to hex
+    dark_hex_color = '#{:02x}{:02x}{:02x}'.format(*new_rgb)
+
+    return dark_hex_color
+
 def on_command(item: str, cmd : str = '') -> None:
     if cmd:
         process_exec(cmd)
@@ -75,7 +88,7 @@ popup_params: dict[str, Any] = { 'master' : my_w, 'relief' : RAISED, 'tearoff' :
 if args.menu_colors:
     mc: list[str] = args.menu_colors
 
-    popup_params.update({'bg' : mc[0], 'fg' : mc[1], 'activebackground' : mc[2], 'activeforeground' : mc[3] })
+    popup_params.update({'bg' : dhc(mc[1]), 'fg' : mc[1], 'activebackground' : mc[2], 'activeforeground' : mc[3] })
 
 popup: Menu = Menu(**popup_params)
 
