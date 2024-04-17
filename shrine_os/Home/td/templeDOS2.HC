@@ -28,7 +28,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (a->count==0) goto error;
 
-  I64 res,idx,v,fc;
+  I64 res,idx,v,fc;
   res=idx=v=fc=0;
 
   if ((idx=c->hashdx(c,a->args[0]))==-1)
@@ -63,7 +63,7 @@ U8 execute_cmd(U8 *cmd) {
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
 
-  bav=(bav|a->count==1);
+  bav=(bav|(a->count==1));
 
   switchit:  
   switch(idx)
@@ -103,20 +103,21 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (file_char("-")) Cd(prev_dir);
+      if (file_char(bufa)) Cd(prev_dir);
       else {
         if (bav) {
-          if (!type_got(v,FILE)) {
+          if (type_got(v,DIR)) {
             Cd(bufa);
-            if (idx==199) ls;
+            if (idx==43) ls;
             prev_dir=StrNew(Fs->cur_dir);
           }
         }
         else err_print(ERR_NF,bufa);
       }
+
       break;
     case  56: //cat
-      if (bav) type_exec(v,FILE,,"Type",bufa);
+      if (bav) type_exec(v,FILE,,"Type",bufa);
       break;
     case  60: //man
       if (bav) if (type_got(v,FILE)) Man(bufa);

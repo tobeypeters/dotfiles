@@ -66,14 +66,14 @@ Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 #define DIR  3
 #define FILE 4
 
-Bool type_got(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE)
+Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 {
   Bool res=FALSE;
 
-  if ((!(1<=warg<=2)) || 
+  if ((!(0<=warg<=1)) || 
       (!(DRV<=type<=FILE))) return FALSE;
-
-  res=ToBool(fvb.u8[(type*warg)-(warg&1)]);
+
+  res=ToBool(fvb.u8[((warg<<2)+(type-(warg&1)))]);
 
   if (!res&&print_err)
   { 
@@ -100,7 +100,7 @@ U0 type_exec(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE,U8 *cmd,...)
 }
 
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-",LMF_EXACT)>0);
-Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
+Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb) 
 {//Validate two given file arguments.
@@ -126,32 +126,32 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
 }
 /*I64 ret=0;
 
-ret=files_valid("c:","~");
-"Got %d\n",type_got(ret,DRV);
-"Got %d\n",type_got(ret,DRV,2);
-
-
+//ret=files_valid("c:","~");
 //ret=files_valid("","~/valid.HC");
-//ret=files_valid("~","~/valid.HC");
+ret=files_valid("~","~/valid.HC");
 //ret=files_valid("1","~/valid.HC");
 //ret=files_valid("9:","~/validu.HC");
 //ret=files_valid("C:/Home","~/valid.HC");
 //ret=files_valid("C:/Homez","~/valid.HC");
 //ret=files_valid("C:/Home","~/valid.HC");
+//ret=files_valid("a:","~/valid.HC");
 
 "\n";
 "ret.u8[0] %d\n",ret.u8[0];
-"ret.u8[2]  drv %d\n",ret.u8[2];
-"ret.u8[3]  dir %d\n",ret.u8[3];
-"ret.u8[4] file %d\n",ret.u8[4];
+"ret.u8[2]  DRV %d\n",ret.u8[2];
+"ret.u8[3]  DIR %d\n",ret.u8[3];
+"ret.u8[4] FILE %d\n",ret.u8[4];
 "\n";
 "ret.u8[1] %d\n",ret.u8[1];
-"ret.u8[5]  drv %d\n",ret.u8[5];
-"ret.u8[6]  dir %d\n",ret.u8[6];
-"ret.u8[7] file %d\n",ret.u8[7];
+"ret.u8[5]  DRV %d\n",ret.u8[5];
+"ret.u8[6]  DIR %d\n",ret.u8[6];
+"ret.u8[7] FILE %d\n",ret.u8[7];
+"\n";
+
+"Got %d\n",type_got(ret,DIR);
+"Got %d\n",type_got(ret,DRV,1);
 "\n";
 */
-
 #define gb 1073741824
 #define gt gb / 10
 #define STD "ST_DAYS_OF_WEEK"
