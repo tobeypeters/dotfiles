@@ -72,7 +72,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   if ((!(0<=warg<=1)) || 
       (!(DRV<=type<=FILE))) return FALSE;
-
+
   res=ToBool(fvb.u8[((warg<<2)+(type-(warg&1)))]);
 
   if (!res&&print_err)
@@ -88,7 +88,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   return res;
 }
-U0 type_exec(U64 fvb,U64 type,U64 warg=1,Bool print_err=TRUE,U8 *cmd,...)
+U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
 {
   U8 *as=arg_str(argv,argc);
   if (argc) as=arg_str(argv,argc);

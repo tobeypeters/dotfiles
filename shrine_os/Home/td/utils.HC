@@ -38,7 +38,6 @@ Bool I64_IN(I64 inval,...)
       return TRUE;
     }
   }
-
   return FALSE;
 }
 
@@ -57,12 +56,14 @@ U8 arg_str(U8 **args,U64 cnt)
   for(;i<cnt;i++)
     s+=str_len(args[i]);
 
-  U8 *buf=CAlloc(sizeof(U8)*s);
+  U8 *buf=CAlloc(sizeof(U8)*s+10);
 
   for(i=0;i<cnt;i++)
   {
+    if (args[i][0]!=34) str_cat(buf,FALSE,"\"");
     if (i>0) str_cat(buf,FALSE,",");
     str_cat(buf,FALSE,args[i]);
+    if (args[i][0]!=34) str_cat(buf,FALSE,"\"");
   }
 
   return buf;
@@ -81,12 +82,14 @@ U0 shell_exec(U8 *cmd,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-  "\n"; ExePutS(buf); "\n";
+  "%s\n",buf;
+
+//  "\n"; ExePutS(buf); "\n";
   Free(as);
   Free(buf);
   return;
 }
-
+
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
  //in "view" mode.

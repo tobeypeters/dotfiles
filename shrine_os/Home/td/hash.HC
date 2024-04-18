@@ -58,7 +58,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 1},
   {223,    "ls", 1, 2, 1},
-  {224,    "rm", 2, 2, 1},
+  {224,    "rm", 2, 3, 1},
   {227,    "mv", 3, 3, 0},
 };
 
@@ -106,7 +106,7 @@ U0 parse(CHCMDS *in)
   }
   //in->print_arr(in);
 
-  MemSet(hashed,'\0',sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
+  MemSet(hashed,'\0',sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
   Free(hashed);
 
 }

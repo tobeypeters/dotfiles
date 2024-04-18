@@ -82,18 +82,27 @@ $PT$$FG$$BG$    case   7: //clear
     case 214: //rd
     case 224: //rm
       if (!bav) { err_print(ERR_NF,bufa); break; }
-
-      if (I64_IN(30,214) || (idx==224&&fc))
+      if (I64_IN(idx,30,214) || (idx==224&&fc))
       {
-        if (!flag_err(a->flags,FLG_D))
-          type_exec(v,DIR,,"DelTree",bufa);
-        break;
+        "Supersonic\n";
+        if (idx==224) {
+          "flags: %s\n",a->flags;
+          if (!flag_err(a->flags,FLG_D))
+"%d%d%d%d\n",v.u8[0],v.u8[2],v.u8[3],v.u8[4];
+
+if (type_got(v,DIR)) "yes\n"; else "no\n";
+
+          type_exec(v,DIR,,,"DelTree",bufa);
+          break;
+        }
+
+//        break;
       }
-      type_exec(v,FILE,,"Del",bufa);
+//      type_exec(v,FILE,,,"Del",bufa);
       break;
     case  35: //touch
       if (bav)
-        type_exec(v,FILE,,"Touch",bufa,"\"\""); //Update time & date
+        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");
@@ -117,7 +126,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  56: //cat
-      if (bav) type_exec(v,FILE,,"Type",bufa);
+      if (bav) type_exec(v,FILE,,,"Type",bufa);
       break;
     case  60: //man
       if (bav) if (type_got(v,FILE)) Man(bufa);
@@ -138,7 +147,7 @@ $PT$$FG$$BG$    case   7: //clear
       "%D %T\n",Now,Now;
       break;
     case  86: //run
-      if (bav) type_exec(v,FILE,,"ExeFile",bufa);
+      if (bav) type_exec(v,FILE,,,"ExeFile",bufa);
       break;
     case 227: //mv
       if (!bav) err_print(ERR_NF,bufa);
@@ -192,9 +201,9 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav)
       {
         if (!flag_err(a->flags,FLG_D)) {
-          type_exec(v,DIR,,"CopyTree",bufa,bufb);
+          type_exec(v,DIR,,,"CopyTree",bufa,bufb);
         }
-        else type_exec(v,FILE,,"Copy",bufa,bufb);
+        else type_exec(v,FILE,,,"Copy",bufa,bufb);
       }
       else err_print(ERR_NF,bufa);
       break;
