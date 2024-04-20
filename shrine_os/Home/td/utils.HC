@@ -72,7 +72,6 @@ U0 shell_exec(U8 *cmd,...)
 {//Execute a templeOS shell command.
  //Example:
  //  shell_exec("Touch","\"C:/Home/valid.HC\"","\"\"");
-
   U8 *as;
 
   if (argc) as=arg_str(argv,argc);
@@ -82,7 +81,7 @@ U0 shell_exec(U8 *cmd,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-  "%s\n",buf;
+  "buf: %s\n",buf;
 
 //  "\n"; ExePutS(buf); "\n";
   Free(as);

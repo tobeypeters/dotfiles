@@ -82,27 +82,21 @@ $PT$$FG$$BG$    case   7: //clear
     case 214: //rd
     case 224: //rm
       if (!bav) { err_print(ERR_NF,bufa); break; }
+
+
       if (I64_IN(idx,30,214) || (idx==224&&fc))
       {
-        "Supersonic\n";
-        if (idx==224) {
-          "flags: %s\n",a->flags;
-          if (!flag_err(a->flags,FLG_D))
-"%d%d%d%d\n",v.u8[0],v.u8[2],v.u8[3],v.u8[4];
-
-if (type_got(v,DIR)) "yes\n"; else "no\n";
-
-          type_exec(v,DIR,,,"DelTree",bufa);
-          break;
-        }
-
-//        break;
+        if (idx==224)
+          if (flag_err(a->flags,FLG_D)) break;
+        type_exec(v,DIR,,,"DelTree",bufa);
+        break;
       }
-//      type_exec(v,FILE,,,"Del",bufa);
+      type_exec(v,FILE,,,"Del",bufa);
+
       break;
     case  35: //touch
       if (bav)
-        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
+        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");

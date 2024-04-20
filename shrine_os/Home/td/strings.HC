@@ -13,7 +13,7 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
+
 /*strings.HC
   Description:
       String related functions.
@@ -80,7 +80,7 @@ U0 str_zero(U8 *str,Bool free=TRUE)
   if (free) Free(str);
   return;
 }
-
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
