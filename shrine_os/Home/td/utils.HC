@@ -71,7 +71,7 @@ U8 arg_str(U8 **args,U64 cnt)
 
   return buf;
 }
-#include "C:/Home/td/debug"
+//#include "C:/Home/td/debug"
 U0 shell_exec(U8 *cmd,...)
 {//Execute a templeOS shell command.
   /*Examples:
@@ -93,9 +93,9 @@ U0 shell_exec(U8 *cmd,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-  debug_prn(buf);
+//  debug_prn(buf);
 
-//  "\n"; ExePutS(buf); "\n";
+  "\n"; ExePutS(buf); "\n";
   Free(as);
   Free(buf);
   return;
@@ -113,4 +113,90 @@ U0 viewer(U8 *cmd)
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+U0 zFree(U8 *cube,Bool free=TRUE)
+{//Zero out mem and free it.
+  MemSet(cube,'\0',sizeof(cube));
+  if (free) Free(cube);
+  return;
+}
+
+U8 MyGetStr(I64 flags=0)
+{//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$
+  CDoc *doc;
+  CDocEntry *doc_e,*doc_e_end;
+  U8 *st,*st2,*res;
+  I64 ch,sc;
+
+  "$$PT$$";
+  do {
+    ch=DocGetKey(&sc);
+
+    if (ch==CH_ESC) {
+      if (doc=DocPut) {
+	DocLock(doc);
+	if (doc->doc_signature==DOC_SIGNATURE_VAL && doc->cur_entry!=doc) {
+	  doc_e=DocEntryCopy(doc,doc->cur_entry);
+	  DocBottom(doc);
+	  DocEntryRun(doc,doc_e,TRUE);
+	  DocEntryDel(doc,doc_e);
+	}
+	DocUnlock(doc);
+      }
+      if (flags&GSF_WITH_NEW_LINE)
+	break;
+    } if (ch==CH_SHIFT_ESC) {
+      if (flags&GSF_SHIFT_ESC_EXIT) {
+        //Think this messes up windows which is opened by
+        //templedos_task.  I believe, I can later determine
+        //if it's a child window or not.  If so I can,do Exit;
+        res = StrNew("-1");
+        goto gs_done;
+      }
+      else {
+	res=StrNew("");
+	goto gs_done;
+      }
+    }
+//<CTRL-SHIFT-ENTER> is a blank line without entry
+  } while (flags&GSF_WITH_NEW_LINE || ch!='\n' ||
+	sc&SCF_CTRL && sc&SCF_SHIFT);
+
+  doc=DocPut;
+  DocLock(doc);
+  if (flags&GSF_WITH_NEW_LINE) {
+    doc_e=doc->cur_entry;
+    do doc_e=doc_e->last;
+    while (doc_e!=doc && doc_e->type_u8!=DOCT_PMT);
+    doc_e=doc_e->next;
+    if (res=DocScanLine(doc,doc_e,NULL,&doc_e_end)) {
+      while (doc_e_end!=doc && doc_e_end->type_u8==DOCT_NEW_LINE) {
+	st2=MStrPrint("%s\n",res);
+	Free(res);
+	res=st2;
+	if (st=DocScanLine(doc,doc_e_end->next,NULL,&doc_e_end)) {
+	  st2=MStrPrint("%s%s",res,st);
+	  Free(st);
+	  Free(res);
+	  res=st2;
+	}
+      }
+    }
+  } else {
+    doc_e=doc->cur_entry;
+    do doc_e=doc_e->last;
+    while (doc_e!=doc && doc_e->type_u8!=DOCT_NEW_LINE &&
+	  doc_e->type_u8!=DOCT_PMT);
+    if (doc_e!=doc && doc_e->type_u8!=DOCT_PMT) {
+      do doc_e=doc_e->last;
+      while (doc_e!=doc && doc_e->type_u8!=DOCT_NEW_LINE &&
+	    doc_e->type_u8!=DOCT_PMT);
+    }
+    doc_e=doc_e->next;
+    res=DocScanLine(doc,doc_e,NULL);
+  }
+  DocUnlock(doc);
+gs_done:
+  "$$PT$$$$FG$$$$BG$$";
+  return res;
 }

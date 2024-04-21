@@ -18,9 +18,9 @@
   Description:
       File system related functions.
 */
-U8 cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+U8 cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
-F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
+F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive
  //or a specified mounted drive.
  //Or just return the free space, for a specific mounted drive.
@@ -107,7 +107,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //This was made primarily for templeDOS and no commands
  //will have more than two arguments and this lets me
  //save if it's valid and if it was a drv/dir/file.
- //
+ //
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
 

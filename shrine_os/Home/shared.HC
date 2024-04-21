@@ -84,7 +84,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 //I'm duplicating a lot of code here. :<
 //I want to pull out all the changes, I've made
 //to templeOS files and put them in my own files.
-//But, I need to finish templeOS v1.0 and refactor/
+//But, I need to finish templeOS v1.0 and refactor/
 //restructure the code.  Everything is a mess.
 I64 sc_x;
 U8 MyGetStr(I64 flags=0)
@@ -120,8 +120,8 @@ if (sc&SCF_CTRL && sc&SCF_ALT)
 //  if (sc&sc_x) { //Goes in the if, just hitting ctrl+alt
 //  if (sc.u8[0]==sc_x) {
   if (sc.u8[0]==sc&SCF_CTRL && sc&SCF_ALT && sc&sc_x) {
-    Adam("\"Hello\n\";");
-    debug_snd;
+//    Adam("\"Hello\n\";");
+//    debug_snd;
   }
 };
 
@@ -372,7 +372,7 @@ U64 hash_code_for(U8 *str)
 
 U0 shell_execute(U8 *cmd)
 {//Execute a templeOS shell command.
-  "\n"; ExePutS(cmd); "\n";
+  "\n"; ExePutS(cmd); "\n";
 }
 
 U0 viewer(U8 *cmd)

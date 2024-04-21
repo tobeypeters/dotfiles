@@ -133,7 +133,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  72: //cpu
       if (fc) if(flag_err(a->flags,FLG_F)) break;
-      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
+      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
 
       CPURep(fc);
       break;
@@ -151,7 +151,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 227: //mv
       if (!bav) { err_print(ERR_NF,bufa); break; }
 
-      if (type_got(v,DIR,,FALSE)) {
+      if (type_got(v,DIR,,FALSE)) {
         shell_exec("CopyTree",bufa,bufb);
         shell_exec("DelTree",bufa);
       }
@@ -223,8 +223,8 @@ $PT$$FG$$BG$    case   7: //clear
       goto error;
   }
 
-  str_zero(bufa);
-  str_zero(bufb);
+  zFree(bufa);
+  zFree(bufb);
 error:
   return res;
 }
@@ -239,8 +239,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-//  DocClear; DocMax;
-  DocMax;
+  DocClear; DocMax;
 
   "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
@@ -251,27 +250,27 @@ U8 templeDOS() {
 
   while (TRUE)
   {
+    DocBottom;
     "\n%c:%s: $$PT$$",(cur_drv),Fs->cur_dir; // Display prompt
-    input = GetStr(,,GSF_SHIFT_ESC_EXIT);
+    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+
+    if (str_cmp(input,"-1")) input=StrNew("exit");
 
     res=execute_cmd(input);
 
-    if (str_cmp(input,"exit")) break;
+    zFree(input,FALSE);
 
-    str_zero(input,FALSE);
+    if (res) break;
   }
 
-  str_zero(input);
+  zFree(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
-  return res; // 0: regular exit, 1: <shift>+<esc>
+  return res;
 }
 
-//U0 stop_ctrl_alt_x()
-//{//Until Ifigure out how to trap it properly.
-//  XTalk(Fs,"exit\n");
-//}
+U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
 
@@ -287,7 +286,7 @@ MenuPush(
 );
 
 
-//Fs->task_end_cb=&stop_ctrl_alt_x;
+Fs->task_end_cb=&stop_ctrl_alt_x;
 
 Cd;prev_dir=StrNew(Fs->cur_dir);
 

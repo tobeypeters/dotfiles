@@ -293,7 +293,7 @@ U8 execute_cmd(U8 *cmd) {
 //DrvMap;
 
 
-  I64 at = seg_count(cmd),
+  I64 at = seg_count(cmd),
        i = 0;
 
   U8 *orig_cmd = cmd;
@@ -487,7 +487,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 33: //mem
         viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
+                MemPageRep;\"\n\";
                ");
 
         break;

@@ -13,7 +13,7 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
+
 /*strings.HC
   Description:
       String related functions.
@@ -74,13 +74,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 }
 
 U64 str_len(U8 *str) return StrLen(str);
-U0 str_zero(U8 *str,Bool free=TRUE)
-{//Memset a string
-  MemSet(str,'\0',sizeof(str));
-  if (free) Free(str);
-  return;
-}
-
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
