@@ -18,14 +18,14 @@
   Description:
       Error message definitions and print routine.
 */
-#define ERR_ARGC        "Invalid number of arguments provided"
+#define ERR_ARGC        "Invalid number of arguments provided"
 #define ERR_FLGC        "Invalid number of options provided"
 #define ERR_FLGI        "Invalid option provided"
 #define ERR_FILEI       "Invalid filename"
 
 #define ERR_NF          "Not found"
 
-#define ERR_DRVIU       "Invalid or unmounted drive"
+#define ERR_DRVIU       "Invalid or unmounted drive"
 
 #define ERR_DRV_SPEC    "Drive was specified"
 #define ERR_DIR_SPEC    "Directory was specified"

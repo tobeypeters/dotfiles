@@ -28,7 +28,6 @@ U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
   if (title) StrCpy(Fs->task_title,title);
   return;
 }
-
 Bool I64_IN(I64 inval,...)
 {//Check to see if an I64 is in a given argv list.
   U64 i=0;
@@ -40,16 +39,17 @@ Bool I64_IN(I64 inval,...)
   }
   return FALSE;
 }
-
 U8 tern(Bool condition, U64 *first, U64 *second)
 {//Ternary operator like function.
   if (condition) return first;
 
   return second;
 }
-
 U8 arg_str(U8 **args,U64 cnt)
-{
+{//Build a comma seperated str, from a list of arguments.
+ //Automatically adds quotes around them.
+ //Prefacing an argument with NQ, will keep the next argument 
+ //from being quoted.
   U64 i=0,
       s=cnt;
 
@@ -58,20 +58,32 @@ U8 arg_str(U8 **args,U64 cnt)
 
   U8 *buf=CAlloc(sizeof(U8)*s+10);
 
+  Bool nq=FALSE;
   for(i=0;i<cnt;i++)
   {
-    if (args[i][0]!=34) str_cat(buf,FALSE,"\"");
-    if (i>0) str_cat(buf,FALSE,",");
-    str_cat(buf,FALSE,args[i]);
-    if (args[i][0]!=34) str_cat(buf,FALSE,"\"");
+    if (str_cmp(args[i],"NQ")) { nq=TRUE; goto continue; }
+    if (args[i][0]!=34&&!nq)
+      str_cat(buf,FALSE,"\"",args[i],"\"");
+    else { str_cat(buf,FALSE,args[i]); nq=FALSE; }
+    if (i<cnt-1) str_cat(buf,FALSE,",");
+    continue:
   }
 
   return buf;
 }
+#include "C:/Home/td/debug"
 U0 shell_exec(U8 *cmd,...)
 {//Execute a templeOS shell command.
- //Example:
- //  shell_exec("Touch","\"C:/Home/valid.HC\"","\"\"");
+  /*Examples:
+  Generate: Copy("b.HC","temp");
+  shell_exec("Copy","b.HC","temp");
+
+  Generate: Touch("filename.HC","");
+  shell_exec("Touch","filename.HC","\"\"");
+
+  Generate: MStrUtil("upperme",SUF_TO_UPPER);
+  shell_exec("MStrUtil","\"upperme\"","NQ","SUF_TO_UPPER"); */
+
   U8 *as;
 
   if (argc) as=arg_str(argv,argc);
@@ -81,14 +93,13 @@ U0 shell_exec(U8 *cmd,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-  "buf: %s\n",buf;
+  debug_prn(buf);
 
 //  "\n"; ExePutS(buf); "\n";
   Free(as);
   Free(buf);
   return;
 }
-
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
  //in "view" mode.
@@ -99,7 +110,6 @@ U0 viewer(U8 *cmd)
   PutChars(CH_CTRLY);
   return;
 }
-
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;

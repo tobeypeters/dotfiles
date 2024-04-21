@@ -73,10 +73,9 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  23: //mkdir
       if (!bav) DirMk(bufa);
-      else {
+      else
         if (type_got(v,DIR))
           err_print(ERR_DIR_EXISTS,bufa);
-      }
       break;
     case  30: //rmdir
     case 214: //rd
@@ -96,7 +95,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  35: //touch
       if (bav)
-        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
+        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");
@@ -106,31 +105,37 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (file_char(bufa)) Cd(prev_dir);
-      else {
-        if (bav) {
-          if (type_got(v,DIR)) {
-            Cd(bufa);
-            if (idx==43) ls;
-            prev_dir=StrNew(Fs->cur_dir);
-          }
-        }
-        else err_print(ERR_NF,bufa);
-      }
+      if (a->count==1) { bufb=StrNew("~"); goto cdit; }
 
-      break;
+      if (a->count==2&&fc==0)
+        if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; }
+
+      if (bav)
+        if (type_got(v,DIR)) bufb=StrNew(bufa);
+      else { err_print(ERR_NF,bufa); goto nocd; }
+
+      cdit:
+        Cd(bufb);
+        if (idx==43) ls;
+        prev_dir=StrNew(Fs->cur_dir);
+      nocd:
+        break;
     case  56: //cat
       if (bav) type_exec(v,FILE,,,"Type",bufa);
+      else err_print(ERR_NF,bufa);
       break;
     case  60: //man
-      if (bav) if (type_got(v,FILE)) Man(bufa);
+      Man(bufa);
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
               MemPageRep;\"\n\";");
       break;
     case  72: //cpu
-        CPURep(!flag_err(a->flags,FLG_F));
+      if (fc) if(flag_err(a->flags,FLG_F)) break;
+      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
+
+      CPURep(fc);
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
@@ -144,12 +149,13 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav) type_exec(v,FILE,,,"ExeFile",bufa);
       break;
     case 227: //mv
-      if (!bav) err_print(ERR_NF,bufa);
-      if (type_got(v,DIR)) {
-        CopyTree(bufa,bufb);
-        DelTree(bufa);
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+
+      if (type_got(v,DIR,,FALSE)) {
+        shell_exec("CopyTree",bufa,bufb);
+        shell_exec("DelTree",bufa);
       }
-      else Move(bufa,bufb);
+      else shell_exec("Move",bufa,bufb);
       break;
     case 158: //date
       "%D\n",Now;

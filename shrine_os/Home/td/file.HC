@@ -18,7 +18,7 @@
   Description:
       File system related functions.
 */
-U8 cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+U8 cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='', Bool ret_free=FALSE)
 {//Display free space for each mounted drive
@@ -94,12 +94,12 @@ U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
 
-  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,as);
+  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,as);
  
   Free(as);
 }
 
-Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-",LMF_EXACT)>0);
+Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb) 

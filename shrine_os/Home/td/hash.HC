@@ -25,7 +25,7 @@
 #define CMD_ARGS  5
 
 /*HASH idx, command, token min, token max,
-  validate file(s) / dir{s}, flag max */
+  flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {  7, "clear", 1, 1, 0},
   { 23, "mkdir", 2, 2, 0},
@@ -36,7 +36,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
   { 63,   "mem", 1, 1, 0},
-  { 72,   "cpu", 1, 1, 1},
+  { 72,   "cpu", 1, 2, 1},
   { 81,   "vol", 1, 1, 0},
   { 84,   "now", 1, 1, 0},
   { 86,   "run", 2, 2, 0},
@@ -58,7 +58,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 1},
   {223,    "ls", 1, 2, 1},
-  {224,    "rm", 2, 3, 1},
+  {224,    "rm", 2, 3, 1},
   {227,    "mv", 3, 3, 0},
 };
 

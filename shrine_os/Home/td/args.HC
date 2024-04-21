@@ -7,7 +7,7 @@
   and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
   subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
@@ -69,7 +69,7 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
       {
         in->flags=StrNew(in->args[p]);
         f=TRUE;goto done;
-      }
+      }
 
       if (f) StrCpy(in->args[p-1],in->args[p]);
 
@@ -77,19 +77,6 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
         p++;
     }
     if (f) MemSet(in->args[p-1],'\0',sizeof(U8)*ARG_LEN);
-
-/*    StrCpy(in->args[p-1],"dummy");
-    "\n";
-    "--------------------------\n";
-    "flags: %s\n",in->flags;
-    "--------------------------\n";
-    p=0;
-    while(*in->args[p])
-    {
-      "%d %s\n",p,in->args[p];
-      p++;
-    }
-    "\n";*/
   }
 }
 U0 init(CArgs *in)
@@ -117,7 +104,6 @@ CArgs *a=CAlloc(sizeof(CArgs));
 
 //  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
-
 
 //  a->init(a); //Clear args before each proceeding parse() call
 /*    a->parse(a,"one -TWO three four five");
