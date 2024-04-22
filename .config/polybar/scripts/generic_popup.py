@@ -88,7 +88,8 @@ popup_params: dict[str, Any] = { 'master' : my_w, 'relief' : RAISED, 'tearoff' :
 if args.menu_colors:
     mc: list[str] = args.menu_colors
 
-    popup_params.update({'bg' : dhc(mc[1]), 'fg' : mc[1], 'activebackground' : mc[2], 'activeforeground' : mc[3] })
+#    popup_params.update({'bg' : dhc(mc[1]), 'fg' : mc[1], 'activebackground' : mc[2], 'activeforeground' : mc[3] })
+    popup_params.update({'bg' : mc[0], 'fg' : mc[1], 'activebackground' : mc[2], 'activeforeground' : mc[3] })
 
 popup: Menu = Menu(**popup_params)
 
