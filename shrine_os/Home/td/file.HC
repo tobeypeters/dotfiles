@@ -52,9 +52,10 @@ F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 }
 
 Bool drv_mounted(U8 *drv)
-{//Valid mounted drive. Must be passed in 
-  if ((!drv) || 
-      (!(StrLen(drv)==2))) return FALSE; //Force format "C:"
+{//Valid mounted drive. Must be passed in
+ //Force format "C:"
+  if (StrLen(drv)!=2) return FALSE;
+  if (drv[1]!=58) return FALSE;
 
   return ToBool(Let2Drv(ToUpper(drv[0]),FALSE));
 }
@@ -94,7 +95,7 @@ U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
 
-  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,as);
+  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,,as);
  
   Free(as);
 }
@@ -107,12 +108,13 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //This was made primarily for templeDOS and no commands
  //will have more than two arguments and this lets me
  //save if it's valid and if it was a drv/dir/file.
- //
+ //
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
 
+
   res.u8[2]=drv_mounted(ddfa);
-  res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
+  res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
   res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
 
@@ -121,6 +123,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
   res.u8[6]=IsDir(ddfb);res.u8[6]=(res.u8[6]&(res.u8[5]^1));
   res.u8[7]=FileFind(ddfb);res.u8[7]=(res.u8[7]&(res.u8[6]^1));
   res.u8[1]=res.u8[5]|res.u8[6]|res.u8[7];
+
 
   return res;
 }
@@ -257,7 +260,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "\n$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,
@@ -304,7 +307,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     }
     entry=start;
 
-    "%11d File(s) %10d byte(s)\n%11d Dir(s)\n",fc,bc,dc;
+    "%11d File(s) %10d byte(s)\n%11d Dir(s)",fc,bc,dc;
 
     DirTreeDel(entry);
   }

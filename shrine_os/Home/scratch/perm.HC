@@ -13,8 +13,8 @@ Bool NextPermutation(U8 *segs) {
   if (i <= 0) return FALSE;
 
   I64 j = length;
-  while (segs[j] <= segs[i - 1]) j--;
-
+  while (segs[j] <= segs[i - 1]) j--;
+
   SwapU8(&segs[i - 1], &segs[j]);
 
   j = length;

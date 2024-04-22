@@ -71,20 +71,24 @@ U8 arg_str(U8 **args,U64 cnt)
 
   return buf;
 }
-//#include "C:/Home/td/debug"
-U0 shell_exec(U8 *cmd,...)
+#include "C:/Home/td/debug"
+U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:
   Generate: Copy("b.HC","temp");
-  shell_exec("Copy","b.HC","temp");
+  shell_exec("Copy",,"b.HC","temp");
 
   Generate: Touch("filename.HC","");
-  shell_exec("Touch","filename.HC","\"\"");
+  shell_exec("Touch",,"filename.HC","\"\"");
 
   Generate: MStrUtil("upperme",SUF_TO_UPPER);
-  shell_exec("MStrUtil","\"upperme\"","NQ","SUF_TO_UPPER"); */
+  shell_exec("MStrUtil",,"\"upperme\"","NQ","SUF_TO_UPPER"); */
+  if (!argc) return;
 
   U8 *as;
+
+//  "\n";
+  if (noparse) { ExePutS(argv[0]); goto done; }
 
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
@@ -93,12 +97,14 @@ U0 shell_exec(U8 *cmd,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-//  debug_prn(buf);
-
-  "\n"; ExePutS(buf); "\n";
+  debug_prn(buf);
+  
+//  ExePutS(buf);
   Free(as);
   Free(buf);
-  return;
+  done:
+//    "\n";
+    return;
 }
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results

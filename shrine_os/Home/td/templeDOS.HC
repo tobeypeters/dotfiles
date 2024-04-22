@@ -31,14 +31,16 @@ U8 execute_cmd(U8 *cmd) {
   I64 res,idx,v,fc;
   res=idx=v=fc=0;
 
+
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
     if (str_len(a->args[0])==2) {
-      if (a->args[0][1]==':')
+      if (a->args[0][1]==':') {
         if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
         else err_print(ERR_DRVIU,"info");
-      goto error;
+        goto error;
+      }
     }
 
     //try to "shell" execute it
@@ -112,8 +114,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       if (bav)
         if (type_got(v,DIR)) bufb=StrNew(bufa);
-      else { err_print(ERR_NF,bufa); goto nocd; }
-
+        else { err_print(ERR_NF,bufa); goto nocd; }
       cdit:
         Cd(bufb);
         if (idx==43) ls;
@@ -133,7 +134,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  72: //cpu
       if (fc) if(flag_err(a->flags,FLG_F)) break;
-      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
+      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
 
       CPURep(fc);
       break;
@@ -152,10 +153,10 @@ $PT$$FG$$BG$    case   7: //clear
       if (!bav) { err_print(ERR_NF,bufa); break; }
 
       if (type_got(v,DIR,,FALSE)) {
-        shell_exec("CopyTree",bufa,bufb);
-        shell_exec("DelTree",bufa);
+        shell_exec("CopyTree",,bufa,bufb);
+        shell_exec("DelTree",,bufa);
       }
-      else shell_exec("Move",bufa,bufb);
+      else shell_exec("Move",,bufa,bufb);
       break;
     case 158: //date
       "%D\n",Now;
@@ -198,7 +199,15 @@ $PT$$FG$$BG$    case   7: //clear
       drv_free;
       break;
     case 211: //cp
+
+      "bufa: %s bufb: %s %d %d\n",bufa,bufb,a->count,fc;
       if (bav)
+      {
+        "bav it is\n";
+      }
+
+
+/*      if (bav)
       {
         if (!flag_err(a->flags,FLG_D)) {
           type_exec(v,DIR,,,"CopyTree",bufa,bufb);
@@ -206,6 +215,9 @@ $PT$$FG$$BG$    case   7: //clear
         else type_exec(v,FILE,,,"Copy",bufa,bufb);
       }
       else err_print(ERR_NF,bufa);
+*/
+
+
       break;
     case 212: //fm
       FileMgr;
@@ -219,7 +231,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 999: //dummy
     default:
-      shell_exec(a->args[0]); //User is trying to normally run a OS command?
+      shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
       goto error;
   }
 
