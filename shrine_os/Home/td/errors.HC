@@ -18,7 +18,7 @@
   Description:
       Error message definitions and print routine.
 */
-#define ERR_ARGC        "Invalid number of arguments provided"
+#define ERR_ARGC        "Invalid number of arguments provided"
 #define ERR_FLGC        "Invalid number of options provided"
 #define ERR_FLGI        "Invalid option provided"
 #define ERR_FILEI       "Invalid filename"
@@ -37,6 +37,7 @@
 #define ERR_DIRFILEIDRV "Directory or file provided instead of a drv"
 #define ERR_DRVFILEIDIR "Drive or file provided instead of a directory"
 #define ERR_DRVDIRIFILE "Drive or directory provided instead of a file"
+#define ERR_FILEIDRVDIR "File provided instead of a drv or directory"
 
 #define ERR_UNKNOWN     "Unrecognized command provided"
 

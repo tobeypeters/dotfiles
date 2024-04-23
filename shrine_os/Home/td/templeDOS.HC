@@ -107,16 +107,19 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (a->count==1) { bufb=StrNew("~"); goto cdit; }
-
+      if (a->count==1) { bufb=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
-        if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; }
+        if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; } //-
+      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto root; } //::
 
-      if (bav) {
-        if (type_got(v,DIR)){ bufb=StrNew(bufa); }
-      }
-      else { err_print(ERR_NF,bufa); goto nocd; }
-      prev_dir=StrNew(Fs->cur_dir);
+      if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
+
+      if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
+      
+      bufb=StrNew(bufa);
+ 
+      root:
+        prev_dir=StrNew(Fs->cur_dir);
       cdit:
         Cd(bufb);
         if (idx==43) ls;
@@ -202,11 +205,10 @@ $PT$$FG$$BG$    case   7: //clear
     case 211: //cp
       if (!bav) { err_print(ERR_NF,bufa); break; }
 
-      "bufa: %s bufb: %s %d %d\n",bufa,bufb,a->count,fc;
       if (fc) {
         if (flag_err(a->flags,FLG_D)) break;
         type_exec(v,DIR,,,"CopyTree",bufa,bufb);
-      }
+      }
       else type_exec(v,FILE,,,"Copy",bufa,bufb);
 
       break;

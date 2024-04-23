@@ -1,131 +1,161 @@
-$FG,2$templeDOS$FG$	$IV,1$  General Commands Manual  $IV,0$
+templeDOS	$IV,1$  General Commands Manual  $IV,0$
 
 Command	Description
 ---------------------------
-cat	Display a FILE to standard output.
-	$FG,2$usage$FG$: cat [filename]
+$IV,1$cat:$IV,0$
+	Display a FILE to standard output.
+	usage: cat [filename]
 
-cd,	Change the current working directory, to
-cdd	your HOME directory, a specified directory,
+$IV,1$cd, cdd:$IV,0$
+	Change the current working directory, to
+	your HOME directory, a specified directory,
 	or to a different mounted drive.
 
 	Issuing cdd, instead of cd, will also display
 	the contents of the current directory.
 
-	$FG,2$usage$FG$: cd
-	       cd [OPTION] {~}
-	       cd [DIR]
-	       cd [DRIVE]: {b|c|d| etc...}
+	usage:
+		   cd / cdd
+		   cd / cdd [DIR]
+		   cd / cdd [DRIVE LETTER]:
+		   cd / cdd [SYMBOL {-, ~, ::}]:
 
-	$FG,2$usage$FG$: cdd
-	       cdd [OPTION] {~}
-	       cdd [DIR]
-	       cdd [DRIVE:] {b|c|d| etc...}
+	symbols:
+	   ~   Causes the same effects as
+		   providing no options. It will
+		   change the working directory,
+		   to your HOME directory.
+	   -   Changes the working directory,
+		   to the PREVIOUS directory, you were in.
+	   ::  Changes the working directory,
+		   To the ROOT, of the boot drive.
 
-	$FG,3$Options:$FG$
-	   ~	    Causes the same effects as
-		    providing no options. It will 
-		    change the working directory,
-		    to your HOME directory.
+$IV,1$clear:$IV,0$
+	Clear the terminal screen.
+	usage: clear
 
-clear	Clear the terminal screen.
-	$FG,2$usage$FG$: clear
+$IV,1$cp:$IV,0$
+	Copy files and directories,
+	from a SOURCE to a DESTINATION
+	usage: cp [OPTION] {-d} [SOURCE] [DESTINATION]
 
-cp	Copy files and directories.
-	$FG,2$usage$FG$: cp [OPTION] {-d} [SOURCE] [DESTINATION]
+	Options:
+	   -d	    Directory  copy
 
-	$FG,3$Options:$FG$
-	   -d	    Directory copy
+$IV,1$cpu:$IV,0$
+	Display cpu info.
+	usage: cpu [OPTION] {-f}
 
-cpu	Display cpu info.
-	$FG,2$usage$FG$: cpu [OPTION] {-f}
-
-	$FG,2$Options$FG$:
+	Options:
 	   -f	    Detailed cpu info
 
-date	Display the current date.
-	$FG,2$usage$FG$: date
+$IV,1$date:$IV,0$
+	Display the current date.
+	usage: date
 
-df	Display currently mounted drives.
-	$FG,2$usage$FG$: df
+$IV,1$df:$IV,0$
+	Display currently mounted drives.
+	usage: df
 
-dump	Display the disassembly "hex dump" of a file.
-	$FG,2$usage$FG$: dump [FILENAME]
+$IV,1$dump:$IV,0$
+	isplay the disassembly "hex dump" of a file.
+	usage: dump [FILENAME]
 
-ed	Edit / Create text files.
-	$FG,2$usage$FG$: ed [FILENAME]
+$IV,1$ed:$IV,0$
+	Edit / Create text files.
+	usage: ed [FILENAME]
 
-exit	Close the current task window.
-	$FG,2$usage$FG$: exit
+$IV,1$exit, quit:$IV,0$
+	Cause normal process termination of templeDOS.
+	usage: exit
+	usage: quit
 
-fm,	Displays a ls expanded treeview, of the
-tree	current or specified directory.
-	$FG,2$usage$FG$: ls
+$IV,1$fm:$IV,0$
+	Opens the templeOS FileManager.
+	usage: fm
+
+$IV,1$tree:$IV,0$
+	Displays a ls expanded treeview, of the
+	current or specified directory.
+	usage: ls
 	       ls [DIR]
 
-	$FG,2$DEFAULT$FG$: current directory
+	default: Current directory
 
-grep	Recursively search files and print any lines
+$IV,1$grep:$IV,0$
+	Recursively search files and print any lines
 	which contain the specified string.
-	$FG,2$usage$FG$: grep [FILENAME]
+	usage: grep [FILENAME]
 
-help	Displays this list of TempleDOS commands.
-	$FG,2$usage$FG$: help
+$IV,1$help:$IV,0$
+	Displays this list of TempleDOS commands.
+	usage: help
 
-ls	List directory contents.
-	$FG,2$usage$FG$: ls
+$IV,1$ls:$IV,0$
+	List directory contents.
+	usage: ls
 	       ls [DIR]
 
-	$FG,2$DEFAULT$FG$: current directory
+	default: Current directory
 
-man	Display the source code for a specified 
-	internal TempleOS command. Like $FG,2$Dir;$FG$ - $FG,2$DrvRep;, etc.
-	$FG,2$usage$FG$: man [COMMAND]
+$IV,1$man:$IV,0$
+	Display the source code for a specified
+	internal TempleOS command. Like Dir;, DrvRep;, etc...
+	usage: man [COMMAND]
 
-mem	Display a "detailed" memory representation.
-	$FG,2$usage$FG$: mem
+$IV,1$mem:$IV,0$
+	Display a "detailed" memory representation.
+	usage: mem
 
-mkdir	Make directories.
-	$FG,2$usage$FG$: mkdir [DIR]
+$IV,1$mkdir:$IV,0$
+	Create a directory, if it doesn't already exist.
+	usage: mkdir [DIR]
 
-more	Display a FILE to stdout, one screen at a time.
-	$FG,2$usage$FG$: more [FILENAME]
+$IV,1$more:$IV,0$
+	Display a FILE to stdout, one screen at a time.
+	usage: more [FILENAME]
 
-mv	Move (rename) files.
-	$FG,2$usage$FG$: mv [SOURCE] [DESTINATION]
+$IV,1$mv:$IV,0$
+	Rename SOURCE to DESTINATION, or move SOURCE to DESTINATION.
+	usage: mv [SOURCE] [DESTINATION]
 
-now	Display the current date and time.
-	$FG,2$usage$FG$: now
+$IV,1$now:$IV,0$
+	Display the current date and time.
+	usage: now
 
-quit	Cause normal process termination of templeDOS.
-	$FG,2$usage$FG$: quit
+$IV,1$rd, rm, rmdir:$IV,0$
+	Remove a directory.
+	usage: rd [DIR]
+	usage: rmdir [DIR]
 
-rd, 	Remove a directory.
-rmdir	$FG,2$usage$FG$: rd [DIR]
-	$FG,2$usage$FG$: rmdir [DIR]
-
-rm	Remove files or directories.
-	$FG,2$usage$FG$: rm [FILENAME]
+	Remove files or directories.
+	usage: rm [FILENAME]
 	       rm [OPTION] {-d} [DIR]
 
-	$FG,2$Options$FG$:
+	Options:
 		 -d	Directory remove
 
-run	Execute source code files.
-	$FG,2$usage$FG$: run [FILENAME]
+$IV,1$run:$IV,0$
+	Execute source code files.
+	usage: run [FILENAME]
 
-tasks	Report current tasks on all cores.
-	$FG,2$usage$FG$: tasks
+$IV,1$tasks:$IV,0$
+	Report current tasks on all cores.
+	usage: tasks
 
-time	Display the current time.
-	$FG,2$usage$FG$: time
+$IV,1$time:$IV,0$
+	Display the current time.
+	usage: time
 
-touch	Create an empty file. TempleOS also has a
-	<$FG$$FG,2$touch$FG$> command which can update the date & file attributes.
-	$FG,2$usage$FG$: touch [FILENAME]
+$IV,1$touch:$IV,0$
+	Update the access and modification times of the FILENAME to the current time.
+	A FILENAME argument that does not exist is created.
+	usage: touch [FILENAME]
 
-view	Display a FILE to stdout, in a viewing window.
-	$FG,2$usage$FG$: view [FILENAME]
+$IV,1$view:$IV,0$
+	Display a FILE to stdout, in a viewing window.
+	usage: view [FILENAME]
 
-vol	Displays volume information of the current drive.
-	$FG,2$usage$FG$: vol
+$IV,1$vol:$IV,0$
+	Displays volume information of the current drive.
+	usage: vol
