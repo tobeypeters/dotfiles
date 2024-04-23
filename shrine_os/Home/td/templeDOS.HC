@@ -18,6 +18,7 @@
   Description:
       Command-line interpreter for TempleOS.
 */
+#include "C:/Home/td/debug"
 U8 *help_file="~/templeDOS.DD";
 
 U8 *prev_dir=NULL;
@@ -40,7 +41,7 @@ U8 execute_cmd(U8 *cmd) {
         if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
         else err_print(ERR_DRVIU,"info");
         goto error;
-      }
+      }
     }
 
     //try to "shell" execute it
@@ -84,7 +85,6 @@ $PT$$FG$$BG$    case   7: //clear
     case 224: //rm
       if (!bav) { err_print(ERR_NF,bufa); break; }
 
-
       if (I64_IN(idx,30,214) || (idx==224&&fc))
       {
         if (idx==224)
@@ -112,13 +112,14 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; }
 
-      if (bav)
-        if (type_got(v,DIR)) bufb=StrNew(bufa);
-        else { err_print(ERR_NF,bufa); goto nocd; }
+      if (bav) {
+        if (type_got(v,DIR)){ bufb=StrNew(bufa); }
+      }
+      else { err_print(ERR_NF,bufa); goto nocd; }
+      prev_dir=StrNew(Fs->cur_dir);
       cdit:
         Cd(bufb);
         if (idx==43) ls;
-        prev_dir=StrNew(Fs->cur_dir);
       nocd:
         break;
     case  56: //cat
@@ -199,24 +200,14 @@ $PT$$FG$$BG$    case   7: //clear
       drv_free;
       break;
     case 211: //cp
+      if (!bav) { err_print(ERR_NF,bufa); break; }
 
       "bufa: %s bufb: %s %d %d\n",bufa,bufb,a->count,fc;
-      if (bav)
-      {
-        "bav it is\n";
-      }
-
-
-/*      if (bav)
-      {
-        if (!flag_err(a->flags,FLG_D)) {
-          type_exec(v,DIR,,,"CopyTree",bufa,bufb);
-        }
-        else type_exec(v,FILE,,,"Copy",bufa,bufb);
-      }
-      else err_print(ERR_NF,bufa);
-*/
-
+      if (fc) {
+        if (flag_err(a->flags,FLG_D)) break;
+        type_exec(v,DIR,,,"CopyTree",bufa,bufb);
+      }
+      else type_exec(v,FILE,,,"Copy",bufa,bufb);
 
       break;
     case 212: //fm
@@ -296,7 +287,6 @@ MenuPush(
   "  FileMgr(,CH_CTRLD);"
   "}"
 );
-
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
 

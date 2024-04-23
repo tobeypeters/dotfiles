@@ -71,7 +71,7 @@ U8 arg_str(U8 **args,U64 cnt)
 
   return buf;
 }
-#include "C:/Home/td/debug"
+#include "C:/Home/td/debug"
 U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:
@@ -113,7 +113,7 @@ U0 viewer(U8 *cmd)
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
   DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);
+  PutChars(CH_CTRLY);
   return;
 }
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
