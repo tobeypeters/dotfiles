@@ -311,7 +311,7 @@ U8 execute_cmd(U8 *cmd) {
 
   Bool tf = FALSE; //General use true/false flag.
 
-  cur_IDX = indexOf(seg_peek);
+  cur_IDX = indexOf(seg_peek);
 
   U8  *buffer = seg_peek,
      *buffera = tern(at>1,seg_peek(1),'\0'),
@@ -487,7 +487,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       case 33: //mem
         viewer("MemRep;\"\n\";
-                MemPageRep;\"\n\";
+                MemPageRep;\"\n\";
                ");
 
         break;

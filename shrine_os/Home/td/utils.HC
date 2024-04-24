@@ -17,7 +17,7 @@
 /*utils.HC
   Description:
       Miscellaneous functions.
-*/
+*/
 Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
@@ -86,7 +86,6 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   if (!argc) return;
 
   U8 *as;
-
 //  "\n";
   if (noparse) { ExePutS(argv[0]); goto done; }
 
@@ -113,7 +112,7 @@ U0 viewer(U8 *cmd)
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
   DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);
+  PutChars(CH_CTRLY);
   return;
 }
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)

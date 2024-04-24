@@ -18,8 +18,9 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-#include "C:/Home/td/debug"
-U8 *help_file="~/templeDOS.DD";
+//Was gonna put the help file in "::/Doc".
+U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("templeDOS.DD"));
+str_cat(help_file,,__DIR__,"templeDOS.DD");
 
 U8 *prev_dir=NULL;
 
@@ -79,6 +80,7 @@ $PT$$FG$$BG$    case   7: //clear
       else
         if (type_got(v,DIR))
           err_print(ERR_DIR_EXISTS,bufa);
+
       break;
     case  30: //rmdir
     case 214: //rd
@@ -101,9 +103,11 @@ $PT$$FG$$BG$    case   7: //clear
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");
+
       break;
     case  38: //tasks
       TaskRep;
+
       break;
     case  43: //cdd
     case 199: //cd
@@ -114,7 +118,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
 
-      if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
+      if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
       bufb=StrNew(bufa);
  
@@ -126,8 +130,8 @@ $PT$$FG$$BG$    case   7: //clear
       nocd:
         break;
     case  56: //cat
-      if (bav) type_exec(v,FILE,,,"Type",bufa);
-      else err_print(ERR_NF,bufa);
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+      type_exec(v,FILE,,,"Type",bufa);
       break;
     case  60: //man
       Man(bufa);
@@ -135,23 +139,29 @@ $PT$$FG$$BG$    case   7: //clear
     case  63: //mem
       viewer("MemRep;\"\n\";
               MemPageRep;\"\n\";");
+
       break;
     case  72: //cpu
       if (fc) if(flag_err(a->flags,FLG_F)) break;
       if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
 
       CPURep(fc);
+
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
         "Volume in drive %c: has no label.\n",cur_drv;
         "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+
       break;
     case  84: //now
       "%D %T\n",Now,Now;
+
       break;
     case  86: //run
-      if (bav) type_exec(v,FILE,,,"ExeFile",bufa);
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+      type_exec(v,FILE,,,"ExeFile",bufa);
+
       break;
     case 227: //mv
       if (!bav) { err_print(ERR_NF,bufa); break; }
@@ -160,47 +170,63 @@ $PT$$FG$$BG$    case   7: //clear
         shell_exec("CopyTree",,bufa,bufb);
         shell_exec("DelTree",,bufa);
       }
-      else shell_exec("Move",,bufa,bufb);
+      else {
+        if (type_got(v,DRV,,FALSE)) {
+          err_print(ERR_DRVIDIRFILE,bufa);
+          break;
+        }
+        shell_exec("Move",,bufa,bufb);
+      }
+
       break;
     case 158: //date
       "%D\n",Now;
       break;
     case 169: //help
-      if (bav) {
-          viewer(str_cat(bufa,,"Type(\"",
-                        help_file,"\");"));
-      }
-      else err_print(ERR_NF,help_file);
+      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
+      if (bav) viewer(str_cat(bufa,,
+                              "Type(\"",help_file,"\");"));
       break;
     case 174: //grep
       F(bufa);
+
       break;
     case 177: //time
       "%T\n",Now;
+
       break;
     case 179: //more
       if (!bav) { err_print(ERR_NF,bufa); break; }
-      if (type_got(v,FILE)) More(bufa);
+      type_exec(v,FILE,,,"More",bufa);
+
       break;
     case 182: //dump
       Dump(bufa);
+
       break;
     case 184: //term
       User;
+
       break;
     case 186: //exit
     case 195: //quit
       res=1;
+
       break;
     case 187: //view
+      if (!bav) { err_print(ERR_NF,bufa); break; }
+      type_exec(v,FILE,,,"viewer",str_cat(bufb,,"Type(\"",bufa,"\");"));
+
       break;
     case 201: //ed
       if (filenameOK(bufa)) PopUpEd(bufa);
       else err_print(ERR_FILEI,"info");
+
       break;
     case 203: //df
       DrvRep; "\n";
       drv_free;
+
       break;
     case 211: //cp
       if (!bav) { err_print(ERR_NF,bufa); break; }
@@ -214,6 +240,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 212: //fm
       FileMgr;
+
       break;
     case 176: //tree
     case 223: //ls
@@ -221,8 +248,9 @@ $PT$$FG$$BG$    case   7: //clear
         if (a->count==1) bufa=StrNew(".");
         ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
       }
+
       break;
-    case 999: //dummy
+    case 999:
     default:
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
       goto error;
