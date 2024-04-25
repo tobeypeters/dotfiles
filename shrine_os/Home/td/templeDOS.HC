@@ -22,7 +22,7 @@
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("templeDOS.DD"));
 str_cat(help_file,,__DIR__,"templeDOS.DD");
 
-U8 *prev_dir=NULL;
+U8 *prev_dir='\0';
 
 U8 execute_cmd(U8 *cmd) {
   a->init(a);
@@ -33,12 +33,13 @@ U8 execute_cmd(U8 *cmd) {
   I64 res,idx,v,fc;
   res=idx=v=fc=0;
 
-
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
     if (str_len(a->args[0])==2) {
       if (a->args[0][1]==':') {
+        if (a->count>1) { err_print(ERR_ARGC); goto error; }
+
         if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
         else err_print(ERR_DRVIU,"info");
         goto error;
@@ -53,16 +54,15 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
-  if (!(I64_between(a->count,c->data[idx][2],c->data[idx][3]))) {
+  if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
     err_print(ERR_ARGC); goto error; }
 
-  if (!(I64_between(fc,0,c->data[idx][4]))) {
+  if (!I64_between(fc,0,c->data[idx][4])) {
     err_print(ERR_FLGC); goto error; }
 
   U8 *bufa, *bufb;
-  bufa=bufb=NULL;
-  a->next(a);bufa=StrNew(a->get_current(a));
-  a->next(a);bufb=StrNew(a->get_current(a));
+  a->next(a);bufa=a->get_current(a);
+  a->next(a);bufb=a->get_current(a);
 
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
@@ -85,8 +85,8 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (!bav) { err_print(ERR_NF,bufa); break; }
-
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
       if (I64_IN(idx,30,214) || (idx==224&&fc))
       {
         if (idx==224)
@@ -114,7 +114,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) { bufb=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; } //-
-      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto root; } //::
+      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto prevdir; } //::
 
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
 
@@ -122,7 +122,7 @@ $PT$$FG$$BG$    case   7: //clear
       
       bufb=StrNew(bufa);
  
-      root:
+      prevdir:
         prev_dir=StrNew(Fs->cur_dir);
       cdit:
         Cd(bufb);
@@ -130,11 +130,15 @@ $PT$$FG$$BG$    case   7: //clear
       nocd:
         break;
     case  56: //cat
-      if (!bav) { err_print(ERR_NF,bufa); break; }
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
+
       type_exec(v,FILE,,,"Type",bufa);
+
       break;
     case  60: //man
       Man(bufa);
+
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
@@ -159,12 +163,14 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  86: //run
-      if (!bav) { err_print(ERR_NF,bufa); break; }
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
       type_exec(v,FILE,,,"ExeFile",bufa);
 
       break;
     case 227: //mv
-      if (!bav) { err_print(ERR_NF,bufa); break; }
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
 
       if (type_got(v,DIR,,FALSE)) {
         shell_exec("CopyTree",,bufa,bufb);
@@ -196,8 +202,9 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 179: //more
-      if (!bav) { err_print(ERR_NF,bufa); break; }
-      type_exec(v,FILE,,,"More",bufa);
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
+      type_exec(v,FILE,,,"More",bufa);
 
       break;
     case 182: //dump
@@ -214,7 +221,8 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 187: //view
-      if (!bav) { err_print(ERR_NF,bufa); break; }
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
       type_exec(v,FILE,,,"viewer",str_cat(bufb,,"Type(\"",bufa,"\");"));
 
       break;
@@ -229,7 +237,8 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 211: //cp
-      if (!bav) { err_print(ERR_NF,bufa); break; }
+//      if (!bav) { err_print(ERR_NF,bufa); break; }
+      if (!bav) goto nferror;
 
       if (fc) {
         if (flag_err(a->flags,FLG_D)) break;
@@ -255,10 +264,16 @@ $PT$$FG$$BG$    case   7: //clear
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
       goto error;
   }
+  goto free;
 
+nferror:
+  err_print(ERR_NF,bufa);
+
+free:
   zFree(bufa);
   zFree(bufb);
 error:
+  return res;
   return res;
 }
 
