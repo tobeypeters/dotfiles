@@ -69,6 +69,8 @@ CBGR48 gr_palette_custom[COLORS_NUM];
 */
 U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
 {//Get a color: bgr->r = ToI64(r*255);
+// Example: rgb2_CBGR48(&gr_palette_custom[GREEN],0,255,0, -0.65);
+
   I64 clamp_max = 65025;
 
   bgr->r = ClampI64(ToI64(r*(1+adj_percent)*255),0,clamp_max);
@@ -88,25 +90,23 @@ U0 default_theme()
   PaletteSetStd;
 }
 
-
 U0 theme1()
 {
   rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
   rgb2_CBGR48(&gr_palette_custom[BLUE],200,200,200);
-  rgb2_CBGR48(&gr_palette_custom[GREEN],0,255,0, -0.65);
-  rgb2_CBGR48(&gr_palette_custom[CYAN],128,128,0);
+  rgb2_CBGR48(&gr_palette_custom[GREEN],18,100,90);
+  rgb2_CBGR48(&gr_palette_custom[CYAN],71,156,185);
   rgb2_CBGR48(&gr_palette_custom[RED],200,200,200);
   rgb2_CBGR48(&gr_palette_custom[PURPLE],253,246,227);
-  rgb2_CBGR48(&gr_palette_custom[BROWN],215,255,0);
-  rgb2_CBGR48(&gr_palette_custom[LTGRAY],194,70,65);
+  rgb2_CBGR48(&gr_palette_custom[BROWN],255,234,0);
+  rgb2_CBGR48(&gr_palette_custom[LTGRAY],255,0,89);
   rgb2_CBGR48(&gr_palette_custom[LTBLUE],95,215,255);
   rgb2_CBGR48(&gr_palette_custom[LTGREEN],175,255,175);
-  rgb2_CBGR48(&gr_palette_custom[LTCYAN],135,255,255);
+  rgb2_CBGR48(&gr_palette_custom[LTCYAN],0,255,255);
   rgb2_CBGR48(&gr_palette_custom[LTRED],251,73,52);
   rgb2_CBGR48(&gr_palette_custom[LTPURPLE],0,255,255);
   rgb2_CBGR48(&gr_palette_custom[YELLOW],18,18,18);
-  rgb2_CBGR48(&gr_palette_custom[WHITE],24,39,54,-.50);
-//  rgb2_CBGR48(&gr_palette_custom[WHITE],24,39,54,-.93);
+  rgb2_CBGR48(&gr_palette_custom[WHITE],24,39,54,-.75);
 }
 
 theme1;

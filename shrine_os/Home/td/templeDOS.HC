@@ -41,7 +41,7 @@ U8 execute_cmd(U8 *cmd) {
         if (a->count>1) { err_print(ERR_ARGC); goto error; }
 
         if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
-        else err_print(ERR_DRVIU,a->args[0]);
+        else err_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
     }
