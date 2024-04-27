@@ -311,7 +311,7 @@ U8 execute_cmd(U8 *cmd) {
 
   Bool tf = FALSE; //General use true/false flag.
 
-  cur_IDX = indexOf(seg_peek);
+  cur_IDX = indexOf(seg_peek);
 
   U8  *buffer = seg_peek,
      *buffera = tern(at>1,seg_peek(1),'\0'),
@@ -339,7 +339,7 @@ U8 execute_cmd(U8 *cmd) {
       case 4: //ls
         "\n"; ls(tern(tc==1,".",buffera));
 
-        break;
+        break;
       case 8: //mv
         if (valid_files("10",buffera,bufferb)) { //Don't allow override.
           if (IsDir(buffera)) {
