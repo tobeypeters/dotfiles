@@ -34,7 +34,7 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 #define FLG_K 0x0000400 //k
 #define FLG_L 0x0000800 //l
 #define FLG_M 0x0001000 //m
-#define FLG_N 0x0002000 //n
+#define FLG_N 0x0002000 //n
 #define FLG_O 0x0004000 //o
 #define FLG_P 0x0008000 //p
 #define FLG_Q 0x0010000 //q
@@ -48,8 +48,9 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 #define FLG_Y 0x1000000 //y
 #define FLG_Z 0x2000000 //z
 
-U64 flags_val(U8 *flag)
-{
+U64 flags_val(U8 *flag)
+{//NOTE: Number of flags is restricted to 7.
+ //      Flags are valid, only if it's a letter.
   U64 res=0,
         i=0;
 
@@ -58,7 +59,7 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
   flag=MStrUtil(flag,SUF_TO_UPPER);
 
   flag++;
-  while (*flag)
+  while (*flag&&i<7)
   {
     res.u8[i]=I64_between(*flag,'A','Z');
 
@@ -68,10 +69,17 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 
   return res;
 }
+/*U64 cnt=flags_val("-ABCD9FG");
+"\n";
+U8 *buffer=CAlloc(sizeof(U8)*8);
+debug_prn(StrPrint(buffer,"%d",cnt.u8[7]));
+Free(buffer);
+"\n";
+*/
 U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
-{ //Stripped down version of ScanFlags. '-'flags only
-  //'-' is '+' and multiple flags are combined.
-  //templeOS: +f+a  myStyle: -fa
+{//Stripped down version of ScanFlags. '-'flags only
+ //'-' is '+' and multiple flags are combined.
+ //templeOS: +f+a  myStyle: -fa
   I64 i=0;
 
   U8 *buf=CAlloc(sizeof(U8)*2);

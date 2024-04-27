@@ -41,7 +41,7 @@ U8 execute_cmd(U8 *cmd) {
         if (a->count>1) { err_print(ERR_ARGC); goto error; }
 
         if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
-        else err_print(ERR_DRVIU,"info");
+        else err_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
     }
@@ -63,14 +63,14 @@ U8 execute_cmd(U8 *cmd) {
   U8 *bufa, *bufb;
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
-
+
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
 
   bav=(bav|(a->count==1));
 
   switchit:  
-  switch(idx)
+  switch[idx] //idx should never be outside the range of this switch
   {
 $PT$$FG$$BG$    case   7: //clear
       DocClear;
@@ -222,7 +222,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 201: //ed
       if (filenameOK(bufa)) PopUpEd(bufa);
-      else err_print(ERR_FILEI,"info");
+      else err_print(ERR_FILEI,bufa);
 
       break;
     case 203: //df
@@ -249,6 +249,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (bav||((a->count==2)&&(fc==1))) {
         if (a->count==1) bufa=StrNew(".");
         ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
+        "\n";
       }
 
       break;
