@@ -95,10 +95,11 @@ Bool IsDir(U8 *dir_name)
   Bool res=FALSE;
 
   U64 len=StrLen(dir_name);
+  if (!StrCmp(dir_name,"")) goto cleanup;
   if (!len) goto cleanup;
   if (len>=2) { 
    if (dir_name[1]==':') {
-     if (!DrvIsWritable(dir_name[0])) goto cleanup;
+     if (!DrvIsWritable(dir_name[0])) goto cleanup;
 
      U64 drv=ToUpper(dir_name[0]);
      if (!('A'<=drv<='Z')) goto cleanup;

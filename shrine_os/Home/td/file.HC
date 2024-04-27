@@ -18,7 +18,7 @@
   Description:
       File system related functions.
 */
-U8 cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive
@@ -103,7 +103,7 @@ U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 
-U64 files_valid(U8 *ddfa,U8 *ddfb) 
+U64 files_valid(U8 *ddfa,U8 *ddfb)
 {//Validate two given file arguments.
  //This was made primarily for templeDOS and no commands
  //will have more than two arguments and this lets me
@@ -112,12 +112,10 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
 
-
   res.u8[2]=drv_mounted(ddfa);
-  res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
+  res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
   res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
-
 
   res.u8[5]=drv_mounted(ddfb);
   res.u8[6]=IsDir(ddfb);res.u8[6]=(res.u8[6]&(res.u8[5]^1));
@@ -129,9 +127,9 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
 }
 /*I64 ret=0;
 
-//ret=files_valid("c:","~");
+//ret=files_valid(NULL,NULL);
 //ret=files_valid("","~/valid.HC");
-ret=files_valid("~","~/valid.HC");
+//ret=files_valid("~","~/valid.HC");
 //ret=files_valid("1","~/valid.HC");
 //ret=files_valid("9:","~/validu.HC");
 //ret=files_valid("C:/Home","~/valid.HC");

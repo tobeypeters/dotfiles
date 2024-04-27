@@ -63,7 +63,7 @@ U8 execute_cmd(U8 *cmd) {
   U8 *bufa, *bufb;
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
-
+
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
 
@@ -85,7 +85,6 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
       if (I64_IN(idx,30,214) || (idx==224&&fc))
       {
@@ -114,7 +113,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) { bufb=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; } //-
-      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto prevdir; } //::
+      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto prevdir; } //::
 
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
 
@@ -130,7 +129,6 @@ $PT$$FG$$BG$    case   7: //clear
       nocd:
         break;
     case  56: //cat
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
 
       type_exec(v,FILE,,,"Type",bufa);
@@ -163,13 +161,11 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  86: //run
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
       type_exec(v,FILE,,,"ExeFile",bufa);
 
       break;
     case 227: //mv
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
 
       if (type_got(v,DIR,,FALSE)) {
@@ -202,7 +198,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 179: //more
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
       type_exec(v,FILE,,,"More",bufa);
 
@@ -221,7 +216,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 187: //view
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
       type_exec(v,FILE,,,"viewer",str_cat(bufb,,"Type(\"",bufa,"\");"));
 
@@ -237,7 +231,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 211: //cp
-//      if (!bav) { err_print(ERR_NF,bufa); break; }
       if (!bav) goto nferror;
 
       if (fc) {

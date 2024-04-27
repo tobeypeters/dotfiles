@@ -52,8 +52,7 @@ $LK,"DirTreeDel",A="MN:DirTreeDel"$() or $LK,"DirTreeDel2",A="MN:DirTreeDel2"$()
 }
 
 Bool FileFind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
-{//FILEFIND....
-$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
+{//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
 // Change[Start]:
 // Author: github/tobeypeters
@@ -62,10 +61,12 @@ $LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_F
 // [+] : Start
   Bool res=FALSE;
   U64 len=StrLen(filename);
-  if (!len) goto cleanup;
+  if (!StrCmp(filename,"")) return res;
+  if (!StrCmp(filename,"/")) return TRUE;
+  if (!len) return res;
   if (len>=2) { 
    if (filename[1]==':') {
-     if (len==2) goto cleanup;
+     if (len==2) goto cleanup;
      if (!fuf_flags&FUf_NO_ATAPI_CHECK)
      {
        if (!DrvIsWritable(filename[0])) goto cleanup;
