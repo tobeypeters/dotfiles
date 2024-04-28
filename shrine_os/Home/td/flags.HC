@@ -18,8 +18,7 @@
   Description:
       Defines and handles flags.
 */
-
-DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
+DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
 
 #define FLG_A 0x0000001 //a
 #define FLG_B 0x0000002 //b
@@ -34,7 +33,7 @@ DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0
 #define FLG_K 0x0000400 //k
 #define FLG_L 0x0000800 //l
 #define FLG_M 0x0001000 //m
-#define FLG_N 0x0002000 //n
+#define FLG_N 0x0002000 //n
 #define FLG_O 0x0004000 //o
 #define FLG_P 0x0008000 //p
 #define FLG_Q 0x0010000 //q

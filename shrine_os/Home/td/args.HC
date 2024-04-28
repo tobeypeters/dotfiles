@@ -85,7 +85,7 @@ U0 init(CArgs *in)
   MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
   in->count=in->cidx=0;
 }
-U8* get_current(CArgs *in)
+U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
 

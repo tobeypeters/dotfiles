@@ -18,7 +18,7 @@
   Description:
       File system related functions.
 */
-U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive
@@ -50,7 +50,6 @@ F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
   }
   return 0;
 }
-
 Bool drv_mounted(U8 *drv)
 {//Valid mounted drive. Must be passed in
  //Force format "C:"
@@ -59,7 +58,6 @@ Bool drv_mounted(U8 *drv)
 
   return ToBool(Let2Drv(ToUpper(drv[0]),FALSE));
 }
-
 //Seemed to be Faster than IsDir(); for my case use.
 Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 
@@ -115,7 +113,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
-  res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
+  res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
 
   res.u8[5]=drv_mounted(ddfb);
   res.u8[6]=IsDir(ddfb);res.u8[6]=(res.u8[6]&(res.u8[5]^1));

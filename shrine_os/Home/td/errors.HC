@@ -33,7 +33,7 @@
 
 #define ERR_DIR_EXISTS  "Directory already exists"
 #define ERR_FILE_EXISTS "File already exists"
-#define ERR_FILE_EX_DIR "Existing file was specified instead of a non existing directory"
+#define ERR_FILE_EX_DIR "Existing file was specified instead of a non existing directory"
 
 #define ERR_DIRFILEIDRV "Directory or file provided instead of a drv"
 #define ERR_DRVFILEIDIR "Drive or file provided instead of a directory"
@@ -47,3 +47,4 @@ U0 err_print(U8 *msg, U8 *link="Usage")
 {//Print our err_msg.
   "`$FG,3$%s$FG$`: %s ...\n", link, msg;
 }
+

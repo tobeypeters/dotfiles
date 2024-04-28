@@ -17,7 +17,7 @@
 /*utils.HC
   Description:
       Miscellaneous functions.
-*/
+*/
 Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
@@ -107,7 +107,7 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 }
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
- //in "view" mode.
+ //in "view" mode.
   DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";

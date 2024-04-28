@@ -18,7 +18,6 @@
   Description:
       String related functions.
 */
-
 U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
@@ -54,8 +53,7 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 
   return res;
 }
-
-Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
+Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 {//EXpanded version of str_cmp. It can compare a string,
  //to a list of strings.
  //
@@ -74,7 +72,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 }
 
 U64 str_len(U8 *str) return StrLen(str);
-
+
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;

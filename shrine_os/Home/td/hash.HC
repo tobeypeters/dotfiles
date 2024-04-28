@@ -54,7 +54,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {199,    "cd", 1, 2, 0},
   {201,    "ed", 2, 2, 0},
   {203,    "df", 1, 1, 0},
-  {211,    "cp", 3, 4, 1},
+  {211,    "cp", 3, 4, 1},
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 1},
   {223,    "ls", 1, 2, 1},
@@ -71,7 +71,6 @@ class CHCMDS
 
   U0 (* print_arr)(CHCMDS *in);
 };
-
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   U64 hash=0,
@@ -138,7 +137,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 "help",
 "grep",
 "time",
-"tree",
+"tree",
 "more",
 "dump",
 "term",
