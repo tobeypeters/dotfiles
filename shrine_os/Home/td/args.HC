@@ -72,7 +72,7 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
       }
 
       if (f) StrCpy(in->args[p-1],in->args[p]);
-
+
       done:
         p++;
     }

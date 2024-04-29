@@ -19,7 +19,7 @@
       Command-line interpreter for TempleOS.
 */
 //Was gonna put the help file in "::/Doc".
-U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("templeDOS.DD"));
+U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/templeDOS.DD"));
 str_cat(help_file,,__DIR__,"/templeDOS.DD");
 
 U8 *prev_dir='\0';
@@ -60,7 +60,8 @@ U8 execute_cmd(U8 *cmd) {
   if (!I64_between(fc,0,c->data[idx][4])) {
     err_print(ERR_FLGC); goto error; }
 
-  U8 *bufa, *bufb;
+  U8 *bufa,*bufb,*bufe;
+
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
@@ -99,8 +100,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  35: //touch
-      if (bav)
-        type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
+      if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else err_print(ERR_FILEI,"info");
@@ -112,19 +112,19 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (a->count==1) { bufb=StrNew("~"); goto cdit; } //~
+      if (a->count==1) { bufe=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
-        if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; } //-
-      if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto prevdir; } //::
+        if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto cdit; } //-
+      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
       if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
-      bufb=StrNew(bufa);
+      bufe=StrNew(bufa);
  
       prevdir:
         prev_dir=StrNew(Fs->cur_dir);
       cdit:
-        Cd(bufb);
+        Cd(bufe);
         if (idx==43) ls;
       nocd:
         break;
@@ -138,7 +138,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
-              MemPageRep;\"\n\";");
+              MemPageRep;\"\n\";");
 
       break;
     case  72: //cpu
@@ -180,8 +180,9 @@ $PT$$FG$$BG$    case   7: //clear
       "%D\n",Now;
       break;
     case 169: //help
-      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
-      if (bav) viewer(str_cat(bufa,,
+      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
+
+      if (bav) viewer(str_cat(bufe,,
                               "Type(\"",help_file,"\");"));
       break;
     case 174: //grep
@@ -238,8 +239,8 @@ $PT$$FG$$BG$    case   7: //clear
     case 176: //tree
     case 223: //ls
       if (bav||((a->count==2)&&(fc==1))) {
-        if (a->count==1) bufa=StrNew(".");
-        ls(bufa,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
+        if (a->count==1) bufe=StrNew(".");
+        ls(bufe,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
         "\n";
       }
 
@@ -255,8 +256,7 @@ nferror:
   err_print(ERR_NF,bufa);
 
 free:
-  zFree(bufa);
-  zFree(bufb);
+  zFree(bufe);
 error:
   return res;
   return res;

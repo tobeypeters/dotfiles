@@ -52,7 +52,7 @@ U8 arg_str(U8 **args,U64 cnt)
  //from being quoted.
   U64 i=0,
       s=cnt;
-
+
   for(;i<cnt;i++)
     s+=str_len(args[i]);
 
@@ -97,7 +97,7 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 
   debug_prn(buf);
 
-//  ExePutS(buf);
+//  ExePutS(buf);
 
   Free(as);
   Free(buf);
