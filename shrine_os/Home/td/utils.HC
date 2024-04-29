@@ -85,29 +85,30 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   shell_exec("MStrUtil",,"\"upperme\"","NQ","SUF_TO_UPPER"); */
   if (!argc) return;
 
-  U8 *as;
+  U8 *as="";
 //  "\n";
   if (noparse) { ExePutS(argv[0]); goto done; }
 
   if (argc) as=arg_str(argv,argc);
-  else as=StrNew("");
 
-  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+3));
+  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+10));
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
   debug_prn(buf);
-  
-//  ExePutS(buf);
+
+//  ExePutS(buf);
+
   Free(as);
   Free(buf);
+
   done:
 //    "\n";
     return;
 }
 U0 viewer(U8 *cmd)
 {//Execute a specified command and examine the results
- //in "view" mode.
+ //in "view" mode.
   DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";

@@ -113,7 +113,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
-  res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
+  res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
 
   res.u8[5]=drv_mounted(ddfb);
   res.u8[6]=IsDir(ddfb);res.u8[6]=(res.u8[6]&(res.u8[5]^1));

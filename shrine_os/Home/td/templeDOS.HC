@@ -20,7 +20,7 @@
 */
 //Was gonna put the help file in "::/Doc".
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("templeDOS.DD"));
-str_cat(help_file,,__DIR__,"templeDOS.DD");
+str_cat(help_file,,__DIR__,"/templeDOS.DD");
 
 U8 *prev_dir='\0';
 
@@ -69,6 +69,9 @@ U8 execute_cmd(U8 *cmd) {
 
   bav=(bav|(a->count==1));
 
+  if (I64_IN(idx,30,56,86,179,
+      187,211,214,224,227)) if (!bav) goto nferror;
+
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
@@ -85,8 +88,7 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (!bav) goto nferror;
-      if (I64_IN(idx,30,214) || (idx==224&&fc))
+      if (I64_IN(idx,30,214) || fc) 
       {
         if (idx==224)
           if (flag_err(a->flags,FLG_D)) break;
@@ -114,9 +116,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufb=StrNew(prev_dir); goto cdit; } //-
       if (str_cmp(bufa,"::")) { bufb=StrNew("::"); goto prevdir; } //::
-
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
-
       if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
       bufb=StrNew(bufa);
@@ -129,8 +129,6 @@ $PT$$FG$$BG$    case   7: //clear
       nocd:
         break;
     case  56: //cat
-      if (!bav) goto nferror;
-
       type_exec(v,FILE,,,"Type",bufa);
 
       break;
@@ -161,13 +159,10 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  86: //run
-      if (!bav) goto nferror;
       type_exec(v,FILE,,,"ExeFile",bufa);
 
       break;
     case 227: //mv
-      if (!bav) goto nferror;
-
       if (type_got(v,DIR,,FALSE)) {
         shell_exec("CopyTree",,bufa,bufb);
         shell_exec("DelTree",,bufa);
@@ -185,7 +180,7 @@ $PT$$FG$$BG$    case   7: //clear
       "%D\n",Now;
       break;
     case 169: //help
-      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
+      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
       if (bav) viewer(str_cat(bufa,,
                               "Type(\"",help_file,"\");"));
       break;
@@ -198,7 +193,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 179: //more
-      if (!bav) goto nferror;
       type_exec(v,FILE,,,"More",bufa);
 
       break;
@@ -216,7 +210,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 187: //view
-      if (!bav) goto nferror;
       type_exec(v,FILE,,,"viewer",str_cat(bufb,,"Type(\"",bufa,"\");"));
 
       break;
@@ -231,8 +224,6 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 211: //cp
-      if (!bav) goto nferror;
-
       if (fc) {
         if (flag_err(a->flags,FLG_D)) break;
         type_exec(v,DIR,,,"CopyTree",bufa,bufb);
