@@ -40,8 +40,7 @@ U8 execute_cmd(U8 *cmd) {
       if (a->args[0][1]==':') {
         if (a->count>1) { err_print(ERR_ARGC); goto error; }
 
-        if (drv_mounted(a->args[0])) {
-          prev_dir=StrNew(DirNameAbs(Fs->cur_dir)); Drv(a->args[0][0]); }
+        if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
         else err_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
@@ -118,14 +117,15 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) { bufe=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto cdit; } //-
-      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto cdit; } //::
+      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
       if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
       bufe=StrNew(bufa);
  
-      cdit:
+      prevdir:
         prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
+      cdit:
         Cd(bufe);
         if (idx==43) ls;
       nocd:

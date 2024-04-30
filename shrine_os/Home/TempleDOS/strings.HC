@@ -14,121 +14,67 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*utils.HC
+/*strings.HC
   Description:
-      Miscellaneous functions.
+      String related functions.
 */
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+U8 *str_cat(U8 **str,Bool flush=TRUE,...)
+{//Build a str, from strings stored in argv.
+ //flush clears the buffer first.
+  U64 i = 0;
 
-U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
-{//Allows you to set Fs values:
- //Fs->task_name
- //Fs->task_title
-  if (name) StrCpy(Fs->task_name,name);
-  if (title) StrCpy(Fs->task_title,title);
-  return;
-}
-Bool I64_IN(I64 inval,...)
-{//Check to see if an I64 is in a given argv list.
-  U64 i=0;
+  if (flush) *str = '\0';
 
   for (;i<argc;i++) {
-    if (inval==argv[i]) {
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
-U8 tern(Bool condition, U64 *first, U64 *second)
-{//Ternary operator like function.
-  if (condition) return first;
-
-  return second;
-}
-U8 arg_str(U8 **args,U64 cnt)
-{//Build a comma seperated str, from a list of arguments.
- //Automatically adds quotes around them.
- //Prefacing an argument with NQ, will keep the next argument 
- //from being quoted.
-  U64 i=0,
-      s=cnt;
-
-  for(;i<cnt;i++)
-    s+=str_len(args[i]);
-
-  U8 *buf=CAlloc(sizeof(U8)*s+10);
-
-  Bool nq=FALSE;
-  for(i=0;i<cnt;i++)
-  {
-    if (str_cmp(args[i],"NQ")) { nq=TRUE; goto continue; }
-    if (args[i][0]!=34&&!nq)
-      str_cat(buf,FALSE,"\"",args[i],"\"");
-    else { str_cat(buf,FALSE,args[i]); nq=FALSE; }
-    if (i<cnt-1) str_cat(buf,FALSE,",");
-    continue:
+    CatPrint(str,argv[i]);
   }
 
-  return buf;
+  return str;
 }
-#include "C:/Home/td/debug"
-U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
-{//Execute a templeOS shell command.
-  /*Examples:
-  Generate: Copy("b.HC","temp");
-  shell_exec("Copy",,"b.HC","temp");
-
-  Generate: Touch("filename.HC","");
-  shell_exec("Touch",,"filename.HC","\"\"");
-
-  Generate: MStrUtil("upperme",SUF_TO_UPPER);
-  shell_exec("MStrUtil",,"\"upperme\"","NQ","SUF_TO_UPPER"); */
-  if (!argc) return;
-
-  U8 *as="";
-//  "\n";
-  if (noparse) { ExePutS(argv[0]); goto done; }
-
-  if (argc) as=arg_str(argv,argc);
-
-  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+10));
-
-  str_cat(buf,FALSE,cmd,"(",as,");");
-
-  debug_prn(buf);
-
-//  ExePutS(buf);
-
-  Free(as);
-  Free(buf);
-
-  done:
-//    "\n";
-    return;
+U8 str_upper(U8 *str)
+{//Convert a string to uppercase.
+  return MStrUtil(str,SUF_TO_UPPER);
 }
-U0 viewer(U8 *cmd)
-{//Execute a specified command and examine the results
- //in "view" mode.
-  DocClear; DocTop;
-  ExePutS(cmd);
-  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);
-  DocClear;
-  return;
+U8 str_lower(U8 *str)
+{//Convert a string to lowercase. 
+  return MStrUtil(str,SUF_TO_LOWER);
 }
-I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-{//Map one range to another range.
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
+{//StrCmp replacement which returns TRUE & FALSE.
+ //Saying !StrCmp() for TRUE, erks me ...
+  Bool res=FALSE;
+
+  if (ignore_case) {
+    res=(!(StrICmp(stra,strb)));
+  }
+  else { 
+    res=(!(StrCmp(stra,strb)));
+  }
+
+  return res;
 }
-U0 zFree(U8 *cube,Bool free=TRUE)
-{//Zero out mem and free it.
-  MemSet(cube,'\0',sizeof(cube));
-  if (free) Free(cube);
-  return;
+Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
+{//EXpanded version of str_cmp. It can compare a string,
+ //to a list of strings.
+ //
+ //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
+  if (!cmp_to || (argc < 1)) return FALSE;
+
+  Bool res=FALSE;
+
+  I64 i=0;
+  for (;i<argc;i++) {
+    if (res=str_cmp(cmp_to,argv[i],ignore_case))
+      break;
+  }
+
+  return res;
 }
+
+U64 str_len(U8 *str) return StrLen(str);
+
 U8 MyGetStr(I64 flags=0)
-{//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$
+{//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
   CDocEntry *doc_e,*doc_e_end;
   U8 *st,*st2,*res;
@@ -153,9 +99,6 @@ U8 MyGetStr(I64 flags=0)
 	break;
     } if (ch==CH_SHIFT_ESC) {
       if (flags&GSF_SHIFT_ESC_EXIT) {
-        //Think this messes up windows which is opened by
-        //templedos_task.  I believe, I can later determine
-        //if it's a child window or not.  If so I can,do Exit;
         res = StrNew("-1");
         goto gs_done;
       }
