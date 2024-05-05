@@ -68,8 +68,8 @@ Bool FileFind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
   if (filename[len-1]==':') return res;
   if (filename[len-1]=='~') return res;
 
-  I64 i,j,cur_dir_clus;
-  U8 *altname,*curname,*full_name=NULL;
+  I64 i,j,cur_dir_clus;
+  U8 *altname,*curname,*full_name=NULL;
   CDirEntry de;
   CDirContext *dirc;
   Bool old_silent;
