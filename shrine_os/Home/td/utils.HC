@@ -86,7 +86,7 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   if (!argc) return;
 
   U8 *as="";
-//  "\n";
+  "\n";
   if (noparse) { ExePutS(argv[0]); goto done; }
 
   if (argc) as=arg_str(argv,argc);
@@ -95,37 +95,40 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 
   str_cat(buf,FALSE,cmd,"(",as,");");
 
-  debug_prn(buf);
-
-//  ExePutS(buf);
+  ExePutS(buf);
 
   Free(as);
   Free(buf);
 
   done:
-//    "\n";
+    "\n";
     return;
-}
-U0 viewer(U8 *cmd)
-{//Execute a specified command and examine the results
- //in "view" mode.
-  DocClear; DocTop;
-  ExePutS(cmd);
-  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);
-  DocClear;
-  return;
-}
-I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-{//Map one range to another range.
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 U0 zFree(U8 *cube,Bool free=TRUE)
 {//Zero out mem and free it.
   MemSet(cube,'\0',sizeof(cube));
   if (free) Free(cube);
   return;
+}
+U0 viewer(U8 *cmd)
+{//Execute cmd and open output in "view" mode.
+  U8 *bufv=CAlloc(sizeof(U8)*128);
+
+  str_cat(bufv,,cmd,"View;");
+
+  PopUp(bufv);
+
+  Free(bufv);
+/*  DocClear; DocTop;
+  ExePutS(cmd);
+  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
+  DocTop;View; DocBottom;
+  PutChars(CH_CTRLY);*/
+  return;
+}
+I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+{//Map one range to another range.
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 U8 MyGetStr(I64 flags=0)
 {//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$

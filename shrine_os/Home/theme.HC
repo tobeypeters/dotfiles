@@ -106,11 +106,11 @@ U0 theme1()
   rgb2_CBGR48(&gr_palette_custom[LTRED],251,73,52);
   rgb2_CBGR48(&gr_palette_custom[LTPURPLE],0,255,255);
   rgb2_CBGR48(&gr_palette_custom[YELLOW],18,18,18);
-  rgb2_CBGR48(&gr_palette_custom[WHITE],24,39,54,-.75);
+  rgb2_CBGR48(&gr_palette_custom[WHITE],24,39,54,-.50);
 }
 
 theme1;
-
+
 set_theme(gr_palette_custom);
 
 //GrPaletteSet(gr_palette_custom);

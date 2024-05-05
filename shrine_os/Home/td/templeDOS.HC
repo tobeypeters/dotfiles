@@ -25,7 +25,7 @@ str_cat(help_file,,__DIR__,"/templeDOS.DD");
 U8 *prev_dir='\0';
 
 U8 execute_cmd(U8 *cmd) {
-//  a->init(a);
+  a->init(a);
   a->parse(a, cmd);
 
   if (a->count==0) goto error;
@@ -40,8 +40,7 @@ U8 execute_cmd(U8 *cmd) {
       if (a->args[0][1]==':') {
         if (a->count>1) { err_print(ERR_ARGC); goto error; }
 
-        if (drv_mounted(a->args[0])) {
-          prev_dir=StrNew(DirNameAbs(Fs->cur_dir)); Drv(a->args[0][0]); }
+        if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
         else err_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
@@ -63,7 +62,7 @@ U8 execute_cmd(U8 *cmd) {
 
   U8 *bufa,*bufb,*bufe;
 
-  bufe=CAlloc(sizeof(U8)*256); //Scratch buffer
+  bufe=CAlloc(sizeof(U8)*128); //scratch buffer
 
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
@@ -75,7 +74,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (I64_IN(idx,30,56,86,179,
       187,211,214,224,227)) if (!bav) goto nferror;
-
+ 
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
@@ -92,7 +91,7 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (I64_IN(idx,30,214)||fc) 
+      if (I64_IN(idx,30,214) || fc) 
       {
         if (idx==224)
           if (flag_err(a->flags,FLG_D)) break;
@@ -118,21 +117,23 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) { bufe=StrNew("~"); goto cdit; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto cdit; } //-
-      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto cdit; } //::
+      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
       if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
       bufe=StrNew(bufa);
  
+      prevdir:
+        prev_dir=StrNew(Fs->cur_dir);
       cdit:
-        prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
         Cd(bufe);
         if (idx==43) ls;
       nocd:
         break;
     case  56: //cat
-      type_exec(v,FILE,,,"Type",bufa);
-
+    case 187: //view
+      if (type_got(v,FILE))
+        viewer(str_cat(bufb,,"Type(\"",bufa,"\");"));
       break;
     case  60: //man
       Man(bufa);
@@ -140,7 +141,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
-              MemPageRep;\"\n\";");
+              MemPageRep;\"\n\";");
 
       break;
     case  72: //cpu
@@ -153,8 +154,7 @@ $PT$$FG$$BG$    case   7: //clear
     case  81: //vol
         //Don't think drives have labels in this OS.
         "Volume in drive %c: has no label.\n",cur_drv;
-        "Volume Serial Number: %s\n",DrvSerialNum(cur_drv);
-        "Volume Model Number: %d\n",DrvModelNum(cur_drv);
+        "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
 
       break;
     case  84: //now
@@ -183,7 +183,7 @@ $PT$$FG$$BG$    case   7: //clear
       "%D\n",Now;
       break;
     case 169: //help
-      if (!FileFind(help_file)) { err_print(ERR_NF,bufa); break; }
+      if (!FileFind(help_file)) { err_print(ERR_NF,help_file); break; }
 
       if (bav) viewer(str_cat(bufe,,
                               "Type(\"",help_file,"\");"));
@@ -211,10 +211,6 @@ $PT$$FG$$BG$    case   7: //clear
     case 186: //exit
     case 195: //quit
       res=1;
-
-      break;
-    case 187: //view
-      type_exec(v,FILE,,,"viewer",str_cat(bufb,,"Type(\"",bufa,"\");"));
 
       break;
     case 201: //ed
@@ -261,8 +257,6 @@ nferror:
 free:
   zFree(bufe);
 error:
-  a->init(a);
-
   return res;
   return res;
 }

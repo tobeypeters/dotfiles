@@ -61,24 +61,15 @@ Bool FileFind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 // [+] : Start
   Bool res=FALSE;
   U64 len=StrLen(filename);
-  if (!StrCmp(filename,"")) return res;
-  if (!StrCmp(filename,"/")) return TRUE;
-  if (!len) return res;
-  if (len>=2) { 
-   if (filename[1]==':') {
-     if (len==2) goto cleanup;
-     if (!fuf_flags&FUf_NO_ATAPI_CHECK)
-     {
-       if (!DrvIsWritable(filename[0])) goto cleanup;
-     }
-     U64 drv=ToUpper(filename[0]);
-     if (!('A'<=drv<='Z')) goto cleanup;
-     if (!Let2Drv(drv,FALSE)) goto cleanup;
-   }
-  }
+
+  if (len==0) return res;
+
+  if (filename[len-1]=='/') return res;
+  if (filename[len-1]==':') return res;
+  if (filename[len-1]=='~') return res;
 
   I64 i,j,cur_dir_clus;
-  U8 *altname,*curname,*full_name=NULL;
+  U8 *altname,*curname,*full_name=NULL;
   CDirEntry de;
   CDirContext *dirc;
   Bool old_silent;
