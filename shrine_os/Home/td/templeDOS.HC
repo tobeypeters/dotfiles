@@ -132,8 +132,8 @@ $PT$$FG$$BG$    case   7: //clear
         break;
     case  56: //cat
     case 187: //view
-      if (type_got(v,FILE))
-        viewer(str_cat(bufb,,"Type(\"",bufa,"\");"));
+      type_exec(v,FILE,,,"viewer",
+                str_cat(bufe,,"Type(\\\"",bufa,"\\\");"));
       break;
     case  60: //man
       Man(bufa);
@@ -141,7 +141,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
-              MemPageRep;\"\n\";");
+              MemPageRep;\"\n\";");
 
       break;
     case  72: //cpu

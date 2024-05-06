@@ -86,7 +86,6 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   if (!argc) return;
 
   U8 *as="";
-  "\n";
   if (noparse) { ExePutS(argv[0]); goto done; }
 
   if (argc) as=arg_str(argv,argc);
@@ -101,7 +100,6 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   Free(buf);
 
   done:
-    "\n";
     return;
 }
 U0 zFree(U8 *cube,Bool free=TRUE)
@@ -114,11 +112,12 @@ U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   U8 *bufv=CAlloc(sizeof(U8)*128);
 
-  str_cat(bufv,,cmd,"View;");
-
+  //Fs->text_attr=BLUE<<4+WHITE;
+  str_cat(bufv,,cmd,"DocTop;View;");
+
   PopUp(bufv);
 
-  Free(bufv);
+  Free(bufv);
 /*  DocClear; DocTop;
   ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
