@@ -42,7 +42,7 @@ $IV,1$cp:$IV,0$
 	Options:
 	   -d	    Directory  copy
 
-$IV,1$cpu:$IV,0$
+$IV,1$cpu:$IV,0$
 	Display cpu info.
 	usage: cpu [OPTION] {-f}
 

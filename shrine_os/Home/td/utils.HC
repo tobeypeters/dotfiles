@@ -113,8 +113,8 @@ U0 viewer(U8 *cmd)
   U8 *bufv=CAlloc(sizeof(U8)*128);
 
   //Fs->text_attr=BLUE<<4+WHITE;
-  str_cat(bufv,,cmd,"DocTop;View;");
-
+  str_cat(bufv,,cmd,"Fs->border_attr=BLUE<<4+WHITE;DocTop;View;");
+
   PopUp(bufv);
 
   Free(bufv);

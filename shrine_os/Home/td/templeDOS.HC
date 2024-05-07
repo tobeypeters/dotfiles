@@ -19,6 +19,7 @@
       Command-line interpreter for TempleOS.
 */
 //Was gonna put the help file in "::/Doc".
+#include "~/td/debug"
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/templeDOS.DD"));
 str_cat(help_file,,__DIR__,"/templeDOS.DD");
 
@@ -54,12 +55,28 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
+  //c->data[3] == Token Max: Includes cmd,flags,and args
+  U8 *test=MStrPrint("a->count: %d a->count-(fc>0):%d\n",a->count,a->count-(fc>0));
+
+  debug_prn(test,TRUE);
+
+  zFree(test);
+
   if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
+    err_print(ERR_ARGTC,,help_file,c->data[idx][1]); goto error; }
+
+  if (!I64_between(a->count-(fc>0),c->data[idx][2],c->data[idx][3])) {
     err_print(ERR_ARGC); goto error; }
 
   if (!I64_between(fc,0,c->data[idx][4])) {
     err_print(ERR_FLGC); goto error; }
 
+/*  if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
+    err_print(ERR_ARGC); goto error; }
+
+  if (!I64_between(fc,0,c->data[idx][4])) {
+    err_print(ERR_FLGC); goto error; }
+*/
   U8 *bufa,*bufb,*bufe;
 
   bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -132,7 +149,7 @@ $PT$$FG$$BG$    case   7: //clear
         break;
     case  56: //cat
     case 187: //view
-      type_exec(v,FILE,,,"viewer",
+      type_exec(v,FILE,,,"viewer",
                 str_cat(bufe,,"Type(\\\"",bufa,"\\\");"));
       break;
     case  60: //man

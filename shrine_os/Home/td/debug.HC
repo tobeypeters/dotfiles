@@ -20,8 +20,8 @@
 */
 U0 debug_snd() Noise(1000,75,1000);
 U0 debug_YN(Bool state) { if (state) "YES"; else "NO"; "\n"; }
-U0 debug_prn(U8 *buf,Bool newline=FALSE) {
-  "$$LTCYAN$$debug$$FG$$: $$LTRED$$%s$$FG$$\n",buf;
-
-  if (newline) "\n";
+U0 debug_prn(U8 *dbg_STMNT,Bool preLF=FALSE,Bool postLF=FALSE) {
+  if (preLF) "\n";
+  "$$LTCYAN$$debug$$FG$$: $$LTRED$$%s$$FG$$\n",dbg_STMNT;
+  if (postLF) "\n";
 }

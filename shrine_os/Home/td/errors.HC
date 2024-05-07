@@ -18,8 +18,9 @@
   Description:
       Error message definitions and print routine.
 */
-#define ERR_ARGC        "Invalid number of arguments provided"
-#define ERR_FLGC        "Invalid number of options provided"
+#define ERR_ARGTC       "Too many arguments provided"
+#define ERR_ARGC        "Too few or too many arguments provided"
+#define ERR_FLGC        "Too few or too many options provided"
 #define ERR_FLGI        "Invalid option provided"
 #define ERR_FILEI       "Invalid filename"
 
@@ -43,8 +44,11 @@
 
 #define ERR_UNKNOWN     "Unrecognized command provided"
 
-U0 err_print(U8 *msg, U8 *link="Usage")
+U0 err_print(U8 *msg,U8 *link="Usage",U8 *help_file=NULL,U8 *cmd=NULL)
 {//Print our err_msg.
-  "`$FG,3$%s$FG$`: %s ...\n", link, msg;
+//$$LK+PU,"Usage",A="FF:~/td/templeDOS.DD,cp"$$
+
+  U8 *err_link=MStrPrint("$$LK+PU,\"%s\",A=\"FF:%s,%s\"$$",link,help_file,cmd);
+  "%s `%s`: %s ...\n",cmd,err_link,msg;
+  Free(err_link);
 }
-
