@@ -20,8 +20,11 @@
 */
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
-U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/templeDOS.DD"));
-str_cat(help_file,,__DIR__,"/templeDOS.DD");
+U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/help.DD"));
+str_cat(help_file,,__DIR__,"/help.DD");
+
+U8 *menu_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/menu.DD"));
+str_cat(menu_file,,__DIR__,"/menu.DD");
 
 U8 *prev_dir='\0';
 
@@ -99,7 +102,7 @@ c->data[idx][4],
       187,211,214,224,227)) if (!bav) goto nferror;
 
   U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
- 
+ 
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
@@ -331,16 +334,7 @@ U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
 
-MenuPush(
-  "File {"
-  "  Exit(,CH_SHIFT_ESC);"
-  "}"
-  "View {"
-  "  PlainText(,CH_CTRLT);"
-  "  Border(,CH_CTRLB);"
-  "  FileMgr(,CH_CTRLD);"
-  "}"
-);
+Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
 
@@ -349,10 +343,12 @@ Cd;prev_dir=StrNew(Fs->cur_dir);
 templeDOS;
 
 a->init(a);
-Free(a);
-Free(c);
+zFree(a);
+zFree(c);
 
-Free(prev_dir);
+zFree(prev_dir);
+zFree(menu_file);
+zFree(help_file);
 
 DocBottom; "$$FG$$";
 

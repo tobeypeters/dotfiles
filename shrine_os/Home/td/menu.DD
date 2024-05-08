@@ -1,0 +1,40 @@
+File
+{
+  Abort(,CH_SHIFT_ESC);
+  Exit(,CH_ESC);
+}
+
+Edit
+{
+  Undo(,CH_CTRLH,0x80E0000080E);
+  Cut(,CH_CTRLX);
+  Copy(,CH_CTRLC);
+  Paste(,CH_CTRLV);
+}
+
+Insert
+{
+  TextWidgets(,CH_CTRLL,0x42600000426);
+  FileName(,,0x3E0000003E);
+  DirName(,,0x23E0000023E);
+}
+
+Program
+{
+  CodeTools(,CH_CTRLL,0x62600000626);
+  Include(,0,0x3F0000003F);
+  AdamInclude(,0,0x23F0000023F);
+}
+
+View
+{
+  PlainText(,CH_CTRLT);
+  Border(,CH_CTRLB);
+  FileMgr(,CH_CTRLD,0x42000000420);
+  Search(,CH_CTRLF,0x62100000621);
+}
+
+Help
+{
+  Menu(,CH_CTRLM,0x43200000432);
+}
