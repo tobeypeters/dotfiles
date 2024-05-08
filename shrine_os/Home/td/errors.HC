@@ -47,8 +47,11 @@
 U0 err_print(U8 *msg,U8 *link="Usage",U8 *help_file=NULL,U8 *cmd=NULL)
 {//Print our err_msg.
 //$$LK+PU,"Usage",A="FF:~/td/templeDOS.DD,cp"$$
+  U8 *err_link;
 
-  U8 *err_link=MStrPrint("$$LK+PU,\"%s\",A=\"FF:%s,%s\"$$",link,help_file,cmd);
-  "%s `%s`: %s ...\n",cmd,err_link,msg;
+  if (!StrCmp(link,"Usage")) err_link=MStrPrint("$$LK+PU,\"%s\",A=\"FF:%s,%s\"$$",link,help_file,cmd);
+  else err_link=StrNew(link);
+
+  "`%s`: %s ...\n",err_link,msg;
   Free(err_link);
 }

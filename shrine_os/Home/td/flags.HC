@@ -18,7 +18,7 @@
   Description:
       Defines and handles flags.
 */
-DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
+DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
 
 #define FLG_A 0x0000001 //a
 #define FLG_B 0x0000002 //b
@@ -129,13 +129,13 @@ Bool flag_got(U8 *flags=NULL, I64 flag_want)
 
   return ToBool((f&flag_want));
 }
-Bool flag_err(U8 *flags=NULL, I64 flag_want,Bool print_err=TRUE)
+Bool flag_err(U8 *flags=NULL, I64 flag_want,Bool print_err=TRUE,U8 *help_file=NULL,U8 *cmd=NULL)
 {
   Bool res=FALSE;
 
   if ((res=!flag_got(flags,flag_want)))
-    if (print_err) err_print(ERR_FLGI);
-
+    if (print_err) err_print(ERR_FLGI,,help_file,cmd);
+
   return res;
 }
 /*"--------------------------------\n";

@@ -16,7 +16,7 @@
 
 /*hash.HC
   Description:
-      Build a command array, from a hash table.
+      Build a command array, from a hash table.
 */
 
 #define HASH_TABLE_SIZE 256
@@ -44,7 +44,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {169,  "help", 1, 1, 0},
   {174,  "grep", 2, 2, 0},
   {176,  "tree", 1, 2, 0},
-  {177,  "time", 1, 1, 0},
+  {177,  "time", 1, 1, 0},
   {179,  "more", 2, 2, 0},
   {182,  "dump", 2, 2, 0},
   {184,  "term", 1, 1, 0},

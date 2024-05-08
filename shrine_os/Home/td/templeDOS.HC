@@ -19,7 +19,7 @@
       Command-line interpreter for TempleOS.
 */
 //Was gonna put the help file in "::/Doc".
-#include "~/td/debug"
+//#include "~/td/debug"
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/templeDOS.DD"));
 str_cat(help_file,,__DIR__,"/templeDOS.DD");
 
@@ -55,28 +55,34 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
-  //c->data[3] == Token Max: Includes cmd,flags,and args
-  U8 *test=MStrPrint("a->count: %d a->count-(fc>0):%d\n",a->count,a->count-(fc>0));
+/*  //c->data[3] == Token Max: Includes cmd,flags,and args
+  U8 *test=MStrPrint("
+fc: %d
+a->count: %d
+a->count-(fc>0): %d
+c->data[idx][3]: %d
+c->data[idx][4]: %d
+(c->data[idx][3]-c->data[idx][4]): %d\n",
+fc,a->count,
+a->count-(fc&0),
+c->data[idx][3],
+c->data[idx][4],
+(c->data[idx][3]-c->data[idx][4]));
 
   debug_prn(test,TRUE);
 
   zFree(test);
-
+*/
+
   if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
     err_print(ERR_ARGTC,,help_file,c->data[idx][1]); goto error; }
 
-  if (!I64_between(a->count-(fc>0),c->data[idx][2],c->data[idx][3])) {
-    err_print(ERR_ARGC); goto error; }
+  if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
+    err_print(ERR_ARGC,,help_file,c->data[idx][1]); goto error; }
 
   if (!I64_between(fc,0,c->data[idx][4])) {
-    err_print(ERR_FLGC); goto error; }
+    err_print(ERR_FLGC,,help_file,c->data[idx][1]); goto error; }
 
-/*  if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
-    err_print(ERR_ARGC); goto error; }
-
-  if (!I64_between(fc,0,c->data[idx][4])) {
-    err_print(ERR_FLGC); goto error; }
-*/
   U8 *bufa,*bufb,*bufe;
 
   bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -91,7 +97,9 @@ U8 execute_cmd(U8 *cmd) {
 
   if (I64_IN(idx,30,56,86,179,
       187,211,214,224,227)) if (!bav) goto nferror;
- 
+
+  U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
+ 
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
@@ -111,7 +119,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (I64_IN(idx,30,214) || fc) 
       {
         if (idx==224)
-          if (flag_err(a->flags,FLG_D)) break;
+          if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
         type_exec(v,DIR,,,"DelTree",bufa);
         break;
       }
@@ -162,8 +170,8 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  72: //cpu
-      if (fc) if(flag_err(a->flags,FLG_F)) break;
-      if (a->count==2&&fc==0) { err_print(ERR_ARGC); break; }
+      if (fc)
+        if (flag_err(a->flags,FLG_F,,help_file,err_cmd)) break;
 
       CPURep(fc);
 
@@ -242,7 +250,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 211: //cp
       if (fc) {
-        if (flag_err(a->flags,FLG_D)) break;
+        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
         type_exec(v,DIR,,,"CopyTree",bufa,bufb);
       }
       else type_exec(v,FILE,,,"Copy",bufa,bufb);
