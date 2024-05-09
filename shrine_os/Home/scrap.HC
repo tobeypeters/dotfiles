@@ -534,7 +534,7 @@ Free(p);
 //   if (dir_name[1]==':') {
 //     U64 drv=ToUpper(dir_name[0]);
 //     if (!('A'<=drv<='Z')) goto cleanup;
-//     if (!Let2Drv(drv,FALSE)) goto cleanup;
+//     if (!Let2Drv(drv,FALSE)) goto cleanup;
 //   }
 //  }
 
@@ -570,7 +570,7 @@ new[0]=old[0]; //Doesn't work
 Free(new);
 */
 
-//"LstMatch: %d\n",LstMatch("o","~\0*\0::\0",LMF_EXACT);
+//"LstMatch: %d\n",LstMatch("o","~\0*\0::\0",LMF_EXACT);
 "\n";
 
 KeyAndCont;
