@@ -11,11 +11,19 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
+public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
+	U8 *name,CDirEntry *_res,I64 fuf_flags=0)
+
+public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
+	CDirEntry *_res,I64 fuf_flags=0)
+
+
 Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
 // Desc: Added validation code and restructed the code,
 //       to prevent infinite loops and exceptions
+"here\n";
   Bool res=FALSE;
   U64 len=StrLen(filename);
 
@@ -88,7 +96,7 @@ Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 	cur_dir_clus=Name2DirClus(dirc->dv,Fs->cur_dir);
 	switch (dirc->dv->fs_type) {
 	  case FSt_REDSEA:
-	    res=RedSeaFileFind(dirc->dv,cur_dir_clus,
+	    res=RedSeaFileFind(dirc->dv,cur_dir_clus,
 		  dirc->mask,&de,fuf_flags);
 	    break;
 	  case FSt_FAT32:
