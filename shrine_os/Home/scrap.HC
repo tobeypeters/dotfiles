@@ -471,7 +471,7 @@ F64 drv_free(U8 *drv = '', Bool ret_free=FALSE)
          "%C: %7.2f%% Free\n",c,s;
           return 0;
         }
-      }      
+      }
     }
   }
 }
@@ -485,7 +485,7 @@ U0 parse(U8 *cmd)
 {
   U64 c=StrOcc(cmd,' ');
   "%d %s\n",c,cmd;
-  
+
   U64 i=0;
   for (;i<c;i++)
   {
@@ -499,9 +499,9 @@ U0 parse(U8 *cmd)
 U0 main()
 {
   U8 *cmd;
-  while (TRUE) 
+  while (TRUE)
   {
-    "> "; 
+    "> ";
     cmd=GetStr(,,GSF_SHIFT_ESC_EXIT);
 
     if (StrLen(cmd)>0){
@@ -530,11 +530,11 @@ Free(p);
 
 //  U64 len=StrLen(dir_name);
 //  if (!len) goto cleanup;
-//  if (len>=2) { 
+//  if (len>=2) {
 //   if (dir_name[1]==':') {
 //     U64 drv=ToUpper(dir_name[0]);
 //     if (!('A'<=drv<='Z')) goto cleanup;
-//     if (!Let2Drv(drv,FALSE)) goto cleanup;
+//     if (!Let2Drv(drv,FALSE)) goto cleanup;
 //   }
 //  }
 
@@ -571,6 +571,19 @@ Free(new);
 */
 
 //"LstMatch: %d\n",LstMatch("o","~\0*\0::\0",LMF_EXACT);
+//public U0 HijackFunc(U8 *orig, U8 *new)
+//{// Replace a system function with a new function
+//
+//    // Warning old function address is not saved and this overwrites it!
+//    // Assembly code of old function is patched to jump to new instead.
+//    // Only a reboot will restore the original function!
+//    PUSHFD
+//    CLI
+//    *orig=0xe9;
+//    *(orig+1)(U32*)=new-orig-5;
+//    POPFD
+//}
 "\n";
 
 KeyAndCont;
+

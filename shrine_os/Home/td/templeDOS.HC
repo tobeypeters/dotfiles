@@ -320,7 +320,7 @@ U8 templeDOS() {
 
     zFree(input,FALSE);
 
-    if (res) break;
+    if (res==1) break;
   }
 
   zFree(input);
