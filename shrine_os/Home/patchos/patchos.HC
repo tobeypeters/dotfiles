@@ -1099,9 +1099,9 @@ public U0 doctermnew()
   pdoc->right_click_link=&TermRightClickLink;
   pdoc->max_entries=4096;
   Fs->border_src=BDS_CUR_DRV;
-  pdoc->desc='';
+  pdoc->desc='';
 
-  Fs->put_doc=Fs->display_doc=pdoc;
+  Fs->put_doc=Fs->display_doc=pdoc;
   Fs->border_doc=DocBorderNew(pdoc);
   Fs->cur_menu=MenuFile("::/Doc/EdPullDown.DD");
   WinScrollsInit(Fs);
