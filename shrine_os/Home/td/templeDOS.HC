@@ -299,7 +299,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear; DocMax;
+  DocClear; DocMax;
 
   "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
@@ -320,7 +320,7 @@ U8 templeDOS() {
 
     zFree(input,FALSE);
 
-    if (res==1) break;
+    if (res==1) break;
   }
 
   zFree(input);

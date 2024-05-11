@@ -1,6 +1,336 @@
-#help_index "DolDoc/Output;StdOut/DolDoc"
+#define FUf_NO_ATAPI_CHECK	99 //For IsDir & FileFind - Tobey Peters
 
-public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
+public U0 Cdr() Cd("/");
+
+public U0 KeyAndCont()
+{//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
+ //Doesn't print any newline characters and "clears" the line after you
+ //press a key.
+  "$$PT$$Press any key to continue ...$$FG$$";
+
+  GetChar(,FALSE);
+  PutChars(CH_CTRLY);
+}
+
+public U0 More(U8 *filename)
+{//Output txt or graphic file to the command line,
+ //one screen at a time.
+  I64 size = 0;
+
+  U64 max_lines = Fs->win_bottom -
+                  Fs->win_top,
+              i = 0,
+             cl = 0;
+
+  U8 *buffer;
+
+  buffer = FileRead(filename,&size);
+
+  DocClear; DocTop;
+
+  for (;i < size; i++)
+  {
+    "%c",buffer[i];
+
+    if (buffer[i] == '\n') cl++;
+
+    if (cl == max_lines) {
+      KeyAndCont;
+      cl = 0;
+    }
+  }
+
+  "\n";
+
+  Free(buffer);
+}
+
+public U0 HijackFunc(U8 *orig, U8 *new)
+{// Replace a system function with a new function
+
+    // Warning old function address is not saved and this overwrites it!
+    // Assembly code of old function is patched to jump to new instead.
+    // Only a reboot will restore the original function!
+    PUSHFD
+    CLI
+    *orig=0xe9;
+    *(orig+1)(U32*)=new-orig-5;
+    POPFD
+}
+
+Bool isdir(U8 *dir_name)
+{//Is a str a valid, existing Dir?
+// Desc: Added validation code and restructed the code,
+//       to prevent infinite loops and exceptions
+  U8 *mask=MStrPrint("%s/*",dir_name);
+  Bool res=FALSE;
+
+  U64 len=StrLen(dir_name);
+  if (!StrCmp(dir_name,"")) goto cleanup;
+  if (!len) goto cleanup;
+  if (len>=2) { 
+   if (dir_name[1]==':') {
+     if (!DrvIsWritable(dir_name[0])) goto cleanup;
+
+     U64 drv=ToUpper(dir_name[0]);
+     if (!('A'<=drv<='Z')) goto cleanup;
+     if (!Let2Drv(drv,FALSE)) goto cleanup;
+   }
+  }
+
+  Bool old_silent=Silent;
+  CDirContext *dirc;
+  if (dirc=DirContextNew(mask)) {
+    DirContextDel(dirc);
+    res=TRUE;
+  }
+
+  Silent(old_silent);
+cleanup:
+  Free(mask);
+  return res;
+}
+
+public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
+	U8 *name,CDirEntry *_res,I64 fuf_flags=0)
+
+public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
+	CDirEntry *_res,I64 fuf_flags=0)
+
+Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
+{//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
+//If you pass _de, you must Free(_de->full_name);
+// Desc: Added validation code and restructed the code,
+//       to prevent infinite loops and exceptions
+  Bool res=FALSE;
+  U64 len=StrLen(filename);
+
+  if (len==0) return res;
+
+  if (filename[len-1]=='/') return res;
+  if (filename[len-1]==':') return res;
+  if (filename[len-1]=='~') return res;
+
+  I64 i,j,cur_dir_clus;
+  U8 *altname,*curname,*full_name=NULL;
+  CDirEntry de;
+  CDirContext *dirc;
+  Bool old_silent;
+  if (fuf_flags&~FUG_FILE_FIND)
+    throw('FUF');
+  if (!filename || *filename && filename[1]==':' && !Let2Drv(*filename,FALSE))
+    return FALSE;
+  altname=ToggleZorNotZ(filename);
+  if (fuf_flags&FUF_Z_OR_NOT_Z)
+    j=2;
+  else
+    j=1;
+  for (i=0;i<j && !res;i++) {
+    if (!i)
+      curname=filename;
+    else
+      curname=altname;
+    old_silent=Silent;
+    if (!(dirc=DirContextNew(curname)))
+      Silent(old_silent);
+    else {
+      Silent(old_silent);
+      cur_dir_clus=Name2DirClus(dirc->dv,Fs->cur_dir);
+      switch (dirc->dv->fs_type) {
+	case FSt_REDSEA:
+	  res=RedSeaFileFind(dirc->dv,cur_dir_clus,dirc->mask,
+		&de,fuf_flags);
+	  break;
+	case FSt_FAT32:
+	  res=FAT32FileFind(dirc->dv,cur_dir_clus,dirc->mask,
+		&de,fuf_flags);
+	  break;
+	default:
+	  PrintErr("File System Not Supported\n");
+      }
+      if (res && _de) {
+	if (StrCmp(Fs->cur_dir,"/"))
+	  full_name=MStrPrint("%C:%s/%s",
+		Drv2Let(Fs->cur_dv),Fs->cur_dir,de.name);
+	else
+	  full_name=MStrPrint("%C:/%s",Drv2Let(Fs->cur_dv),de.name);
+      }
+      DirContextDel(dirc);
+    }
+  }
+  for (i=0;i<j && !res && fuf_flags&FUF_SCAN_PARENTS;i++) {
+    if (!i)
+      curname=filename;
+    else
+      curname=altname;
+    old_silent=Silent;
+    if (!(dirc=DirContextNew(curname)))
+      Silent(old_silent);
+    else {
+      Silent(old_silent);
+      cur_dir_clus=Name2DirClus(dirc->dv,Fs->cur_dir);
+      while (!res && StrCmp(Fs->cur_dir,"/")) {
+	Cd("..");
+	cur_dir_clus=Name2DirClus(dirc->dv,Fs->cur_dir);
+	switch (dirc->dv->fs_type) {
+	  case FSt_REDSEA:
+	    res=RedSeaFileFind(dirc->dv,cur_dir_clus,
+		  dirc->mask,&de,fuf_flags);
+	    break;
+	  case FSt_FAT32:
+	    res=FAT32FileFind(dirc->dv,cur_dir_clus,
+		  dirc->mask,&de,fuf_flags);
+	    break;
+	  default:
+	    PrintErr("File System Not Supported\n");
+	}
+      }
+      if (res && _de) {
+	if (StrCmp(Fs->cur_dir,"/"))
+	  full_name=MStrPrint("%C:%s/%s",
+		Drv2Let(Fs->cur_dv),Fs->cur_dir,de.name);
+	else
+	  full_name=MStrPrint("%C:/%s",
+		Drv2Let(Fs->cur_dv),de.name);
+      }
+      DirContextDel(dirc);
+    }
+  }
+  if (_de) {
+    if (res) {
+      MemCpy(_de,&de,sizeof(CDirEntry));
+      _de->full_name=full_name;
+    } else
+      MemSet(_de,0,sizeof(CDirEntry));
+  }
+  Free(altname);
+
+  return res;
+}
+
+public Bool doced(CDoc *doc,I64 dof_flags=0)
+{//Live for user interaction. End on <ESC> or <SHIFT-ESC>.
+  CDoc *old_put_doc	  =DocPut,
+	*old_display_doc=DocDisplay,
+	*old_border_doc =DocBorder,*bdoc;
+  CDocEntry *doc_e;
+  I64 old_attr=Fs->text_attr,
+	old_top =Fs->win_top, old_bottom=Fs->win_bottom,
+	old_left=Fs->win_left,old_right =Fs->win_right,
+	old_title_src=Fs->title_src;
+  Bool res,unlock;
+  U8 *old_task_title;
+  if (dof_flags&DOF_WIN_MAX)
+    WinMax;
+
+  unlock=DocLock(doc);
+  doc->win_task=Fs;
+  bdoc=DocNew;
+  bdoc->flags|=DOCF_BORDER_DOC;
+  DocPrint(bdoc,"$$$$CM+TY+LX+NC,0,-1$$$$");
+
+  DocPrint(bdoc,"$$$$TX+RX+BD,\"[þ]\"$$$$");
+  DocPrint(bdoc,"$$$$BK,1$$$$$$$$TX+LX+BD,\"µ-Æ\"$$$$$$$$BK,0$$$$");
+
+  old_task_title=StrNew(Fs->task_title);
+  if (Fs->title_src!=TTS_LOCKED_CONST) {
+    Fs->title_src=TTS_ED_FILENAME;
+    MemCpy(Fs->task_title,doc->filename.name,STR_LEN-1);
+  }
+
+  doc_e=DocPrint(bdoc,"$$$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
+	"A=\"%%s... \",SCX=32$$$$");
+
+  doc_e->data=&Fs->task_title;
+  DocDataFmt(bdoc,doc_e);
+
+  if (doc->flags & DOCF_ALLOW_UNDO) {
+    DocPrint(bdoc,"$$$$CM+BY+LX+NC,1,1$$$$");
+    doc_e=DocPrint(bdoc,"$$$$DA+BD+RD-TRM,RT=U32,A=\"Undo:%%03d\"$$$$\n");
+    doc_e->data=&doc->undo_cnt;
+    DocDataFmt(bdoc,doc_e);
+  }
+
+  DocPrint(bdoc,"$$$$CM+BY+RX+NC,-31,1$$$$");
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdMoreCB;
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdDollarTypeCB;
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdFilterCB;
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdOverStrikeCB;
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdAutoSaveCB;
+  doc_e=DocPrint(bdoc,"$$$$TX+BD+TC,\" \"$$$$");
+  doc_e->user_data=doc;
+  doc_e->tag_cb=&EdDollarCB;
+  doc_e=DocPrint(bdoc,"$$$$DA+BD+RD-TRM,A=\"Line:%%04d \"$$$$");
+  doc_e->data=&doc->line;
+  DocDataFmt(bdoc,doc_e);
+  doc_e=DocPrint(bdoc,"$$$$DA+BD+RD-TRM,A=\"Col:%%04d\"$$$$\n");
+  doc_e->data=&doc->col;
+  DocDataFmt(bdoc,doc_e);
+
+  DocRecalc(bdoc);
+  DocRecalc(doc);
+  if (!(dof_flags&DOF_DONT_HOME))
+    DocTop(doc);
+  Fs->border_doc=bdoc;
+  if (doc!=old_display_doc)
+    doc->parent_doc=old_display_doc;
+  Fs->put_doc=Fs->display_doc=doc;
+  if (!(dof_flags&DOF_DONT_TEXT_ATTR))
+    Fs->text_attr=DOC_ATTR_DFT_TEXT;
+  if (!(dof_flags&DOF_DONT_SHOW)) {
+    LBts(&Fs->display_flags,DISPLAYf_SHOW);
+    WinZBufUpdate;
+  }
+  if (dof_flags&DOF_SIZE_MIN)
+    doc->flags|=DOCF_SIZE_MIN;
+
+  DocUnlock(doc);
+  if (!(dof_flags&DOF_DONT_WINMGR_SYNC)) {
+    Refresh(2,TRUE);
+    if (doc->flags&DOCF_SIZE_MIN)
+      Refresh(2,TRUE);
+  }
+  res=View;
+
+  DocLock(doc);
+  if (res) {
+    doc_e=doc->head.next;
+    while (doc_e!=doc) {
+      if (doc_e->type_u8==DOCT_DATA || doc_e->type_u8==DOCT_CHECK_BOX)
+	DocDataScan(doc,doc_e);
+      doc_e=doc_e->next;
+    }
+  }
+  if (unlock)
+    DocUnlock(doc);
+  Fs->border_doc =old_border_doc;
+  Fs->display_doc=old_display_doc;
+  Fs->put_doc	 =old_put_doc;
+  Fs->text_attr  =old_attr;
+  if (Fs->title_src!=TTS_LOCKED_CONST) {
+    Fs->title_src  =old_title_src;
+    StrCpy(Fs->task_title,old_task_title);
+  }
+  Free(old_task_title);
+  DocDel(bdoc);
+  if (dof_flags&DOF_SIZE_MIN) {
+    WinHorz(old_left,old_right);
+    WinVert(old_top,old_bottom);
+  }
+  return res;
+}
+
+public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
 {//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
   I64 i,x,y;
   CDoc *m;
@@ -53,25 +383,11 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
 		break;
 	      } else
 		sc&=~SCF_CTRL;
-//Fall Through to SC_END
-// Change[Start]:
-
-// Author: github/tobeypeters
-// Desc:
-//       Make the END key work like CTRL/RIght Arrow.
-//       I'm use to it, in other editors.
-//
-//       I left all the other funtionality alone.
-
 	    case SC_END:
 	      if (!(sc&SCF_CTRL)) {
 		if (sc&SCF_KEY_DESC) {
 		  if (sc&SCF_SHIFT)
 		    KeyDescSet("Edit/GoTo Doc End, Sel");
-// [-] : start
-		  //else
-		  //  KeyDescSet("Edit/GoTo Doc End");
-// [-] : end
 		} else {
 		    if (sc&SCF_SHIFT) {
 		      while (doc_ce!=doc) {
@@ -81,17 +397,13 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
 		      doc->cur_col=doc_ce->min_col;
 		      DocFormBwd(doc);
 		    }
-// [+] : start
                     else {
                       sc = (SCF_CTRL | SC_CURSOR_RIGHT);
                       EdCursorRight(doc,sc);
                     }
-// [+] : end
-
 		}
 	      }
 
-// [+] : start
 	      else {
 	        while (doc_ce!=doc) {
 	          BEqu(&doc_ce->type,DOCEt_SEL,sc&SCF_SHIFT);
@@ -100,9 +412,6 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
 	        doc->cur_col=doc_ce->min_col;
 	        DocFormBwd(doc);
 	      }
-// [+] : end
-
-// Change[end]
 
 	      break;
 	    case SC_CURSOR_UP:
@@ -754,10 +1063,7 @@ public U0 DocPutKey(CDoc *doc,I64 ch=0,I64 sc=0)
     Yield;
 }
 
-Bool KDDocPutKey(I64 ch,I64 scan_code)
-{
-  CDoc *doc;
-  if (doc=DocPut)
-    DocPutKey(doc,ch,scan_code);
-  return FALSE;
-}
+HijackFunc(&IsDir,&isdir);
+HijackFunc(&FileFind,&filefind);
+//HijackFunc(&DocEd,&doced);
+//HijackFunc(&DocPutKey,&docputkey);
