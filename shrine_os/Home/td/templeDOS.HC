@@ -29,6 +29,8 @@ str_cat(menu_file,,__DIR__,"/menu.DD");
 U8 *prev_dir='\0';
 
 U8 execute_cmd(U8 *cmd) {
+  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
+
   a->init(a);
   a->parse(a, cmd);
 
@@ -76,19 +78,26 @@ c->data[idx][4],
 
   zFree(test);
 */
+  U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
+
+  if (a->count==2&&fc) {
+    if (!flag_err(a->flags,FLG_H,FALSE,help_file,err_cmd)) {
+      Ed(str_cat(bufe,,"FF:",help_file,",_",err_cmd)); goto error;
+    }
+  }
+
+  "%d %d %d\n",a->count,c->data[idx][2],c->data[idx][3];
 
   if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
-    err_print(ERR_ARGTC,,help_file,c->data[idx][1]); goto error; }
+    err_print(ERR_ARGTC,,help_file,err_cmd); goto error; }
 
   if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
-    err_print(ERR_ARGC,,help_file,c->data[idx][1]); goto error; }
+    err_print(ERR_ARGC,,help_file,err_cmd); goto error; }
 
   if (!I64_between(fc,0,c->data[idx][4])) {
-    err_print(ERR_FLGC,,help_file,c->data[idx][1]); goto error; }
+    err_print(ERR_FLGC,,help_file,err_cmd); goto error; }
 
-  U8 *bufa,*bufb,*bufe;
-
-  bufe=CAlloc(sizeof(U8)*128); //scratch buffer
+  U8 *bufa,*bufb;
 
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
@@ -100,8 +109,6 @@ c->data[idx][4],
 
   if (I64_IN(idx,30,56,86,179,
       187,211,214,224,227)) if (!bav) goto nferror;
-
-  U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
  
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
@@ -265,6 +272,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 176: //tree
     case 223: //ls
+"check logic\n";
       if (bav||((a->count==2)&&(fc==1))) {
         if (a->count==1) bufe=StrNew(".");
         ls(bufe,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
@@ -277,15 +285,15 @@ $PT$$FG$$BG$    case   7: //clear
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
       goto error;
   }
-  goto free;
+  goto error;
 
 nferror:
   err_print(ERR_NF,bufa);
 
-free:
-  zFree(bufe);
+//free:
+//  zFree(bufe);
 error:
-  return res;
+  zFree(bufe);
   return res;
 }
 
@@ -311,7 +319,7 @@ U8 templeDOS() {
   while (TRUE)
   {
     DocBottom;
-    "\n%c:%s: $$PT$$",(cur_drv),Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1")) input=StrNew("exit");
@@ -331,7 +339,7 @@ U8 templeDOS() {
 }
 
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
+
 SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);
