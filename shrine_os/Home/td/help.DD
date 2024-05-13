@@ -18,7 +18,7 @@ $IV,1$_cd: _cdd:$IV,0$
 		   cd / cdd
 		   cd / cdd [DIR]
 		   cd / cdd [DRIVE LETTER]:
-		   cd / cdd [SYMBOL {-, ~, ::}]:
+		   cd / cdd [SYMBOL] {-, ~, ::}
 
 	symbols:
 	   ~   Causes the same effects as
@@ -40,7 +40,7 @@ $IV,1$_cp:$IV,0$
 	usage: cp [OPTION] {-d} [SOURCE] [DESTINATION]
 
 	Options:
-	   -d	    Directory  copy
+	   -d	    Directory copy
 
 $IV,1$_cpu:$IV,0$
 	Display cpu info.
@@ -49,7 +49,7 @@ $IV,1$_cpu:$IV,0$
 	Options:
 	   -f	    Detailed cpu info
 
-$IV,1$_date:$IV,0$
+$IV,1$_date:$IV,0$
 	Display the current date.
 	usage: date
 
@@ -77,8 +77,7 @@ $IV,1$_fm:$IV,0$
 $IV,1$_tree:$IV,0$
 	Displays a ls expanded treeview, of the
 	current or specified directory.
-	usage: ls
-	       ls [DIR]
+	usage: tree [DIR]
 
 	default: Current directory
 
@@ -91,10 +90,17 @@ $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
 	usage: help
 
-$IV,1$_ls:$IV,0$
+$IV,1$_ls:$IV,0$
 	List directory contents.
-	usage: ls
-	       ls [DIR]
+	usage: ls [OPTION] {-t} [DIR]
+	       ls [SYMBOL] {-}
+
+	Options:
+	   -t	    Displays a ls expanded treeview, of
+                    the current or specified directory
+	symbols:
+	   -   Displays the contents, of the previous directory
+	       you were in.
 
 	default: Current directory
 
@@ -123,11 +129,11 @@ $IV,1$_now:$IV,0$
 	Display the current date and time.
 	usage: now
 
-$IV,1$_rd: _rm: _rmdir:$IV,0$
+$IV,1$_rd: _rmdir:$IV,0$
 	Remove a directory.
 	usage: rd [DIR]
 	usage: rmdir [DIR]
-
+$IV,1$_rm:$IV,0$
 	Remove files or directories.
 	usage: rm [FILENAME]
 	       rm [OPTION] {-d} [DIR]

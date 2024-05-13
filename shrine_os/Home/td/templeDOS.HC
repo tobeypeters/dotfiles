@@ -86,8 +86,6 @@ c->data[idx][4],
     }
   }
 
-  "%d %d %d\n",a->count,c->data[idx][2],c->data[idx][3];
-
   if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
     err_print(ERR_ARGTC,,help_file,err_cmd); goto error; }
 
@@ -149,7 +147,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  43: //cdd
     case 199: //cd
-      if (a->count==1) { bufe=StrNew("~"); goto cdit; } //~
+      if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto cdit; } //-
       if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
@@ -159,7 +157,7 @@ $PT$$FG$$BG$    case   7: //clear
       bufe=StrNew(bufa);
  
       prevdir:
-        prev_dir=StrNew(Fs->cur_dir);
+        prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
       cdit:
         Cd(bufe);
         if (idx==43) ls;
@@ -272,26 +270,31 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 176: //tree
     case 223: //ls
-"check logic\n";
-      if (bav||((a->count==2)&&(fc==1))) {
-        if (a->count==1) bufe=StrNew(".");
-        ls(bufe,(idx==176||(!flag_err(a->flags,FLG_T,FALSE))));
-        "\n";
-      }
+      if (!bav)
+        if(str_len(bufa)) goto nferror;
+
+      if (fc)
+        if (flag_err(a->flags,FLG_T,,help_file,err_cmd)) break;
+
+      bufe=StrNew(bufa);
+
+      if (a->count==1) bufe=StrNew(".");
+
+      if (a->count==2)
+        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
+      
+      ls(bufe,(fc||idx==176));"\n";
 
       break;
     case 999:
     default:
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
-      goto error;
   }
   goto error;
 
 nferror:
   err_print(ERR_NF,bufa);
 
-//free:
-//  zFree(bufe);
 error:
   zFree(bufe);
   return res;
@@ -302,8 +305,11 @@ U8 templeDOS() {
 
   Adam("DocClear;");
 
-  Adam("\"\nBoot Time:%%7.3fs\n\",tS;");
-  Adam("\"templeDOS [%d]: spawned : %D %T\n\";",termID,Now,Now);
+  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
+
+  Adam("\"$$LTCYAN$$TODO:$$FG$$ cd - after switching to another drive\n\n\";");
+
+  Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
   set_windowinfo("templedos_task","TempleDOS");
 
