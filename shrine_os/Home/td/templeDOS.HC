@@ -17,7 +17,7 @@
 /*templeDOS.HC
   Description:
       Command-line interpreter for TempleOS.
-*/
+*/
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/help.DD"));
@@ -27,6 +27,8 @@ U8 *menu_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/menu.DD"));
 str_cat(menu_file,,__DIR__,"/menu.DD");
 
 U8 *prev_dir='\0';
+
+U0 set_prevdir() prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
 
 U8 execute_cmd(U8 *cmd) {
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -46,7 +48,11 @@ U8 execute_cmd(U8 *cmd) {
       if (a->args[0][1]==':') {
         if (a->count>1) { err_print(ERR_ARGC); goto error; }
 
-        if (drv_mounted(a->args[0])) Drv(a->args[0][0]);
+        if (drv_mounted(a->args[0])) {
+          set_prevdir;
+          Drv(a->args[0][0]);
+          "prev_dir: %s\n",prev_dir;
+        }
         else err_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
@@ -149,7 +155,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 199: //cd
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
-        if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto cdit; } //-
+        if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
       if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
       if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
       if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
@@ -157,8 +163,8 @@ $PT$$FG$$BG$    case   7: //clear
       bufe=StrNew(bufa);
  
       prevdir:
-        prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
-      cdit:
+        set_prevdir;
+        "prev_dir: %s\n",prev_dir;
         Cd(bufe);
         if (idx==43) ls;
       nocd:
@@ -307,7 +313,7 @@ U8 templeDOS() {
 
   Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"$$LTCYAN$$TODO:$$FG$$ cd - after switching to another drive\n\n\";");
+//  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
@@ -352,7 +358,7 @@ Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
 
-Cd;prev_dir=StrNew(Fs->cur_dir);
+Cd;set_prevdir;
 
 templeDOS;
 

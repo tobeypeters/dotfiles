@@ -53,7 +53,7 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 
   return res;
 }
-Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
+Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
 {//EXpanded version of str_cmp. It can compare a string,
  //to a list of strings.
  //

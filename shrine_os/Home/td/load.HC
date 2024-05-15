@@ -16,10 +16,9 @@
 
 /*load.HC <--- Might rename to index.HC Kinda like how it is in like js
   Description:
-      App includes.
+      templeDOS includes.
 */
-
-
+
 #include "strings"
 #include "utils"
 #include "errors"
@@ -27,4 +26,4 @@
 #include "args"
 #include "flags"
 #include "file"
-#include "hash"
+#include "hash"

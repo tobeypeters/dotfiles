@@ -90,7 +90,7 @@ $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
 	usage: help
 
-$IV,1$_ls:$IV,0$
+$IV,1$_ls:$IV,0$
 	List directory contents.
 	usage: ls [OPTION] {-t} [DIR]
 	       ls [SYMBOL] {-}

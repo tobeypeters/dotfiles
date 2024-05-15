@@ -122,7 +122,7 @@ U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 */
 }
 Bool flag_got(U8 *flags=NULL, I64 flag_want)
-{//Search for a certain flag.
+{//Search for a certain flag.
   I64 f=0;
 
   flag_scan(&f,Define("ST_FLAGS"),flags);
