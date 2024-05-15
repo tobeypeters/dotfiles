@@ -17,7 +17,7 @@
 /*templeDOS.HC
   Description:
       Command-line interpreter for TempleOS.
-*/
+*/
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
 U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/help.DD"));
@@ -176,7 +176,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  60: //man
       Man(bufa);
-
+
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
