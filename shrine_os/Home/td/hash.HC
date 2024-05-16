@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  33
+#define CMD_CNT  34
 #define CMD_ARGS  5
 
 /*HASH idx, command, token min, token max,
@@ -36,6 +36,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
   { 63,   "mem", 1, 1, 0},
+  { 68,   "rnd", 1, 1, 0},
   { 72,   "cpu", 1, 2, 1},
   { 81,   "vol", 1, 1, 0},
   { 84,   "now", 1, 1, 0},
@@ -59,7 +60,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {214,    "rd", 2, 2, 1},
   {223,    "ls", 1, 3, 1},
   {224,    "rm", 2, 3, 1},
-  {227,    "mv", 3, 3, 0},
+  {227,    "mv", 3, 3, 0}
 };
 
 class CHCMDS
@@ -80,6 +81,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
   while (*p) hash+=*p++;
   idx=(hash % HASH_TABLE_SIZE);
 
+//  "%d\n",idx;
   for(;idx < HASH_TABLE_SIZE;idx++)
     if (!StrCmp(in->data[idx][1],cmd)) return idx;
 

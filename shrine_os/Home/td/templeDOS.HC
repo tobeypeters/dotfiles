@@ -176,12 +176,15 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  60: //man
       Man(bufa);
-
+
       break;
     case  63: //mem
       viewer("MemRep;\"\n\";
               MemPageRep;\"\n\";");
 
+      break;
+    case 68: //rnd <-Generate a GOD number, for Terry
+      "%X\n",GodPick;
       break;
     case  72: //cpu
       if (fc)
