@@ -236,7 +236,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   return;
 }
-U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
+U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 {//Linux'ish style directory listing.
   U8 *st;
 

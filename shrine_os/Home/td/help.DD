@@ -141,6 +141,10 @@ $IV,1$_rm:$IV,0$
 	Options:
 		 -d	Directory remove
 
+$IV,1$_rnd:$IV,0$
+	Generate a random number.
+	usage: rnd
+
 $IV,1$_run:$IV,0$
 	Execute source code files.
 	usage: run [FILENAME]

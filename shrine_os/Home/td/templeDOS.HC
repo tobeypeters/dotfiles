@@ -112,7 +112,7 @@ c->data[idx][4],
   bav=(bav|(a->count==1));
 
   if (I64_IN(idx,30,56,86,179,
-      187,211,214,224,227)) if (!bav) goto nferror;
+      182, 187,211,214,224,227)) if (!bav) goto nferror;
  
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
@@ -184,7 +184,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
-      "%X\n",GodPick;
+      "%X\n",GodPick;
       break;
     case  72: //cpu
       if (fc)
