@@ -137,7 +137,7 @@ $PT$$FG$$BG$    case   7: //clear
         break;
       }
       type_exec(v,FILE,,,"Del",bufa);
-
+
       break;
     case  35: //touch
       if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
@@ -182,7 +182,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
-      "%X\n",god_num(Fs->display_doc);
+      "%X\n",god_num(Fs->display_doc);
 
       break;
     case  72: //cpu
