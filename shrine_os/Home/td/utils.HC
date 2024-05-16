@@ -128,6 +128,16 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+U64 god_num(CDoc *doc) {
+  CDocEntry *doc_e;
+//  doc_e=DocPrint(Fs->display_doc,"\n $$TX+TC,\"\"$$");
+  doc_e=DocPrint(doc,"\n $$TX+TC,\"\"$$");
+  doc_e->tag_cb=&TimeStampCB;
+  GetChar(,FALSE);
+  doc_e->tag_cb=NULL;
+  return KbdMsEvtTime>>GOD_BAD_BITS;
+}
+
 U8 MyGetStr(I64 flags=0)
 {//$LK,"Flags",A="MN:GSF_SHIFT_ESC_EXIT"$
   CDoc *doc;
