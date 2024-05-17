@@ -29,17 +29,16 @@ Bool MyPutKey(I64 ch,I64 sc)
 
 
 //[tpc start]
-//[+] <shift>+<esc> start
+//[+s] <shift>+<esc>
 //  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
-//    !(StrCmp(Fs->task_name,"templedos_task"))) {
-//  }
-//[+] <shift>+<esc> end
+//    !(StrCmp(Fs->task_name,"templedos_task"))) Play("5eC");
+//[+e] <shift>+<esc>
 
-//[+] <CTRL>+<DEL> start
+//[+s] <CTRL>+<DEL>
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
     BootRAM;
   }
-//[+] <CTRL>+<DEL> end
+//[+e] <CTRL>+<DEL>
 //[tpc end]
 
   if (sc&SCF_ALT && !(sc&SCF_CTRL)) {

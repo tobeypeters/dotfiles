@@ -39,7 +39,7 @@ public U0 More(U8 *filename)
     }
   }
 
-//  "\n";
+//  "\n";
 
   Free(buffer);
 }
@@ -217,8 +217,10 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   bdoc->flags|=DOCF_BORDER_DOC;
   DocPrint(bdoc,"$$CM+TY+LX+NC,0,-1$$");
 
-  DocPrint(bdoc,"$$TX+RX+BD,\"[þ]\"$$");
-  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"µ-Æ\"$$$$BK,0$$");
+  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
+  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"ÍßÍ\"$$$$BK,0$$");
+//  DocPrint(bdoc,"$$TX+RX+BD,\"¾ßÔ\"$$");
+//  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"¾ßÔ\"$$$$BK,0$$");
 
   old_task_title=StrNew(Fs->task_title);
   if (Fs->title_src!=TTS_LOCKED_CONST) {
@@ -226,8 +228,10 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
     MemCpy(Fs->task_title,doc->filename.name,STR_LEN-1);
   }
 
-  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
-	"A=\"%%s... \",SCX=32$$");
+  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX,LEN=STR_LEN-1,"
+	"A=\"¸ %%s Õ\"$$");
+//  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
+//	"A=\"%%s... \",SCX=32$$");
 
   doc_e->data=&Fs->task_title;
   DocDataFmt(bdoc,doc_e);
