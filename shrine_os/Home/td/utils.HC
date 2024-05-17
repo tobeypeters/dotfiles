@@ -112,7 +112,7 @@ U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   U8 *bufv=CAlloc(sizeof(U8)*128);
 
-  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTRED;DocTop;View;");
+  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTRED;DocTop;View;");
 
   PopUp(bufv);
 
@@ -131,7 +131,7 @@ I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 U64 god_num(CDoc *doc) {
   CDocEntry *doc_e;
 //  doc_e=DocPrint(Fs->display_doc,"\n $$TX+TC,\"\"$$");
-  doc_e=DocPrint(doc,"\n $$TX+TC,\"\"$$");
+  doc_e=DocPrint(doc,"\n $$TX+TC,\"\"$$");
   doc_e->tag_cb=&TimeStampCB;
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
