@@ -56,7 +56,7 @@ Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
 //       to prevent infinite loops and exceptions
-  U8 *mask=MStrPrint("%s/*",dir_name);
+  U8 *mask=MStrPrint("%s/*",dir_name);
   Bool res=FALSE;
 
   U64 len=StrLen(dir_name);
@@ -217,7 +217,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   bdoc->flags|=DOCF_BORDER_DOC;
   DocPrint(bdoc,"$$CM+TY+LX+NC,0,-1$$");
 
-  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
+  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
   DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"ÍßÍ\"$$$$BK,0$$");
 //  DocPrint(bdoc,"$$TX+RX+BD,\"¾ßÔ\"$$");
 //  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"¾ßÔ\"$$$$BK,0$$");

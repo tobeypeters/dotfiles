@@ -16,7 +16,7 @@ U0 spawned() {
 
 U0 UserStartUp()
 {
-  spawned; //Ran when a user is spawned.
+  spawned; //Ran when a user is spawned.
 
   if (started) {
   }
@@ -34,9 +34,9 @@ U0 StartUpTasks()
   Fs->border_src=BDS_CONST;
   Fs->border_attr=WHITE<<4+LTCYAN;
 
-  "\nBoot Time:%7.3fs\n",tS;
-
-  "\n$$SY,-3$$TempleOS$$SY,0$$$$SY,4$$v%2.2f$$SY,0$$\n\n$$SY,-6$$Kernel$$SY,0$$compiled: %D %T\n\n",sys_os_version,sys_compile_time,sys_compile_time;
+//  "\nBoot Time:%7.3fs\n",tS;
+//  "\nTempleOS v%2.2f\n\nKernel compiled: %D %T\n",sys_os_version,sys_compile_time,sys_compile_time;
+  "\nTempleOS v%2.2f\n\nBoot Time:%7.3fs  Kernel compiled: %D %T\n",tS,sys_os_version,sys_compile_time,sys_compile_time;
 
   DocCursor;
 

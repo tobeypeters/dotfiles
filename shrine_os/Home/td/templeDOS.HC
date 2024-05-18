@@ -137,7 +137,7 @@ $PT$$FG$$BG$    case   7: //clear
         break;
       }
       type_exec(v,FILE,,,"Del",bufa);
-
+
       break;
     case  35: //touch
       if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
@@ -222,6 +222,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 158: //date
       "%D\n",Now;
+
       break;
     case 169: //help
       if (!FileFind(help_file)) { err_print(ERR_NF,help_file); break; }
@@ -311,9 +312,9 @@ error:
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
 
-  Adam("DocClear;");
+//  Adam("DocClear;");
 
-  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
+//  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
 //  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
 

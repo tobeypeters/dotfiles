@@ -583,7 +583,5 @@ Free(new);
 //    *(orig+1)(U32*)=new-orig-5;
 //    POPFD
 //}
-"\n";
 
-KeyAndCont;
-
+KeyAndCont;
