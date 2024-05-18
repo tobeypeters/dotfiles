@@ -56,7 +56,7 @@ Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
 //       to prevent infinite loops and exceptions
-  U8 *mask=MStrPrint("%s/*",dir_name);
+  U8 *mask=MStrPrint("%s/*",dir_name);
   Bool res=FALSE;
 
   U64 len=StrLen(dir_name);
@@ -217,10 +217,10 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   bdoc->flags|=DOCF_BORDER_DOC;
   DocPrint(bdoc,"$$CM+TY+LX+NC,0,-1$$");
 
-  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
-  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"ÍßÍ\"$$$$BK,0$$");
-//  DocPrint(bdoc,"$$TX+RX+BD,\"¾ßÔ\"$$");
-//  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"¾ßÔ\"$$$$BK,0$$");
+  DocPrint(bdoc,"$$TX+RX+BD,\"Í-Í\"$$");
+  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"Í-Í\"$$$$BK,0$$");
+//  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
+//  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"ÍßÍ\"$$$$BK,0$$");
 
   old_task_title=StrNew(Fs->task_title);
   if (Fs->title_src!=TTS_LOCKED_CONST) {
@@ -228,10 +228,10 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
     MemCpy(Fs->task_title,doc->filename.name,STR_LEN-1);
   }
 
-  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX,LEN=STR_LEN-1,"
-	"A=\"¸ %%s Õ\"$$");
-//  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
-//	"A=\"%%s... \",SCX=32$$");
+  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
+	"A=\" %%s \"$$");
+//  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX,LEN=STR_LEN-1,"
+//	"A=\"¸ %%s Õ\"$$");
 
   doc_e->data=&Fs->task_title;
   DocDataFmt(bdoc,doc_e);
@@ -1082,15 +1082,16 @@ public CDoc *docbordernew(CDoc *pdoc)
     doc_e->user_data=pdoc;
     doc_e->tag_cb=&EdDollarTypeCB;
   }
-  DocPrint(bdoc,"$$CM+H+TY+NC,0,-1$$");
-  doc_e=DocPrint(bdoc,"$$DA+H-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
-	"A=\"%%s...\",SCX=15$$");
-  doc_e->data=&Fs->task_title;
+    DocPrint(bdoc,"$$CM+H+TY+NC,0,-1$$");
+    doc_e=DocPrint(bdoc,"$$DA+H-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
+	  "A=\" %%s \"$$");
+
+  doc_e->data=&Fs->task_title;
   DocDataFmt(bdoc,doc_e);
   DocPrint(bdoc,"$$CM+H+NC,1,0$$$$TX+H+BD+IV,\"%X\"$$",Fs);
 
-  DocPrint(bdoc,"$$TX+H+RX+BD,\"[þ]\"$$");
-  DocPrint(bdoc,"$$BK,1$$$$TX+H+LX+BD,\"µ-Æ\"$$$$BK,0$$");
+  DocPrint(bdoc,"$$TX+H+RX+BD,\"-\"$$");
+  DocPrint(bdoc,"$$BK,1$$$$TX+H+LX+BD,\"-\"$$$$BK,0$$");
 
   return bdoc;
 }
