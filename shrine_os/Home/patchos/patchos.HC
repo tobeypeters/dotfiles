@@ -1082,11 +1082,12 @@ public CDoc *docbordernew(CDoc *pdoc)
     doc_e->user_data=pdoc;
     doc_e->tag_cb=&EdDollarTypeCB;
   }
-    DocPrint(bdoc,"$$CM+H+TY+NC,0,-1$$");
-    doc_e=DocPrint(bdoc,"$$DA+H-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
-	  "A=\" %%s \"$$");
+  DocPrint(bdoc,"$$CM+H+TY+NC,0,-1$$");
+  doc_e=DocPrint(bdoc,"$$DA+H-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
+	"A=\" %%s \"$$");
 
-  doc_e->data=&Fs->task_title;
+  doc_e->data=&Fs->task_title;
+
   DocDataFmt(bdoc,doc_e);
   DocPrint(bdoc,"$$CM+H+NC,1,0$$$$TX+H+BD+IV,\"%X\"$$",Fs);
 

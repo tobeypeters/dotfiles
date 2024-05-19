@@ -584,4 +584,15 @@ Free(new);
 //    POPFD
 //}
 
-KeyAndCont;
+//CTask *task;
+//while (TRUE) {
+//  task=Fs->next_task;
+//  while (task!=Fs) {
+//    "$$MA+X,T=\"Task:%08X:%16ts\",LM=\"0x%08X\n\"$$\n",
+//     task,task->task_name,task;
+//     task=task->next_task;
+//  }
+//  break;
+//}
+
+KeyAndCont;

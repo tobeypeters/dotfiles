@@ -314,8 +314,8 @@ U8 templeDOS() {
 
 //  Adam("DocClear;");
 
-//  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
-
+//  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
+
 //  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
