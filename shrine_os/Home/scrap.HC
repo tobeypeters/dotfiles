@@ -595,22 +595,14 @@ Free(new);
 //  break;
 //}
 
-U0 static_test1() {
-  U64 i=68;
+U0 static_test3() {
+  static U64 i=69;
 
-  i=69;
-  "%d\n",i;
-}
-U0 static_test2() {
-  static U64 i=68;
-
-  i=69;
-  "%d\n",i;
+  "i: %d\n",i;
+  i=70;
 }
 
-"No static variable\n";
-U("static_test1");
-"\nStatic variable\n";
-U("static_test2");
+static_test3;
+static_test3;
 
 KeyAndCont;
