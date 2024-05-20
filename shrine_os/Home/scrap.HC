@@ -594,5 +594,23 @@ Free(new);
 //  }
 //  break;
 //}
-
+
+U0 static_test1() {
+  U64 i=68;
+
+  i=69;
+  "%d\n",i;
+}
+U0 static_test2() {
+  static U64 i=68;
+
+  i=69;
+  "%d\n",i;
+}
+
+"No static variable\n";
+U("static_test1");
+"\nStatic variable\n";
+U("static_test2");
+
 KeyAndCont;

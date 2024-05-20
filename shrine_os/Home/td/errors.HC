@@ -30,7 +30,7 @@
 
 #define ERR_DRV_SPEC    "Drive was specified"
 #define ERR_DIR_SPEC    "Directory was specified"
-#define ERR_FILE_SPEC   "File was specified"
+#define ERR_FILE_SPEC   "File was specified"
 
 #define ERR_DIR_EXISTS  "Directory already exists"
 #define ERR_FILE_EXISTS "File already exists"
