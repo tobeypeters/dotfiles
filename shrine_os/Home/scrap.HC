@@ -595,10 +595,10 @@ Free(new);
 //  break;
 //}
 
-U0 static_test3() {
+U0 static_test3() {
   static U64 i=69;
 
-  "i: %d\n",i;
+  "i: %d\n",i;
   i=70;
 }
 

@@ -112,13 +112,12 @@ U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   U8 *bufv=CAlloc(sizeof(U8)*128);
 
-  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTRED;DocTop;View;");
-
+  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTRED;DocTop;View;");
+
   PopUp(bufv);
 
   Free(bufv);
 /*  DocClear; DocTop;
-  ExePutS(cmd);
   "$$BK,1$$Press ESC to exit ...$$BK,0$$";
   DocTop;View; DocBottom;
   PutChars(CH_CTRLY);*/

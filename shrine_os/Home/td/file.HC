@@ -93,6 +93,8 @@ U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
 
+  "as: %s\n",as;
+
   if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,,as);
  
   Free(as);

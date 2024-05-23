@@ -256,7 +256,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 201: //ed
-      if (filenameOK(bufa)) PopUpEd(bufa);
+      if (filenameOK(bufa)) PopUpEd(bufa);
       else err_print(ERR_FILEI,bufa);
 
       break;
@@ -315,7 +315,7 @@ U8 templeDOS() {
 //  Adam("DocClear;");
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
-
+
 //  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
