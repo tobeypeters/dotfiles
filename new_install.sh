@@ -156,6 +156,8 @@ sudo apt install -y lolcat #terminal gradient
 sudo snap install auto-cpufreq
 sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 
+sudo cargo install procs
+
 # https://christitus.com/quickemu/
 
 # In case, you want a ramdisk
