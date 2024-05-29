@@ -20,15 +20,27 @@
 */
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
-U8 *help_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/help.DD"));
+U0 callocize(...)
+{
+  U64 len=0;
+  while (*argv) {
+   len+=str_len(arv);
+   argv++;
+  }
+  "len: %d\n",len;
+}
+
+U8 *help_file=CAlloc(sizeof(U8)*str_len(__DIR__)+str_len("/help.DD"));
 str_cat(help_file,,__DIR__,"/help.DD");
 
-U8 *menu_file=CAlloc(sizeof(U8)* str_len(__DIR__)+str_len("/menu.DD"));
+U8 *menu_file=CAlloc(sizeof(U8)*str_len(__DIR__)+str_len("/menu.DD"));
 str_cat(menu_file,,__DIR__,"/menu.DD");
 
 U8 *prev_dir='\0';
 
 U0 set_prevdir() prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
+
+//U8 *prev_cmd=CAlloc(
 
 U8 execute_cmd(U8 *cmd) {
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -256,7 +268,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 201: //ed
-      if (filenameOK(bufa)) PopUpEd(bufa);
+      if (filenameOK(bufa)) PopUpEd(bufa);
       else err_print(ERR_FILEI,bufa);
 
       break;

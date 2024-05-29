@@ -37,7 +37,7 @@ class CArgs
   U0 (*prev)(CArgs *in);
 };
 U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
-{//Parse command buffer.  This version uses
+{//Parse command buffer.  This version uses
  //space as the delimeter.
   StrUtil(cmd, SUF_REM_LEADING);
   if (!cmd[0]) return;

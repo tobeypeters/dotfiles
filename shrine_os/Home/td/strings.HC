@@ -31,13 +31,13 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 
   return str;
 }
-U8 str_upper(U8 *str)
+U8 str_upper(U8 *str)
 {//Convert a string to uppercase.
   return MStrUtil(str,SUF_TO_UPPER);
 }
 U8 str_lower(U8 *str)
 {//Convert a string to lowercase. 
-  return MStrUtil(str,SUF_TO_LOWER);
+  return MStrUtil(str,SUF_TO_LOWER);
 }
 Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
 {//StrCmp replacement which returns TRUE & FALSE.

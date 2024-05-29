@@ -1,3 +1,4 @@
+#include "./td/strings"
 #include "./shared"
 
 //"\n";
@@ -595,14 +596,39 @@ Free(new);
 //  break;
 //}
 
-U0 static_test3() {
-  static U64 i=69;
+//U0 static_test3() {
+//  static U64 i=69;
 
-  "i: %d\n",i;
-  i=70;
+//  "i: %d\n",i;
+//  i=70;
+//}
+
+//static_test3;
+//static_test3;
+
+//U8 *callocize(U8 **str,...)
+U8 *callocize(...)
+{
+  U64 len=0,
+        i=0;
+
+  while (i<argc) {
+   len+=str_len(argv[i]);
+   i++;
+  }
+
+  "len: %d\n",len; //9 in my example
+  U8 *st=CAlloc((sizeof(U8)*len)+1);
+
+  StrCpy(st,"abcdefgabcdefg");
+  "length st: %d\n",StrLen(st); //14 :<
+
+
+  return st;
 }
 
-static_test3;
-static_test3;
+U8 *test=callocize("three","four");
+//"str_len(test):%d\n",str_len(test);
+Free(test);
 
 KeyAndCont;
