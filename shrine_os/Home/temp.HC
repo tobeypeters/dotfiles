@@ -1,70 +1,18 @@
-Pt{(0,1)};
-Color{YELLOW};
-Pt{(1,1)};
-Pt{(2,1)};
-Pt{(3,1)};
-Pt{(4,1)};
-Pt{(5,1)};
-Pt{(6,1)};
-Color{TRANSPARENT};
-Pt{(7,1)};
-Color{YELLOW};
-Pt{(0,2)};
-Pt{(1,2)};
-Pt{(2,2)};
-Color{WHITE};
-Pt{(3,2)};
-Color{YELLOW};
-Pt{(4,2)};
-Color{WHITE};
-Pt{(5,2)};
-Color{YELLOW};
-Pt{(6,2)};
-Color{TRANSPARENT};
-Pt{(7,2)};
-Pt{(0,3)};
-Pt{(1,3)};
-Pt{(2,3)};
-Pt{(3,3)};
-Pt{(4,3)};
-Pt{(5,3)};
-Pt{(6,3)};
-Color{TRANSPARENT};
-Pt{(7,3)};
-Pt{(0,4)};
-Pt{(1,4)};
-Pt{(2,4)};
-Pt{(3,4)};
-Pt{(4,4)};
-Pt{(5,4)};
-Pt{(6,4)};
-Color{TRANSPARENT};
-Pt{(7,4)};
-Pt{(0,5)};
-Pt{(1,5)};
-Pt{(2,5)};
-Pt{(3,5)};
-Pt{(4,5)};
-Pt{(5,5)};
-Pt{(6,5)};
-Color{TRANSPARENT};
-Pt{(7,5)};
-Pt{(0,6)};
-Pt{(1,6)};
-Pt{(2,6)};
-Pt{(3,6)};
-Pt{(4,6)};
-Pt{(5,6)};
-Pt{(6,6)};
-Color{TRANSPARENT};
-Pt{(7,6)};
-Pt{(0,7)};
-Pt{(1,7)};
-Pt{(2,7)};
-Pt{(3,7)};
-Pt{(4,7)};
-Pt{(5,7)};
-Pt{(6,7)};
-Color{TRANSPARENT};
-Pt{(7,7)};
-
+/*xxxxxx
+ xxxxxx
+xxx0|0x
+ xx0|0x
+ xx|0|x
+  ||00
+ xx||xx
+  00x0
+*/
+
+#define cw 8
+#define ch 8
+
+U8 *chrone[cw][ch] = {
+  {"x","x","x","x","x","x","",""}
+}; //<--- saws missing expression here
+
+"test: %s",charone[0][0];

@@ -26,7 +26,7 @@
 
 /*HASH idx, command, token min, token max,
   flag max */
-U8 *hashed[CMD_CNT][CMD_ARGS] = {
+U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {  7, "clear", 1, 1, 0},
   { 23, "mkdir", 2, 2, 0},
   { 30, "rmdir", 2, 2, 0},
@@ -57,7 +57,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {203,    "df", 1, 1, 0},
   {211,    "cp", 3, 4, 1},
   {212,    "fm", 1, 1, 0},
-  {214,    "rd", 2, 2, 0},
+  {214,    "rd", 2, 2, 0},
   {223,    "ls", 1, 3, 1},
   {224,    "rm", 2, 3, 1},
   {227,    "mv", 3, 3, 0}
