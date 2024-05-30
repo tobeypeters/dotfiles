@@ -242,7 +242,7 @@ ej_doc:
 
 public Bool doced(CDoc *doc,I64 dof_flags=0)
 {//Live for user interaction. End on <ESC> or <SHIFT-ESC>.
-  Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTCYAN;
+  Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTCYAN;
 
   CDoc *old_put_doc	  =DocPut,
 	*old_display_doc=DocDisplay,
@@ -1157,6 +1157,43 @@ public U0 doctermnew()
   Raw(OFF);
 }
 
+U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
+{//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
+  U8 *res=0;
+  I64 size=0;
+
+  if (buf||mem_task) {
+    if (buf) {
+      size=StrLen(buf)+1;
+      res=MAlloc(size,mem_task);
+      MemCpy(res,buf,size);
+      goto done;
+    }
+    res=MAlloc(1,mem_task);
+    goto done;
+  }
+
+  if (argc) {
+    U64 i=0;
+
+    while(i<argc) {
+      size+=StrLen(argv[i]);
+
+      i++;
+    }
+
+    if (size) size+=1;
+
+    res=CAlloc(sizeof(U8)*size);
+    for (i=0;i<argc;i++) {
+      CatPrint(res,argv[i]);
+    }
+  }
+
+done:
+  return res;
+}
+
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
 HijackFunc(&DocEd,&doced);

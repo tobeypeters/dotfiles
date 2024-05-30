@@ -20,29 +20,25 @@
 */
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
-U0 callocize(...)
-{
-  U64 len=0;
-  while (*argv) {
-   len+=str_len(arv);
-   argv++;
-  }
-  "len: %d\n",len;
-}
 
-U8 *help_file=CAlloc(sizeof(U8)*str_len(__DIR__)+str_len("/help.DD"));
-str_cat(help_file,,__DIR__,"/help.DD");
+U8 *help_file=strnew(,,__DIR__,"/help.DD");
+U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
-U8 *menu_file=CAlloc(sizeof(U8)*str_len(__DIR__)+str_len("/menu.DD"));
-str_cat(menu_file,,__DIR__,"/menu.DD");
-
+U8 *prev_cmd='\0';
 U8 *prev_dir='\0';
+
+U0 set_prevcmd(U8 *newcmd) {
+  zFree(prev_cmd);
+  prev_cmd=StrNew(newcmd);
+}
 
 U0 set_prevdir() prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
 
 //U8 *prev_cmd=CAlloc(
 
 U8 execute_cmd(U8 *cmd) {
+  set_prevcmd(cmd);
+
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
 
   a->init(a);
@@ -324,8 +320,6 @@ error:
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
 
-//  Adam("DocClear;");
-
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
 //  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
@@ -349,7 +343,15 @@ U8 templeDOS() {
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-    if (str_cmp(input,"-1")) input=StrNew("exit");
+    if (str_cmp(input,"-1")) {
+      zFree(input);
+      input=StrNew("exit");
+    }
+
+    if (str_cmp(input, "!!")) {
+      zFree(input);
+      input=StrNew(prev_cmd);
+    }
 
     res=execute_cmd(input);
 

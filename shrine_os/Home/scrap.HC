@@ -606,8 +606,7 @@ Free(new);
 //static_test3;
 //static_test3;
 
-//U8 *callocize(U8 **str,...)
-U8 *callocize(...)
+/*U8 *callocit(...)
 {
   U64 len=0,
         i=0;
@@ -617,18 +616,59 @@ U8 *callocize(...)
    i++;
   }
 
-  "len: %d\n",len; //9 in my example
-  U8 *st=CAlloc((sizeof(U8)*len)+1);
-
-  StrCpy(st,"abcdefgabcdefg");
-  "length st: %d\n",StrLen(st); //14 :<
-
-
-  return st;
+  return CAlloc((sizeof(U8)*len)+1);
 }
 
-U8 *test=callocize("three","four");
-//"str_len(test):%d\n",str_len(test);
-Free(test);
+U8 *test=callocit("three","four");
+
+str_cat(test,,"three ","four");
+
+"%s %d\n",test,str_len(test);
+
+Free(test);*/
+
+/*U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
+{//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
+  U8 *res=0;
+  I64 size=0;
+
+  if (buf||mem_task) {
+    if (buf) {
+      size=StrLen(buf)+1;
+      res=MAlloc(size,mem_task);
+      MemCpy(res,buf,size);
+      goto done;
+    }
+    res=MAlloc(1,mem_task);
+    goto done;
+  }
+
+  if (argc) {
+    U64 i=0;
+
+    while(i<argc) {
+      size+=StrLen(argv[i]);
+
+      i++;
+    }
+
+    if (size) size+=1;
+
+    res=CAlloc(sizeof(U8)*size);
+    for (i=0;i<argc;i++) {
+      CatPrint(res,argv[i]);
+    }
+  }
+
+done:
+  return res;
+}
+
+U8 *buffe$IV,0$r=strnew(,,"viper","armed");
+"buffer: %s\n",buffer;
+Free(buffer);*/
+
+$SP,"<1>",BI=1$
 
 KeyAndCont;
+        _                                                ÿ                                                         ÿ                         ÿ            ÿ            ÿ                                                 ÿ                                                 ÿ                                                 ÿ                                                 ÿ                                                 ÿ       
