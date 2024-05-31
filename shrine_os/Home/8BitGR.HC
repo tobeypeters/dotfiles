@@ -55,30 +55,28 @@ while(*warrior) {
   if (changed=(!str_cmp(prev_chr,warrior[0]))) {
     zFree(prev_chr);
     prev_chr=strnew(warrior[0]);
-  }
 
-  switch(warrior[0]) {
-    case 32: //space
-      if (changed) "Color{TRANSPARENT};\n";
-      break;
-    case 48: //0
-      if (changed) "Color{LTRED};\n";
-      break;
-    case 120: //x
-      if (changed) "Color{BLACK};\n";
-      break;
-    case 124: //|
-      if (changed) "Color{WHITE};\n";
-      break;
-    default:
-      break;
+    switch(warrior[0]) {
+      case 32: //space
+        if (changed) "Color{TRANSPARENT};\n";
+        break;
+      case 48: //0
+        if (changed) "Color{LTRED};\n";
+        break;
+      case 120: //x
+        if (changed) "Color{BLACK};\n";
+        break;
+      case 124: //|
+        if (changed) "Color{WHITE};\n";
+        break;
+      default:
+        break;
+    }
   }
 
   "Pt{(%d,%d)};\n",x,y;
 
-  x++;
-
-  if (x==8) y++;
+  if (++x==8) y++;
 
   warrior++;
 }
