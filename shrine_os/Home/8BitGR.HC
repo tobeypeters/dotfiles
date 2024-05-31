@@ -43,10 +43,17 @@ U8 *warrior=strnew(,,
   "  00x0  "
 );
 
+U8 *blocks[255][20];
+
+blocks[32][0]="TRANSPARENT"; //space
+blocks[48][0]="LTRED"; //0
+blocks[120][0]="BLACK"; //x
+blocks[124][0]="WHITE"; //|
+
 U8 *prev_chr='\0';
 Bool changed=FALSE;
 
-U64 x=0,y=0;
+U64 x=0,y=0,l=0;
 
 "\n";
 while(*warrior) {
@@ -56,22 +63,7 @@ while(*warrior) {
     zFree(prev_chr);
     prev_chr=strnew(warrior[0]);
 
-    switch(warrior[0]) {
-      case 32: //space
-        "Color{TRANSPARENT};\n";
-        break;
-      case 48: //0
-        "Color{LTRED};\n";
-        break;
-      case 120: //x
-        "Color{BLACK};\n";
-        break;
-      case 124: //|
-        "Color{WHITE};\n";
-        break;
-      default:
-        break;
-    }
+    "Color{%s};\n",blocks[warrior[0]][0];
   }
 
   "Pt{(%d,%d)};\n",x,y;
@@ -83,3 +75,4 @@ while(*warrior) {
 "\n";
 
 zFree(prev_chr);
+zFree(blocks);
