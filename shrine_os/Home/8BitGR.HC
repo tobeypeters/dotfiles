@@ -13,7 +13,7 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
+
 /*8BitGR.HC
   Description:
       Help build the text needed to build a 8x8 graphic resource.
@@ -53,7 +53,7 @@ blocks[124][0]="WHITE"; //|
 U8 *prev_chr='\0';
 Bool changed=FALSE;
 
-U64 x=0,y=0,l=0;
+U64 x=0,y=0;
 
 "\n";
 while(*warrior) {
