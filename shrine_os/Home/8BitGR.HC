@@ -58,18 +58,18 @@ while(*warrior) {
 
     switch(warrior[0]) {
       case 32: //space
-        if (changed) "Color{TRANSPARENT};\n";
+        "Color{TRANSPARENT};\n";
         break;
       case 48: //0
-        if (changed) "Color{LTRED};\n";
+        "Color{LTRED};\n";
         break;
       case 120: //x
-        if (changed) "Color{BLACK};\n";
+        "Color{BLACK};\n";
         break;
       case 124: //|
-        if (changed) "Color{WHITE};\n";
+        "Color{WHITE};\n";
         break;
-      default:
+      default:
         break;
     }
   }
