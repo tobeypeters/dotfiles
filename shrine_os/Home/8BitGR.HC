@@ -32,7 +32,7 @@
 #include "~/td/strings"
 #include "~/td/utils"
 
-U8 *warrior=strnew(,,
+U8 *warrior=strnew(,,
   "xxxxxx  ",
   " xxxxxx ",
   "xxx0|0x ",
@@ -62,14 +62,14 @@ while(*warrior) {
       if (changed) "Color{TRANSPARENT};\n";
       break;
     case 48: //0
-      if (changed) "Color{LTCYAN};\n";
+      if (changed) "Color{LTRED};\n";
       break;
     case 120: //x
-      if (changed) "Color{LTRED};\n";
+      if (changed) "Color{BLACK};\n";
       break;
     case 124: //|
-      if (changed) "Color{LTRED};\n";
-      break;
+      if (changed) "Color{WHITE};\n";
+      break;
     default:
       break;
   }
