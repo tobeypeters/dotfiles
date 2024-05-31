@@ -18,7 +18,7 @@
   Description:
       Miscellaneous functions.
 */
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
@@ -134,4 +134,4 @@ U64 god_num(CDoc *doc) {
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
   return KbdMsEvtTime>>GOD_BAD_BITS;
-}
+}
