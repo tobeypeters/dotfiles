@@ -35,8 +35,47 @@
 #define BLKCNT 255
 #define BLKSIZE 11
 
+U8 *blocks[BLKCNT][BLKSIZE];
+*blocks=CAlloc(sizeof(U8)*BLKCNT*BLKSIZE);
+
+blocks[32][0]="TRANSPARENT"; //space
+blocks[48][0]="LTRED"; //0
+blocks[120][0]="BLACK"; //x
+blocks[124][0]="WHITE"; //|
+
+U0 gen_gr(U8 *res=NULL) {
+  U8 *prev_chr='\0';
+  Bool changed=FALSE;
+
+  U64 x=0,y=0;
+
+  "\n";
+  "$$GREEN$$----BEGIN Graphic Resource definition----$$FG$$\n";
+  while(*res) {
+    x=x-(8*(x==8));
+
+    if (changed=(!str_cmp(prev_chr,res[0]))) {
+      zFree(prev_chr);
+      prev_chr=strnew(res[0]);
+
+      "Color{%s};\n",blocks[res[0]][0];
+    }
+
+    "Pt{(%d,%d)};\n",x,y;
+
+    if (++x==8) y++;
+
+    res++;
+  }
+  "$$GREEN$$----END Graphic Resource definition----$$FG$$\n";
+  "\n";
+
+  zFree(prev_chr);
+  return;
+}
+
 U8 *warrior=strnew(,,
-  "xxxxxx  ",
+  "xxxxxx  ",
   " xxxxxx ",
   "xxx0|0x ",
   " xx0|0x ",
@@ -46,37 +85,6 @@ U8 *warrior=strnew(,,
   "  00x0  "
 );
 
-U8 *blocks[BLKCNT][BLKSIZE];
-*blocks=CAlloc(sizeof(U8)*BLKCNT*BLKSIZE);
+gen_gr(warrior);
 
-blocks[32][0]="TRANSPARENT"; //space
-blocks[48][0]="LTRED"; //0
-blocks[120][0]="BLACK"; //x
-blocks[124][0]="WHITE"; //|
-
-U8 *prev_chr='\0';
-Bool changed=FALSE;
-
-U64 x=0,y=0;
-
-"\n";
-while(*warrior) {
-  x=x-(8*(x==8));
-
-  if (changed=(!str_cmp(prev_chr,warrior[0]))) {
-    zFree(prev_chr);
-    prev_chr=strnew(warrior[0]);
-
-    "Color{%s};\n",blocks[warrior[0]][0];
-  }
-
-  "Pt{(%d,%d)};\n",x,y;
-
-  if (++x==8) y++;
-
-  warrior++;
-}
-"\n";
-
-zFree(prev_chr);
 zFree(blocks);
