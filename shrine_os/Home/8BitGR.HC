@@ -45,7 +45,6 @@ blocks[124][0]="WHITE"; //|
 
 U0 gen_gr(U8 *res=NULL) {
   U8 *prev_chr='\0';
-  Bool changed=FALSE;
 
   U64 x=0,y=0;
 
@@ -54,7 +53,7 @@ U0 gen_gr(U8 *res=NULL) {
   while(*res) {
     x=x-(8*(x==8));
 
-    if (changed=(!str_cmp(prev_chr,res[0]))) {
+    if (!str_cmp(prev_chr,res[0])) {
       zFree(prev_chr);
       prev_chr=strnew(res[0]);
 
@@ -75,7 +74,7 @@ U0 gen_gr(U8 *res=NULL) {
 }
 
 U8 *warrior=strnew(,,
-  "xxxxxx  ",
+  "xxxxxx  ",
   " xxxxxx ",
   "xxx0|0x ",
   " xx0|0x ",
