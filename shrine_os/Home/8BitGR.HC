@@ -32,6 +32,9 @@
 #include "~/td/strings"
 #include "~/td/utils"
 
+#define BLKCNT 255
+#define BLKSIZE 11
+
 U8 *warrior=strnew(,,
   "xxxxxx  ",
   " xxxxxx ",
@@ -43,7 +46,8 @@ U8 *warrior=strnew(,,
   "  00x0  "
 );
 
-U8 *blocks[255][11];
+U8 *blocks[BLKCNT][BLKSIZE];
+*blocks=CAlloc(sizeof(U8)*BLKCNT*BLKSIZE);
 
 blocks[32][0]="TRANSPARENT"; //space
 blocks[48][0]="LTRED"; //0
@@ -55,7 +59,7 @@ Bool changed=FALSE;
 
 U64 x=0,y=0;
 
-"\n";
+"\n";
 while(*warrior) {
   x=x-(8*(x==8));
 

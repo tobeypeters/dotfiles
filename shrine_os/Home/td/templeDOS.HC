@@ -39,7 +39,7 @@ U0 set_prevdir() prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
 U8 execute_cmd(U8 *cmd) {
   set_prevcmd(cmd);
 
-  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
+  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
 
   a->init(a);
   a->parse(a, cmd);
@@ -105,7 +105,7 @@ c->data[idx][4],
   if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
     err_print(ERR_ARGC,,help_file,err_cmd); goto error; }
 
-  if (!I64_between(fc,0,c->data[idx][4])) {
+  if (!I64_between(fc,0,c->data[idx][4])) {
     err_print(ERR_FLGC,,help_file,err_cmd); goto error; }
 
   U8 *bufa,*bufb;
