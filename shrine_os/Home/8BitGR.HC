@@ -53,9 +53,9 @@ blocks[124][0]="WHITE"; //|
 U8 *prev_chr='\0';
 Bool changed=FALSE;
 
-U64 x=0,y=0;
+U64 x=0,y=0;
 
-"\n";
+"\n";
 while(*warrior) {
   x=x-(8*(x==8));
 
