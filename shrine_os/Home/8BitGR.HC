@@ -53,7 +53,7 @@ U0 gen_gr(U8 *res=NULL) {
   while(*res) {
     x=x-(8*(x==8));
 
-    if (!str_cmp(prev_chr,res[0])) {
+    if (!str_cmp(prev_chr,res[0])) {
       zFree(prev_chr);
       prev_chr=strnew(res[0]);
 
@@ -83,7 +83,19 @@ U8 *warrior=strnew(,,
   " xx||xx ",
   "  00x0  "
 );
-
 gen_gr(warrior);
 
+U8 *shield=strnew(,,
+  "0 000 0 ",
+  "00   00 ",
+  "0  0  0 ", 
+  "0 0x0 0 ",
+  "0  0  0 ",
+  "0  0  0 ",
+  " 0   0  ",
+  "  000   "
+);
+gen_gr(shield);
+
 zFree(blocks);
+

@@ -21,6 +21,9 @@
 //Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
 
+/*COMMAND HISTORY stuff
+EdLineDel(doc);
+*/
 U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
@@ -32,14 +35,15 @@ U0 set_prevcmd(U8 *newcmd) {
   prev_cmd=StrNew(newcmd);
 }
 
-U0 set_prevdir() prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
-
-//U8 *prev_cmd=CAlloc(
+U0 set_prevdir() {
+  zFree(prev_dir);
+  prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
+}
 
 U8 execute_cmd(U8 *cmd) {
   set_prevcmd(cmd);
 
-  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
+  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
 
   a->init(a);
   a->parse(a, cmd);
