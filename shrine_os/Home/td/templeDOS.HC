@@ -23,7 +23,7 @@
 
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
-*/
+*/
 U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
@@ -88,7 +88,7 @@ c->data[idx][4]: %d
 fc,a->count,
 a->count-(fc&0),
 c->data[idx][3],
-c->data[idx][4],
+c->data[idx][4],
 (c->data[idx][3]-c->data[idx][4]));
 
   debug_prn(test,TRUE);
@@ -186,6 +186,16 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  60: //man
       Man(bufa);
+
+      break;
+    case  61: //pal
+      if (fc)
+        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+
+      if (fc)
+        PopUpColorDither;
+      else
+        PopUpColor;
 
       break;
     case  63: //mem

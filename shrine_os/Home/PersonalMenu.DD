@@ -1,5 +1,7 @@
-ShortCuts:
-$MA,LM="Cd;Dir;\n"$
+$MA-X+PU,"Key Map",LM="KeyMap;View;\n"$
+$LK,"HolyC",A="FI:::/Doc/HolyC.DD"$
+
+$MA,LM="Cd;Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\");Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\\BlkDev"$
 $MA,LM="Cd(\"::/Demo/Lectures\");ls;\n"$

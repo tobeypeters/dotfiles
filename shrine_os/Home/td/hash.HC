@@ -21,12 +21,12 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  34
+#define CMD_CNT  35
 #define CMD_ARGS  5
 
 /*HASH idx, command, token min, token max,
   flag max */
-U8 *hashed[CMD_CNT][CMD_ARGS] = {
+U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {  7, "clear", 1, 1, 0},
   { 23, "mkdir", 2, 2, 0},
   { 30, "rmdir", 2, 2, 0},
@@ -35,6 +35,7 @@
   { 43,   "cdd", 1, 2, 0},
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
+  { 61,   "pal", 1, 2, 1},
   { 63,   "mem", 1, 1, 0},
   { 68,   "rnd", 1, 1, 0},
   { 72,   "cpu", 1, 2, 1},

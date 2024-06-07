@@ -1,4 +1,10 @@
-templeDOS	$IV,1$  General Commands Manual  $IV,0$
+$TX+CX,"templeDOS Command Manual"$
+
+
+command -h:
+	Displays this help file and the syntax, for
+	the desired command.
+
 
 Command	Description
 ---------------------------
@@ -6,7 +12,7 @@ Command	Description
 $IV,1$!!:$IV,0$
 	Executes the previous terminal command,
 	similiar to the Linux implementation.
-
+
 $IV,1$_cat:$IV,0$
 	Display a FILE to standard output.
 	usage: cat [filename]
@@ -133,6 +139,15 @@ $IV,1$_mv:$IV,0$
 $IV,1$_now:$IV,0$
 	Display the current date and time.
 	usage: now
+
+$IV,1$_pal:$IV,0$
+	Display the system color palette.
+	usage: pal
+	       rm [OPTION] {-d}
+
+	Options:
+		 -d	Displays the system color palette,
+	                in dither mode.
 
 $IV,1$_rd: _rmdir:$IV,0$
 	Remove a directory.
