@@ -40,6 +40,7 @@ U8 *blocks[BLKCNT][BLKSIZE];
 
 blocks[32][0]="TRANSPARENT"; //space
 blocks[48][0]="LTRED"; //0
+blocks[99][0]="LTCYAN"; //c
 blocks[120][0]="BLACK"; //x
 blocks[124][0]="WHITE"; //|
 
@@ -97,5 +98,41 @@ U8 *shield=strnew(,,
 );
 gen_gr(shield);
 
+U8 *cross=strnew(,,
+  "cccccccc",
+  "ccc cccc",
+  "ccc0cccc", 
+  "c 0c0 cc",
+  "ccc0cccc",
+  "ccc cccc",
+  "ccc cccc",
+  "cccccccc"
+);
+gen_gr(cross);
+
+/*
+     xx
+    xxxx
+    xx x x
+    x   xx
+   xxxxxxx
+  xxxxxx x
+  xx xx x
+  x xxx 
+*/
+
+
+U8 *ghost=strnew(,,
+ "ccc00ccc",
+ "cc0000cc",
+ "cc00c0c0",
+ "cc0ccc00",
+ "c0000000",
+ "000000c0",
+ "00c00c0c",
+ "0c000ccc"
+);
+gen_gr(ghost);
+
 zFree(blocks);
-
+ 

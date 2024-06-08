@@ -1,13 +1,118 @@
-$MA-X+PU,"Key Map",LM="KeyMap;View;\n"$
-$LK,"HolyC",A="FI:::/Doc/HolyC.DD"$
+$TX+CX,"Customized Help"$
 
-$MA,LM="Cd;Dir;\n"$
+$TR-C,"Shortcuts"$
+$ID,2$$MA,LM="Cd;Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\");Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\\BlkDev"$
 $MA,LM="Cd(\"::/Demo/Lectures\");ls;\n"$
 $MA,LM="Cd(\"::/Demo\");ls;\n"$
 $MA,LM="Cd(\"::/Doc\");ls;\n"$
 $MA,LM="Cd(\"::/Apps\");ls;\n"$
+$ID,-2$
+$TR,"Admin Help"$
+$ID,2$Use $LK,"Mount",A="MN:Mount"$() to mount disk drives, perhaps, if you are booted to a LiveCD.
+
+You recompile the kernel with $LK,"BootHDIns",A="MN:BootHDIns"$(), and specify which drives should be mounted at boot.  See $LK,"::/Misc/DoDistro.HC"$.
+
+$LK,"Installing",A="FI:::/Doc/Install.DD"$
+
+$LK,"::/StartOS.HC"$ the TempleOS equivalent of the $FG,2$AUTOEXEC.BAT$FG$.  It is run at start-up by the $LK,"Adam Task",A="FF:::/Kernel/KMain.HC,\"StartOS"$.
+$ID,-2$$TR,"Programmer help"$
+$ID,2$$LK,"Guidelines",A="FI:::/Doc/GuideLines.DD"$
+$LK,"HolyC",A="FI:::/Doc/HolyC.DD"$
+$LK,"Graphics",A="FI:::/Doc/GraphicsOverview.DD"$
+$LK,"DolDoc Documents",A="FI:::/Demo/DolDoc/FileRead.HC"$
+$LK,"Lectures/AndNotMod.HC",A="FI:::/Demo/Lectures/AndNotMod.HC"$
+$LK,"Lectures/FixedPoint.HC",A="FI:::/Demo/Lectures/FixedPoint.HC"$
+$LK,"Lectures/NegDisp.HC",A="FI:::/Demo/Lectures/NegDisp.HC"$
+$LK,"Lectures/Optimization.HC",A="FI:::/Demo/Lectures/Optimization.HC"$
+$LK,"Lectures/ScrnMemory.HC",A="FI:::/Demo/Lectures/ScrnMemory.HC"$
+$LK,"Lectures/GraphicsCPULoad.HC",A="FI:::/Demo/Lectures/GraphicsCPULoad.HC"$
+$LK,"Lectures/InterruptDemo.HC",A="FI:::/Demo/Lectures/InterruptDemo.HC"$
+$ID,-2$$TR,"System Programmer Help"$
+$ID,2$$LK,"64BitAsmQuiz",A="FI:::/Demo/Lectures/64BitAsmQuiz.DD"$
+$LK,"Hash Tables",A="HI:Hash"$
+$LK,"Dsk Stk",A="FI:::/Doc/FileLowLevel.DD"$
+$LK,"Keyboard Devices",A="HI:Keyboard Devices/System"$
+$LK,"PCIInterrupts.HC",A="FI:::/Demo/Lectures/PCIInterrupts.HC"$
+$LK,"MemRep",A="MN:MemRep"$
+$LK,"WallPaper",A="FI:::/Adam/WallPaper.HC"$
+$LK,"Scheduler",A="FL:::/Kernel/Sched.HC,1"$
+$LK,"Doc",A="FL:::/Adam/DolDoc/MakeDoc.HC,1"$
+$LK,"MiniGrLib",A="FI:::/Demo/Lectures/MiniGrLib.HC"$
+$LK,"MiniCompiler",A="FI:::/Demo/Lectures/MiniCompiler.HC"$
+$LK,"Backend",A="FL:::/Compiler/BackLib.HC,1"$$ID,-2$
+$TX+CX,"Index"$
+$LK,"AutoComplete",A="HI:AutoComplete"$
+$LK,"Bit",A="HI:Bit"$
+$LK,"Boot",A="HI:Boot"$
+$LK,"Call",A="HI:Call"$
+$LK,"Char Overview",A="FI:::/Doc/CharOverview.DD"$
+$LK,"Char Routines",A="HI:Char"$
+$LK,"Circular Queue",A="HI:Data Types/Circular Queue"$
+$LK,"Cmd Line Overview",A="FI:::/Doc/CmdLineOverview.DD"$
+$LK,"Cmd Line Routines",A="HI:Cmd Line (Typically)"$
+$LK,"Compiler Overview",A="FI:::/Doc/CompilerOverview.DD"$
+$LK,"Compiler Routines",A="HI:Compiler"$
+$LK,"Compression",A="HI:Compression"$
+$LK,"Ctrls",A="HI:Ctrls"$
+$LK,"Data Types",A="HI:Data Types"$
+$LK,"Date",A="HI:Date"$
+$LK,"Debugging Overview",A="FI:::/Doc/DbgOverview.DD"$
+$LK,"Debugging Routines",A="HI:Debugging"$
+$LK,"Define",A="HI:Define"$
+$LK,"Devices",A="HI:Devices"$
+$LK,"Disk",A="HI:File"$
+$LK,"Doc Overview",A="FI:::/Doc/DolDocOverview.DD"$
+$LK,"Doc Routines",A="HI:DolDoc"$
+$LK,"Exceptions",A="HI:Exceptions"$
+$LK,"File",A="HI:File"$
+$LK,"File Utils",A="FI:::/Doc/FileUtils.DD"$
+$LK,"Frames",A="HI:Hash/Frame"$
+$LK,"God",A="HI:God"$
+$LK,"Graphics Overview",A="FI:::/Doc/GraphicsOverview.DD"$
+$LK,"Graphics Routines",A="HI:Graphics"$
+$LK,"Hash",A="HI:Hash"$
+$LK,"Help System",A="HI:Help System"$
+$LK,"HolyC",A="FI:::/Doc/HolyC.DD"$
+$LK,"InFile",A="HI:InFile"$
+$LK,"Info",A="HI:Info"$
+$LK,"Install",A="HI:Install"$
+$LK,"I/O",A="HI:I/O"$
+$LK,"Job",A="HI:Job"$
+$LK,"Key Allocations",A="FI:::/Doc/KeyAlloc.DD"$
+$LK,"Keyboard Devices",A="HI:Keyboard Devices"$
+$LK,"Link Types",A="MN:LK_FILE"$
+$LK,"Math",A="HI:Math"$
+$LK,"Memory Overview",A="FI:::/Doc/MemOverview.DD"$
+$LK,"Memory Routines",A="HI:Memory"$
+$LK,"Menus",A="HI:Menus"$
+$LK,"Messages",A="HI:Messages"$
+$LK,"Misc",A="HI:Misc"$
+$LK,"Mouse",A="HI:Mouse"$
+$LK,"MultiCore",A="HI:MultiCore"$
+$LK,"OpCodes",A="FF:::/Compiler/OpCodes.DD,MOV"$
+$LK,"Operator Precedences",A="FF:::/Doc/HolyC.DD,operator precedence"$
+$LK,"PCI",A="HI:PCI"$
+$LK,"Print(\"\") Fmt Strings",A="FI:::/Doc/Print.DD"$
+$LK,"Processor",A="HI:Processor"$
+$LK,"Profiler",A="HI:Profiler"$
+$LK,"RedSea",A="FI:::/Doc/RedSea.DD"$
+$LK,"Registry",A="HI:Registry"$
+$LK,"Scan Codes",A="FI:::/Doc/CharOverview.DD"$
+$LK,"ScrnCast",A="HI:ScrnCast"$
+$LK,"Sound",A="HI:Snd"$
+$LK,"Sprites",A="HI:Sprites"$
+$LK,"StdIn",A="HI:StdIn"$
+$LK,"StdOut",A="HI:StdOut"$
+$LK,"String",A="HI:Char"$
+$LK,"Task",A="HI:Task"$
+$LK,"TextBase Layer",A="HI:TextBase Layer"$
+$LK,"Time",A="HI:Time"$
+$LK,"Training",A="HI:Help System/Training"$
+$LK,"TOSZ",A="FI:::/Doc/TOSZ.DD"$
+$LK,"Utils",A="HI:Cmd Line (Typically)"$
+$LK,"Windows",A="HI:Windows"$
 
 Run $LK,"TOSStdIns",A="MN:TOSStdIns"$() if you wish to
 use the official staff $FG,2$/Home$FG$ files.
