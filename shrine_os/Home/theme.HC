@@ -93,7 +93,7 @@ U0 default_theme()
 U0 theme1()
 {
 //  rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255,-.12);
-  rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
+  rgb2_CBGR48(&gr_palette_custom[BLACK],255,255,255);
   rgb2_CBGR48(&gr_palette_custom[BLUE],255,255,255,-.32);
   rgb2_CBGR48(&gr_palette_custom[GREEN],18,100,90);
   rgb2_CBGR48(&gr_palette_custom[CYAN],71,156,185);
@@ -113,7 +113,7 @@ U0 theme1()
 
 theme1;
 
-set_theme(gr_palette_custom);
+set_theme(gr_palette_custom);
 
 //GrPaletteSet(gr_palette_custom);
 //MemCpy(gr_palette_std,gr_palette_custom,sizeof(gr_palette_custom));

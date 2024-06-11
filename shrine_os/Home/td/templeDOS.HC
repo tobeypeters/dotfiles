@@ -24,7 +24,8 @@
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
-U8 *help_file=strnew(,,__DIR__,"/help.DD");
+
+U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
 U8 *prev_cmd='\0';
@@ -88,7 +89,7 @@ c->data[idx][4]: %d
 fc,a->count,
 a->count-(fc&0),
 c->data[idx][3],
-c->data[idx][4],
+c->data[idx][4],
 (c->data[idx][3]-c->data[idx][4]));
 
   debug_prn(test,TRUE);

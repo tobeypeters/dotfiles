@@ -18,7 +18,8 @@
   Description:
       File system related functions.
 */
-U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+
+U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive

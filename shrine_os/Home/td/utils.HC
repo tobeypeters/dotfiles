@@ -18,7 +18,8 @@
   Description:
       Miscellaneous functions.
 */
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
@@ -108,7 +109,7 @@ U0 zFree(U8 *cube,Bool free=TRUE)
   return;
 }
 U0 viewer(U8 *cmd)
-{//Execute cmd and open output in "view" mode.
+{//Execute cmd and open output in "view" mode.
   U8 *bufv=CAlloc(sizeof(U8)*128);
 
   str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTRED;DocTop;View;");

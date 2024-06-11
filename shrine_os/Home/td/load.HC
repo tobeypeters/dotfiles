@@ -18,8 +18,8 @@
   Description:
       templeDOS includes.
 */
-
-#include "strings"
+
+#include "strings"
 #include "utils"
 #include "errors"
 

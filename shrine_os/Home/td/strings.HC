@@ -83,7 +83,7 @@ U8 *callocstr(...)
 
   return CAlloc((sizeof(U8)*len)+1);
 }
-U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
+U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
   U8 *res=0;
   I64 size=0;
