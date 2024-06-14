@@ -19,7 +19,7 @@
       File system related functions.
 */
 
-U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive
@@ -232,7 +232,7 @@ U0 ls_dir_sub(CDirEntry *entry)
   entry=temp;
 
   "\n";
-
+
   DirTreeDel(entry);
 
   return;
@@ -280,11 +280,11 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
         {
           if (!str_cmpEX(entry->name,,".",".."))
           {
-            "$$LTBLUE$$";
+//            "$$LTBLUE$$";
             tree_top(entry->name);
             ls_dir_sub(FilesFind(entry->full_name));
             tree_trunk;
-            "$$FG$$";
+//            "$$FG$$";
           }
           else "%s",entry->name;
         }

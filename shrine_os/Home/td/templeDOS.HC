@@ -25,7 +25,7 @@
 EdLineDel(doc);
 */
 
-U8 *help_file=strnew(,,__DIR__,"/help.DD");
+U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
 U8 *prev_cmd='\0';
@@ -345,9 +345,11 @@ U8 templeDOS() {
 
   DocClear; DocMax;
 
-  "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
+//  "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
+  "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
-  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+  "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+//  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 res=0;
   U8 *input=NULL;
@@ -355,7 +357,7 @@ U8 templeDOS() {
   while (TRUE)
   {
     DocBottom;
-    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1")) {

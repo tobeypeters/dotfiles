@@ -242,7 +242,8 @@ ej_doc:
 
 public Bool doced(CDoc *doc,I64 dof_flags=0)
 {//Live for user interaction. End on <ESC> or <SHIFT-ESC>.
-  Fs->border_src=BDS_CONST;Fs->border_attr=WHITE<<4+LTCYAN;
+  Fs->border_src=BDS_CONST;Fs->border_attr=BLACK<<4+WHITE; ///sponge
+  Fs->titler_src=BDS_CONST;Fs->title_attr=BLACK<<4+WHITE; ///sponge
 
   CDoc *old_put_doc	  =DocPut,
 	*old_display_doc=DocDisplay,
@@ -252,6 +253,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
 	old_top =Fs->win_top, old_bottom=Fs->win_bottom,
 	old_left=Fs->win_left,old_right =Fs->win_right,
 	old_title_src=Fs->title_src;
+
   Bool res,unlock;
   U8 *old_task_title;
   if (dof_flags&DOF_WIN_MAX)
@@ -1193,7 +1195,7 @@ U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
 done:
   return res;
 }
-
+
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
 HijackFunc(&DocEd,&doced);

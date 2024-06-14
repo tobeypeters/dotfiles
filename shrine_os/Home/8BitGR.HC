@@ -58,7 +58,7 @@ U0 gen_gr(U8 *res=NULL) {
       zFree(prev_chr);
       prev_chr=strnew(res[0]);
 
-      "Color{%s};\n",blocks[res[0]][0];
+      "Color{%s};\n",blocks[res[0]][0];
     }
 
     "Pt{(%d,%d)};\n",x,y;
@@ -130,7 +130,7 @@ U8 *ghost=strnew(,,
  "c0000000",
  "000000c0",
  "00c00c0c",
- "0c000ccc"
+ "0c000ccc"
 );
 gen_gr(ghost);
 

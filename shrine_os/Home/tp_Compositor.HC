@@ -15,7 +15,7 @@
 */
 public U0 DrawStdMs(CDC *dc,I64 x,I64 y) 
 {// Override the mouse cursor.
-  dc->color=LTRED;
+  dc->color=RED;
 
   dc->thick=1;
   dc->flags&=~(DCF_TRANSFORMATION|DCF_SYMMETRY);
@@ -23,4 +23,3 @@ public U0 DrawStdMs(CDC *dc,I64 x,I64 y)
 }
 
 gr.fp_draw_ms=&DrawStdMs;
-

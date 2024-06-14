@@ -58,55 +58,32 @@ public CBGR24 zsnes[COLORS_NUM]={
   0x712,0xFF2A76,0xA1CE97,0x6DB4BE,0x9FA6FF,0xCA94E8,0xFFCC00,0x132C
 }; //ZealOS
 
-#define PAL_CNT 9
+U8 *lst="amicus\0commander\0default1\0sandybeach\0slate\0temple\0tradition\0vapor\0zsnes\0";
 
-U8 *pals[PAL_CNT]={
-  "amicus",
-  "commander",
-  "default1",
-  "sandybeach",
-  "slate",
-  "temple",
-  "tradition",
-  "vapor",
-  "zsnes"
-};
-
-U0 pal_select()
+public U64 pal_select()
 {
-  U8 *pal_lst="default1\0amicus\0commander\0sandybeach\0slate\0temple\0tradition\0vaper\0zsnes\0";
+  I64 ret=PopUpPickLst(lst);
+
+  if (ret<0) return 0;
+
   U8 *pal=CAlloc(sizeof(U8)*64);
 
-  I64 i=0,pos=0,ret=2;
+  U64 i=0,pos=0;
 
-  while(*pal_lst){
-
-    if (i==ret) {
-      "%c",pal_lst[0];
-      pal[pos]=pal_lst[0]; pos++;
-    }
-    pal_lst++;
-
-    if (pal_lst[0]=='\0') { pal_lst++;i++; }
+  while (*lst) {
+    if (i==ret) break;
+    lst+=StrLen(lst)+1;i++;
   }
 
-"\n";
-/*  U8 *buffer;
+  Free(pal);
 
-  U64 size=0,i=0;
-  while (i<PAL_CNT) {
-    size+=StrLen(pals[i]);
-    "%s\n",pals[i];
-    i++;
-  }
-  size+=PAL_CNT*2;
-
-  buffer=CAlloc(sizeof(U8)*size);
-
-  I64 ret=PopUpPickLst("default1\0amicus\0commander\0sandybeach\0slate\0temple\0tradition\0vaper\0zsnes\0");
-
-  if (ret>-1) "%s\n",pals[ret];
-*/
+  return 1;
 }
 
-pal_select;
+public U0 pal_set(U8 *pal) {
+  GrPaletteSet(pal);
+  VGAFlush;
+  MemCpy(gr_palette_std,pal,sizeof(pal)*COLORS_NUM);
+}
+
+if (pal_select) pal_set(lst);
