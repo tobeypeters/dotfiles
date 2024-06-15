@@ -16,7 +16,7 @@
 
 /*args.HC
   Description:
-      Parse a string, into individual arguments.
+      Parse a string, into individual arguments.
 */
 
 #define ARG_CNT 64
@@ -130,4 +130,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
     "$$GREEN$$:end$$FG$$\n\n";
   a->init(a);
 Free(a);
-*/
+*/

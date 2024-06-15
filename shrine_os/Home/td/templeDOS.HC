@@ -231,7 +231,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 227: //mv
       if (type_got(v,DIR,,FALSE)) {
-        shell_exec("CopyTree",,bufa,bufb);
+        shell_exec("CopyTree",,bufa,bufb);
         shell_exec("DelTree",,bufa);
       }
       else {
@@ -357,7 +357,7 @@ U8 templeDOS() {
   while (TRUE)
   {
     DocBottom;
-    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1")) {

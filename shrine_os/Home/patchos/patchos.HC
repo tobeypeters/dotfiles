@@ -52,7 +52,7 @@ public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
 public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
 	CDirEntry *_res,I64 fuf_flags=0)
 
-Bool isdir(U8 *dir_name)
+public Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
 //       to prevent infinite loops and exceptions
@@ -85,7 +85,7 @@ cleanup:
   return res;
 }
 
-Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
+public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
 // Desc: Added validation code and restructed the code,
@@ -243,7 +243,6 @@ ej_doc:
 public Bool doced(CDoc *doc,I64 dof_flags=0)
 {//Live for user interaction. End on <ESC> or <SHIFT-ESC>.
   Fs->border_src=BDS_CONST;Fs->border_attr=BLACK<<4+WHITE; ///sponge
-  Fs->titler_src=BDS_CONST;Fs->title_attr=BLACK<<4+WHITE; ///sponge
 
   CDoc *old_put_doc	  =DocPut,
 	*old_display_doc=DocDisplay,
@@ -1159,7 +1158,7 @@ public U0 doctermnew()
   Raw(OFF);
 }
 
-U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
+public U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
   U8 *res=0;
   I64 size=0;
@@ -1196,6 +1195,20 @@ done:
   return res;
 }
 
+U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
+U8 drv_text_attr[3]={BLACK,BLUE,RED};
+
+public U8 drvtextattrget(U8 drv_let=0)
+{//Get color of drive.
+  drv_let=Let2Let(drv_let);
+  if ('A'<=drv_let<='Z')
+    return drv_text_attr[drv_let%sizeof(drv_text_attr)]<<4|
+	blkdev_text_attr[Let2BlkDevType(drv_let)];
+  else
+    return BLACK<<4|WHITE;
+}
+
+HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
 HijackFunc(&DocEd,&doced);

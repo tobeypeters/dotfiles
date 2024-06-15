@@ -24,7 +24,7 @@ DocClear;
 "%d %d\n",'a','z'; //97 .. 122
 "%d %d\n",*"a",*"z"; //97 .. 122
 "%d %d\n",*"a:",*"z:"; //97 .. 122
-"%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
+"%d %d\n",*"a:/",*"z:/"; //97 .. 122*/
 /*Bool drv_mounted(U8 *drv)
 {//Valid mounted drive?
  //Better than using a built-in like

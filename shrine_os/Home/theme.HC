@@ -83,7 +83,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->r = ClampI64(ToI64(r*(1+adj_percent)*255),0,clamp_max);
   bgr->g = ClampI64(ToI64(g*(1+adj_percent)*255),0,clamp_max);
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
-//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
+//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
 }
 
 U0 set_theme(CBGR48* in_pal)
@@ -113,7 +113,7 @@ U0 theme1()
   rgb2_CBGR48(&gr_palette_vga[LTRED],255,85,85);
   rgb2_CBGR48(&gr_palette_vga[LTPURPLE],255,85,255);
   rgb2_CBGR48(&gr_palette_vga[YELLOW],255,255,85);
-  rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.10);
+  rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.10);
 
 /*  rgb2_CBGR48(&gr_palette_custom[TRANSPARENT],232,232,233);
   rgb2_CBGR48(&gr_palette_custom[BLACK],55,75,136);
