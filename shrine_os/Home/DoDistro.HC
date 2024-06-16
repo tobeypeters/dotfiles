@@ -52,7 +52,7 @@ SettingsPush;
 U64 len=sizeof(U8)*StrLen(DirNameAbs(Fs->cur_dir));
 
 Fs->border_src=BDS_CONST;
-Fs->border_attr=WHITE<<4+LTRED;
+Fs->border_attr=RED<<4+WHITE;
 
 U8 *buffer=CAlloc(len);
 buffer=StrNew(DirNameAbs(Fs->cur_dir));

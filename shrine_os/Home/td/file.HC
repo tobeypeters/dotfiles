@@ -232,7 +232,7 @@ U0 ls_dir_sub(CDirEntry *entry)
   entry=temp;
 
   "\n";
-
+
   DirTreeDel(entry);
 
   return;

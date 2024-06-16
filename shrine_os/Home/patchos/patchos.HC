@@ -11,7 +11,17 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
-public U0 Cdr() Cd("/");
+public U0 Cdr() Cd("/");
+
+public U0 KeyAndCont()
+{//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
+ //Doesn't print any newline characters and "clears" the line after you
+ //press a key.
+  "$$$$PT$$$$Press any key to continue ...$$$$FG$$$$";
+
+  GetChar(,FALSE);
+  PutChars(CH_CTRLY);
+}
 
 public U0 More(U8 *filename)
 {//Output txt or graphic file to the command line,
@@ -1208,7 +1218,7 @@ public U8 drvtextattrget(U8 drv_let=0)
     return BLACK<<4|WHITE;
 }
 
-HijackFunc(&DrvTextAttrGet,&drvtextattrget);
+HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
 HijackFunc(&DocEd,&doced);

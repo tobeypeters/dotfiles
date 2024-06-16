@@ -18,13 +18,13 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-//Was gonna put the help file in "::/Doc".
 //#include "~/td/debug"
 
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
 
+//Was gonna put the help file in "::/Doc".
 U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
@@ -54,7 +54,7 @@ U8 execute_cmd(U8 *cmd) {
   I64 res,idx,v,fc;
   res=idx=v=fc=0;
 
-  if ((idx=c->hashdx(c,a->args[0]))==-1)
+  if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
     if (str_len(a->args[0])==2) {
@@ -231,7 +231,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 227: //mv
       if (type_got(v,DIR,,FALSE)) {
-        shell_exec("CopyTree",,bufa,bufb);
+        shell_exec("CopyTree",,bufa,bufb);
         shell_exec("DelTree",,bufa);
       }
       else {
