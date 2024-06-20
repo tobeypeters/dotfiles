@@ -19,6 +19,8 @@
       Set system themes.
 */
 
+//COLORS and such WILL probably chage
+
 public CBGR48 default1[COLORS_NUM]={
   0x00002b2b3636,0x070736364242,0x000080808080,0x31318282a4a4,
   0xcbcb4b4b1616,0x9c9c3636b6b6,0x858599990000,0xeeeee8e8d5d5,
@@ -58,7 +60,7 @@ public CBGR24 zsnes[COLORS_NUM]={
   0x712,0xFF2A76,0xA1CE97,0x6DB4BE,0x9FA6FF,0xCA94E8,0xFFCC00,0x132C
 }; //ZealOS
 
-U8 *lst="amicus\0commander\0default1\0sandybeach\0slate\0temple\0tradition\0vapor\0zsnes\0";
+U8 *lst="amicus\0commander\0default1\0sandybeach\0slate\0temple\0tradition\0vapor\0zsnes\0";
 
 public U64 pal_select()
 {

@@ -54,7 +54,7 @@ U8 execute_cmd(U8 *cmd) {
   I64 res,idx,v,fc;
   res=idx=v=fc=0;
 
-  if ((idx=c->hashdx(c,a->args[0]))==-1)
+  if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
     if (str_len(a->args[0])==2) {
@@ -186,7 +186,7 @@ $PT$$FG$$BG$    case   7: //clear
                 str_cat(bufe,,"Type(\\\"",bufa,"\\\");"));
       break;
     case  60: //man
-      Man(bufa);
+      if (!Man(bufa)) "No symbol entry found for $$RED$$%s$$FG$$\n",bufa;
 
       break;
     case  61: //pal
@@ -196,7 +196,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (fc)
         PopUpColorDither;
       else
-        PopUpColor;
+        PopUpColor;
 
       break;
     case  63: //mem
@@ -214,6 +214,9 @@ $PT$$FG$$BG$    case   7: //clear
 
       CPURep(fc);
 
+      break;
+    case 75: //pwd
+      "%s\n",__DIR__;
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
@@ -279,7 +282,8 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 201: //ed
-      if (filenameOK(bufa)) PopUpEd(bufa);
+      Ed(bufa);
+      if (filenameOK(bufa)) Ed(bufa);
       else err_print(ERR_FILEI,bufa);
 
       break;

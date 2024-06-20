@@ -1,10 +1,12 @@
-$TX+CX,"templeDOS Command Manual"$
+$FG,2$$TX+CX,"templeDOS Command Manual"$$FG,15$
 
-
+
 command -h:
 	Displays this help file and the syntax, for
 	the desired command.
 
+NOTE:	$FG,4$$TX+BK,"IGNORE"$$FD,15$ the $FG,4$_$FD,15$ character, in front of the below commands.
+	They are used internally, for the help/error lookup system.
 
 Command	Description
 ---------------------------
@@ -15,7 +17,7 @@ $IV,1$!!:$IV,0$
 
 $IV,1$_cat:$IV,0$
 	Display a FILE to standard output.
-	usage: cat [filename]
+	usage: cat [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_cd: _cdd:$IV,0$
 	Change the current working directory, to
@@ -27,18 +29,18 @@ $IV,1$_cd: _cdd:$IV,0$
 
 	usage:
 		   cd / cdd
-		   cd / cdd [DIR]
-		   cd / cdd [DRIVE LETTER]:
-		   cd / cdd [SYMBOL] {-, ~, ::}
+		   cd / cdd [$FG,2$DIR$FG,15$]
+		   cd / cdd [$FG,2$DRIVE LETTER$FG,15$]:
+		   cd / cdd [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$, $FG,11$~$FG,15$, $FG,11$::$FG,15$}
 
 	symbols:
-	   ~   Causes the same effects as
+	   $FG,11$~$FG,15$   Causes the same effects as
 		   providing no options. It will
 		   change the working directory,
 		   to your HOME directory.
-	   -   Changes the working directory,
+	   $FG,11$-$FG,15$   Changes the working directory,
 		   to the PREVIOUS directory, you were in.
-	   ::  Changes the working directory,
+	   $FG,11$::$FG,15$  Changes the working directory,
 		   To the ROOT, of the boot drive.
 
 $IV,1$_clear:$IV,0$
@@ -48,17 +50,17 @@ $IV,1$_clear:$IV,0$
 $IV,1$_cp:$IV,0$
 	Copy files and directories,
 	from a SOURCE to a DESTINATION
-	usage: cp [OPTION] {-d} [SOURCE] [DESTINATION]
+	usage: cp [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION$FG,15$]
 
-	Options:
-	   -d	    Directory copy
+	options:
+	   $FG,11$-d$FG,15$	    Directory copy
 
 $IV,1$_cpu:$IV,0$
 	Display cpu info.
-	usage: cpu [OPTION] {-f}
+	usage: cpu [$FG,2$OPTION$FG,15$] {$FG,11$-f$FG,15$}
 
 	Options:
-	   -f	    Detailed cpu info
+	   $FG,11$-f$FG,15$	    Detailed cpu info
 
 $IV,1$_date:$IV,0$
 	Display the current date.
@@ -69,12 +71,12 @@ $IV,1$_df:$IV,0$
 	usage: df
 
 $IV,1$_dump:$IV,0$
-	isplay the disassembly "hex dump" of a file.
-	usage: dump [FILENAME]
+	Display the disassembly "hex dump" of a file.
+	usage: dump [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_ed:$IV,0$
 	Edit / Create text files.
-	usage: ed [FILENAME]
+	usage: ed [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_exit: _quit:$IV,0$
 	Cause normal process termination of templeDOS.
@@ -88,14 +90,14 @@ $IV,1$_fm:$IV,0$
 $IV,1$_tree:$IV,0$
 	Displays a ls expanded treeview, of the
 	current or specified directory.
-	usage: tree [DIR]
+	usage: tree [$FG,2$DIR$FG,15$]
 
 	default: Current directory
 
 $IV,1$_grep:$IV,0$
 	Recursively search files and print any lines
 	which contain the specified string.
-	usage: grep [FILENAME]
+	usage: grep [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
@@ -103,14 +105,14 @@ $IV,1$_help:$IV,0$
 
 $IV,1$_ls:$IV,0$
 	List directory contents.
-	usage: ls [OPTION] {-t} [DIR]
-	       ls [SYMBOL] {-}
+	usage: ls [$FG,2$OPTION$FG,15$] {$FG,11$-t$FG,15$} [DIR]
+	       ls [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$}
 
-	Options:
-	   -t	    Displays a ls expanded treeview, of
+	options:
+	   $FG,11$-t$FG,15$	    Displays a ls expanded treeview, of
                     the current or specified directory
 	symbols:
-	   -   Displays the contents, of the previous directory
+	   $FG,11$-$FG,15$   Displays the contents, of the previous directory
 	       you were in.
 
 	default: Current directory
@@ -118,7 +120,7 @@ $IV,1$_ls:$IV,0$
 $IV,1$_man:$IV,0$
 	Display the source code for a specified
 	internal TempleOS command. Like Dir;, DrvRep;, etc...
-	usage: man [COMMAND]
+	usage: man [$FG,2$COMMAND$FG,15$]
 
 $IV,1$_mem:$IV,0$
 	Display a "detailed" memory representation.
@@ -126,40 +128,23 @@ $IV,1$_mem:$IV,0$
 
 $IV,1$_mkdir:$IV,0$
 	Create a directory, if it doesn't already exist.
-	usage: mkdir [DIR]
+	usage: mkdir [$FG,2$DIR$FG,15$]
 
 $IV,1$_more:$IV,0$
 	Display a FILE to stdout, one screen at a time.
-	usage: more [FILENAME]
+	usage: more [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_mv:$IV,0$
 	Rename SOURCE to DESTINATION, or move SOURCE to DESTINATION.
-	usage: mv [SOURCE] [DESTINATION]
+	usage: mv [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION#WHITE$ER$IV,1$ER$IV,0$ER$IV,1$ER$IV,0$ER$GREEN$ER$WHITE$ER$LTCYAN$ER$WHITE$ER$LTCYAN$ER$WHITE$ER$IV,1$ER$IV,0$ER$GREEN$ER$WHITE$ER$GREEN$ER$WHITE$ER$IV,1$ER$IV,0$ER$GREEN$ER$]
+	       rm [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [DIR]
 
-$IV,1$_now:$IV,0$
-	Display the current date and time.
-	usage: now
+	options:
+		$FG,11$-d$FG,15$	Directory remove
 
-$IV,1$_pal:$IV,0$
-	Display the system color palette.
-	usage: pal
-	       rm [OPTION] {-d}
-
-	Options:
-		 -d	Displays the system color palette,
-	                in dither mode.
-
-$IV,1$_rd: _rmdir:$IV,0$
-	Remove a directory.
-	usage: rd [DIR]
-	usage: rmdir [DIR]
-$IV,1$_rm:$IV,0$
-	Remove files or directories.
-	usage: rm [FILENAME]
-	       rm [OPTION] {-d} [DIR]
-
-	Options:
-		 -d	Directory remove
+$IV,1$_pwd:$IV,0$
+	Print the name of the current working directory.
+	usage: pwd
 
 $IV,1$_rnd:$IV,0$
 	Generate a random number.
@@ -167,7 +152,7 @@ $IV,1$_rnd:$IV,0$
 
 $IV,1$_run:$IV,0$
 	Execute source code files.
-	usage: run [FILENAME]
+	usage: run [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_tasks:$IV,0$
 	Report current tasks on all cores.
@@ -180,11 +165,11 @@ $IV,1$_time:$IV,0$
 $IV,1$_touch:$IV,0$
 	Update the access and modification times of the FILENAME to the current time.
 	A FILENAME argument that does not exist is created.
-	usage: touch [FILENAME]
+	usage: touch [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_view:$IV,0$
 	Display a FILE to stdout, in a viewing window.
-	usage: view [FILENAME]
+	usage: view [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_vol:$IV,0$
 	Displays volume information of the current drive.

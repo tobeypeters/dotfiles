@@ -83,7 +83,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->r = ClampI64(ToI64(r*(1+adj_percent)*255),0,clamp_max);
   bgr->g = ClampI64(ToI64(g*(1+adj_percent)*255),0,clamp_max);
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
-//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
+//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
 }
 
 U0 set_theme(CBGR48* in_pal)

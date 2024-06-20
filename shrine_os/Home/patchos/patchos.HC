@@ -11,7 +11,10 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
-public U0 Cdr() Cd("/");
+public U0 Cdr()
+{//Change to the root directory of the current drive
+ Cd("/");
+}
 
 public U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
