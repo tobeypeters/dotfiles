@@ -19,7 +19,9 @@
       templeDOS includes.
 */
 
-#include "strings"
+#define TEMPLE_DOS_PATH "::/Apps/templeDOS/"
+
+#include "strings"
 #include "utils"
 #include "errors"
 

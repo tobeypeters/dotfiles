@@ -83,7 +83,7 @@ U0 rgb2_CBGR48(CBGR48* bgr,U64 r,U64 g,U64 b,F64 adj_percent=0)
   bgr->r = ClampI64(ToI64(r*(1+adj_percent)*255),0,clamp_max);
   bgr->g = ClampI64(ToI64(g*(1+adj_percent)*255),0,clamp_max);
   bgr->b = ClampI64(ToI64(b*(1+adj_percent)*255),0,clamp_max);
-//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
+//  "%X %X %X %X\n",bgr->r,bgr->g,bgr->b,bgr;
 }
 
 U0 set_theme(CBGR48* in_pal)
@@ -97,8 +97,7 @@ U0 default_theme() {
 }
 
 U0 theme1()
-{
-//  rgb2_CBGR48(&gr_palette_vga[TRANSPARENT],232,232,233);
+{//Standard VGA Palette
   rgb2_CBGR48(&gr_palette_vga[BLACK],0,0,0);
   rgb2_CBGR48(&gr_palette_vga[BLUE],0,0,170); 
   rgb2_CBGR48(&gr_palette_vga[GREEN],0,170,0);
@@ -114,27 +113,28 @@ U0 theme1()
   rgb2_CBGR48(&gr_palette_vga[LTPURPLE],255,85,255);
   rgb2_CBGR48(&gr_palette_vga[YELLOW],255,255,85);
   rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.10);
-
-/*  rgb2_CBGR48(&gr_palette_custom[TRANSPARENT],232,232,233);
-  rgb2_CBGR48(&gr_palette_custom[BLACK],55,75,136);
-  rgb2_CBGR48(&gr_palette_custom[BLUE],108,132,252);
-  rgb2_CBGR48(&gr_palette_custom[GREEN],41,117,130);
-  rgb2_CBGR48(&gr_palette_custom[CYAN],99,214,78);
-  rgb2_CBGR48(&gr_palette_custom[RED],255,122,255);
-  rgb2_CBGR48(&gr_palette_custom[PURPLE],183,130,47);
-  rgb2_CBGR48(&gr_palette_custom[BROWN],37,37,110);
-  rgb2_CBGR48(&gr_palette_custom[LTGRAY],0,7,18);
-  rgb2_CBGR48(&gr_palette_custom[LTBLUE],255,42,118);
-  rgb2_CBGR48(&gr_palette_custom[LTGREEN],161,206,151);
-  rgb2_CBGR48(&gr_palette_custom[LTCYAN],109,180,190);
-  rgb2_CBGR48(&gr_palette_custom[LTRED],255,166,255);
-  rgb2_CBGR48(&gr_palette_custom[LTPURPLE],202,148,232);
-  rgb2_CBGR48(&gr_palette_custom[YELLOW],255,204,0);
-  rgb2_CBGR48(&gr_palette_custom[WHITE],55,75,136,-.75);
-*/
+}
+U0 theme2()
+{//Custom VGA Palette
+  rgb2_CBGR48(&gr_palette_vga[BLACK],0,0,0);
+  rgb2_CBGR48(&gr_palette_vga[BLUE],0,0,170,-.45); 
+  rgb2_CBGR48(&gr_palette_vga[GREEN],0,170,0);
+  rgb2_CBGR48(&gr_palette_vga[CYAN],0,170,170);
+  rgb2_CBGR48(&gr_palette_vga[RED],170,0,0,-.35);
+  rgb2_CBGR48(&gr_palette_vga[PURPLE],170,0,170);  //function names
+  rgb2_CBGR48(&gr_palette_vga[BROWN],170,85,0);
+  rgb2_CBGR48(&gr_palette_vga[LTGRAY],170,170,170);
+  rgb2_CBGR48(&gr_palette_vga[LTBLUE],88,88,255);
+  rgb2_CBGR48(&gr_palette_vga[LTGREEN],85,255,85);
+  rgb2_CBGR48(&gr_palette_vga[LTCYAN],85,255,255);
+  rgb2_CBGR48(&gr_palette_vga[LTRED],255,85,85,-.1);
+  rgb2_CBGR48(&gr_palette_vga[LTPURPLE],255,85,255);
+  rgb2_CBGR48(&gr_palette_vga[YELLOW],255,255,85,-.3);
+  rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.2);
 }
 
-theme1;
+//theme1;
+theme2;
 
 set_theme(gr_palette_vga);
 

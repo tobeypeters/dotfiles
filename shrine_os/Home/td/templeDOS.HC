@@ -18,8 +18,12 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-//#include "~/td/debug"
 
+#ifndef TEMPLE_DOS_PATH
+  Cd(__DIR__);;
+  #include "load"
+#endif
+
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
@@ -196,7 +200,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (fc)
         PopUpColorDither;
       else
-        PopUpColor;
+        PopUpColor;
 
       break;
     case  63: //mem

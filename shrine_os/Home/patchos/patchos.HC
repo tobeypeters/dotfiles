@@ -11,8 +11,13 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
+public U0 ADocClear()
+{//Clear Adams doc window
+  Adam("DocClear;");
+}
+
 public U0 Cdr()
-{//Change to the root directory of the current drive
+{//Change to the root directory of the current drive
  Cd("/");
 }
 
@@ -1208,15 +1213,14 @@ done:
   return res;
 }
 
-U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
+//U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
 
 public U8 drvtextattrget(U8 drv_let=0)
 {//Get color of drive.
   drv_let=Let2Let(drv_let);
   if ('A'<=drv_let<='Z')
-    return drv_text_attr[drv_let%sizeof(drv_text_attr)]<<4|
-	blkdev_text_attr[Let2BlkDevType(drv_let)];
+    return drv_text_attr[drv_let%sizeof(drv_text_attr)]<<4|WHITE;
   else
     return BLACK<<4|WHITE;
 }

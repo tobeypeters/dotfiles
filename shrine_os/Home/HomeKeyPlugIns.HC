@@ -8,7 +8,7 @@ U0 TimeIns()
   "$$IV,1$$----%D %T----$$IV,0$$\n",cdt,cdt;
 }
 
-Bool MyPutKey(I64 ch,I64 sc)
+Bool MyPutKey(I64 ch,I64 sc)
 {//ch=ASCII; sc=scan_code
 
   /*
@@ -31,7 +31,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 //[tpc start]
 //[+s] <shift>+<esc>
 //  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
-//    !(StrCmp(Fs->task_name,"templedos_task"))) Play("5eC");
+//    !(StrCmp(Fs->task_name,"templedos_task"))) Play("5eC");
 //[+e] <shift>+<esc>
 
 //[+s] <CTRL>+<DEL>

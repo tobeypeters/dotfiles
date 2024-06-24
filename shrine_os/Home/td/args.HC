@@ -89,7 +89,7 @@ U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
 
-  return StrNew(in->args[in->cidx]);
+  return StrNew(in->args[in->cidx]);
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
