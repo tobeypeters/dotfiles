@@ -68,7 +68,6 @@ def fill_nodes(f: str) -> None:
     def filler_up(tree: Optional[dict[str, Any]] = None):
         node_buffer = [l for ws in i3.get_tree().workspaces()
                        for l in ws if l.type == 'con' and
-#                       for l in ws if l.type == 'con' and l.window_class not in ignore and
                        (not args.onlyclass or l.window_class == args.onlyclass[0])
                       ]
 
