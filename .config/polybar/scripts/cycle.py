@@ -42,6 +42,8 @@ from json import  loads
 from my_helper import gen_path_file, output_check, process_exec
 from re import split
 from typing import Any, Optional, Union, cast
+from subprocess import Popen
+
 
 parser: ArgumentParser = ArgumentParser()
 parser.add_argument('--onlyclass', '--oc', nargs=1, type=str, help='Filter visible windows, by the specified classname.')
@@ -87,10 +89,24 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
 
     if wc > 0:
         focusedID: int = i3.get_tree().find_focused().window or windows[0]
+        #process_exec(f"notify-send '1 cycle.py:' 'wc: {wc} ...'")
+        #process_exec(f"notify-send '2 cycle.py:' 'focusedID: \n{focusedID} ...'")
+        #process_exec(f"notify-send '3 cycle.py:' 'wID: \n{windows.index(focusedID)} ...'")
 
         binding_cmd: str = e.ipc_data['binding']['command']
         if binding_cmd in commands:
             if binding_cmd in [commands[0], commands[1]]:
+
+                """#Can't use starts-----------------------------------
+                #This only cycles the current workspace.  I want it, to cycle apps
+                #on all workspaces.
+                if binding_cmd == commands[0]:
+                    process_exec(f'i3-msg focus next')
+                else:
+                    process_exec(f'i3-msg focus prev')
+                return
+                -----Can't use ends-----------------------------------"""
+
                 # We're tabbing forward or backward
 
                 focus_idx: int = (
@@ -98,7 +114,11 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
                                     (1 if (binding_cmd == commands[0]) else -1)
                                  ) % wc
 
-                process_exec(f'i3-msg [id={windows[focus_idx]}] focus') # focus it using i3-msg
+                #process_exec(f"notify-send '4 cycle.py:' 'focus_idx: \n{focus_idx} ...'")
+
+                process_exec(f'i3-msg -q [id={windows[focus_idx]}] focus') # focus it using i3-msg
+                #Popen(f'i3-msg [id={windows[focus_idx]}] focus',shell=True)
+                #Popen(f'i3-msg [id={windows[focus_idx]}] focus &',shell=False)
 
             if binding_cmd == commands[2]:
                 fill_nodes('switcher')
