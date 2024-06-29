@@ -104,14 +104,12 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
                 -----Can't use ends-----------------------------------"""
 
                 # We're tabbing forward or backward
-
                 focus_idx: int = (
                                     (windows.index(focusedID) if focusedID > 0 else 0) +
                                     (1 if (binding_cmd == commands[0]) else -1)
                                  ) % wc
 
-                #process_exec(f'i3-msg -q [id={windows[focus_idx]}] focus &') # focus it using i3-msg
-                process_exec(f'xdotool windowactivate {windows[focus_idx]} &') # focus it using i3-msg
+                i3.command(f'[id="{windows[focus_idx]}"] focus')
 
             if binding_cmd == commands[2]:
                 fill_nodes('switcher')
@@ -166,8 +164,7 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
 
                     for w_id, w_name in switcher.items():
                         menu_items += f"'{w_name} {get_terminal_program(w_id, w_name)}' "
-                        menu_cmds += f"'xdotool windowactivate {w_id} &' "
-                        #menu_cmds += f"'i3-msg [id={w_id}] focus &' "
+                        i3.command(f'[id="{w_id}"] focus')
 
                     menu_items = menu_items.rstrip()
                     menu_cmds = menu_cmds.rstrip()
