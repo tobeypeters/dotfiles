@@ -42,8 +42,6 @@ from json import  loads
 from my_helper import gen_path_file, output_check, process_exec
 from re import split
 from typing import Any, Optional, Union, cast
-from subprocess import Popen
-
 
 parser: ArgumentParser = ArgumentParser()
 parser.add_argument('--onlyclass', '--oc', nargs=1, type=str, help='Filter visible windows, by the specified classname.')
@@ -64,10 +62,13 @@ for w in windows:
 windows: list[int] = []
 switcher: dict[int, str] = {}
 
+ignore: list[str] = ["Polybar"]
+
 def fill_nodes(f: str) -> None:
     def filler_up(tree: Optional[dict[str, Any]] = None):
         node_buffer = [l for ws in i3.get_tree().workspaces()
                        for l in ws if l.type == 'con' and
+#                       for l in ws if l.type == 'con' and l.window_class not in ignore and
                        (not args.onlyclass or l.window_class == args.onlyclass[0])
                       ]
 
@@ -85,13 +86,8 @@ def fill_nodes(f: str) -> None:
 def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
     wc: int = len(windows)
 
-#    process_exec(f'spd-say {wc}')
-
     if wc > 0:
-        focusedID: int = i3.get_tree().find_focused().window or windows[0]
-        #process_exec(f"notify-send '1 cycle.py:' 'wc: {wc} ...'")
-        #process_exec(f"notify-send '2 cycle.py:' 'focusedID: \n{focusedID} ...'")
-        #process_exec(f"notify-send '3 cycle.py:' 'wID: \n{windows.index(focusedID)} ...'")
+        focusedID: int = i3.get_tree().find_focused().window or windows[wc - 1]
 
         binding_cmd: str = e.ipc_data['binding']['command']
         if binding_cmd in commands:
@@ -114,11 +110,8 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
                                     (1 if (binding_cmd == commands[0]) else -1)
                                  ) % wc
 
-                #process_exec(f"notify-send '4 cycle.py:' 'focus_idx: \n{focus_idx} ...'")
-
-                process_exec(f'i3-msg -q [id={windows[focus_idx]}] focus') # focus it using i3-msg
-                #Popen(f'i3-msg [id={windows[focus_idx]}] focus',shell=True)
-                #Popen(f'i3-msg [id={windows[focus_idx]}] focus &',shell=False)
+                #process_exec(f'i3-msg -q [id={windows[focus_idx]}] focus &') # focus it using i3-msg
+                process_exec(f'xdotool windowactivate {windows[focus_idx]} &') # focus it using i3-msg
 
             if binding_cmd == commands[2]:
                 fill_nodes('switcher')
@@ -212,8 +205,8 @@ def container_focused() -> bool:
     return i3.get_tree().find_focused().type == 'con'
 
 def new_window(c: i3_con.Connection, e: i3_events.WindowEvent) -> None:
-    windows.append(e.container.window)
-#    process_exec(f'echo new_window: {windows} >> ~/cycle.txt')
+    if e.container.window_class not in ignore:
+        windows.append(e.container.window)
 
 def close_window(c: i3_con.Connection, e: i3_events.WindowEvent) -> None:
     windows.remove(e.container.window)
@@ -228,11 +221,9 @@ commands = ['nop window next', 'nop window prev', 'nop window selector', 'nop wi
 
 swapID: list[int] = [0]
 
-#process_exec(f'echo START: \n> ~/cycle.txt')
-
 fill_nodes('')
 
-#process_exec(f'spd-say {len(windows)}')
+#process_exec(f'spd-say {wc}')
 
 i3.on('window::new', new_window)
 i3.on('window::close', close_window)
