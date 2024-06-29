@@ -231,12 +231,16 @@ $exec ckb-next -b
 $exec indicator-sensors # CPU & GPU temps
 
 $exec mpd
-$exec cava -p ~/.config/cava/polybar.conf
-
-$exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
+#$exec cava -p ~/.config/cava/polybar.conf
 
 $exec picom &
 
-#$exec_always kill $(pgrep -f "cycle.py")
-#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg"
 $exec_always ~/.config/polybar/launch.sh
+
+#----These are testing cycle.py
+bindsym $mod+a exec ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg" &
+$exec_always kill $(pgrep -f "cycle.py") &
+#----cycle.py
+
+#$exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg" &
+#$exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
