@@ -163,7 +163,8 @@ def switch_window(c: i3_con.Connection, e: i3_events.BindingEvent) -> None:
 
                     for w_id, w_name in switcher.items():
                         menu_items += f"'{w_name} {get_terminal_program(w_id, w_name)}' "
-                        i3.command(f'[id="{w_id}"] focus')
+                        menu_cmds += f"'xdotool windowactivate {w_id} focus' "
+                        #menu_cmds += f"'i3-msg [id={w_id}] focus' "
 
                     menu_items = menu_items.rstrip()
                     menu_cmds = menu_cmds.rstrip()
