@@ -11,16 +11,63 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
+public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
+		     Bool del_dir,Bool print_msg)
+
+public extern I64 RedSeaFilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
+		     Bool del_dir,Bool print_msg)
+
+#define TRASH_DIR "/Trash"
+#define TRASH 127
+
+public I64 del(U8 *files_find_mask,Bool make_mask=FALSE,
+	Bool del_dir=FALSE,Bool print_msg=TRUE)
+{//Delete files or move files, to the "trash can".
+ //To move them to the trash can, set make_mask to TRASH
+ //Examples:
+ //           Del("filea.HC",TRASH);
+ //           Del("*",TRASH); //Deletes all files in a given directory.
+ //           Del("filea.HC",TRASH+TRUE); //Allow make_mask to used as before.
+
+  if (make_mask>=TRASH)
+  {
+    U8 *dump="/Trash";
+
+    if (!IsDir(TRASH_DIR)) DirMk(TRASH_DIR);
+
+    if (FilesFind(files_find_mask))
+      Copy(files_find_mask,dump);
+
+    make_mask-=TRASH; //Sets make_mask to TRUE or FALSE
+  }
+
+  I64 res=0;
+  CDirContext *dirc;
+  if (dirc=DirContextNew(files_find_mask,make_mask)) {
+    switch (dirc->dv->fs_type) {
+      case FSt_REDSEA:
+	res=RedSeaFilesDel(dirc->dv,Fs->cur_dir,dirc->mask,
+	      0,del_dir,print_msg);
+	break;
+      case FSt_FAT32:
+	res=FAT32FilesDel(dirc->dv,Fs->cur_dir,dirc->mask,
+	      0,del_dir,print_msg);
+	break;
+      default:
+	PrintErr("File System Not Supported\n");
+    }
+    DirContextDel(dirc);
+  }
+  return res;
+}
 public U0 ADocClear()
 {//Clear Adams doc window
   Adam("DocClear;");
 }
-
 public U0 Cdr()
 {//Change to the root directory of the current drive
- Cd("/");
+  Cd("/");
 }
-
 public U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
  //Doesn't print any newline characters and "clears" the line after you
@@ -1213,7 +1260,7 @@ done:
   return res;
 }
 
-//U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
+//U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
 
 public U8 drvtextattrget(U8 drv_let=0)
@@ -1233,3 +1280,4 @@ HijackFunc(&DocPutKey,&docputkey);
 HijackFunc(&DocBorderNew,&docbordernew);
 HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
+HijackFunc(&Del,&del);

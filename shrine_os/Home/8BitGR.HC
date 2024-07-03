@@ -37,12 +37,12 @@
 
 U8 *blocks[BLKCNT][BLKSIZE];
 *blocks=CAlloc(sizeof(U8)*BLKCNT*BLKSIZE);
-
-blocks[32][0]="TRANSPARENT"; //space
-blocks[48][0]="LTRED"; //0
+
+blocks[32][0]="LTGRAY"; //space
+blocks[48][0]="LTBLUE"; //0
 blocks[99][0]="LTCYAN"; //c
-blocks[120][0]="BLACK"; //x
-blocks[124][0]="WHITE"; //|
+blocks[120][0]="BLUE"; //x
+blocks[124][0]="RED"; //|
 
 U0 gen_gr(U8 *res=NULL) {
   U8 *prev_chr='\0';
@@ -58,7 +58,7 @@ U0 gen_gr(U8 *res=NULL) {
       zFree(prev_chr);
       prev_chr=strnew(res[0]);
 
-      "Color{%s};\n",blocks[res[0]][0];
+      "Color{%s};\n",blocks[res[0]][0];
     }
 
     "Pt{(%d,%d)};\n",x,y;
@@ -84,7 +84,7 @@ U8 *warrior=strnew(,,
   " xx||xx ",
   "  00x0  "
 );
-gen_gr(warrior);
+"warrior";gen_gr(warrior);
 
 U8 *shield=strnew(,,
   "0 000 0 ",
@@ -96,7 +96,7 @@ U8 *shield=strnew(,,
   " 0   0  ",
   "  000   "
 );
-gen_gr(shield);
+"shield";gen_gr(shield);
 
 U8 *cross=strnew(,,
   "cccccccc",
@@ -108,7 +108,7 @@ U8 *cross=strnew(,,
   "ccc cccc",
   "cccccccc"
 );
-gen_gr(cross);
+"cross";gen_gr(cross);
 
 /*
      xx
@@ -120,8 +120,6 @@ gen_gr(cross);
   xx xx x
   x xxx 
 */
-
-
 U8 *ghost=strnew(,,
  "ccc00ccc",
  "cc0000cc",
@@ -132,7 +130,7 @@ U8 *ghost=strnew(,,
  "00c00c0c",
  "0c000ccc"
 );
-gen_gr(ghost);
+"ghost";gen_gr(ghost);
 
 zFree(blocks);
  

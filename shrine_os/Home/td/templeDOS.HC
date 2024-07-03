@@ -23,7 +23,7 @@
   Cd(__DIR__);;
   #include "load"
 #endif
-
+
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
@@ -321,7 +321,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) bufe=StrNew(".");
 
       if (a->count==2)
-        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
+        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
       
       ls(bufe,(fc||idx==176));"\n";
 
