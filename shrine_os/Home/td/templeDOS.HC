@@ -147,7 +147,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 214: //rd
     case 224: //rm
       Bool trash=!flag_err(a->flags,FLG_T,FALSE);
-      if (trash) dump_manifest; fc-=trash;
+      if (trash) dump_exists; fc-=trash;
 
       if (fc)
         if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
@@ -164,7 +164,7 @@ $PT$$FG$$BG$    case   7: //clear
         type_exec(v,FILE,,,"Move",bufa,TRASH_DIR);
       else
         type_exec(v,FILE,,,"Del",bufa);
-
+
       break;
     case  35: //touch
       if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date

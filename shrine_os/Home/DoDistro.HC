@@ -13,6 +13,8 @@ U0 MakeMyISO(U8 *_out_iso_filename)
     "Drive must be writable.  Install on Hard drive, first.\n";
     return;
   }
+
+  Del("/Home/MyDistro.ISO.C");
   DelTree("/Distro");
   Del(out_iso_filename);
 
@@ -52,7 +54,7 @@ SettingsPush;
 U64 len=sizeof(U8)*StrLen(DirNameAbs(Fs->cur_dir));
 
 Fs->border_src=BDS_CONST;
-Fs->border_attr=RED<<4+WHITE;
+Fs->border_attr=RED<<4+WHITE;
 
 U8 *buffer=CAlloc(len);
 buffer=StrNew(DirNameAbs(Fs->cur_dir));
