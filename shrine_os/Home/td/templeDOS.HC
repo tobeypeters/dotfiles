@@ -146,15 +146,25 @@ $PT$$FG$$BG$    case   7: //clear
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      if (I64_IN(idx,30,214) || fc) 
-      {
-        if (idx==224)
-          if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+      Bool trash=!flag_err(a->flags,FLG_T,FALSE);
+      if (trash) dump_manifest; fc-=trash;
+
+      if (fc)
+        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+
+      if (I64_IN(idx,30,214) || 224 && fc) {
+        if (trash)
+          type_exec(v,DIR,,,"CopyTree",bufa,TRASH_DIR);
+
         type_exec(v,DIR,,,"DelTree",bufa);
         break;
       }
-      type_exec(v,FILE,,,"Del",bufa);
 
+      if (trash) 
+        type_exec(v,FILE,,,"Move",bufa,TRASH_DIR);
+      else
+        type_exec(v,FILE,,,"Del",bufa);
+
       break;
     case  35: //touch
       if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
@@ -321,7 +331,7 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==1) bufe=StrNew(".");
 
       if (a->count==2)
-        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
+        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
       
       ls(bufe,(fc||idx==176));"\n";
 

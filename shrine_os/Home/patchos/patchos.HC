@@ -20,8 +20,12 @@ public extern I64 RedSeaFilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fu
 #define TRASH_DIR "/Trash"
 #define TRASH 127
 
+public U0 dump_manifest()
+{//Make sure the /Trash directory exists on the current drive
+  if (!IsDir(TRASH_DIR)) DirMk(TRASH_DIR);
+}
 public I64 del(U8 *files_find_mask,Bool make_mask=FALSE,
-	Bool del_dir=FALSE,Bool print_msg=TRUE)
+Bool del_dir=FALSE,Bool print_msg=TRUE)
 {//Delete files or move files, to the "trash can".
  //To move them to the trash can, set make_mask to TRASH
  //Examples:
@@ -31,12 +35,10 @@ public I64 del(U8 *files_find_mask,Bool make_mask=FALSE,
 
   if (make_mask>=TRASH)
   {
-    U8 *dump="/Trash";
-
-    if (!IsDir(TRASH_DIR)) DirMk(TRASH_DIR);
+    dump_manifest;
 
     if (FilesFind(files_find_mask))
-      Copy(files_find_mask,dump);
+      Copy(files_find_mask,TRASH_DIR);
 
     make_mask-=TRASH; //Sets make_mask to TRUE or FALSE
   }
@@ -59,6 +61,16 @@ public I64 del(U8 *files_find_mask,Bool make_mask=FALSE,
     DirContextDel(dirc);
   }
   return res;
+}
+public Bool move(U8 *f1,U8 *f2)
+{//Move files from one location to another or rename.
+  dump_manifest;
+
+  if (Copy(f1,f2)) {
+    Del(f1);
+    return TRUE;
+  }
+  return FALSE;
 }
 public U0 ADocClear()
 {//Clear Adams doc window
@@ -129,6 +141,7 @@ public Bool isdir(U8 *dir_name)
   if (!len) goto cleanup;
   if (len>=2) { 
    if (dir_name[1]==':') {
+
      if (!DrvIsWritable(dir_name[0])) goto cleanup;
 
      U64 drv=ToUpper(dir_name[0]);
@@ -137,7 +150,7 @@ public Bool isdir(U8 *dir_name)
    }
   }
 
-  Bool old_silent=Silent;
+  Bool old_silent=Silent;
   CDirContext *dirc;
   if (dirc=DirContextNew(mask)) {
     DirContextDel(dirc);
@@ -1281,3 +1294,4 @@ HijackFunc(&DocBorderNew,&docbordernew);
 HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
+HijackFunc(&Move,&move);
