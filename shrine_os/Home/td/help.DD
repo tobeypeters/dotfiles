@@ -136,11 +136,19 @@ $IV,1$_more:$IV,0$
 
 $IV,1$_mv:$IV,0$
 	Rename SOURCE to DESTINATION, or move SOURCE to DESTINATION.
-	usage: mv [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION#WHITE$ER$IV,1$ER$IV,0$ER$IV,1$ER$IV,0$ER$GREEN$ER$WHITE$ER$LTCYAN$ER$WHITE$ER$LTCYAN$ER$WHITE$ER$IV,1$ER$IV,0$ER$GREEN$ER$WHITE$ER$GREEN$ER$WHITE$ER$IV,1$ER$IV,0$ER$GREEN$ER$]
-	       rm [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [DIR]
+	usage: mv [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION$FG,15$]
+	       mv [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [DIR]
 
 	options:
 		$FG,11$-d$FG,15$	Directory remove
+
+$IV,1$_pal:$IV,0$
+	Display the current system color palette.
+	usage: pal [$FG,2$OPTION$FG,15$] {$FG,11$-p,-d$FG,15$}
+
+	Options:
+	   $FG,11$-p$FG,15$	    Display the palette, in a popup window.
+	   $FG,11$-d$FG,15$	    Display the dither palette, in a popup window.
 
 $IV,1$_pwd:$IV,0$
 	Print the name of the current working directory.
@@ -162,7 +170,7 @@ $IV,1$_time:$IV,0$
 	Display the current time.
 	usage: time
 
-$IV,1$_tosz:$IV,0$
+$IV,1$_tosz:$IV,0$
 	Toggle the compression status, of a file.
 	usage: tosz [$FG,2$FILENAME$FG,15$]
 
@@ -178,3 +186,4 @@ $IV,1$_view:$IV,0$
 $IV,1$_vol:$IV,0$
 	Displays volume information of the current drive.
 	usage: vol
+	

@@ -76,7 +76,7 @@ debug_prn(StrPrint(buffer,"%d",cnt.u8[7]));
 Free(buffer);
 "\n";
 */
-U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
+U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 {//Stripped down version of ScanFlags. '-'flags only
  //'-' is '+' and multiple flags are combined.
  //templeOS: +f+a  myStyle: -fa
@@ -126,7 +126,7 @@ Bool flag_got(U8 *flags=NULL, I64 flag_want)
 {//Search for a certain flag.
   I64 f=0;
 
-  flag_scan(&f,Define("ST_FLAGS"),flags);
+  flag_scan(&f,Define("ST_FLAGS"),flags);
 
   return ToBool((f&flag_want));
 }

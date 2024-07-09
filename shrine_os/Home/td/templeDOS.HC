@@ -108,6 +108,8 @@ U8 execute_cmd(U8 *cmd) {
 
   if (I64_IN(idx,30,56,86,179,
       182, 187,211,214,224,227)) if (!bav) goto nferror;
+
+  Bool be=FALSE; //General purpose bool
  
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
@@ -186,13 +188,11 @@ $PT$$FG$$BG$    case   7: //clear
     case  61: //pal
       if (fc)
       {
-        if (!flag_err(a->flags,FLG_P,,help_file,err_cmd)) {
-          PopUpColor; break;
-        }
-
-        if (!flag_err(a->flags,FLG_D,,help_file,err_cmd)) {
-          PopUpColorDither; break;
-        }
+        if (be=!flag_err(a->flags,FLG_P,FALSE,help_file,err_cmd))
+          PopUpColor;
+         
+        if (!be) if (!flag_err(a->flags,FLG_D,,help_file,err_cmd))
+          PopUpColorDither;
 
         break;
       }
@@ -210,7 +210,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
-      "%X\n",god_num(Fs->display_doc);
+      "%X\n",god_num(Fs->display_doc);
 
       break;
     case  72: //cpu
@@ -258,8 +258,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 169: //help
       if (!FileFind(help_file)) { err_print(ERR_NF,help_file); break; }
 
-      if (bav) viewer(str_cat(bufe,,
-                              "Type(\"",help_file,"\");"));
+      if (bav) viewer(str_cat(bufe,,"Type(\"",help_file,"\");"));
       break;
     case 174: //grep
       F(bufa);
