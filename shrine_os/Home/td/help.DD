@@ -162,6 +162,10 @@ $IV,1$_time:$IV,0$
 	Display the current time.
 	usage: time
 
+$IV,1$_tosz:$IV,0$
+	Toggle the compression status, of a file.
+	usage: tosz [$FG,2$FILENAME$FG,15$]
+
 $IV,1$_touch:$IV,0$
 	Update the access and modification times of the FILENAME to the current time.
 	A FILENAME argument that does not exist is created.

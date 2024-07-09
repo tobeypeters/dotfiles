@@ -20,6 +20,14 @@ public extern I64 RedSeaFilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fu
 #define TRASH_DIR "/Trash"
 #define TRASH 127
 
+public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
+{
+//Display a specified message, when a file or files
+ //are sent to the trash.
+ Silent(silent_off);
+ "Thrashed: %s\n",msg;
+}
+
 public U0 dump_exists()
 {//Make sure the /Trash directory exists on the current drive
   if (!IsDir(TRASH_DIR)) DirMk(TRASH_DIR);
@@ -64,7 +72,7 @@ Bool del_dir=FALSE,Bool print_msg=TRUE)
 }
 public Bool move(U8 *f1,U8 *f2)
 {//Move files from one location to another or rename.
-  dump_exists;
+  dump_exists;
 
   if (Copy(f1,f2)) {
     Del(f1);

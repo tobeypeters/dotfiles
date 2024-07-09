@@ -37,12 +37,16 @@
 
 U8 *blocks[BLKCNT][BLKSIZE];
 *blocks=CAlloc(sizeof(U8)*BLKCNT*BLKSIZE);
-
+
 blocks[32][0]="LTGRAY"; //space
 blocks[48][0]="LTBLUE"; //0
 blocks[99][0]="LTCYAN"; //c
 blocks[120][0]="BLUE"; //x
 blocks[124][0]="RED"; //|
+
+blocks[98][0]="BLACK"; //b <-black
+blocks[119][0]="WHITE"; //w <-white
+blocks[116][0]="LTCYAN"; //t <-"transparent"
 
 U0 gen_gr(U8 *res=NULL) {
   U8 *prev_chr='\0';
@@ -132,5 +136,30 @@ U8 *ghost=strnew(,,
 );
 "ghost";gen_gr(ghost);
 
+U8 *grip=strnew(,,
+ "        ",
+ "  w  w  ",
+ "  wb wb ",
+ "  wb wb ",
+ "  wb wb ",
+ "  wb wb ",
+ "  wb wb ",
+ "  bb bb "
+);
+"grip";gen_gr(grip);
+
+U8 *cross2=strnew(,,
+ "   b    ",
+ "   bw   ",
+ "bbbbbbb ",
+ " wwbwwww",
+ "   bw   ",
+ "   bw   ",
+ "    w   ",
+ "        "
+);
+"cross2";gen_gr(cross2);
+
 zFree(blocks);
+
  

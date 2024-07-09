@@ -88,15 +88,17 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   return res;
 }
-U0 type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
-{
+Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
+{
+  Bool res=FALSE;
   U8 *as=arg_str(argv,argc);
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
 
-  if (type_got(fvb,type,warg,print_err)) shell_exec(cmd,,as);
+  if (res=type_got(fvb,type,warg,print_err)) shell_exec(cmd,,as);
  
   Free(as);
+  return res;
 }
 
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);

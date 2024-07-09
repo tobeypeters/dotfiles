@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  36
+#define CMD_CNT  37
 #define CMD_ARGS  5
 
 /*HASH idx, command, token min, token max,
@@ -57,12 +57,13 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {199,    "cd", 1, 2, 0},
   {201,    "ed", 2, 2, 0},
   {203,    "df", 1, 1, 0},
+  {208,  "tosz", 2, 2, 0},
   {211,    "cp", 3, 4, 1},
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 0},
   {223,    "ls", 1, 3, 1},
-  {224,    "rm", 2, 4, 2},
-  {227,    "mv", 3, 3, 0}
+  {224,    "rm", 2, 4, 2},
+  {227,    "mv", 3, 3, 0} //37
 };
 
 class CHCMDS

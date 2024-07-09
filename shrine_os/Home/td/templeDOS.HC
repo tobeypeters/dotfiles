@@ -82,24 +82,6 @@ U8 execute_cmd(U8 *cmd) {
   fc=flags_val(a->flags);
   fc=fc.u8[7];
 
-/*  //c->data[3] == Token Max: Includes cmd,flags,and args
-  U8 *test=MStrPrint("
-fc: %d
-a->count: %d
-a->count-(fc>0): %d
-c->data[idx][3]: %d
-c->data[idx][4]: %d
-(c->data[idx][3]-c->data[idx][4]): %d\n",
-fc,a->count,
-a->count-(fc&0),
-c->data[idx][3],
-c->data[idx][4],
-(c->data[idx][3]-c->data[idx][4]));
-
-  debug_prn(test,TRUE);
-
-  zFree(test);
-*/
   U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
 
   if (a->count==2&&fc) {
@@ -107,9 +89,6 @@ c->data[idx][4],
       Ed(str_cat(bufe,,"FF:",help_file,",_",err_cmd)); goto error;
     }
   }
-
-  if (!I64_between(a->count,c->data[idx][2],c->data[idx][3])) {
-    err_print(ERR_ARGTC,,help_file,err_cmd); goto error; }
 
   if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
     err_print(ERR_ARGC,,help_file,err_cmd); goto error; }
@@ -154,14 +133,15 @@ $PT$$FG$$BG$    case   7: //clear
 
       if (I64_IN(idx,30,214) || 224 && fc) {
         if (trash)
-          type_exec(v,DIR,,,"CopyTree",bufa,TRASH_DIR);
+          if (type_exec(v,DIR,,,"Silent(ON);CopyTree",bufa,TRASH_DIR))
+            trash_msg(bufa);
 
         type_exec(v,DIR,,,"DelTree",bufa);
         break;
       }
 
       if (trash) 
-        type_exec(v,FILE,,,"Move",bufa,TRASH_DIR);
+        if (type_exec(v,FILE,,,"Silent(ON);Move",bufa,TRASH_DIR)) trash_msg(bufa);
       else
         type_exec(v,FILE,,,"Del",bufa);
 
@@ -205,12 +185,23 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  61: //pal
       if (fc)
-        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+      {
+        if (!flag_err(a->flags,FLG_P,,help_file,err_cmd)) {
+          PopUpColor; break;
+        }
 
-      if (fc)
-        PopUpColorDither;
-      else
-        PopUpColor;
+        if (!flag_err(a->flags,FLG_D,,help_file,err_cmd)) {
+          PopUpColorDither; break;
+        }
+
+        break;
+      }
+
+      U64 i=0;
+      while (i<16)
+      {
+        "$$FG,%d$$Û",i;i++;
+      }"\n";
 
       break;
     case  63: //mem
@@ -304,6 +295,11 @@ $PT$$FG$$BG$    case   7: //clear
     case 203: //df
       DrvRep; "\n";
       drv_free;
+
+      break;
+    case 208: //tosz
+      if (type_exec(v,FILE,,,"Silent(ON);Move",bufa,ToggleZorNotZ(bufa)))
+        Silent(OFF);
 
       break;
     case 211: //cp

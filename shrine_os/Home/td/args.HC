@@ -36,10 +36,12 @@ class CArgs
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
+
 U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 {//Parse command buffer.  This version uses
  //space as the delimeter.
   StrUtil(cmd, SUF_REM_LEADING);
+
   if (!cmd[0]) return;
 
   U64 p=0;
@@ -100,7 +102,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->parse=&parse;
   a->get_current=&get_current;
   a->next=&next;
-  a->prev=&prev; 
+  a->prev=&prev; 
 
 //  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
@@ -131,3 +133,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->init(a);
 Free(a);
 */
+
