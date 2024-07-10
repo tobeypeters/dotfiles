@@ -79,8 +79,7 @@ U8 execute_cmd(U8 *cmd) {
     goto switchit;
   }
 
-  fc=flags_val(a->flags);
-  fc=fc.u8[7];
+  fc=flag_cnt(a->flags);
 
   U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
 
@@ -210,7 +209,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
-      "%X\n",god_num(Fs->display_doc);
+      "%X\n",god_num(Fs->display_doc);
 
       break;
     case  72: //cpu
@@ -303,7 +302,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case 211: //cp
       if (fc) {
-        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
         type_exec(v,DIR,,,"CopyTree",bufa,bufb);
       }
       else type_exec(v,FILE,,,"Copy",bufa,bufb);

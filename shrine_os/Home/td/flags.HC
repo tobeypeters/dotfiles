@@ -18,6 +18,56 @@
   Description:
       Defines and handles flags.
 */
+#define FLG_A 'a'
+#define FLG_B 'b'
+#define FLG_C 'c'
+#define FLG_D 'd'
+#define FLG_E 'e'
+#define FLG_F 'f'
+#define FLG_G 'g'
+#define FLG_H 'h'
+#define FLG_I 'i'
+#define FLG_J 'j'
+#define FLG_K 'k'
+#define FLG_L 'l'
+#define FLG_M 'm'
+#define FLG_N 'n'
+#define FLG_O 'o'
+#define FLG_P 'p'
+#define FLG_Q 'q'
+#define FLG_R 'r'
+#define FLG_S 's'
+#define FLG_T 't'
+#define FLG_U 'u'
+#define FLG_V 'v'
+#define FLG_W 'w'
+#define FLG_X 'x'
+#define FLG_Y 'y'
+#define FLG_Z 'z'
+
+Bool flag_val(U8 *flags,U64 chr)
+{//Is chr present, in the the flags we got?
+  flags=str_lower(flags);
+  while (*flags) {
+    if (*flags==chr) return TRUE;
+    flags++;
+  }
+  return FALSE;  
+}
+U64 flag_cnt(U8 *flags)
+{//Get the number of provided flags.
+  return StrLen(flags)-(*flags=='-');
+}
+Bool flag_err(U8 *flags=NULL, U8 *flag_want,Bool print_err=TRUE,U8 *help_file=NULL,U8 *cmd=NULL)
+{//Validate the provied flag. If it's not potentially print an error message.
+  if (flag_val(flags,flag_want)) return FALSE;
+  if (print_err) err_print(ERR_FLGI,,help_file,cmd);
+  return TRUE;
+}
+
+/*Below is the old version, which used a more TempleOS style flag system.
+//Terry used to allow, "-A-B+C-D+E", to allow things to be turn ON&OFF.
+//I don't need that.
 
 DefineLstLoad("ST_FLAGS","a\0b\0c\0d\0e\0f\0g\0h\0i\0j\0k\0l\0m\0n\0o\0p\0q\0r\0s\0t\0u\0v\0w\0x\0y\0z\0");
 
@@ -80,6 +130,8 @@ U0 flag_scan(U8 *dst,U8 *lst,U8 *src)
 {//Stripped down version of ScanFlags. '-'flags only
  //'-' is '+' and multiple flags are combined.
  //templeOS: +f+a  myStyle: -fa
+  "%s\n",src;
+
   I64 i=0;
 
   U8 *buf=CAlloc(sizeof(U8)*2);
@@ -126,7 +178,7 @@ Bool flag_got(U8 *flags=NULL, I64 flag_want)
 {//Search for a certain flag.
   I64 f=0;
 
-  flag_scan(&f,Define("ST_FLAGS"),flags);
+  flag_scan(&f,Define("ST_FLAGS"),flags);
 
   return ToBool((f&flag_want));
 }
@@ -146,3 +198,4 @@ if (flag_err("-afb",FLG_B)) "yes b\n";
 if (flag_err("-afb",FLG_T,FALSE)) "yes t\n";
 if (flag_err("-afb",FLG_F)) "yes g\n";
 "--------------------------------\n";*/
+*/

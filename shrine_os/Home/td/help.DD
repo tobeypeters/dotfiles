@@ -142,7 +142,7 @@ $IV,1$_mv:$IV,0$
 	options:
 		$FG,11$-d$FG,15$	Directory remove
 
-$IV,1$_pal:$IV,0$
+$IV,1$_pal:$IV,0$
 	Display the current system color palette.
 	usage: pal [$FG,2$OPTION$FG,15$] {$FG,11$-p,-d$FG,15$}
 
