@@ -90,7 +90,7 @@ U0 init(CArgs *in)
 U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
-
+
   return StrNew(in->args[in->cidx]);
 }
 
@@ -102,7 +102,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->parse=&parse;
   a->get_current=&get_current;
   a->next=&next;
-  a->prev=&prev; 
+  a->prev=&prev; 
 
 //  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
