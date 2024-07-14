@@ -125,11 +125,8 @@ public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
   DocClear; DocTop;
 
 //  U64 lc=LineCnt(filename)-line_max;
-//  U64 lc=LineCnt(filename)-line_max;
-
-  if (buffer[i]==35) "yes\n";
 
-  for (;i<size;i++)
+  for (;buffer[i]!=TK_EOF;i++)
   {
 //    if ((less && cl>=lc)&&buffer[i]=='\n') "yes\n";
     "%c",buffer[i];
@@ -137,10 +134,10 @@ public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
     if (buffer[i]=='\n') cl++;
 
     if (cl == max_lines) {
-//      KeyAndCont; cl = 0;
+      KeyAndCont; cl = 0;
       cl=0;
     }
-  }
+  }
 
   Free(buffer);
 }
