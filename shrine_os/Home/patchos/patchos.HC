@@ -124,8 +124,9 @@ public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
 
   DocClear; DocTop;
 
-////  U64 lc=LineCnt(filename)-line_max;
-
+//  U64 lc=LineCnt(filename)-line_max;
+//  U64 lc=LineCnt(filename)-line_max;
+
   if (buffer[i]==35) "yes\n";
 
   for (;i<size;i++)
