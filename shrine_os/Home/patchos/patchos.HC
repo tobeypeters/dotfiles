@@ -113,7 +113,7 @@ public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
  //one screen at a time.
  //line_max is used for the Head()
   I64 size=0;
-
+
   U64 max_lines=Fs->win_bottom-Fs->win_top,
              cl=0,
               i=0;
@@ -124,7 +124,7 @@ public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
 
   DocClear; DocTop;
 
-//  U64 lc=LineCnt(filename)-line_max;
+//  U64 lc=LineCnt(filename)-line_max;
 
   if (buffer[i]==35) "yes\n";
 
