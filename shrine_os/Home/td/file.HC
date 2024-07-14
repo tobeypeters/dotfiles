@@ -90,7 +90,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 }
 Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
 {
-  Bool res=FALSE;
+  Bool res=FALSE;
   U8 *as=arg_str(argv,argc);
   if (argc) as=arg_str(argv,argc);
   else as=StrNew("");
@@ -314,3 +314,4 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
+

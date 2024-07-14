@@ -25,7 +25,7 @@ public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
 //Display a specified message, when a file or files
  //are sent to the trash.
  Silent(silent_off);
- "Thrashed: %s\n",msg;
+ "Thrashed: %s\n",msg;
 }
 
 public U0 dump_exists()
@@ -92,43 +92,67 @@ public U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
  //Doesn't print any newline characters and "clears" the line after you
  //press a key.
-  "$$$$PT$$$$Press any key to continue ...$$$$FG$$$$";
+  "$FG,2$Press any key to continue ...$FG$";
 
   GetChar(,FALSE);
   PutChars(CH_CTRLY);
 }
+public U64 LineCnt(U8 *filename)
+{//Get the line count, for a specified file.
+  U64 res=0;
+  CDirEntry *tmpde=NULL;
+  if (tmpde=FilesFind(filename)) {
+    res=LineRep1(tmpde);
+    DirTreeDel(tmpde);
+  }
+  return res;
+}
 
-public U0 More(U8 *filename)
+public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
 {//Output txt or graphic file to the command line,
  //one screen at a time.
+ //line_max is used for the Head()
   I64 size=0;
-
+
   U64 max_lines=Fs->win_bottom-Fs->win_top,
              cl=0,
               i=0;
 
   U8 *buffer;
 
-  buffer=FileRead(filename,&size);
+  buffer=FileRead(filename,&size,DOCF_PLAIN_TEXT);
 
   DocClear; DocTop;
 
-  for (;i<size; i++)
+//  U64 lc=LineCnt(filename)-line_max;
+
+  if (buffer[i]==35) "yes\n";
+
+  for (;i<size;i++)
   {
+//    if ((less && cl>=lc)&&buffer[i]=='\n') "yes\n";
     "%c",buffer[i];
 
     if (buffer[i]=='\n') cl++;
 
     if (cl == max_lines) {
-      KeyAndCont; cl = 0;
+//      KeyAndCont; cl = 0;
+      cl=0;
     }
   }
 
-//  "\n";
-
   Free(buffer);
 }
-
+/*
+public U0 Head(U8 *filename)
+{//Print out the first 10 lines, of the specified file.
+  More(filename,10);"\n";
+}
+public U0 Tail(U8 *filename)
+{//Print out the last 10 lines, of the specified file.
+  More(filename,10,TRUE);
+}
+*/
 #define FUf_NO_ATAPI_CHECK	99 //For IsDir & FileFind - Tobey Peters
 
 public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,

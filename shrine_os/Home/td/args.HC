@@ -90,7 +90,7 @@ U0 init(CArgs *in)
 U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
-
+
   return StrNew(in->args[in->cidx]);
 }
 
