@@ -107,50 +107,57 @@ public U64 LineCnt(U8 *filename)
   }
   return res;
 }
-
-public U0 More(U8 *filename,U64 line_max=10000,Bool less=FALSE)
+public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
 {//Output txt or graphic file to the command line,
  //one screen at a time.
  //line_max is used for the Head()
+  if (!FileFind(filename)) return;
+
+  U8 *buffer=NULL;
+
   I64 size=0;
-
-  U64 max_lines=Fs->win_bottom-Fs->win_top,
-             cl=0,
-              i=0;
-
-  U8 *buffer;
 
   buffer=FileRead(filename,&size,DOCF_PLAIN_TEXT);
 
-  DocClear; DocTop;
+  U64 ml=Fs->win_bottom-Fs->win_top,
+      cl=0, //Current line count
+      dc=0, //Display count
+       i=0;
 
-//  U64 lc=LineCnt(filename)-line_max;
+  Bool di=FALSE; //Display the char(s)
+
+  U64 lc=LineCnt(filename)-prn_lines;
 
   for (;buffer[i]!=TK_EOF;i++)
   {
-//    if ((less && cl>=lc)&&buffer[i]=='\n') "yes\n";
-    "%c",buffer[i];
+    if (less) di=(cl>=lc);
+    else di=(cl<prn_lines);
 
-    if (buffer[i]=='\n') cl++;
+    if (di) "%c",buffer[i];
 
-    if (cl == max_lines) {
-      KeyAndCont; cl = 0;
-      cl=0;
+    if (buffer[i]=='\n') { cl++; dc+=di; }
+
+    if (di)
+    {
+      if (dc==ml) { KeyAndCont; dc=0; }
+      if (cl==prn_lines) break;
     }
-  }
+  }
+
+  "\n";
 
   Free(buffer);
 }
-/*
-public U0 Head(U8 *filename)
+
+public U0 Head(U8 *filename,U64 disp=10)
 {//Print out the first 10 lines, of the specified file.
-  More(filename,10);"\n";
+  More(filename,disp);
 }
-public U0 Tail(U8 *filename)
+public U0 Tail(U8 *filename,U64 disp=10)
 {//Print out the last 10 lines, of the specified file.
-  More(filename,10,TRUE);
+  More(filename,disp,TRUE);
 }
-*/
+
 #define FUf_NO_ATAPI_CHECK	99 //For IsDir & FileFind - Tobey Peters
 
 public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
