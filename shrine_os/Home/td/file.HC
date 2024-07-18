@@ -100,6 +100,14 @@ Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
   Free(as);
   return res;
 }
+Bool t_exec(U64 fvb,U64 type,U8 *cmd)
+{
+  Bool res=FALSE;
+
+  if (res=type_got(fvb,type)) s_exec(cmd);
+ 
+  return res;
+}
 
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
@@ -112,7 +120,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
-
+
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
@@ -314,4 +322,3 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
-

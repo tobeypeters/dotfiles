@@ -19,6 +19,6 @@
       Spawns an instance of TempleOS.
 */
 
-Cd(__DIR__);;
-#include "load"
+Cd(__DIR__);;
+#include "load"
 #include "templeDOS"

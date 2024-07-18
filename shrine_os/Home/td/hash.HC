@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  37
+#define CMD_CNT  39
 #define CMD_ARGS  5
 
 /*HASH idx, command, token min, token max,
@@ -43,8 +43,10 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 81,   "vol", 1, 1, 0},
   { 84,   "now", 1, 1, 0},
   { 86,   "run", 2, 2, 0},
+  {146,  "head", 2, 2, 0},
   {158,  "date", 1, 1, 0},
   {169,  "help", 1, 1, 0},
+  {170,  "tail", 2, 2, 0},
   {174,  "grep", 2, 2, 0},
   {176,  "tree", 1, 2, 0},
   {177,  "time", 1, 1, 0},
@@ -63,7 +65,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {214,    "rd", 2, 2, 0},
   {223,    "ls", 1, 3, 1},
   {224,    "rm", 2, 4, 2},
-  {227,    "mv", 3, 3, 0} //37
+  {227,    "mv", 3, 3, 0} //39
 };
 
 class CHCMDS
@@ -120,7 +122,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->print_arr=&print_arr;
 
   c->parse(c);
-
+
 //Free(c);
 
 /*U8 w[33][6]={

@@ -33,17 +33,25 @@ U8 *help_file=strnew(,,__DIR__,"/help.DD");
 U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
 
 U8 *prev_cmd='\0';
-U8 *prev_dir='\0';
-
 U0 set_prevcmd(U8 *newcmd) {
   zFree(prev_cmd);
   prev_cmd=StrNew(newcmd);
 }
 
+U8 *prev_dir='\0';
 U0 set_prevdir() {
   zFree(prev_dir);
   prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
 }
+
+U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
+
+U8 *eptr=NULL; //cmd sent into the error function.
+U8 *fptr=NULL; //ptr to a->flags
+Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
+  return flag_err(fptr,flg_want,prn_err,help_file,eptr);
+U0 e_print(U8 *msg,U8 *link="Usage")
+  err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
   set_prevcmd(cmd);
@@ -51,25 +59,25 @@ U8 execute_cmd(U8 *cmd) {
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
 
   a->init(a);
-  a->parse(a, cmd);
+  a->parse(a,cmd);
 
   if (a->count==0) goto error;
 
-  I64 res,idx,v,fc;
-  res=idx=v=fc=0;
+  I64 res,idx;
+  res=idx=0;
 
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
     if (str_len(a->args[0])==2) {
       if (a->args[0][1]==':') {
-        if (a->count>1) { err_print(ERR_ARGC); goto error; }
+        if (a->count>1) { e_print(ERR_ARGC); goto error; }
 
         if (drv_mounted(a->args[0])) {
           set_prevdir;
           Drv(a->args[0][0]);
         }
-        else err_print(ERR_DRVIU,a->args[0]);
+        else e_print(ERR_DRVIU,a->args[0]);
         goto error;
       }
     }
@@ -79,21 +87,25 @@ U8 execute_cmd(U8 *cmd) {
     goto switchit;
   }
 
+  I64 v,fc;
+  v=fc=0;
+
+  eptr=c->data[idx][1];
+  fptr=a->flags;
+
   fc=flag_cnt(a->flags);
 
-  U8 *err_cmd=c->data[idx][1]; //Passed into the err_print;
-
   if (a->count==2&&fc) {
-    if (!flag_err(a->flags,FLG_H,FALSE,help_file,err_cmd)) {
-      Ed(str_cat(bufe,,"FF:",help_file,",_",err_cmd)); goto error;
+    if (!f_err(FLG_H,FALSE)) {
+      Ed(str_cat(bufe,,"FF:",help_file,",_",eptr)); goto error;
     }
   }
 
   if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
-    err_print(ERR_ARGC,,help_file,err_cmd); goto error; }
+    e_print(ERR_ARGC); goto error; }
 
   if (!I64_between(fc,0,c->data[idx][4])) {
-    err_print(ERR_FLGC,,help_file,err_cmd); goto error; }
+    e_print(ERR_FLGC); goto error; }
 
   U8 *bufa,*bufb;
 
@@ -113,45 +125,52 @@ U8 execute_cmd(U8 *cmd) {
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
-$PT$$FG$$BG$    case   7: //clear
+    case   7: //clear
       DocClear;
       break;
     case  23: //mkdir
       if (!bav) DirMk(bufa);
       else
         if (type_got(v,DIR))
-          err_print(ERR_DIR_EXISTS,bufa);
+          e_print(ERR_DIR_EXISTS,bufa);
+        else
+          e_print(ERR_DRVFILEIDIR,bufa);
 
       break;
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      Bool trash=!flag_err(a->flags,FLG_T,FALSE);
-      if (trash) dump_exists; fc-=trash;
+      Bool trash=!f_err(FLG_T,FALSE);
+      if (trash) {
+        dump_exists;
+        Silent(ON);
+      }
+
+      fc-=trash;
 
       if (fc)
-        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+        if (f_err(FLG_D)) break;
 
       if (I64_IN(idx,30,214) || 224 && fc) {
         if (trash)
-          if (type_exec(v,DIR,,,"Silent(ON);CopyTree",bufa,TRASH_DIR))
+          if (type_exec(v,DIR,,,"CopyTree",bufa,TRASH_DIR))
             trash_msg(bufa);
 
-        type_exec(v,DIR,,,"DelTree",bufa);
+        t_exec(v,DIR,f_str("DelTree",bufa));
         break;
       }
 
       if (trash) 
-        if (type_exec(v,FILE,,,"Silent(ON);Move",bufa,TRASH_DIR)) trash_msg(bufa);
+        if (type_exec(v,FILE,,,"Move",bufa,TRASH_DIR)) trash_msg(bufa);
       else
-        type_exec(v,FILE,,,"Del",bufa);
+        t_exec(v,FILE,f_str("Del",bufa));
 
       break;
     case  35: //touch
       if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
-       else err_print(ERR_FILEI,"info");
+       else e_print(ERR_FILEI,"info");
 
       break;
     case  38: //tasks
@@ -164,8 +183,8 @@ $PT$$FG$$BG$    case   7: //clear
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
       if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
-      if (!bav) { err_print(ERR_NF,bufa); goto nocd; }
-      if (type_got(v,FILE,,FALSE)) { err_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
+      if (!bav) { e_print(ERR_NF,bufa); goto nocd; }
+      if (type_got(v,FILE,,FALSE)) { e_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
       bufe=StrNew(bufa);
  
@@ -179,6 +198,7 @@ $PT$$FG$$BG$    case   7: //clear
     case 187: //view
       type_exec(v,FILE,,,"viewer",
                 str_cat(bufe,,"Type(\\\"",bufa,"\\\");"));
+
       break;
     case  60: //man
       if (!Man(bufa)) "No symbol entry found for $$RED$$%s$$FG$$\n",bufa;
@@ -187,10 +207,10 @@ $PT$$FG$$BG$    case   7: //clear
     case  61: //pal
       if (fc)
       {
-        if (be=!flag_err(a->flags,FLG_P,FALSE,help_file,err_cmd))
+        if (be=!f_err(FLG_P,FALSE))
           PopUpColor;
          
-        if (!be) if (!flag_err(a->flags,FLG_D,,help_file,err_cmd))
+        if (!be) if (!f_err(FLG_D))
           PopUpColorDither;
 
         break;
@@ -214,7 +234,7 @@ $PT$$FG$$BG$    case   7: //clear
       break;
     case  72: //cpu
       if (fc)
-        if (flag_err(a->flags,FLG_F,,help_file,err_cmd)) break;
+        if (f_err(FLG_F)) break;
 
       CPURep(fc);
 
@@ -233,21 +253,11 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case  86: //run
-      type_exec(v,FILE,,,"ExeFile",bufa);
+      t_exec(v,FILE,f_str("ExeFile",bufa));
 
       break;
-    case 227: //mv
-      if (type_got(v,DIR,,FALSE)) {
-        shell_exec("CopyTree",,bufa,bufb);
-        shell_exec("DelTree",,bufa);
-      }
-      else {
-        if (type_got(v,DRV,,FALSE)) {
-          err_print(ERR_DRVIDIRFILE,bufa);
-          break;
-        }
-        shell_exec("Move",,bufa,bufb);
-      }
+    case 146: //head
+      t_exec(v,FILE,f_str("Head",bufa));
 
       break;
     case 158: //date
@@ -255,9 +265,14 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 169: //help
-      if (!FileFind(help_file)) { err_print(ERR_NF,help_file); break; }
+      if (!FileFind(help_file)) { e_print(ERR_NF,help_file); break; }
 
-      if (bav) viewer(str_cat(bufe,,"Type(\"",help_file,"\");"));
+      if (bav) viewer(f_str("Type",help_file));
+
+      break;
+    case 170: //tail
+      t_exec(v,FILE,f_str("Tail",bufa));
+
       break;
     case 174: //grep
       F(bufa);
@@ -268,7 +283,7 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 179: //more
-      type_exec(v,FILE,,,"More",bufa);
+      t_exec(v,FILE,f_str("More",bufa));
 
       break;
     case 182: //dump
@@ -285,9 +300,8 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 201: //ed
-      Ed(bufa);
       if (filenameOK(bufa)) Ed(bufa);
-      else err_print(ERR_FILEI,bufa);
+      else e_print(ERR_FILEI,bufa);
 
       break;
     case 203: //df
@@ -296,13 +310,12 @@ $PT$$FG$$BG$    case   7: //clear
 
       break;
     case 208: //tosz
-      if (type_exec(v,FILE,,,"Silent(ON);Move",bufa,ToggleZorNotZ(bufa)))
-        Silent(OFF);
+      type_exec(v,FILE,,,"Silent(ON);Move",bufa,ToggleZorNotZ(bufa));
 
       break;
     case 211: //cp
       if (fc) {
-        if (flag_err(a->flags,FLG_D,,help_file,err_cmd)) break;
+        if (f_err(FLG_D)) break;
         type_exec(v,DIR,,,"CopyTree",bufa,bufb);
       }
       else type_exec(v,FILE,,,"Copy",bufa,bufb);
@@ -318,7 +331,7 @@ $PT$$FG$$BG$    case   7: //clear
         if(str_len(bufa)) goto nferror;
 
       if (fc)
-        if (flag_err(a->flags,FLG_T,,help_file,err_cmd)) break;
+        if (f_err(FLG_T)) break;
 
       bufe=StrNew(bufa);
 
@@ -328,6 +341,20 @@ $PT$$FG$$BG$    case   7: //clear
         if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
       
       ls(bufe,(fc||idx==176));"\n";
+
+      break;
+    case 227: //mv
+      if (type_got(v,DIR,,FALSE)) {
+        shell_exec("CopyTree",,bufa,bufb);
+        shell_exec("DelTree",,bufa);
+      }
+      else {
+        if (type_got(v,DRV,,FALSE)) {
+          e_print(ERR_DRVIDIRFILE,bufa);
+          break;
+        }
+        shell_exec("Move",,bufa,bufb);
+      }
 
       break;
     case 999:
@@ -340,6 +367,7 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
+  Silent(OFF);
   zFree(bufe);
   return res;
 }
@@ -349,7 +377,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"$$LTCYAN$$TODO:$$FG$$ \n\n\";");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep and man quoted strings ...\n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
@@ -357,11 +385,9 @@ U8 templeDOS() {
 
   DocClear; DocMax;
 
-//  "\n$FG,3$TempleDOS {Version 1.0}$FG$\n";
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
-//  "Type '$FG$$FG,2$help$FG$' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 res=0;
   U8 *input=NULL;

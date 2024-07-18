@@ -99,6 +99,10 @@ $IV,1$_grep:$IV,0$
 	which contain the specified string.
 	usage: grep [$FG,2$FILENAME$FG,15$]
 
+$IV,1$_head:$IV,0$
+	Display the first 10 lines of a specified file.
+	usage: tail [$FG,2$FILENAME$FG,15$]
+
 $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
 	usage: help
@@ -161,6 +165,10 @@ $IV,1$_rnd:$IV,0$
 $IV,1$_run:$IV,0$
 	Execute source code files.
 	usage: run [$FG,2$FILENAME$FG,15$]
+
+$IV,1$_tail:$IV,0$
+	Display the last 10 lines of a specified file.
+	usage: tail [$FG,2$FILENAME$FG,15$]
 
 $IV,1$_tasks:$IV,0$
 	Report current tasks on all cores.

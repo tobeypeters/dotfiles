@@ -19,7 +19,7 @@
       Miscellaneous functions.
 */
 
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
@@ -72,6 +72,7 @@ U8 arg_str(U8 **args,U64 cnt)
   return buf;
 }
 #include "C:/Home/td/debug"
+U0 s_exec(U8 *cmd) ExePutS(cmd);
 U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:
@@ -85,8 +86,9 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   shell_exec("MStrUtil",,"\"upperme\"","NQ","SUF_TO_UPPER"); */
   if (!argc) return;
 
-  U8 *as="";
   if (noparse) { ExePutS(argv[0]); goto done; }
+
+  U8 *as="";
 
   if (argc) as=arg_str(argv,argc);
 
@@ -102,6 +104,7 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
   done:
     return;
 }
+
 U0 zFree(U8 *cube,Bool free=TRUE)
 {//Zero out mem and free it.
   MemSet(cube,'\0',sizeof(cube));
