@@ -112,6 +112,8 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
+  if (idx==174) goto switchit; //grep
+
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
 
@@ -156,7 +158,8 @@ U8 execute_cmd(U8 *cmd) {
           if (type_exec(v,DIR,,,"CopyTree",bufa,TRASH_DIR))
             trash_msg(bufa);
 
-        t_exec(v,DIR,f_str("DelTree",bufa));
+        t_exec(v,DIR,f_str("DelTree",bufa));
+
         break;
       }
 
@@ -275,7 +278,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
-      F(bufa);
+      F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -377,7 +380,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep and man quoted strings ...\n\n\";");
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 

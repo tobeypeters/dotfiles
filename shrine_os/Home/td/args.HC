@@ -44,18 +44,24 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 
   if (!cmd[0]) return;
 
-  U64 p=0;
+  U64 qf=0,
+       p=0;
 
   in->count=ins_idx+1;
 
   while(*cmd)
   {
-    if(cmd[0]==32){
-      ins_idx++; cmd++;
+    if(*cmd==32&&!qf){
+      ins_idx++; cmd++;
       parse(in,cmd,ins_idx,FALSE);
       break;
     }
-    in->args[ins_idx][p]=cmd[0];
+
+    in->args[ins_idx][p]=*cmd;
+
+    qf+=*cmd==34;
+    if (!(qf%2)) qf=0;
+  
     p++;cmd++;
   }
 

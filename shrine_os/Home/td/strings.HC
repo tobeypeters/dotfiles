@@ -119,6 +119,18 @@ U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 done:
   return res;
 }
+U8 *str_NQ(U8 *str)
+{//De-Quotify$CM-LE-RE$$SY,3$tm$SY,0$ a string.
+  U8 *p=str;
+  while (*str)
+  {
+    if (*str==34) *str=' ';
+    str++;
+  }
+  str=p;
+
+  return MStrUtil(str,SUF_REM_LEADING|SUF_REM_TRAILING);
+}
 U8 MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
