@@ -71,8 +71,7 @@ U8 arg_str(U8 **args,U64 cnt)
 
   return buf;
 }
-#include "C:/Home/td/debug"
-U0 s_exec(U8 *cmd) ExePutS(cmd);
+U0 s_exec(U8 *cmd) ExePutS(cmd);
 U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:
@@ -138,4 +137,4 @@ U64 god_num(CDoc *doc) {
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
   return KbdMsEvtTime>>GOD_BAD_BITS;
-}
+}

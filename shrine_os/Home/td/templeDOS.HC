@@ -45,7 +45,6 @@ U0 set_prevdir() {
 }
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
-
 U8 *eptr=NULL; //cmd sent into the error function.
 U8 *fptr=NULL; //ptr to a->flags
 Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
@@ -278,7 +277,11 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
-      F(str_NQ(bufa));
+      
+//      StrCpy(bufe,str_NQ(bufa));
+//      F(bufe); //Tried a simple ExePutS() and not doing th string manipulation or strcpy
+
+      Find(bufa,"/*",NULL);
 
       break;
     case 177: //time
@@ -370,8 +373,8 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
-  Silent(OFF);
-  zFree(bufe);
+//  Silent(OFF);
+//  zFree(bufe);
   return res;
 }
 
@@ -380,7 +383,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
@@ -402,23 +405,23 @@ U8 templeDOS() {
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1")) {
-      zFree(input);
+//      zFree(input);
       input=StrNew("exit");
     }
 
     if (str_cmp(input, "!!")) {
-      zFree(input);
+//      zFree(input);
       input=StrNew(prev_cmd);
     }
 
     res=execute_cmd(input);
 
-    zFree(input,FALSE);
+//    zFree(input,FALSE);
 
     if (res==1) break;
   }
 
-  zFree(input);
+//  zFree(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
@@ -431,13 +434,13 @@ SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);
 
-Fs->task_end_cb=&stop_ctrl_alt_x;
+//Fs->task_end_cb=&stop_ctrl_alt_x;
 
 Cd;set_prevdir;
 
 templeDOS;
 
-a->init(a);
+/*a->init(a);
 zFree(a);
 zFree(c);
 
@@ -446,6 +449,5 @@ zFree(menu_file);
 zFree(help_file);
 
 DocBottom; "$$FG$$";
-
+*/
 SettingsPop;
-

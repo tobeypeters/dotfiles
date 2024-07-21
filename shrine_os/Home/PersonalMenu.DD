@@ -1,6 +1,6 @@
 $FG,2$$TX+CX,"Customized Help"$$FG,15$
 
-$TR-C,"Shortcuts"$
+$TR-C,"Shortcuts"$
 $ID,2$$MA,LM="Cd;Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\");Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\\BlkDev"$
@@ -30,7 +30,7 @@ $LK,"Lectures/Optimization.HC",A="FI:::/Demo/Lectures/Optimization.HC"$
 $LK,"Lectures/ScrnMemory.HC",A="FI:::/Demo/Lectures/ScrnMemory.HC"$
 $LK,"Lectures/GraphicsCPULoad.HC",A="FI:::/Demo/Lectures/GraphicsCPULoad.HC"$
 $LK,"Lectures/InterruptDemo.HC",A="FI:::/Demo/Lectures/InterruptDemo.HC"$
-$ID,-2$$TR,"System Programmer Help"$
+$ID,-2$$TR,"System Programmer Help"$
 $ID,2$$LK,"64BitAsmQuiz",A="FI:::/Demo/Lectures/64BitAsmQuiz.DD"$
 $LK,"Hash Tables",A="HI:Hash"$
 $LK,"Dsk Stk",A="FI:::/Doc/FileLowLevel.DD"$
