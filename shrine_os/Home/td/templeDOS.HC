@@ -278,7 +278,7 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case 174: //grep
       
-//      StrCpy(bufe,str_NQ(bufa));
+//      StrCpy(bufe,str_NQ(bufa));
 //      F(bufe); //Tried a simple ExePutS() and not doing th string manipulation or strcpy
 
       Find(bufa,"/*",NULL);
@@ -402,8 +402,9 @@ U8 templeDOS() {
   {
     DocBottom;
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
-    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
+//    input=GetStr(,,GSF_SHIFT_ESC_EXIT);
     if (str_cmp(input,"-1")) {
 //      zFree(input);
       input=StrNew("exit");

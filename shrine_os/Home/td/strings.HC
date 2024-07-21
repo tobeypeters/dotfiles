@@ -94,7 +94,7 @@ U8 MyGetStr(I64 flags=0)
   do {
     ch=DocGetKey(&sc);
 
-    if (ch==CH_ESC) {
+    if (ch==CH_ESC) {
       if (doc=DocPut) {
 	DocLock(doc);
 	if (doc->doc_signature==DOC_SIGNATURE_VAL && doc->cur_entry!=doc) {
@@ -110,6 +110,9 @@ U8 MyGetStr(I64 flags=0)
     }
 
     if (ch==CH_SHIFT_ESC) {
+//      if (flags&GSF_SHIFT_ESC_EXIT) {
+//	Exit;
+//      }
       if (flags&GSF_SHIFT_ESC_EXIT) {
         res = StrNew("-1");
         goto gs_done;
@@ -160,4 +163,4 @@ U8 MyGetStr(I64 flags=0)
 gs_done:
   "$$PT$$$$FG$$$$BG$$";
   return res;
-}
+}

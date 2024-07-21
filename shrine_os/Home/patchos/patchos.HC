@@ -1346,7 +1346,7 @@ U0 settingspop2(CTask *task,CTaskSettings *tmpse)
   StrCpy(task->task_title,tmpse->task_title);
   AutoComplete(tmpse->autocomplete);
   GrPaletteSet(tmpse->palette);
-//  Snd;
+  Snd;
 }
 public U0 settingspop(CTask *task=NULL,I64 flags=0)
 {//Typically, called at end of an application.
