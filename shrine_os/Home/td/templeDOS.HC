@@ -277,11 +277,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
-      
-//      StrCpy(bufe,str_NQ(bufa));
-//      F(bufe); //Tried a simple ExePutS() and not doing th string manipulation or strcpy
-
-      Find(bufa,"/*",NULL);
+      F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -373,8 +369,8 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
-//  Silent(OFF);
-//  zFree(bufe);
+  Silent(OFF);
+  zFree(bufe);
   return res;
 }
 
@@ -402,27 +398,27 @@ U8 templeDOS() {
   {
     DocBottom;
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
-    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-//    input=GetStr(,,GSF_SHIFT_ESC_EXIT);
+    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+
     if (str_cmp(input,"-1")) {
-//      zFree(input);
+      zFree(input);
       input=StrNew("exit");
     }
 
     if (str_cmp(input, "!!")) {
-//      zFree(input);
+      zFree(input);
       input=StrNew(prev_cmd);
     }
 
     res=execute_cmd(input);
 
-//    zFree(input,FALSE);
+    zFree(input,FALSE);
 
     if (res==1) break;
   }
 
-//  zFree(input);
+  zFree(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
@@ -435,13 +431,13 @@ SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);
 
-//Fs->task_end_cb=&stop_ctrl_alt_x;
+Fs->task_end_cb=&stop_ctrl_alt_x;
 
 Cd;set_prevdir;
 
 templeDOS;
 
-/*a->init(a);
+a->init(a);
 zFree(a);
 zFree(c);
 
@@ -450,5 +446,5 @@ zFree(menu_file);
 zFree(help_file);
 
 DocBottom; "$$FG$$";
-*/
-SettingsPop;
+
+SettingsPop;

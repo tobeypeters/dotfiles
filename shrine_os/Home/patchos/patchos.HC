@@ -1322,65 +1322,6 @@ public U8 drvtextattrget(U8 drv_let=0)
     return BLACK<<4|WHITE;
 }
 
-U0 settingspop2(CTask *task,CTaskSettings *tmpse)
-{
-  CDoc *doc;
-
-  if (doc=DocPut(task)) {
-    LBEqu(&doc->flags,DOCf_HIDE_CURSOR,!tmpse->hide_cursor);
-    LBEqu(&doc->flags,DOCf_DONT_HIGHLIGHT_CURSOR,!tmpse->highlight_cursor);
-    LBEqu(&doc->flags,DOCf_NO_SCROLL_BARS,!tmpse->scroll);
-  }
-
-  WinBorder(tmpse->border,task);
-  WinHorz(tmpse->left,tmpse->right,task);
-  WinVert(tmpse->top,tmpse->bottom,task);
-  task->scroll_x=tmpse->scroll_x;
-  task->scroll_y=tmpse->scroll_y;
-  task->scroll_z=tmpse->scroll_z;
-  task->win_inhibit=tmpse->win_inhibit;
-  task->text_attr=tmpse->text_attr;
-  task->border_attr=tmpse->border_attr;
-  task->border_src =tmpse->border_src;
-  task->title_src  =tmpse->title_src;
-  StrCpy(task->task_title,tmpse->task_title);
-  AutoComplete(tmpse->autocomplete);
-  GrPaletteSet(tmpse->palette);
-  Snd;
-}
-public U0 settingspop(CTask *task=NULL,I64 flags=0)
-{//Typically, called at end of an application.
-  CTaskSettings *tmpse;
-  if (!task) task=Fs;
-  if (!TaskValidate(task))
-    return;
-  if (tmpse=task->next_settings) {
-    task->next_settings=tmpse->next;
-    Cd(tmpse->cur_dir);
-    Free(tmpse->cur_dir);
-    task->draw_it=tmpse->draw_it;
-    task->task_end_cb=tmpse->task_end_cb;
-
-    if (task->animate_task)
-      Kill(task->animate_task);
-    if (task->animate_task=tmpse->animate_task)
-      Suspend(task->animate_task,FALSE);
-
-    if (!(flags&TSF_SAME_SONG)) {
-      if (task->song_task)
-	Kill(task->song_task);
-      if (task->song_task=tmpse->song_task)
-	Suspend(task->song_task,FALSE);
-    }
-
-    SettingsPop2(task,tmpse); //Do it to get ress fast
-    Refresh(,TRUE);
-    SettingsPop2(task,tmpse); //Redo in case was lost by old update
-
-    Free(tmpse);
-  }
-}
-
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
@@ -1391,5 +1332,4 @@ HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
-HijackFunc(&SettingsPop2,&settingspop2);
-HijackFunc(&SettingsPop,&settingspop);
+
