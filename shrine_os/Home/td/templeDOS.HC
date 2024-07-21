@@ -426,7 +426,7 @@ U8 templeDOS() {
 }
 
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
+
 SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);
@@ -447,4 +447,6 @@ zFree(help_file);
 
 DocBottom; "$$FG$$";
 
-SettingsPop;
+MenuPop;
+SettingsPop;
+
