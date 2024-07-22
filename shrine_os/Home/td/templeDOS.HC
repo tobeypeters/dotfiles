@@ -417,7 +417,7 @@ U8 templeDOS() {
 
     if (res==1) break;
   }
-
+
   zFree(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
@@ -426,7 +426,7 @@ U8 templeDOS() {
 }
 
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
+
 SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);

@@ -1,5 +1,5 @@
 /*
-  The MIT License(MIT)
+  The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -163,4 +163,4 @@ U8 MyGetStr(I64 flags=0)
 gs_done:
   "$$PT$$$$FG$$$$BG$$";
   return res;
-}
+}

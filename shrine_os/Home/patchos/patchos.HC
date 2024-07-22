@@ -1,3 +1,11 @@
+/*
+  The HijackFunc() code is taken from TinkerOS, which is a very enhanced
+  branch of TempleOS.
+
+  TinkerOS and the Original source can be found at:
+
+  http://www.github.com/tinkeros/TinkerOS
+*/
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -1332,4 +1340,3 @@ HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
-

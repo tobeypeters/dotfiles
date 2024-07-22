@@ -1,3 +1,11 @@
+/*The code is this file is taken from TinkerOS, which is a ver enhanced
+  branch of TempleOS.
+
+  TinkerOS and the Original source can be found at:
+
+  http://www.github.com/tinkeros/TinkerOS
+*/
+
 //Cd(__DIR__);
 
 //#include "Midi.HH"
