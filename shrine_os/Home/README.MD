@@ -26,7 +26,7 @@
  * Added $LK,"templeDOS.HC",A="FI:C:/Apps/templeDOS/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Apps/templeDOS/templeDOS.DD"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
- <b>Modied system files ... : copies in - c:/Home/patchos</b>
+ <b>Modied system files ... : c:/Home/patchos</b>
 
  <b>Credits:</b>
           The source code for the Adlib support and HijackFunc() was taken from<br>TinkerOS, which is a very enhanced version of TempleOS.<br>
