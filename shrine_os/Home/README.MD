@@ -29,6 +29,6 @@
  <b>Modied system files ... : copies in - c:/Home/patchos</b>
 
  <b>Credits:</b>
-          The source code for the Adlib support and HijackFun() was taken from<br>TinkerOS, which is a very enhanced version of TempleOS.<br>
+          The source code for the Adlib support and HijackFunc() was taken from<br>TinkerOS, which is a very enhanced version of TempleOS.<br>
           http://www.github.com/tinkeros/TinkerOS
 
