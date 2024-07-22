@@ -1,4 +1,4 @@
-/*The code is this file is taken from TinkerOS, which is a very enhanced
+/*The code in this file is taken from TinkerOS, which is a very enhanced
   branch of TempleOS.
 
   TinkerOS and the Original source can be found at:

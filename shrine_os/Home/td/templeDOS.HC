@@ -417,7 +417,7 @@ U8 templeDOS() {
 
     if (res==1) break;
   }
-
+
   zFree(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
