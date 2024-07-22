@@ -15,17 +15,20 @@
 */
 
 <b>Description:</b>
-              Running list of additions and changes made to my 
-              distribution of Shrine/TempleOS.  
-              
+              Running list of additions and changes made to my
+              distribution of Shrine/TempleOS.
+
               <b>Main thing is the new command interpreter : templeDOS.HC</b>
 
 <b>General:</b>
- * Added $LK,"shared.HC",A="FI:C:/Home/shared.HC"$ : Shared HolyC source file.
  * Added $LK,"tp_Compositor.HC",A="FI:C:/Home/tp_Compositor.HC"$ : Start of my custom
    compositor. Right now it overrides the mouse cursor color.
- * Added $LK,"templeDOS.HC",A="FI:C:/Home/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Home/templeDOS.DD"$ : Terminal command app.
+ * Added $LK,"templeDOS.HC",A="FI:C:/Apps/templeDOS/templeDOS.HC"$, $LK,"templeDOS.DD",A="FI:C:/Apps/templeDOS/templeDOS.DD"$ : Terminal command app.
  * Added $LK,"Theme.HC",A="FI:C:/Home/Theme.HC"$ : Allows easy'ish color theming.
 
- <b>Modied system files ... : copies in - c:/Home/OSBackup</b>
- 
+ <b>Modied system files ... : copies in - c:/Home/patchos</b>
+
+ Credits:
+          The source code for the Adlib support and HijackFun() was taken from<br>TinkerOS, which is a very enhanced version of TempleOS.<br>
+          http://www.github.com/tinkeros/TinkerOS
+
