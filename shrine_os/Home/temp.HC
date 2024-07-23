@@ -11,8 +11,8 @@ U0 Main()
 
   Menu_Select=GetStr("Would you like to run this program?: ");
 
-  if (*Menu_Select=='1') goto run_game;
-  if (*Menu_Select=='2') goto term_game;
+  if (!StrCmp(Menu_Select,"1")) goto run_game;
+  if (!StrCmp(Menu_Select,"2")) goto term_game;
   else goto menu;
 
  run_game:
@@ -26,4 +26,3 @@ U0 Main()
 }
 
 Main();
-
