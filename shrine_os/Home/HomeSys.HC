@@ -32,7 +32,7 @@ U0 StartUpTasks()
 {
   //Terry said GOD's favorite color is BLUE
   Fs->border_src=BDS_CONST;
-  Fs->border_attr=BLACK<<4+WHITE;
+  Fs->border_attr=BLACK<<4+WHITE;
 
 //  "\nBoot Time:%7.3fs\n",tS;
 //  "\nTempleOS v%2.2f\n\nKernel compiled: %D %T\n",sys_os_version,sys_compile_time,sys_compile_time;
@@ -47,7 +47,7 @@ U0 StartUpTasks()
   user1=User;
 
   XTalk(user1,"#include \"AdLib/OPL2\";\n");
-  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
+  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
 
   ACInit("/*;!*/Bible.TXT*");
   AutoComplete; //Hide autocomplete window.

@@ -359,7 +359,7 @@ U8 execute_cmd(U8 *cmd) {
       }
 
       break;
-    case 999:
+    case 999:
     default:
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
   }
@@ -373,6 +373,8 @@ error:
   zFree(bufe);
   return res;
 }
+
+U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
@@ -425,8 +427,6 @@ U8 templeDOS() {
   return res;
 }
 
-U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
 SettingsPush;
 
 Fs->cur_menu=MenuFile(menu_file);
@@ -449,4 +449,3 @@ DocBottom; "$$FG$$";
 
 MenuPop;
 SettingsPop;
-
