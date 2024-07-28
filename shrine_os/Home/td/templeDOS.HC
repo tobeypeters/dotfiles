@@ -279,8 +279,8 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
-//      F("str_cmp");
-      F(str_NQ(bufa));
+      F("str_cmp");
+//      F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -372,6 +372,7 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
+//so, F() gets called and works. It then jumps down to here.
 //  Silent(OFF);
 //  zFree(bufe);
   return res;
@@ -418,7 +419,7 @@ U8 templeDOS() {
 //TEST CODE: strarts
 U8 *buffer=CAlloc(sizeof(U8)*128);
 ADocClear;
-//TEST CODE: ends
+//TEST CODE: ends
 
 
   while (TRUE)
@@ -452,7 +453,7 @@ ADocClear;
 //          StrCpy(buffer,"exit");
           deleteme;
           return res;
-          Exit;
+//          Exit;
           break;
         default:
           Adam("\"chr:%c x: %d\n\";",chr,x);
@@ -469,7 +470,7 @@ ADocClear;
 
 
 
-    if (str_cmp(input,"-1")) {
+/*    if (str_cmp(input,"-1")) {
       zFree(input);
       input=StrNew("exit");
     }
@@ -478,7 +479,7 @@ ADocClear;
       zFree(input);
       input=StrNew(prev_cmd);
     }
-
+*/
     if (res=execute_cmd(input)) break;
 
 //    zFree(input,FALSE);
