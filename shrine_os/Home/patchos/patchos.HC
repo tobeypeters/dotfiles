@@ -136,7 +136,7 @@ public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
 
   U64 lc=LineCnt(filename)-prn_lines;
 
-  for (;buffer[i]!=TK_EOF;i++)
+  for (;buffer[i]!=TK_EOF;i++)
   {
     if (less) di=(cl>=lc);
     else di=(cl<prn_lines);
@@ -493,7 +493,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
 }
 
 public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
-{//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
+{//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
   I64 i,x,y;
   CDoc *m;
   CDocEntry *doc_ce;

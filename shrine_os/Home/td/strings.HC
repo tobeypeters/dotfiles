@@ -21,7 +21,7 @@
 U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
-  if (str==NULL||!argc) return str;
+  if (str==NULL||!argc) return str;
 
   U64 i = 0;
 
@@ -119,7 +119,7 @@ U8 MyGetStr(I64 flags=0)
         res = StrNew("-1");
         goto gs_done;
       }
-      else {
+      else {
 	res=StrNew("");
 	goto gs_done;
       }

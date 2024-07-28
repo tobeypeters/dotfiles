@@ -1,9 +1,9 @@
-$FG,2$$TX+CX,"Customized Help"$$FG,15$
+$GREEN$$TX+CX,"Customized Help"$$WHITE$
 
 $TR-C,"Shortcuts"$
 $ID,2$$MA,LM="Cd;Dir;\n"$
-$MA,LM="Cd(\"::/Kernel\");Dir;\n"$
-$MA,LM="Cd(\"::/Kernel\\BlkDev"$
+$MA,LM="Cd(\"::/Kernel\");ls;\n"$
+$MA,LM="Cd(\"::/Kernel\\BlkDev\");ls;\n"$
 $MA,LM="Cd(\"::/Demo/Lectures\");ls;\n"$
 $MA,LM="Cd(\"::/Demo\");ls;\n"$
 $MA,LM="Cd(\"::/Doc\");ls;\n"$
@@ -17,7 +17,7 @@ You recompile the kernel with $LK,"BootHDIns",A="MN:BootHDIns"$(), and specify w
 
 $LK,"Installing",A="FI:::/Doc/Install.DD"$
 
-$LK,"::/StartOS.HC"$ the TempleOS equivalent of the $FG,2$AUTOEXEC.BAT$FG$.  It is run at start-up by the $LK,"Adam Task",A="FF:::/Kernel/KMain.HC,\"StartOS"$.
+$LK,"::/StartOS.HC"$ the TempleOS equivalent of the $GREEN$AUTOEXEC.BAT$FG$.  It is run at start-up by the $LK,"Adam Task",A="FF:::/Kernel/KMain.HC,\"StartOS"$.
 $ID,-2$$TR,"Programmer help"$
 $ID,2$$LK,"Guidelines",A="FI:::/Doc/GuideLines.DD"$
 $LK,"HolyC",A="FI:::/Doc/HolyC.DD"$
@@ -30,7 +30,7 @@ $LK,"Lectures/Optimization.HC",A="FI:::/Demo/Lectures/Optimization.HC"$
 $LK,"Lectures/ScrnMemory.HC",A="FI:::/Demo/Lectures/ScrnMemory.HC"$
 $LK,"Lectures/GraphicsCPULoad.HC",A="FI:::/Demo/Lectures/GraphicsCPULoad.HC"$
 $LK,"Lectures/InterruptDemo.HC",A="FI:::/Demo/Lectures/InterruptDemo.HC"$
-$ID,-2$$TR,"System Programmer Help"$
+$ID,-2$$TR,"System Programmer Help"$
 $ID,2$$LK,"64BitAsmQuiz",A="FI:::/Demo/Lectures/64BitAsmQuiz.DD"$
 $LK,"Hash Tables",A="HI:Hash"$
 $LK,"Dsk Stk",A="FI:::/Doc/FileLowLevel.DD"$
@@ -43,7 +43,7 @@ $LK,"Doc",A="FL:::/Adam/DolDoc/MakeDoc.HC,1"$
 $LK,"MiniGrLib",A="FI:::/Demo/Lectures/MiniGrLib.HC"$
 $LK,"MiniCompiler",A="FI:::/Demo/Lectures/MiniCompiler.HC"$
 $LK,"Backend",A="FL:::/Compiler/BackLib.HC,1"$$ID,-2$
-$FG,2$$TX+CX,"Index"$$FG,15$
+$GREEN$$TX+CX,"Index"$$WHITE$
 $LK,"AutoComplete",A="HI:AutoComplete"$
 $LK,"Bit",A="HI:Bit"$
 $LK,"Boot",A="HI:Boot"$
@@ -116,7 +116,7 @@ $LK,"Utils",A="HI:Cmd Line (Typically)"$
 $LK,"Windows",A="HI:Windows"$
 
 Run $LK,"TOSStdIns",A="MN:TOSStdIns"$() if you wish to
-use the official staff $FG,2$/Home$FG$ files.
+use the official staff $GREEN$/Home$FG$ files.
 $MA,LM="Cd(\"::/Demo/AcctExample\");Dir;\n"$
 
 Make all with $LK,"BootHDIns",A="MN:BootHDIns"$().

@@ -53,6 +53,8 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
+  if (!cmd) return 0;
+
   set_prevcmd(cmd);
 
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -277,6 +279,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
+//      F("str_cmp");
       F(str_NQ(bufa));
 
       break;
@@ -369,12 +372,28 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
-  Silent(OFF);
-  zFree(bufe);
+//  Silent(OFF);
+//  zFree(bufe);
   return res;
 }
 
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
+
+U0 deleteme()
+{
+a->init(a);
+zFree(a);
+zFree(c);
+
+zFree(prev_dir);
+zFree(menu_file);
+zFree(help_file);
+
+DocBottom; "$$FG$$";
+
+MenuPop;
+SettingsPop;
+}
 
 U8 templeDOS() {
   Seed; I64 termID = AbsI64(RandI32);
@@ -396,12 +415,59 @@ U8 templeDOS() {
   U64 res=0;
   U8 *input=NULL;
 
+//TEST CODE: strarts
+U8 *buffer=CAlloc(sizeof(U8)*128);
+ADocClear;
+//TEST CODE: ends
+
+
   while (TRUE)
   {
     DocBottom;
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
 
-    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+//    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+
+
+
+
+
+
+
+//TEST CODE: strarts
+    U64 x=0;
+    I64 chr;
+    Bool l=TRUE;
+
+    while (l) {
+      chr=GetChar(,FALSE);
+
+      switch (chr) {
+        case 10:
+           l=FALSE;
+           break;
+	case CH_SHIFT_ESC:
+	case CH_ESC:
+//          l=FALSE;
+//          StrCpy(buffer,"exit");
+          deleteme;
+          return res;
+          Exit;
+          break;
+        default:
+          Adam("\"chr:%c x: %d\n\";",chr,x);
+          buffer[x]=chr;x++; //There's no checking for backspace or anything else here
+      }
+    }
+
+    Adam("\"buffer: %s\n\";",buffer);
+    input=StrNew(buffer);
+    Free(buffer);
+    Adam("\"input: %s\n\";",input);
+//TEST CODE: ends
+
+
+
 
     if (str_cmp(input,"-1")) {
       zFree(input);
@@ -415,12 +481,12 @@ U8 templeDOS() {
 
     if (res=execute_cmd(input)) break;
 
-    zFree(input,FALSE);
+//    zFree(input,FALSE);
   }
 
-  zFree(input);
+//  zFree(input);
 
-  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
+//  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
   return res;
 }
@@ -435,7 +501,7 @@ Cd;set_prevdir;
 
 templeDOS;
 
-a->init(a);
+/*a->init(a);
 zFree(a);
 zFree(c);
 
@@ -447,3 +513,4 @@ DocBottom; "$$FG$$";
 
 MenuPop;
 SettingsPop;
+*/
