@@ -136,7 +136,7 @@ public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
 
   U64 lc=LineCnt(filename)-prn_lines;
 
-  for (;buffer[i]!=TK_EOF;i++)
+  for (;buffer[i]!=TK_EOF;i++)
   {
     if (less) di=(cl>=lc);
     else di=(cl<prn_lines);

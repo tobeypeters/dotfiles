@@ -70,7 +70,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
 
 class CHCMDS
 {
-  U8 *data[HASH_TABLE_SIZE+1][CMD_ARGS];
+  U8 *data[HASH_TABLE_SIZE+1][CMD_ARGS];
 
   I64 (* hashdx)(CHCMDS *in,U8 *cmd);
   U0 (* parse)(CHCMDS *in);
@@ -122,7 +122,7 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->print_arr=&print_arr;
 
   c->parse(c);
-
+
 //Free(c);
 
 /*U8 w[33][6]={

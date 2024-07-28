@@ -52,7 +52,7 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
   while(*cmd)
   {
     if(*cmd==32&&!qf){
-      ins_idx++; cmd++;
+      ins_idx++; cmd++;
       parse(in,cmd,ins_idx,FALSE);
       break;
     }
@@ -89,9 +89,10 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 }
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function
-  MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
   in->count=in->cidx=0;
+
+  MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
+  MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
 }
 U8* get_current(CArgs *in)
 {

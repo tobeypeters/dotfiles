@@ -359,7 +359,7 @@ U8 execute_cmd(U8 *cmd) {
       }
 
       break;
-    case 999:
+    case 999:
     default:
       shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
   }
@@ -401,7 +401,7 @@ U8 templeDOS() {
     DocBottom;
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
 
-    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (str_cmp(input,"-1")) {
       zFree(input);
@@ -413,11 +413,9 @@ U8 templeDOS() {
       input=StrNew(prev_cmd);
     }
 
-    res=execute_cmd(input);
+    if (res=execute_cmd(input)) break;
 
     zFree(input,FALSE);
-
-    if (res==1) break;
   }
 
   zFree(input);

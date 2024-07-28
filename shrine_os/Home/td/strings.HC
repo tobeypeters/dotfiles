@@ -1,5 +1,5 @@
 /*
-  The MIT License(MIT)
+  The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,6 +21,8 @@
 U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
+  if (str==NULL||!argc) return str;
+
   U64 i = 0;
 
   if (flush) *str = '\0';
