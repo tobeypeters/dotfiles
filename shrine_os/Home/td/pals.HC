@@ -21,7 +21,7 @@
 
 //COLORS and such WILL probably chage
 
-//NOT IMPLEMENTED IN templeDOS YET
+//NOT IMPLEMENTED IN templeDOS YET
 
 public CBGR48 default1[COLORS_NUM]={
   0x00002b2b3636,0x070736364242,0x000080808080,0x31318282a4a4,
@@ -70,7 +70,7 @@ public U64 pal_select()
 
   if (ret<0) return 0;
 
-  U8 *pal=CAlloc(sizeof(U8)*64);
+  U8 *pal=CAlloc(sizeof(U8)*64);
 
   U64 i=0,pos=0;
 

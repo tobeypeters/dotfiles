@@ -71,7 +71,8 @@ U8 arg_str(U8 **args,U64 cnt)
 
   return buf;
 }
-U0 s_exec(U8 *cmd) ExePutS(cmd);
+#include "C:/Home/td/debug"
+U0 s_exec(U8 *cmd) ExePutS(cmd);
 U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:

@@ -120,7 +120,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
-
+
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
@@ -322,4 +322,3 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   Free(st);
 }
-

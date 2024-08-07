@@ -45,6 +45,7 @@ U0 set_prevdir() {
 }
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
+
 U8 *eptr=NULL; //cmd sent into the error function.
 U8 *fptr=NULL; //ptr to a->flags
 Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
@@ -53,8 +54,6 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
-  if (!cmd) return 0;
-
   set_prevcmd(cmd);
 
   U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
@@ -279,8 +278,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 174: //grep
-      F("str_cmp");
-//      F(str_NQ(bufa));
+      F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -372,28 +370,9 @@ nferror:
   err_print(ERR_NF,bufa);
 
 error:
-//so, F() gets called and works. It then jumps down to here.
-//  Silent(OFF);
-//  zFree(bufe);
+  Silent(OFF);
+  zFree(bufe);
   return res;
-}
-
-U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
-U0 deleteme()
-{
-a->init(a);
-zFree(a);
-zFree(c);
-
-zFree(prev_dir);
-zFree(menu_file);
-zFree(help_file);
-
-DocBottom; "$$FG$$";
-
-MenuPop;
-SettingsPop;
 }
 
 U8 templeDOS() {
@@ -401,7 +380,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
@@ -416,61 +395,13 @@ U8 templeDOS() {
   U64 res=0;
   U8 *input=NULL;
 
-//TEST CODE: strarts
-U8 *buffer=CAlloc(sizeof(U8)*128);
-ADocClear;
-//TEST CODE: ends
-
-
   while (TRUE)
   {
     DocBottom;
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
+    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-//    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
-
-
-
-
-
-
-
-//TEST CODE: strarts
-    U64 x=0;
-    I64 chr;
-    Bool l=TRUE;
-
-    while (l) {
-      chr=GetChar(,FALSE);
-
-      switch (chr) {
-        case 10:
-           l=FALSE;
-           break;
-	case CH_SHIFT_ESC:
-	case CH_ESC:
-//          l=FALSE;
-//          StrCpy(buffer,"exit");
-          deleteme;
-          return res;
-//          Exit;
-          break;
-        default:
-          Adam("\"chr:%c x: %d\n\";",chr,x);
-          buffer[x]=chr;x++; //There's no checking for backspace or anything else here
-      }
-    }
-
-    Adam("\"buffer: %s\n\";",buffer);
-    input=StrNew(buffer);
-    Free(buffer);
-    Adam("\"input: %s\n\";",input);
-//TEST CODE: ends
-
-
-
-
-/*    if (str_cmp(input,"-1")) {
+    if (str_cmp(input,"-1")) {
       zFree(input);
       input=StrNew("exit");
     }
@@ -479,18 +410,22 @@ ADocClear;
       zFree(input);
       input=StrNew(prev_cmd);
     }
-*/
-    if (res=execute_cmd(input)) break;
 
-//    zFree(input,FALSE);
+    res=execute_cmd(input);
+
+    zFree(input,FALSE);
+
+    if (res==1) break;
   }
 
-//  zFree(input);
+  zFree(input);
 
-//  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
+  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
   return res;
 }
+
+U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
 
@@ -502,7 +437,7 @@ Cd;set_prevdir;
 
 templeDOS;
 
-/*a->init(a);
+a->init(a);
 zFree(a);
 zFree(c);
 
@@ -512,6 +447,5 @@ zFree(help_file);
 
 DocBottom; "$$FG$$";
 
-MenuPop;
 SettingsPop;
-*/
+
