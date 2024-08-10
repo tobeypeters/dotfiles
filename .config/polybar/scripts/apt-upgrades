@@ -47,8 +47,8 @@ aptitude full-upgrade --simulate --assume-yes |\
 
 if [[ $upgraded != 0 ]] || [[ $new != 0 ]]; then
   echo -e ""
-  polybar-msg action updater module_show
+  polybar-msg action updater module_show > /dev/null &
 else
   echo -e ""
-  polybar-msg action updater module_hide
+  polybar-msg action updater module_hide > /dev/null
 fi

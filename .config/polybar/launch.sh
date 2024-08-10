@@ -18,6 +18,12 @@ polybar-msg cmd quit >/dev/null 2>&1
 #while pgrep -u -x $UID polybar >/dev/null; do sleep 1; done
 while pgrep -x polybar >/dev/null; do sleep 1; done
 
-# Launch main-i3 bar
 sleep 1
+
+# Launch cycle.py - Doing it here, cause colors don't get updated correctly.  Using pywal now.
+color0=$(xrdb -query | awk '/color0:/ {print $2; exit}')
+color1=$(xrdb -query | awk '/color1:/ {print $2; exit}')
+$~/.config/polybar/scripts/cycle.py --menu_colors ${color0} ${color1} ${color1} ${color0} & disown
+
+# Launch main-i3 bar
 polybar -c ~/.config/polybar/config.ini main-i3 2>&1 | tee -a /mnt/ram_disk/polybar.log & disown

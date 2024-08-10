@@ -20,8 +20,8 @@ LICENSE
 
 sudo apt update
 echo ''
-aptitude full-upgrade --assume-yes
+sudo aptitude full-upgrade --assume-yes
 #sudo apt dist-upgrade -y
 echo ''
-sleep 1000
+#sleep 1000
 polybar-msg action updater module_hide
