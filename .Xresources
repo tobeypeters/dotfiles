@@ -24,7 +24,7 @@ Xft.lcdfilter: lcddefault
 prompt.color1:  #FFFFFF
 
 dmenu.font : System San Francisco Display:size=10
-dmenu.background:   #FFFFFF
-dmenu.foreground:   #000000
-dmenu.selbackground: #FF0000
-dmenu.selforeground: #FFFFFF
+!dmenu.background:   #FFFFFF
+!dmenu.foreground:   #000000
+!dmenu.selbackground: #FF0000
+!dmenu.selforeground: #FFFFFF
