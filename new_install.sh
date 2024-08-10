@@ -158,6 +158,14 @@ sudo apt install indicator-sensors #cpu and gpu temps, etc ...
 
 sudo cargo install procs
 
+# Use pipewire instead of pulseaudio - CPU issue
+# https://askubuntu.com/questions/1361885/pulseaudio-cpu-usage-above-normal-with-no-audio-video-play
+#sudo apt install pipewire-audio-client-libraries libspa-0.2-bluetooth libspa-0.2-jack
+#sudo apt install wireplumber pipewire-media-session-
+#sudo cp /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf /etc/alsa/conf.d/
+#sudo apt remove pulseaudio-module-bluetooth
+#systemctl --user --now enable wireplumber.service
+
 # https://christitus.com/quickemu/
 
 # In case, you want a ramdisk
