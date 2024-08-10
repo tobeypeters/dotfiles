@@ -8,7 +8,7 @@ U0 TimeIns()
   "$$IV,1$$----%D %T----$$IV,0$$\n",cdt,cdt;
 }
 
-Bool MyPutKey(I64 ch,I64 sc)
+Bool MyPutKey(I64 ch,I64 sc)
 {//ch=ASCII; sc=scan_code
 
   /*
@@ -36,7 +36,9 @@ U0 TimeIns()
 
 //[+s] <CTRL>+<DEL>
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
-    BootRAM;
+//    BootRAM;
+//    CopyTree("~/td","/Apps/templeDOS");
+    CopyTree("~/td","/Apps/templeDOS");
   }
 //[+e] <CTRL>+<DEL>
 //[tpc end]

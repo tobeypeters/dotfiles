@@ -24,6 +24,9 @@
 #define CMD_CNT  39
 #define CMD_ARGS  5
 
+#define HFLAGS 0
+#define HARGS  1
+
 /*HASH idx, command, token min, token max,
   flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
@@ -64,7 +67,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 0},
   {223,    "ls", 1, 3, 1},
-  {224,    "rm", 2, 4, 2},
+  {224,    "rm", 2, 4, 1},
   {227,    "mv", 3, 3, 0} //39
 };
 
@@ -74,6 +77,8 @@ class CHCMDS
 
   I64 (* hashdx)(CHCMDS *in,U8 *cmd);
   U0 (* parse)(CHCMDS *in);
+
+  Bool (* tk_minmax)(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS);
 
   U0 (* print_arr)(CHCMDS *in);
 };
@@ -91,6 +96,27 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
     if (!StrCmp(in->data[idx][1],cmd)) return idx;
 
   return -1;
+}
+Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
+{ 
+  if (type==HARGS)
+{
+  Bool yn=in->data[idx][2]<=val<=in->data[idx][3];
+
+  Adam("\"count:%d min: %d max: %d yorn: %d\n\";",val,in->data[idx][2],in->data[idx][3],yn);
+
+    return (in->data[idx][2]<=val<=in->data[idx][3]);
+}
+
+
+//    return (in->data[idx][2]<=val<=in->data[idx][3]);
+
+
+
+  if (type==HFLAGS)
+    return (0<=val<=in->data[idx][4]);
+
+  return FALSE;
 }
 U0 print_arr(CHCMDS *in)
 {
@@ -119,50 +145,17 @@ U0 parse(CHCMDS *in)
 CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->hashdx=&hashDX;
   c->parse=&parse;
+
+  c->tk_minmax=&tk_minmax;
   c->print_arr=&print_arr;
 
   c->parse(c);
-
+
+//  "args:  %d\n",c->tk_minmax(c,224,5);
+//  "flags: %d\n",c->tk_minmax(c,224,1,HFLAGS);
+
 //Free(c);
 
-/*U8 w[33][6]={
-"clear",
-"mkdir",
-"rmdir",
-"touch",
-"tasks",
-"cdd",
-"cat",
-"man",
-"mem",
-"cpu",
-"vol",
-"now",
-"run",
-"mv",
-"date",
-"help",
-"grep",
-"time",
-"tree",
-"more",
-"dump",
-"term",
-"exit",
-"view",
-"quit",
-"cd",
-"ed",
-"df",
-"cp",
-"fm",
-"rd",
-"ls",
-"rm",
-};
-U64 i=0;
-for(;*w[i]!='\0';i++)
-{
-///  "    case %3d: //%s\n       break;\n",c->hashdx(c,w[i]),w[i];
-  "%3d %s\n",c->hashdx(c,w[i]),w[i];
-}*/
+
+
+

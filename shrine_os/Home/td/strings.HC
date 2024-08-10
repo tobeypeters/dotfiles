@@ -83,7 +83,7 @@ U8 *callocstr(...)
 
   return CAlloc((sizeof(U8)*len)+1);
 }
-U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
+/*U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
   U8 *res=0;
   I64 size=0;
@@ -118,9 +118,9 @@ U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 
 done:
   return res;
-}
+}*/
 U8 *str_NQ(U8 *str)
-{//De-Quotify$CM-LE-RE$$SY,3$tm$SY,0$ a string.
+{//De-Quotify$CM-LE-RE$$SY,3$tm$SY,0$ a string.
   U8 *p=str;
   while (*str)
   {
@@ -131,7 +131,7 @@ U8 *str_NQ(U8 *str)
 
   return MStrUtil(str,SUF_REM_LEADING|SUF_REM_TRAILING);
 }
-U8 MyGetStr(I64 flags=0)
+U8 *MyGetStr(I64 flags=0)
 {//Altered GetStr() to return -1 on <shift><esc>
   CDoc *doc;
   CDocEntry *doc_e,*doc_e_end;
@@ -155,9 +155,20 @@ U8 MyGetStr(I64 flags=0)
       }
       if (flags&GSF_WITH_NEW_LINE)
 	break;
-    } if (ch==CH_SHIFT_ESC) {
+    }
+
+    if (ch==CH_SHIFT_ESC) {
       if (flags&GSF_SHIFT_ESC_EXIT) {
-        res = StrNew("-1");
+	DocLock(doc);
+	if (doc->doc_signature==DOC_SIGNATURE_VAL && doc->cur_entry!=doc) {
+	  doc_e=DocEntryCopy(doc,doc->cur_entry);
+	  DocBottom(doc);
+	  DocEntryRun(doc,doc_e,TRUE);
+	  DocEntryDel(doc,doc_e);
+	}
+	DocUnlock(doc);
+
+        res=StrNew("é");
         goto gs_done;
       }
       else {
@@ -165,6 +176,7 @@ U8 MyGetStr(I64 flags=0)
 	goto gs_done;
       }
     }
+
 //<CTRL-SHIFT-ENTER> is a blank line without entry
   } while (flags&GSF_WITH_NEW_LINE || ch!='\n' ||
 	sc&SCF_CTRL && sc&SCF_SHIFT);

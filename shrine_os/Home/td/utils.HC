@@ -19,7 +19,7 @@
       Miscellaneous functions.
 */
 
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
@@ -72,7 +72,7 @@ U8 arg_str(U8 **args,U64 cnt)
   return buf;
 }
 #include "C:/Home/td/debug"
-U0 s_exec(U8 *cmd) ExePutS(cmd);
+U0 s_exec(U8 *cmd) ExePutS(cmd);
 U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 {//Execute a templeOS shell command.
   /*Examples:

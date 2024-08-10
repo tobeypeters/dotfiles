@@ -30,19 +30,23 @@ class CArgs
   U8 args[ARG_CNT][ARG_LEN];
   U8 *flags;
 
-  U0 (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE);
-  U0 (*init)(CArgs *in);
+  Bool (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE);
+  U0 (*init)(CArgs *in);
   U8 (*get_current)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
 };
 
-U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
+Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 {//Parse command buffer.  This version uses
  //space as the delimeter.
+  Bool res=FALSE;
+
+  if (!ins_idx) in->init;
+
   StrUtil(cmd, SUF_REM_LEADING);
 
-  if (!cmd[0]) return;
+  if (!cmd[0]) return res;
 
   U64 qf=0,
        p=0;
@@ -52,7 +56,7 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
   while(*cmd)
   {
     if(*cmd==32&&!qf){
-      ins_idx++; cmd++;
+      ins_idx++; cmd++;
       parse(in,cmd,ins_idx,FALSE);
       break;
     }
@@ -86,6 +90,8 @@ U0 parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
     }
     if (f) MemSet(in->args[p-1],'\0',sizeof(U8)*ARG_LEN);
   }
+
+  return in->count>0;
 }
 U0 init(CArgs *in)
 {//Initizlizer and reset CArgs function

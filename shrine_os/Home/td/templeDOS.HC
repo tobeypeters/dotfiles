@@ -29,39 +29,35 @@ EdLineDel(doc);
 */
 
 //Was gonna put the help file in "::/Doc".
-U8 *help_file=strnew(,,__DIR__,"/help.DD");
-U8 *menu_file=strnew(,,__DIR__,"/menu.DD");
+U8 *help_file=MStrPrint("%s%s",__DIR__,"/help.DD");
+U8 *menu_file=MStrPrint("%s%s",__DIR__,"/menu.DD");
 
-U8 *prev_cmd='\0';
+U8 *prev_cmd=NULL;
 U0 set_prevcmd(U8 *newcmd) {
-  zFree(prev_cmd);
+  if (prev_cmd) Free(prev_cmd);
   prev_cmd=StrNew(newcmd);
 }
 
-U8 *prev_dir='\0';
+U8 *prev_dir=NULL;
 U0 set_prevdir() {
-  zFree(prev_dir);
-  prev_dir=StrNew(DirNameAbs(Fs->cur_dir));
+  if (prev_dir) Free(prev_dir);
+  prev_dir=DirNameAbs(Fs->cur_dir);
 }
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
 
 U8 *eptr=NULL; //cmd sent into the error function.
-U8 *fptr=NULL; //ptr to a->flags
 Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
-  return flag_err(fptr,flg_want,prn_err,help_file,eptr);
+  return flag_err(a->flags,flg_want,prn_err,help_file,eptr);
 U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
   set_prevcmd(cmd);
 
-  U8 *bufe=CAlloc(sizeof(U8)*128); //scratch buffer
+  U8 *bufe=NULL; //scratch buffer
 
-  a->init(a);
-  a->parse(a,cmd);
-
-  if (a->count==0) goto error;
+  if (!a->parse(a,cmd)) goto error; //Parsed no args
 
   I64 res,idx;
   res=idx=0;
@@ -69,7 +65,7 @@ U8 execute_cmd(U8 *cmd) {
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
-    if (str_len(a->args[0])==2) {
+    if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
         if (a->count>1) { e_print(ERR_ARGC); goto error; }
 
@@ -91,28 +87,31 @@ U8 execute_cmd(U8 *cmd) {
   v=fc=0;
 
   eptr=c->data[idx][1];
-  fptr=a->flags;
 
   fc=flag_cnt(a->flags);
 
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
-      Ed(str_cat(bufe,,"FF:",help_file,",_",eptr)); goto error;
+      Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto error;
     }
   }
 
-  if (!I64_between(a->count-(fc>0),c->data[idx][2],(c->data[idx][3]-c->data[idx][4]))) {
+Watch newest ted
+
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto error; }
 
-  if (!I64_between(fc,0,c->data[idx][4])) {
+  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto error; }
 
   U8 *bufa,*bufb;
+  bufa=bufb=NULL;
 
   a->next(a);bufa=a->get_current(a);
-  a->next(a);bufb=a->get_current(a);
 
-  if (idx==174) goto switchit; //grep
+  if (a->count>2) {
+    a->next(a);bufb=a->get_current(a);
+  }
 
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
@@ -279,6 +278,7 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case 174: //grep
       F(str_NQ(bufa));
+//KbdCmdFlush;
 
       break;
     case 177: //time
@@ -371,7 +371,7 @@ nferror:
 
 error:
   Silent(OFF);
-  zFree(bufe);
+  Free(bufe);
   return res;
 }
 
@@ -380,13 +380,16 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
+
+  ADocClear;
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear; DocMax;
+  DocClear;DocMax;
+  Cd;
 
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
@@ -401,24 +404,21 @@ U8 templeDOS() {
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-    if (str_cmp(input,"-1")) {
-      zFree(input);
-      input=StrNew("exit");
-    }
+//    input=GetStr(,,GSF_SHIFT_ESC_EXIT);
+
+    if (*input=='é') break;
 
     if (str_cmp(input, "!!")) {
       zFree(input);
       input=StrNew(prev_cmd);
     }
 
-    res=execute_cmd(input);
+    if (res=execute_cmd(input)) break;
 
-    zFree(input,FALSE);
-
-    if (res==1) break;
+//    zFree(input,FALSE);
   }
 
-  zFree(input);
+//  Free(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
@@ -433,19 +433,20 @@ Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
 
-Cd;set_prevdir;
-
 templeDOS;
 
-a->init(a);
-zFree(a);
-zFree(c);
+/*a->init(a);
+Free(a);
+Free(c);
 
-zFree(prev_dir);
-zFree(menu_file);
-zFree(help_file);
+eptr=NULL;
+Free(prev_dir);
+Free(menu_file);
+Free(help_file);
+*/
 
 DocBottom; "$$FG$$";
 
-SettingsPop;
+MenuPop;
 
+SettingsPop;

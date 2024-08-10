@@ -228,7 +228,7 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
   CDirContext *dirc;
   Bool old_silent;
   if (fuf_flags&~FUG_FILE_FIND)
-    throw('FUF');
+    throw('FUF');
   if (!filename || *filename && filename[1]==':' && !Let2Drv(*filename,FALSE))
     return FALSE;
   altname=ToggleZorNotZ(filename);
@@ -493,7 +493,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
 }
 
 public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
-{//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
+{//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
   I64 i,x,y;
   CDoc *m;
   CDocEntry *doc_ce;
@@ -1281,7 +1281,7 @@ public U0 doctermnew()
   Raw(OFF);
 }
 
-public U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
+/*public U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
   U8 *res=0;
   I64 size=0;
@@ -1316,7 +1316,7 @@ public U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
 
 done:
   return res;
-}
+}*/
 
 //U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
