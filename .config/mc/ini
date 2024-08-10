@@ -116,6 +116,8 @@ base_color=
 xterm-256color=
 color_terminals=
 
+alacritty=
+
 [Panels]
 show_mini_info=true
 kilobyte_si=false
