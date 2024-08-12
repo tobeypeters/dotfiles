@@ -16,7 +16,7 @@
 
 /*menu.DD
   Description:
-      templeDOS menu definitions.
+      templeDOS menu definitions.
 */
 
 File
@@ -59,3 +59,4 @@ Help
 {
   Menu(,CH_CTRLM,0x43200000432);
 }
+

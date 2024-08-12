@@ -84,8 +84,11 @@ class CHCMDS
 };
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
-  U64 hash=0,
-       idx=0;
+  I64 idx=-1;
+
+  if (!cmd) return idx;
+
+  U64 hash=0;
 
   U8 *p=cmd;
   while (*p) hash+=*p++;
@@ -95,23 +98,12 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
   for(;idx < HASH_TABLE_SIZE;idx++)
     if (!StrCmp(in->data[idx][1],cmd)) return idx;
 
-  return -1;
+  return idx;
 }
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
-{
-  Bool yn=in->data[idx][2]<=val<=in->data[idx][3];
-
-  Adam("\"count:%d min: %d max: %d yorn: %d\n\";",val,in->data[idx][2],in->data[idx][3],yn);
-
     return (in->data[idx][2]<=val<=in->data[idx][3]);
-}
-
-
-//    return (in->data[idx][2]<=val<=in->data[idx][3]);
-
-
 
   if (type==HFLAGS)
     return (0<=val<=in->data[idx][4]);
@@ -150,11 +142,6 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->print_arr=&print_arr;
 
   c->parse(c);
-
-//  "args:  %d\n",c->tk_minmax(c,224,5);
-//  "flags: %d\n",c->tk_minmax(c,224,1,HFLAGS);
-
-//Free(c);
 
 
 

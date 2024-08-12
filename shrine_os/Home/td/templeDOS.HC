@@ -53,14 +53,20 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
-  set_prevcmd(cmd);
+Adam("\"execute_cmd\n\";");
+  I64 res,idx;
+  res=idx=0;
 
   U8 *bufe=NULL; //scratch buffer
 
-  if (!a->parse(a,cmd)) goto error; //Parsed no args
+  if (cmd[StrLen(cmd)-1]==';')
+  {//User is trying to normally run a OS command?
+    ExePutS(cmd); return res;
+  }
 
-  I64 res,idx;
-  res=idx=0;
+  set_prevcmd(cmd);
+
+  if (!a->parse(a,cmd)) goto error; //Parsed no args
 
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
@@ -78,7 +84,6 @@ U8 execute_cmd(U8 *cmd) {
       }
     }
 
-    //try to "shell" execute it
     idx=999; 
     goto switchit;
   }
@@ -95,8 +100,6 @@ U8 execute_cmd(U8 *cmd) {
       Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto error;
     }
   }
-
-Watch newest ted
 
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto error; }
@@ -362,7 +365,7 @@ Watch newest ted
       break;
     case 999:
     default:
-      shell_exec("",TRUE,a->args[0]); //User is trying to normally run a OS command?
+      ExePutS(cmd); //Probably never get in here.
   }
   goto error;
 
@@ -388,8 +391,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear;DocMax;
-  Cd;
+  DocClear;DocMax;Cd;
 
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
@@ -404,6 +406,8 @@ U8 templeDOS() {
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
+//    Adam("\"cmd: %s\n\";",input);
+
 //    input=GetStr(,,GSF_SHIFT_ESC_EXIT);
 
     if (*input=='é') break;
@@ -415,10 +419,10 @@ U8 templeDOS() {
 
     if (res=execute_cmd(input)) break;
 
-//    zFree(input,FALSE);
+    zFree(input,FALSE);
   }
 
-//  Free(input);
+  Free(input);
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 
@@ -435,7 +439,7 @@ Fs->task_end_cb=&stop_ctrl_alt_x;
 
 templeDOS;
 
-/*a->init(a);
+a->init(a);
 Free(a);
 Free(c);
 
@@ -443,7 +447,7 @@ eptr=NULL;
 Free(prev_dir);
 Free(menu_file);
 Free(help_file);
-*/
+
 
 DocBottom; "$$FG$$";
 

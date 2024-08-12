@@ -30,7 +30,7 @@ F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
        c=0,
        i=0;
 
-  F64 s = 0;
+  F64 s=0;
 
   for (;i<d;i++) {
     if (drv)
@@ -38,12 +38,12 @@ F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
     else
       dv=Let2Drv(i+'A',FALSE);
 
-    if (dv && (dv->fs_type==FSt_FAT32 || dv->fs_type==FSt_REDSEA))
+    if (dv&&(dv->fs_type==FSt_FAT32 || dv->fs_type==FSt_REDSEA))
     {
-      c = Drv2Let(dv);
-      s = DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
+      c=Drv2Let(dv);
+      s=DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
 
-      if (drv && ret_free) return s;
+      if (drv&&ret_free) return s;
 
       "%C: %3.2f%% Free\n",c,s;
       if (drv) break;
@@ -59,8 +59,6 @@ Bool drv_mounted(U8 *drv)
 
   return ToBool(Let2Drv(ToUpper(drv[0]),FALSE));
 }
-//Seemed to be Faster than IsDir(); for my case use.
-Bool is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
 
 #define DRV  2
 #define DIR  3
@@ -120,7 +118,7 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
  //
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
-
+
   res.u8[2]=drv_mounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
   res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
@@ -167,6 +165,9 @@ U64 files_valid(U8 *ddfa,U8 *ddfb)
 #define STD "ST_DAYS_OF_WEEK"
 #define STM "ST_MONTHS"
 
+//Seemed to be Faster than IsDir(); for my case use.
+Bool ls_is_dir(CDirEntry *dir) return ToBool(dir->attr & RS_ATTR_DIR);
+
 U0 tree_top(U8 *name) { "$$TR,\"%s\"$$",name; "$$ID,2$$"; }
 U0 tree_trunk() "$$ID,-2S$$";
 
@@ -193,7 +194,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   CDateStruct ds, dsc;
   Date2Struct(&dsc,Now+local_time_offset);
 
-  Bool id = is_dir(entry);
+  Bool id = ls_is_dir(entry);
 
   Date2Struct(&ds,entry->datetime+local_time_offset);
 
@@ -230,7 +231,7 @@ U0 ls_dir_sub(CDirEntry *entry)
     {
       "\n";
       ls_entry_info(entry);
-      if (is_dir(entry))
+      if (ls_is_dir(entry))
       {
         tree_top(entry->name);        
         ls_dir_sub(FilesFind(entry->full_name,FUF_RECURSE));
@@ -262,7 +263,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   if (entry)
   {
-    st=MAllocIdent(entry->full_name);
+    st=MAllocIdent(entry->full_name);
     StrLastRem(st,"/");
 
     if (!st[2]) StrCpy(st+2,"/");
@@ -278,7 +279,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
     start=entry;
     while (entry)
     {
-      id=is_dir(entry);
+      id=ls_is_dir(entry);
 
       ls_entry_info(entry);
 

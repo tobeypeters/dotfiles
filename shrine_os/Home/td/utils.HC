@@ -19,23 +19,21 @@
       Miscellaneous functions.
 */
 
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name
  //Fs->task_title
   if (name) StrCpy(Fs->task_name,name);
   if (title) StrCpy(Fs->task_title,title);
-  return;
 }
 Bool I64_IN(I64 inval,...)
 {//Check to see if an I64 is in a given argv list.
   U64 i=0;
 
   for (;i<argc;i++) {
-    if (inval==argv[i]) {
+    if (inval==argv[i])
       return TRUE;
-    }
   }
   return FALSE;
 }
@@ -107,10 +105,10 @@ U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
 
 U0 zFree(U8 *cube,Bool free=TRUE)
 {//Zero out mem and free it.
-  MemSet(cube,'\0',sizeof(cube));
+  MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
   return;
-}
+}
 U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   U8 *bufv=CAlloc(sizeof(U8)*128);

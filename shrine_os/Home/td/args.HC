@@ -31,7 +31,7 @@ class CArgs
   U8 *flags;
 
   Bool (*parse)(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE);
-  U0 (*init)(CArgs *in);
+  U0 (*init)(CArgs *in);
   U8 (*get_current)(CArgs *in);
   U0 (*next)(CArgs *in);
   U0 (*prev)(CArgs *in);
@@ -42,11 +42,11 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
  //space as the delimeter.
   Bool res=FALSE;
 
+  if (!StrLen(cmd)) return res;
+
   if (!ins_idx) in->init;
 
   StrUtil(cmd, SUF_REM_LEADING);
-
-  if (!cmd[0]) return res;
 
   U64 qf=0,
        p=0;
@@ -116,7 +116,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
-//  a->parse(a,"-a");
+//  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
 
 //  a->init(a); //Clear args before each proceeding parse() call
