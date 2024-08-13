@@ -44,7 +44,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 
   if (!StrLen(cmd)) return res;
 
-  StrUtil(cmd, SUF_REM_LEADING);
+  StrUtil(cmd, SUF_REM_LEADING);
 
   U64 qf=0,
        p=0;
@@ -92,7 +92,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
   return in->count>0;
 }
 U0 init(CArgs *in)
-{//Initizlizer and reset CArgs function
+{//Initizlizer and reset CArgs function
   MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
   MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
   in->count=in->cidx=0;

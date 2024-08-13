@@ -53,7 +53,6 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
-Adam("\"execute_cmd\n\";");
   I64 res,idx;
   res=idx=0;
 
@@ -103,7 +102,6 @@ Adam("\"execute_cmd\n\";");
     }
   }
 
-  Adam("\"%d %d %d\n\";",idx,a->count,fc);
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto error; }
 
@@ -284,8 +282,6 @@ Adam("\"execute_cmd\n\";");
       break;
     case 174: //grep
       F(str_NQ(bufa));
-//KbdCmdFlush;
-CmdLinePmt;
 
       break;
     case 177: //time
@@ -412,10 +408,6 @@ U8 templeDOS() {
     "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
-//    Adam("\"cmd: %s\n\";",input);
-
-//    input=GetStr(,,GSF_SHIFT_ESC_EXIT);
-
     if (*input=='é') break;
 
     if (str_cmp(input, "!!")) {
@@ -438,7 +430,7 @@ U8 templeDOS() {
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
-
+
 Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
@@ -454,9 +446,9 @@ Free(prev_dir);
 Free(menu_file);
 Free(help_file);
 
-
 DocBottom; "$$FG$$";
 
 MenuPop;
 
 SettingsPop;
+

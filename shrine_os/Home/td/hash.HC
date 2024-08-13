@@ -102,7 +102,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 }
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
-//  "tk_minmax: %d %d %d\n",in->data[idx][2],val,in->data[idx][3];
+//  "tk_minmax: %d %d %d\n",in->data[idx][2],val,in->data[idx][3];
 
   if (type==HARGS)
     return (in->data[idx][2]<=val<=in->data[idx][3]);
@@ -147,4 +147,4 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
 
 
-
+
