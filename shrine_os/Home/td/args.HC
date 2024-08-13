@@ -44,9 +44,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 
   if (!StrLen(cmd)) return res;
 
-  if (!ins_idx) in->init;
-
-  StrUtil(cmd, SUF_REM_LEADING);
+  StrUtil(cmd, SUF_REM_LEADING);
 
   U64 qf=0,
        p=0;
@@ -116,7 +114,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->next=&next;
   a->prev=&prev; 
 
-//  a->parse(a,"-a");
+//  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
 
 //  a->init(a); //Clear args before each proceeding parse() call

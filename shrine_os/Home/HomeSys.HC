@@ -47,7 +47,7 @@ U0 StartUpTasks()
   user1=User;
 
   XTalk(user1,"#include \"AdLib/OPL2\";\n");
-  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
+//  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
 
   ACInit("/*;!*/Bible.TXT*");
   AutoComplete; //Hide autocomplete window.

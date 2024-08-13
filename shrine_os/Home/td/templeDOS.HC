@@ -53,7 +53,7 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
-Adam("\"execute_cmd\n\";");
+Adam("\"execute_cmd\n\";");
   I64 res,idx;
   res=idx=0;
 
@@ -61,10 +61,12 @@ Adam("\"execute_cmd\n\";");
 
   if (cmd[StrLen(cmd)-1]==';')
   {//User is trying to normally run a OS command?
-    ExePutS(cmd); return res;
+    ExePutS2(cmd); return res;
   }
 
   set_prevcmd(cmd);
+
+  a->init(a);
 
   if (!a->parse(a,cmd)) goto error; //Parsed no args
 
@@ -101,6 +103,7 @@ Adam("\"execute_cmd\n\";");
     }
   }
 
+  Adam("\"%d %d %d\n\";",idx,a->count,fc);
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto error; }
 
@@ -282,6 +285,7 @@ Adam("\"execute_cmd\n\";");
     case 174: //grep
       F(str_NQ(bufa));
 //KbdCmdFlush;
+CmdLinePmt;
 
       break;
     case 177: //time
@@ -374,6 +378,8 @@ nferror:
 
 error:
   Silent(OFF);
+  bufa=bufb=NULL;
+
   Free(bufe);
   return res;
 }
@@ -432,13 +438,13 @@ U8 templeDOS() {
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
-
+/*
 Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
-
+*/
 templeDOS;
-
+/*
 a->init(a);
 Free(a);
 Free(c);
@@ -452,5 +458,6 @@ Free(help_file);
 DocBottom; "$$FG$$";
 
 MenuPop;
-
+*/
 SettingsPop;
+
