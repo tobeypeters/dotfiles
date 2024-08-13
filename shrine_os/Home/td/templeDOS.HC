@@ -438,13 +438,13 @@ U8 templeDOS() {
 U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
 
 SettingsPush;
-/*
+
 Fs->cur_menu=MenuFile(menu_file);
 
 Fs->task_end_cb=&stop_ctrl_alt_x;
-*/
+
 templeDOS;
-/*
+
 a->init(a);
 Free(a);
 Free(c);
@@ -458,6 +458,5 @@ Free(help_file);
 DocBottom; "$$FG$$";
 
 MenuPop;
-*/
+
 SettingsPop;
-

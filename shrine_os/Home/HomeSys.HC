@@ -2,7 +2,7 @@
 //anything you want.
 
 #include "~/theme.HC" // This also loads tp_Compositor.HC
-#include "~/patchos/patchos"
+#include "~/patchos/patchos"
 
 Bool started=FALSE;
 
@@ -46,8 +46,8 @@ U0 StartUpTasks()
 
   user1=User;
 
-  XTalk(user1,"#include \"AdLib/OPL2\";\n");
-//  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
+//  XTalk(user1,"#include \"AdLib/OPL2\";\n");
+  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
 
   ACInit("/*;!*/Bible.TXT*");
   AutoComplete; //Hide autocomplete window.
