@@ -18,7 +18,8 @@
   Description:
       File system related functions.
 */
-
+#include "~/td/errors"
+#include "~/td/utils"
 U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
@@ -104,6 +105,17 @@ Bool t_exec(U64 fvb,U64 type,U8 *cmd)
 
   if (res=type_got(fvb,type)) s_exec(cmd);
  
+  return res;
+}
+
+Bool t_execnew(U64 fvb,U64 type,U8 *cmd,Bool p_err=TRUE,U64 w_arg=0)
+{
+  Bool res=FALSE;
+
+  if (res=type_got(fvb,type,w_arg,p_err))
+    ExePutS(cmd);
+//    ExePutS(MStrPrint("%s(\"%s\");",cmd,arg));
+
   return res;
 }
 
@@ -263,7 +275,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
   if (entry)
   {
-    st=MAllocIdent(entry->full_name);
+    st=MAllocIdent(entry->full_name);
     StrLastRem(st,"/");
 
     if (!st[2]) StrCpy(st+2,"/");

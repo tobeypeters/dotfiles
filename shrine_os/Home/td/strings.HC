@@ -18,7 +18,7 @@
   Description:
       String related functions.
 */
-U8 *str_cat(U8 **str,Bool flush=TRUE,...)
+U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
   U64 i = 0;

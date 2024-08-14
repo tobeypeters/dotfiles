@@ -18,6 +18,7 @@
   Description:
       Miscellaneous functions.
 */
+#include "~/td/strings"
 
 Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
@@ -108,22 +109,14 @@ U0 zFree(U8 *cube,Bool free=TRUE)
   MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
   return;
-}
+}
 U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
-  U8 *bufv=CAlloc(sizeof(U8)*128);
+  if (!StrLen(cmd)) return;
+  PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;",cmd));
 
-  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;");
-
-  PopUp(bufv);
-
-  Free(bufv);
-/*  DocClear; DocTop;
-  "$$BK,1$$Press ESC to exit ...$$BK,0$$";
-  DocTop;View; DocBottom;
-  PutChars(CH_CTRLY);*/
-  return;
-}
+//  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;");
+}
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;

@@ -34,13 +34,13 @@ U8 *menu_file=MStrPrint("%s%s",__DIR__,"/menu.DD");
 
 U8 *prev_cmd=NULL;
 U0 set_prevcmd(U8 *newcmd) {
-  if (prev_cmd) Free(prev_cmd);
+  if (StrLen(prev_cmd)) Free(prev_cmd);
   prev_cmd=StrNew(newcmd);
 }
 
 U8 *prev_dir=NULL;
 U0 set_prevdir() {
-  if (prev_dir) Free(prev_dir);
+  if (StrLen(prev_dir)) Free(prev_dir);
   prev_dir=DirNameAbs(Fs->cur_dir);
 }
 
@@ -60,7 +60,7 @@ U8 execute_cmd(U8 *cmd) {
 
   if (cmd[StrLen(cmd)-1]==';')
   {//User is trying to normally run a OS command?
-    ExePutS2(cmd); return res;
+    ExePutS(cmd); return res;
   }
 
   set_prevcmd(cmd);
@@ -112,10 +112,7 @@ U8 execute_cmd(U8 *cmd) {
   bufa=bufb=NULL;
 
   a->next(a);bufa=a->get_current(a);
-
-  if (a->count>2) {
-    a->next(a);bufb=a->get_current(a);
-  }
+  a->next(a);bufb=a->get_current(a);
 
   v=files_valid(bufa,bufb);
   U64 bav=v.u8[0];
@@ -157,19 +154,28 @@ U8 execute_cmd(U8 *cmd) {
         if (f_err(FLG_D)) break;
 
       if (I64_IN(idx,30,214) || 224 && fc) {
-        if (trash)
-          if (type_exec(v,DIR,,,"CopyTree",bufa,TRASH_DIR))
-            trash_msg(bufa);
+        if (!type_got(v,DIR)) break;
 
-        t_exec(v,DIR,f_str("DelTree",bufa));
+        if (trash)
+        {
+          if (type_got(v,DIR)) {
+            CopyTree(bufa,TRASH_DIR);
+            trash_msg(bufa);
+          }
+        }
+        DelTree(bufa);
 
         break;
       }
 
-      if (trash) 
-        if (type_exec(v,FILE,,,"Move",bufa,TRASH_DIR)) trash_msg(bufa);
+      if (!type_got(v,FILE)) break;
+      if (trash)
+      {
+        Move(bufa,TRASH_DIR);
+        trash_msg(bufa);
+      }
       else
-        t_exec(v,FILE,f_str("Del",bufa));
+       Del(bufa);
 
       break;
     case  35: //touch
@@ -202,8 +208,8 @@ U8 execute_cmd(U8 *cmd) {
         break;
     case  56: //cat
     case 187: //view
-      type_exec(v,FILE,,,"viewer",
-                str_cat(bufe,,"Type(\\\"",bufa,"\\\");"));
+      bufe=MStrPrint("viewer(\"Type(\\\"%s\\\");\");",bufa);
+      t_execnew(v,FILE,bufe);
 
       break;
     case  60: //man
@@ -451,4 +457,3 @@ DocBottom; "$$FG$$";
 MenuPop;
 
 SettingsPop;
-
