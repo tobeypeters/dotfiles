@@ -87,7 +87,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   return res;
 }
-Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
+/*Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
 {
   Bool res=FALSE;
   U8 *as=arg_str(argv,argc);
@@ -99,7 +99,7 @@ Bool type_exec(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE,U8 *cmd,...)
   Free(as);
   return res;
 }
-Bool t_exec(U64 fvb,U64 type,U8 *cmd)
+Bool t_exec(U64 fvb,U64 type,U8 *cmd)
 {
   Bool res=FALSE;
 
@@ -108,17 +108,20 @@ Bool t_exec(U64 fvb,U64 type,U8 *cmd)
   return res;
 }
 
-Bool t_execnew(U64 fvb,U64 type,U8 *cmd,Bool p_err=TRUE,U64 w_arg=0)
+Bool t_execnew(U64 fvb,U64 type,U8 *cmd=NULL,U8 *arg=NULL,Bool p_err=TRUE,U64 w_arg=0)
 {
   Bool res=FALSE;
 
   if (res=type_got(fvb,type,w_arg,p_err))
-    ExePutS(cmd);
-//    ExePutS(MStrPrint("%s(\"%s\");",cmd,arg));
+    ExePutS(MStrPrint("%s(\\\"%s\\\");",cmd,arg));
+
+  "t_execnew: %s\n",cmd;
+
+//  viewer(arg);
 
   return res;
 }
-
+*/
 Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 

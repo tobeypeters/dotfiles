@@ -73,7 +73,7 @@ U8 execute_cmd(U8 *cmd) {
   {
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
-      if (a->args[0][1]==':') {
+      if (a->args[0][1]==':') {
         if (a->count>1) { e_print(ERR_ARGC); goto error; }
 
         if (drv_mounted(a->args[0])) {
@@ -158,10 +158,8 @@ U8 execute_cmd(U8 *cmd) {
 
         if (trash)
         {
-          if (type_got(v,DIR)) {
-            CopyTree(bufa,TRASH_DIR);
-            trash_msg(bufa);
-          }
+          CopyTree(bufa,TRASH_DIR);
+          trash_msg(bufa);
         }
         DelTree(bufa);
 
@@ -175,11 +173,11 @@ U8 execute_cmd(U8 *cmd) {
         trash_msg(bufa);
       }
       else
-       Del(bufa);
+       Del(bufa);
 
       break;
     case  35: //touch
-      if (bav) type_exec(v,FILE,,,"Touch",bufa,"\"\""); //Update time & date
+      if (bav) Touch(bufa,""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
        else e_print(ERR_FILEI,"info");
@@ -208,8 +206,8 @@ U8 execute_cmd(U8 *cmd) {
         break;
     case  56: //cat
     case 187: //view
-      bufe=MStrPrint("viewer(\"Type(\\\"%s\\\");\");",bufa);
-      t_execnew(v,FILE,bufe);
+      if (type_got(v,FILE))
+        viewer(f_str("Type",bufa));
 
       break;
     case  60: //man
@@ -265,11 +263,14 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      t_exec(v,FILE,f_str("ExeFile",bufa));
+      if (type_got(v,FILE)) ExeFile(bufa);
+//      t_exec(v,FILE,f_str("ExeFile",bufa));
 
       break;
     case 146: //head
-      t_exec(v,FILE,f_str("Head",bufa));
+      if (type_got(v,FILE)) Head(bufa);
+
+//      t_exec(v,FILE,f_str("Head",bufa));
 
       break;
     case 158: //date
@@ -283,7 +284,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 170: //tail
-      t_exec(v,FILE,f_str("Tail",bufa));
+      if (type_got(v,FILE)) Tail(bufa);
 
       break;
     case 174: //grep
@@ -295,7 +296,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 179: //more
-      t_exec(v,FILE,f_str("More",bufa));
+      if (type_got(v,FILE)) More(bufa);
 
       break;
     case 182: //dump
@@ -322,15 +323,19 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 208: //tosz
-      type_exec(v,FILE,,,"Silent(ON);Move",bufa,ToggleZorNotZ(bufa));
+      if (type_got(v,FILE)) {
+        Silent(ON);
+        Move(bufa,ToggleZorNotZ(bufa));
+      }
 
       break;
     case 211: //cp
       if (fc) {
         if (f_err(FLG_D)) break;
-        type_exec(v,DIR,,,"CopyTree",bufa,bufb);
+        if (type_got(v,DIR)) CopyTree(bufa,bufb);
       }
-      else type_exec(v,FILE,,,"Copy",bufa,bufb);
+      else
+        if (type_got(v,FILE)) Copy(bufa,bufb);
 
       break;
     case 212: //fm
@@ -391,9 +396,9 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ grep - allow quoted strings ...\n\n\";");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ invalid commands aren't being processed correctly anymore  ...\n\n\";");
 
-  ADocClear;
+//  ADocClear;
 
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
@@ -427,6 +432,7 @@ U8 templeDOS() {
   }
 
   Free(input);
+
 
   Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
 

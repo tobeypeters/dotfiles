@@ -110,13 +110,14 @@ U0 zFree(U8 *cube,Bool free=TRUE)
   if (free) Free(cube);
   return;
 }
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
+"viewer: %s\n",cmd;
   if (!StrLen(cmd)) return;
   PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;",cmd));
 
 //  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;");
-}
+}
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
