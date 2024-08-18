@@ -84,7 +84,7 @@ class CHCMDS
 };
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
-  I64 idx=-1;
+  I64 idx=0;
 
   if (!cmd) return idx;
 
@@ -98,7 +98,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
   for(;idx < HASH_TABLE_SIZE;idx++)
     if (!StrCmp(in->data[idx][1],cmd)) return idx;
 
-  return idx;
+  return -1;
 }
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
@@ -146,5 +146,3 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
   c->parse(c);
 
 
-
-

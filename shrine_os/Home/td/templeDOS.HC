@@ -73,7 +73,7 @@ U8 execute_cmd(U8 *cmd) {
   {
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
-      if (a->args[0][1]==':') {
+      if (a->args[0][1]==':') {
         if (a->count>1) { e_print(ERR_ARGC); goto error; }
 
         if (drv_mounted(a->args[0])) {
@@ -108,21 +108,33 @@ U8 execute_cmd(U8 *cmd) {
   if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto error; }
 
-  U8 *bufa,*bufb;
-  bufa=bufb=NULL;
-
+  U8 *bufa,*bufb; bufa=bufb=NULL;
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
-  v=files_valid(bufa,bufb);
-  U64 bav=v.u8[0];
+//Pick file support
+//Make this a valid thing after everything else
+  if (a->count==2) {
+    if (!StrCmp(bufb,"??")) {
+//      PopUpPickFile;
+    }
+  }
+//
 
-  bav=(bav|(a->count==1));
+  U64 bav=0; //bav=v.u8[0];
+  if (!*bufa=='*') {
+    if (idx==223) bav=TRUE; //ls wildcard support
+  }
+  else {
+    v=files_valid(bufa,bufb);
+    bav=(bav|(a->count==1));
+  }
 
-  if (I64_IN(idx,30,56,86,179,
+check these
+  if (I64_IN(idx,30,56,86,146,170,179,
       182, 187,211,214,224,227)) if (!bav) goto nferror;
 
-  Bool be=FALSE; //General purpose bool
+  Bool be=FALSE; //General purpose
  
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
@@ -344,11 +356,13 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case 176: //tree
     case 223: //ls
+      if (*bufa=='*') bav=TRUE;
+
       if (!bav)
         if(str_len(bufa)) goto nferror;
 
       if (fc)
-        if (f_err(FLG_T)) break;
+        if (f_err(FLG_T)) break;     
 
       bufe=StrNew(bufa);
 
@@ -375,9 +389,15 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 999:
+      goto unknown;
+      break;
     default:
       ExePutS(cmd); //Probably never get in here.
   }
+  goto error;
+
+unknown:
+  e_print(ERR_UNKNOWN,"info");
   goto error;
 
 nferror:
