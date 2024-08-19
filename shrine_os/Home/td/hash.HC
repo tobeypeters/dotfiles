@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  39
+#define CMD_CNT  40
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -40,6 +40,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 60,   "man", 2, 2, 0},
   { 61,   "pal", 1, 2, 1},
   { 63,   "mem", 1, 1, 0},
+  { 66,   "cls", 1, 1, 0},
   { 68,   "rnd", 1, 1, 0},
   { 72,   "cpu", 1, 2, 1},
   { 75,   "pwd", 1, 1, 0},
@@ -68,7 +69,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {214,    "rd", 2, 2, 0},
   {223,    "ls", 1, 3, 1},
   {224,    "rm", 2, 4, 1},
-  {227,    "mv", 3, 3, 0} //39
+  {227,    "mv", 3, 3, 0} //40
 };
 
 class CHCMDS
@@ -84,7 +85,7 @@ class CHCMDS
 };
 I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
-  I64 idx=0;
+  I64 idx=0;
 
   if (!cmd) return idx;
 
@@ -145,4 +146,4 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
   c->parse(c);
 
-
+

@@ -43,9 +43,10 @@ $IV,1$_cd: _cdd:$IV,0$
 	   $FG,11$::$FG,15$  Changes the working directory,
 		   To the ROOT, of the boot drive.
 
-$IV,1$_clear:$IV,0$
+$IV,1$_clear _cls:$IV,0$
 	Clear the terminal screen.
 	usage: clear
+	usage: cls
 
 $IV,1$_cp:$IV,0$
 	Copy files and directories,
@@ -55,7 +56,7 @@ $IV,1$_cp:$IV,0$
 	options:
 	   $FG,11$-d$FG,15$	    Directory copy
 
-$IV,1$_cpu:$IV,0$
+$IV,1$_cpu:$IV,0$
 	Display cpu info.
 	usage: cpu [$FG,2$OPTION$FG,15$] {$FG,11$-f$FG,15$}
 

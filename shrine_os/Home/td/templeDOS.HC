@@ -130,9 +130,9 @@ U8 execute_cmd(U8 *cmd) {
     bav=(bav|(a->count==1));
   }
 
-check these
+//check these
   if (I64_IN(idx,30,56,86,146,170,179,
-      182, 187,211,214,224,227)) if (!bav) goto nferror;
+      182, 187,208,211,214,224,227)) if (!bav) goto nferror;
 
   Bool be=FALSE; //General purpose
  
@@ -140,6 +140,7 @@ check these
   switch[idx] //idx should never be outside the range of this switch
   {
     case   7: //clear
+    case  66: //cls
       DocClear;
       break;
     case  23: //mkdir
@@ -165,7 +166,7 @@ check these
       if (fc)
         if (f_err(FLG_D)) break;
 
-      if (I64_IN(idx,30,214) || 224 && fc) {
+      if (I64_IN(idx,30,214) || 224 && fc) {
         if (!type_got(v,DIR)) break;
 
         if (trash)
@@ -204,7 +205,9 @@ check these
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
-      if (str_cmp(bufa,"::")) { bufe=StrNew("::"); goto prevdir; } //::
+
+      if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
+
       if (!bav) { e_print(ERR_NF,bufa); goto nocd; }
       if (type_got(v,FILE,,FALSE)) { e_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
       
