@@ -49,7 +49,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 86,   "run", 2, 2, 0},
   {146,  "head", 2, 2, 0},
   {158,  "date", 1, 1, 0},
-  {169,  "help", 1, 1, 0},
+  {169,  "help", 1, 1, 0},
   {170,  "tail", 2, 2, 0},
   {174,  "grep", 2, 2, 0},
   {176,  "tree", 1, 2, 0},
@@ -146,4 +146,3 @@ CHCMDS *c = CAlloc(sizeof(CHCMDS));
 
   c->parse(c);
 
-

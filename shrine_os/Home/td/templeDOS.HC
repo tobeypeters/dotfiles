@@ -127,15 +127,14 @@ U8 execute_cmd(U8 *cmd) {
   }
   else {
     v=files_valid(bufa,bufb);
-    bav=(bav|(a->count==1));
+    bav=(v.u8[0]|(a->count==1));
   }
 
 //check these
+  //exclude: 43,199
   if (I64_IN(idx,30,56,86,146,170,179,
       182, 187,208,211,214,224,227)) if (!bav) goto nferror;
 
-  Bool be=FALSE; //General purpose
- 
   switchit:  
   switch[idx] //idx should never be outside the range of this switch
   {
@@ -166,7 +165,7 @@ U8 execute_cmd(U8 *cmd) {
       if (fc)
         if (f_err(FLG_D)) break;
 
-      if (I64_IN(idx,30,214) || 224 && fc) {
+      if (I64_IN(idx,30,214) || 224 && fc) {
         if (!type_got(v,DIR)) break;
 
         if (trash)
@@ -183,7 +182,7 @@ U8 execute_cmd(U8 *cmd) {
       if (trash)
       {
         Move(bufa,TRASH_DIR);
-        trash_msg(bufa);
+        trash_msg(bufa);
       }
       else
        Del(bufa);
@@ -205,20 +204,18 @@ U8 execute_cmd(U8 *cmd) {
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
-
       if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
 
-      if (!bav) { e_print(ERR_NF,bufa); goto nocd; }
-      if (type_got(v,FILE,,FALSE)) { e_print(ERR_FILEIDRVDIR,bufa); goto nocd; }
-      
+      if (!bav) goto nferror;
+      if (!type_got(v,DIR,,FALSE)) { e_print(ERR_FILEIDRVDIR,bufa); break; }
+
       bufe=StrNew(bufa);
  
       prevdir:
         set_prevdir;
         Cd(bufe);
         if (idx==43) ls;
-      nocd:
-        break;
+      break;
     case  56: //cat
     case 187: //view
       if (type_got(v,FILE))
@@ -232,6 +229,8 @@ U8 execute_cmd(U8 *cmd) {
     case  61: //pal
       if (fc)
       {
+        Bool be=FALSE;
+ 
         if (be=!f_err(FLG_P,FALSE))
           PopUpColor;
          
@@ -278,7 +277,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      if (type_got(v,FILE)) ExeFile(bufa);
+      if (type_got(v,FILE)) { "hello\n";ExeFile(bufa); }
 //      t_exec(v,FILE,f_str("ExeFile",bufa));
 
       break;
@@ -419,7 +418,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ invalid commands aren't being processed correctly anymore  ...\n\n\";");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ?? support ...\n\n\";");
 
 //  ADocClear;
 
