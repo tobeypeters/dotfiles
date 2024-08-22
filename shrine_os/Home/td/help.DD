@@ -6,7 +6,7 @@ command -h:
 	the desired command.
 
 NOTE:	$FG,4$$TX+BK,"IGNORE"$$FD,15$ the $FG,4$_$FD,15$ character, in front of the below commands.
-	They are used internally, for the help/error lookup system.
+	They are used internally, for the help/error lookup system.
 
 Command	Description
 ---------------------------
@@ -15,9 +15,9 @@ $IV,1$!!:$IV,0$
 	Executes the previous terminal command,
 	similiar to the Linux implementation.
 
-$IV,1$_cat:$IV,0$
+$IV,1$_cat: _type: _view:$IV,0$
 	Display a FILE to standard output.
-	usage: cat [$FG,2$FILENAME$FG,15$]
+	usage: cat [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_cd: _cdd:$IV,0$
 	Change the current working directory, to
@@ -29,7 +29,7 @@ $IV,1$_cd: _cdd:$IV,0$
 
 	usage:
 		   cd / cdd
-		   cd / cdd [$FG,2$DIR$FG,15$]
+		   cd / cdd [$FG,2$DIR$FG,15$]...
 		   cd / cdd [$FG,2$DRIVE LETTER$FG,15$]:
 		   cd / cdd [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$, $FG,11$~$FG,15$, $FG,11$::$FG,15$}
 
@@ -43,7 +43,7 @@ $IV,1$_cd: _cdd:$IV,0$
 	   $FG,11$::$FG,15$  Changes the working directory,
 		   To the ROOT, of the boot drive.
 
-$IV,1$_clear _cls:$IV,0$
+$IV,1$_clear _cls:$IV,0$
 	Clear the terminal screen.
 	usage: clear
 	usage: cls
@@ -73,11 +73,11 @@ $IV,1$_df:$IV,0$
 
 $IV,1$_dump:$IV,0$
 	Display the disassembly "hex dump" of a file.
-	usage: dump [$FG,2$FILENAME$FG,15$]
+	usage: dump [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_ed:$IV,0$
 	Edit / Create text files.
-	usage: ed [$FG,2$FILENAME$FG,15$]
+	usage: ed [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_exit: _quit:$IV,0$
 	Cause normal process termination of templeDOS.
@@ -91,18 +91,18 @@ $IV,1$_fm:$IV,0$
 $IV,1$_tree:$IV,0$
 	Displays a ls expanded treeview, of the
 	current or specified directory.
-	usage: tree [$FG,2$DIR$FG,15$]
+	usage: tree [$FG,2$DIR$FG,15$]...
 
-	default: Current directory
+	$FG,11$DEFAULT$FG,15$: Current directory
 
 $IV,1$_grep:$IV,0$
 	Recursively search files and print any lines
 	which contain the specified string.
-	usage: grep [$FG,2$FILENAME$FG,15$]
+	usage: grep [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_head:$IV,0$
 	Display the first 10 lines of a specified file.
-	usage: tail [$FG,2$FILENAME$FG,15$]
+	usage: tail [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
@@ -110,7 +110,7 @@ $IV,1$_help:$IV,0$
 
 $IV,1$_ls:$IV,0$
 	List directory contents.
-	usage: ls [$FG,2$OPTION$FG,15$] {$FG,11$-t$FG,15$} [DIR]
+	usage: ls [$FG,2$OPTION$FG,15$] {$FG,11$-t$FG,15$} [$FG,2$DIR$FG,15$]...
 	       ls [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$}
 
 	options:
@@ -124,8 +124,8 @@ $IV,1$_ls:$IV,0$
 
 $IV,1$_man:$IV,0$
 	Display the source code for a specified
-	internal TempleOS command. Like Dir;, DrvRep;, etc...
-	usage: man [$FG,2$COMMAND$FG,15$]
+	command/symbol. [Dir;, DrvRep;, etc...]
+	usage: man [$FG,2$COMMAND$FG,15$]...
 
 $IV,1$_mem:$IV,0$
 	Display a "detailed" memory representation.
@@ -137,11 +137,11 @@ $IV,1$_mkdir:$IV,0$
 
 $IV,1$_more:$IV,0$
 	Display a FILE to stdout, one screen at a time.
-	usage: more [$FG,2$FILENAME$FG,15$]
+	usage: more [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_mv:$IV,0$
 	Rename SOURCE to DESTINATION, or move SOURCE to DESTINATION.
-	usage: mv [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION$FG,15$]
+	usage: mv [$FG,2$SOURCE$FG,15$]... [$FG,2$DESTINATION$FG,15$]...
 	       mv [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [DIR]
 
 	options:
@@ -159,17 +159,28 @@ $IV,1$_pwd:$IV,0$
 	Print the name of the current working directory.
 	usage: pwd
 
+$IV,1$_rm _rd _rmdir:$IV,0$
+	Remove files or directioes.
+	usage: rm [$FG,2$OPTION$FG,15$]... {$FG,11$-d,-t$FG,15$} [$FG,2$FILENAME/DIRECTORY$FG,15$]...
+	usage: rd [$FG,2$OPTION$FG,15$]... {$FG,11$-t$FG,15$} [$FG,2$DIRECTORY$FG,15$]...
+	usage: rmdir [$FG,2$OPTION$FG,15$]... {$FG,11$-t$FG,15$} [$FG,2$DIRECTORY$FG,15$]...
+
+	Options:
+	   $FG,11$-d$FG,15$	    Delete a directory, instead of a file.
+	   $FG,11$-t$FG,15$	    Move files and directories to the [$FG,2$TRASHBIN$FG,15$].
+		    $FG,11$LOCATION$FG,15$: [/Trash]
+
 $IV,1$_rnd:$IV,0$
 	Generate a random number.
 	usage: rnd
 
 $IV,1$_run:$IV,0$
 	Execute source code files.
-	usage: run [$FG,2$FILENAME$FG,15$]
+	usage: run [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_tail:$IV,0$
 	Display the last 10 lines of a specified file.
-	usage: tail [$FG,2$FILENAME$FG,15$]
+	usage: tail [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_tasks:$IV,0$
 	Report current tasks on all cores.
@@ -181,16 +192,12 @@ $IV,1$_time:$IV,0$
 
 $IV,1$_tosz:$IV,0$
 	Toggle the compression status, of a file.
-	usage: tosz [$FG,2$FILENAME$FG,15$]
+	usage: tosz [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_touch:$IV,0$
 	Update the access and modification times of the FILENAME to the current time.
 	A FILENAME argument that does not exist is created.
-	usage: touch [$FG,2$FILENAME$FG,15$]
-
-$IV,1$_view:$IV,0$
-	Display a FILE to stdout, in a viewing window.
-	usage: view [$FG,2$FILENAME$FG,15$]
+	usage: touch [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_vol:$IV,0$
 	Displays volume information of the current drive.

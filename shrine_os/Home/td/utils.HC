@@ -23,8 +23,7 @@
 Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
- //Fs->task_name
- //Fs->task_title
+ //Fs->task_name, Fs->task_title
   if (name) StrCpy(Fs->task_name,name);
   if (title) StrCpy(Fs->task_title,title);
 }
@@ -44,79 +43,15 @@ U8 tern(Bool condition, U64 *first, U64 *second)
 
   return second;
 }
-U8 arg_str(U8 **args,U64 cnt)
-{//Build a comma seperated str, from a list of arguments.
- //Automatically adds quotes around them.
- //Prefacing an argument with NQ, will keep the next argument 
- //from being quoted.
-  U64 i=0,
-      s=cnt;
-
-  for(;i<cnt;i++)
-    s+=str_len(args[i]);
-
-  U8 *buf=CAlloc(sizeof(U8)*s+10);
-
-  Bool nq=FALSE;
-  for(i=0;i<cnt;i++)
-  {
-    if (str_cmp(args[i],"NQ")) { nq=TRUE; goto continue; }
-    if (args[i][0]!=34&&!nq)
-      str_cat(buf,FALSE,"\"",args[i],"\"");
-    else { str_cat(buf,FALSE,args[i]); nq=FALSE; }
-    if (i<cnt-1) str_cat(buf,FALSE,",");
-    continue:
-  }
-
-  return buf;
-}
-#include "C:/Home/td/debug"
-U0 s_exec(U8 *cmd) ExePutS(cmd);
-U0 shell_exec(U8 *cmd,Bool noparse=FALSE,...)
-{//Execute a templeOS shell command.
-  /*Examples:
-  Generate: Copy("b.HC","temp");
-  shell_exec("Copy",,"b.HC","temp");
-
-  Generate: Touch("filename.HC","");
-  shell_exec("Touch",,"filename.HC","\"\"");
-
-  Generate: MStrUtil("upperme",SUF_TO_UPPER);
-  shell_exec("MStrUtil",,"\"upperme\"","NQ","SUF_TO_UPPER"); */
-  if (!argc) return;
-
-  if (noparse) { ExePutS(argv[0]); goto done; }
-
-  U8 *as="";
-
-  if (argc) as=arg_str(argv,argc);
-
-  U8 *buf=CAlloc(sizeof(U8)*(str_len(cmd)+str_len(as)+10));
-
-  str_cat(buf,FALSE,cmd,"(",as,");");
-
-  ExePutS(buf);
-
-  Free(as);
-  Free(buf);
-
-  done:
-    return;
-}
-
 U0 zFree(U8 *cube,Bool free=TRUE)
 {//Zero out mem and free it.
   MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
-  return;
 }
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
-"viewer: %s\n",cmd;
   if (!StrLen(cmd)) return;
-  PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;",cmd));
-
-//  str_cat(bufv,,cmd,"Fs->border_src=BDS_CONST;Fs->border_attr=PURPLE<<4+WHITE;DocTop;View;");
+  PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=LTRED<<4+WHITE;DocTop;View;",cmd));
 }
 I64 map_value(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Map one range to another range.
@@ -130,4 +65,4 @@ U64 god_num(CDoc *doc) {
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
   return KbdMsEvtTime>>GOD_BAD_BITS;
-}
+}

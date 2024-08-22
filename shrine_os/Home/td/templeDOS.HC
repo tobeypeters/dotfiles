@@ -112,16 +112,17 @@ U8 execute_cmd(U8 *cmd) {
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
+  U64 bav=0; //bav=v.u8[0];
+
 //Pick file support
-//Make this a valid thing after everything else
   if (a->count==2) {
     if (!StrCmp(bufb,"??")) {
-//      PopUpPickFile;
+      bufa=StrNew(PopUpPickFile);
+      v=$WW+H,1$4294967297; //00010001
+      bav=TRUE; goto switchit;
     }
   }
-//
 
-  U64 bav=0; //bav=v.u8[0];
   if (!*bufa=='*') {
     if (idx==223) bav=TRUE; //ls wildcard support
   }
@@ -130,8 +131,7 @@ U8 execute_cmd(U8 *cmd) {
     bav=(v.u8[0]|(a->count==1));
   }
 
-//check these
-  //exclude: 43,199
+  //exclude: 23, 43,199,209
   if (I64_IN(idx,30,56,86,146,170,179,
       182, 187,208,211,214,224,227)) if (!bav) goto nferror;
 
@@ -143,6 +143,7 @@ U8 execute_cmd(U8 *cmd) {
       DocClear;
       break;
     case  23: //mkdir
+   case  209: //md
       if (!bav) DirMk(bufa);
       else
         if (type_got(v,DIR))
@@ -162,27 +163,29 @@ U8 execute_cmd(U8 *cmd) {
 
       fc-=trash;
 
-      if (fc)
-        if (f_err(FLG_D)) break;
+      if (fc) {
+        if (idx==224)
+          if (f_err(FLG_D)) break;
+
+        e_print(ERR_FLGI,"info");
+        break;
+      }
 
       if (I64_IN(idx,30,214) || 224 && fc) {
         if (!type_got(v,DIR)) break;
 
-        if (trash)
-        {
+        if (trash) {
           CopyTree(bufa,TRASH_DIR);
           trash_msg(bufa);
         }
         DelTree(bufa);
-
         break;
       }
 
       if (!type_got(v,FILE)) break;
-      if (trash)
-      {
+      if (trash) {
         Move(bufa,TRASH_DIR);
-        trash_msg(bufa);
+        trash_msg(bufa);
       }
       else
        Del(bufa);
@@ -215,9 +218,11 @@ U8 execute_cmd(U8 *cmd) {
         set_prevdir;
         Cd(bufe);
         if (idx==43) ls;
+
       break;
     case  56: //cat
     case 187: //view
+    case 194: //type
       if (type_got(v,FILE))
         viewer(f_str("Type",bufa));
 
@@ -253,6 +258,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
+      "Press <ESC> to recieve your GOD number:";
       "%X\n",god_num(Fs->display_doc);
 
       break;
@@ -265,6 +271,7 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case 75: //pwd
       "%s\n",__DIR__;
+
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
@@ -277,14 +284,11 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      if (type_got(v,FILE)) { "hello\n";ExeFile(bufa); }
-//      t_exec(v,FILE,f_str("ExeFile",bufa));
+      if (type_got(v,FILE)) ExeFile(bufa);
 
       break;
     case 146: //head
       if (type_got(v,FILE)) Head(bufa);
-
-//      t_exec(v,FILE,f_str("Head",bufa));
 
       break;
     case 158: //date
@@ -314,7 +318,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 182: //dump
-      Dump(bufa);
+      if (type_got(v,FILE)) Dump(bufa);
 
       break;
     case 184: //term
@@ -377,17 +381,17 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 227: //mv
-      if (type_got(v,DIR,,FALSE)) {
-        shell_exec("CopyTree",,bufa,bufb);
-        shell_exec("DelTree",,bufa);
+//Possibly add flags to specify destination type dir/file.
+//Could then check existance of destination folders & such.
+      if (type_got(v,DRV,,FALSE)) {
+        e_print(ERR_DRVIDIRFILE,bufa);
+        break;
       }
-      else {
-        if (type_got(v,DRV,,FALSE)) {
-          e_print(ERR_DRVIDIRFILE,bufa);
-          break;
-        }
-        shell_exec("Move",,bufa,bufb);
-      }
+
+      Silent(ON);
+      Move(bufa,bufb);
+      Silent(OFF);
+      "Moved: %s to %s\n",bufa,bufb;
 
       break;
     case 999:
@@ -418,7 +422,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ?? support ...\n\n\";");
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ?? support ...\n\n\";");
 
 //  ADocClear;
 

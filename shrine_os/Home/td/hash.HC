@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  40
+#define CMD_CNT  42
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -32,7 +32,7 @@
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {  7, "clear", 1, 1, 0},
   { 23, "mkdir", 2, 2, 0},
-  { 30, "rmdir", 2, 2, 0},
+  { 30, "rmdir", 2, 2, 1},
   { 35, "touch", 2, 2, 0},
   { 38, "tasks", 1, 1, 0},
   { 43,   "cdd", 1, 2, 0},
@@ -49,7 +49,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 86,   "run", 2, 2, 0},
   {146,  "head", 2, 2, 0},
   {158,  "date", 1, 1, 0},
-  {169,  "help", 1, 1, 0},
+  {169,  "help", 1, 1, 0},
   {170,  "tail", 2, 2, 0},
   {174,  "grep", 2, 2, 0},
   {176,  "tree", 1, 2, 0},
@@ -59,17 +59,19 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {184,  "term", 1, 1, 0},
   {186,  "exit", 1, 1, 0},
   {187,  "view", 2, 2, 0},
+  {194,  "type", 2, 2, 0},
   {195,  "quit", 1, 1, 0},
   {199,    "cd", 1, 2, 0},
   {201,    "ed", 2, 2, 0},
   {203,    "df", 1, 1, 0},
   {208,  "tosz", 2, 2, 0},
-  {211,    "cp", 3, 4, 1},
+  {209,    "md", 2, 2, 0},
+  {211,    "cp", 3, 3, 1},
   {212,    "fm", 1, 1, 0},
-  {214,    "rd", 2, 2, 0},
-  {223,    "ls", 1, 3, 1},
-  {224,    "rm", 2, 4, 1},
-  {227,    "mv", 3, 3, 0} //40
+  {214,    "rd", 2, 2, 1},
+  {223,    "ls", 1, 2, 1},
+  {224,    "rm", 2, 2, 2},
+  {227,    "mv", 3, 3, 0} //42
 };
 
 class CHCMDS
@@ -103,8 +105,6 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 }
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
-//  "tk_minmax: %d %d %d\n",in->data[idx][2],val,in->data[idx][3];
-
   if (type==HARGS)
     return (in->data[idx][2]<=val<=in->data[idx][3]);
 

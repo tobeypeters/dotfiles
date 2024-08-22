@@ -32,8 +32,7 @@ public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
 {
 //Display a specified message, when a file or files
  //are sent to the trash.
- Silent(silent_off);
- "Thrashed: %s\n",msg;
+ Silent(silent_off); "Trashed: %s",msg;
 }
 
 public U0 dump_exists()
@@ -228,7 +227,7 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
   CDirContext *dirc;
   Bool old_silent;
   if (fuf_flags&~FUG_FILE_FIND)
-    throw('FUF');
+    throw('FUF');
   if (!filename || *filename && filename[1]==':' && !Let2Drv(*filename,FALSE))
     return FALSE;
   altname=ToggleZorNotZ(filename);

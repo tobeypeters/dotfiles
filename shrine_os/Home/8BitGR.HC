@@ -67,7 +67,7 @@ U0 gen_gr(U8 *res=NULL) {
 
     "Pt{(%d,%d)};\n",x,y;
 
-    if (++x==8) y++;
+    if (++x==8) y++;
 
     res++;
   }
@@ -157,7 +157,7 @@ U8 *cross2=strnew(,,
  "   bw   ",
  "    w   ",
  "        "
-);
+);
 "cross2";gen_gr(cross2);
 
 zFree(blocks);

@@ -25,7 +25,7 @@
 #define ERR_FLGI        "Invalid option provided"
 #define ERR_FILEI       "Invalid filename"
 
-#define ERR_NF          "Not found"
+#define ERR_NF          "Not found"
 
 #define ERR_DRVIU       "Invalid or unmounted drive"
 
