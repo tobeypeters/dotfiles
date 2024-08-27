@@ -32,7 +32,7 @@ public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
 {
 //Display a specified message, when a file or files
  //are sent to the trash.
- Silent(silent_off); "Trashed: %s",msg;
+ Silent(silent_off); "Trashed: %s",msg;
 }
 
 public U0 dump_exists()
@@ -1339,3 +1339,4 @@ HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
+

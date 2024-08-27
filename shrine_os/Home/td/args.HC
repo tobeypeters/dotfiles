@@ -92,16 +92,18 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
   return in->count>0;
 }
 U0 init(CArgs *in)
-{//Initizlizer and reset CArgs function
-  MemSet(in->args, '\0', sizeof(U8)*ARG_CNT*ARG_LEN);
-  MemSet(in->flags, '\0',sizeof(U8)*StrLen(in->flags));
-  in->count=in->cidx=0;
-}
+{//Re-init in
+  MemSet(in->flags,'\0',sizeof(U8)*StrLen(in->flags));
+  MemSet(in->args,'\0',sizeof(U8)*ARG_CNT*ARG_LEN);
+  MemSet(in,'\0',sizeof(in));
+}
 U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
 
-  return StrNew(in->args[in->cidx]);
+//Just return a pointer to it. Should be no peoblems.
+//  return StrNew(in->args[in->cidx]);
+  return in->args[in->cidx]; 
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
@@ -112,7 +114,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->parse=&parse;
   a->get_current=&get_current;
   a->next=&next;
-  a->prev=&prev; 
+  a->prev=&prev;
 
 //  a->parse(a,"-a");
 //  "flags: %s\n",a->flags;
@@ -143,4 +145,3 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->init(a);
 Free(a);
 */
-

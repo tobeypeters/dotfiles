@@ -48,7 +48,7 @@ U0 zFree(U8 *cube,Bool free=TRUE)
   MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
 }
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   if (!StrLen(cmd)) return;
   PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=LTRED<<4+WHITE;DocTop;View;",cmd));
@@ -65,4 +65,4 @@ U64 god_num(CDoc *doc) {
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
   return KbdMsEvtTime>>GOD_BAD_BITS;
-}
+}

@@ -111,9 +111,9 @@ U64 files_valid(U8 *ddfa,U8 *ddfb=NULL)
     res.u8[1]=res.u8[5]|res.u8[6]|res.u8[7];
   }
 
-  return res;
+  return res;
 }
-/*I64 ret=0;
+/*I64 ret=0;
 
 //ret=files_valid(NULL,NULL);
 //ret=files_valid("","~/valid.HC");

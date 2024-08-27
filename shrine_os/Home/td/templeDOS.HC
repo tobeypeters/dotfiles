@@ -53,22 +53,19 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U8 execute_cmd(U8 *cmd) {
-  I64 res,idx;
-  res=idx=0;
-
   U8 *bufe=NULL; //scratch buffer
 
-  if (cmd[StrLen(cmd)-1]==';')
-  {//User is trying to normally run a OS command?
-    ExePutS(cmd); return res;
+  //User is trying to normally run a OS command?
+  if (cmd[StrLen(cmd)-1]==';') {
+    ExePutS(cmd); return 0;
   }
 
-  set_prevcmd(cmd);
-
   a->init(a);
-
   if (!a->parse(a,cmd)) goto error; //Parsed no args
 
+  Fs->answer=0;
+
+  I64 res,idx;res=idx=0;
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     //Switching drives DOS style?
@@ -89,8 +86,7 @@ U8 execute_cmd(U8 *cmd) {
     goto switchit;
   }
 
-  I64 v,fc;
-  v=fc=0;
+  I64 v,fc;v=fc=0;
 
   eptr=c->data[idx][1];
 
@@ -104,7 +100,6 @@ U8 execute_cmd(U8 *cmd) {
 
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto error; }
-
   if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto error; }
 
@@ -118,24 +113,24 @@ U8 execute_cmd(U8 *cmd) {
   if (a->count==2) {
     if (!StrCmp(bufb,"??")) {
       bufa=StrNew(PopUpPickFile);
-      v=$WW+H,1$4294967297; //00010001
+      v=$WW+H,1$4294967297; //0000000100000000000000000000000000000001
       bav=TRUE; goto switchit;
     }
   }
 
-  if (!*bufa=='*') {
-    if (idx==223) bav=TRUE; //ls wildcard support
-  }
-  else {
+  //Wild card support,grep
+  if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
     bav=(v.u8[0]|(a->count==1));
   }
 
-  //exclude: 23, 43,199,209
+  //exclude: 23, 43,199,209
   if (I64_IN(idx,30,56,86,146,170,179,
-      182, 187,208,211,214,224,227)) if (!bav) goto nferror;
+      182,187,208,211,214,224,227)) if (!bav) goto nferror;
+
 
   switchit:  
+    set_prevcmd(cmd);
   switch[idx] //idx should never be outside the range of this switch
   {
     case   7: //clear
@@ -199,6 +194,7 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  38: //tasks
+    case 228: //ps
       TaskRep;
 
       break;
@@ -210,7 +206,9 @@ U8 execute_cmd(U8 *cmd) {
       if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
 
       if (!bav) goto nferror;
-      if (!type_got(v,DIR,,FALSE)) { e_print(ERR_FILEIDRVDIR,bufa); break; }
+      if (!type_got(v,DIR,,FALSE)) {
+        e_print(ERR_FILEIDRVDIR,bufa); break;
+      }
 
       bufe=StrNew(bufa);
  
@@ -237,10 +235,10 @@ U8 execute_cmd(U8 *cmd) {
         Bool be=FALSE;
  
         if (be=!f_err(FLG_P,FALSE))
-          PopUpColor;
+          Fs->answer=PopUpColor;
          
         if (!be) if (!f_err(FLG_D))
-          PopUpColorDither;
+          Fs->answer=PopUpColorDither;
 
         break;
       }
@@ -404,12 +402,18 @@ U8 execute_cmd(U8 *cmd) {
 
 unknown:
   e_print(ERR_UNKNOWN,"info");
+  Fs-answer=0;
   goto error;
 
 nferror:
   err_print(ERR_NF,bufa);
-
+  Fs-answer=0;
+  goto error;
+
 error:
+
+ "%8.6fs ans=0x%08X=%d\n",Fs->answer_time,Fs->answer,Fs->answer;
+
   Silent(OFF);
   bufa=bufb=NULL;
 

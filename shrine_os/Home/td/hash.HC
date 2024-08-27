@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  42
+#define CMD_CNT  43
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -71,7 +71,8 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {214,    "rd", 2, 2, 1},
   {223,    "ls", 1, 2, 1},
   {224,    "rm", 2, 2, 2},
-  {227,    "mv", 3, 3, 0} //42
+  {227,    "mv", 3, 3, 0},
+  {228,    "ps", 1, 1, 0} //43
 };
 
 class CHCMDS
@@ -113,14 +114,14 @@ Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 
   return FALSE;
 }
-U0 print_arr(CHCMDS *in)
+/*U0 print_arr(CHCMDS *in)
 {
   U64 i=0;
 
   for(;i<HASH_TABLE_SIZE;i++)
     if (in->data[i][0]) "%3d%6s%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4];
-}
-U0 parse(CHCMDS *in)
+}*/
+U0 parse(CHCMDS *in)
 {
   U64 h,i,j;
 
@@ -137,12 +138,12 @@ U0 parse(CHCMDS *in)
   Free(hashed);
 
 }
-CHCMDS *c = CAlloc(sizeof(CHCMDS));
+
+CHCMDS *c=CAlloc(sizeof(CHCMDS));
   c->hashdx=&hashDX;
   c->parse=&parse;
 
   c->tk_minmax=&tk_minmax;
-  c->print_arr=&print_arr;
+//  c->print_arr=&print_arr;
 
   c->parse(c);
-

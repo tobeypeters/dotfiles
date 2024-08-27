@@ -25,7 +25,7 @@
 #define ERR_FLGI        "Invalid option provided"
 #define ERR_FILEI       "Invalid filename"
 
-#define ERR_NF          "Not found"
+#define ERR_NF          "Not found"
 
 #define ERR_DRVIU       "Invalid or unmounted drive"
 
@@ -56,3 +56,4 @@ U0 err_print(U8 *msg,U8 *link="Usage",U8 *help_file=NULL,U8 *cmd=NULL)
   "`%s`: %s ...\n",err_link,msg;
   Free(err_link);
 }
+
