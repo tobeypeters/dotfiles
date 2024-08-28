@@ -6,7 +6,7 @@ command -h:
 	the desired command.
 
 NOTE:	$FG,4$$TX+BK,"IGNORE"$$FD,15$ the $FG,4$_$FD,15$ character, in front of the below commands.
-	They are used internally, for the help/error lookup system.
+	They are used internally, for the help/error lookup system.
 
 Command	Description
 ---------------------------
@@ -95,7 +95,7 @@ $IV,1$_tree:$IV,0$
 
 	$FG,11$DEFAULT$FG,15$: Current directory
 
-$IV,1$_grep:$IV,0$
+$IV,1$_grep:$IV,0$
 	Recursively search files and print any lines
 	which contain the specified string.
 	usage: grep [$FG,2$FILENAME$FG,15$]...

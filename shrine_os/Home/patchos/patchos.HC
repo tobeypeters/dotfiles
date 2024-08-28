@@ -230,7 +230,7 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
     throw('FUF');
   if (!filename || *filename && filename[1]==':' && !Let2Drv(*filename,FALSE))
     return FALSE;
-  altname=ToggleZorNotZ(filename);
+  altname=ToggleZorNotZ(filename);
   if (fuf_flags&FUF_Z_OR_NOT_Z)
     j=2;
   else
@@ -1339,4 +1339,3 @@ HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
-

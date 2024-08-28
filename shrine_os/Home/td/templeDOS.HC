@@ -24,6 +24,8 @@
   #include "load"
 #endif
 
+#define SHOW_ANSWERS TRUE
+
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
@@ -61,9 +63,9 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   a->init(a);
-  if (!a->parse(a,cmd)) goto error; //Parsed no args
+  if (!a->parse(a,cmd)) goto answer; //Parsed no args
 
-  Fs->answer=0;
+  Fs->answer=1;
 
   I64 res,idx;res=idx=0;
   if ((idx=c->hashdx(c,a->args[0]))==-1)
@@ -71,14 +73,14 @@ U8 execute_cmd(U8 *cmd) {
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
-        if (a->count>1) { e_print(ERR_ARGC); goto error; }
+        if (a->count>1) { e_print(ERR_ARGC); goto answer; }
 
         if (drv_mounted(a->args[0])) {
           set_prevdir;
           Drv(a->args[0][0]);
         }
         else e_print(ERR_DRVIU,a->args[0]);
-        goto error;
+        goto answer;
       }
     }
 
@@ -92,16 +94,20 @@ U8 execute_cmd(U8 *cmd) {
 
   fc=flag_cnt(a->flags);
 
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
+    e_print(ERR_ARGC); goto answer; }
+  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
+    e_print(ERR_FLGC); goto answer; }
+
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
-      Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto error;
+      Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto answer;
     }
   }
 
-  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
-    e_print(ERR_ARGC); goto error; }
-  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
-    e_print(ERR_FLGC); goto error; }
+  //CMD: No args or flags
+  if (I64_IN(idx,7,38,61,63,66,68,72,75,81,84,158,
+      169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb; bufa=bufb=NULL;
   a->next(a);bufa=a->get_current(a);
@@ -109,7 +115,7 @@ U8 execute_cmd(U8 *cmd) {
 
   U64 bav=0; //bav=v.u8[0];
 
-//Pick file support
+  //Pick file support
   if (a->count==2) {
     if (!StrCmp(bufb,"??")) {
       bufa=StrNew(PopUpPickFile);
@@ -121,13 +127,18 @@ U8 execute_cmd(U8 *cmd) {
   //Wild card support,grep
   if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
-    bav=(v.u8[0]|(a->count==1));
+    bav=v.u8[0];
+//    bav=(v.u8[0]|(a->count==1)); //Was for NO ARG & NO FLAGS COMMANDS
   }
 
-  //exclude: 23, 43,199,209
-  if (I64_IN(idx,30,56,86,146,170,179,
-      182,187,208,211,214,224,227)) if (!bav) goto nferror;
-
+  //CMD: File needs to exist
+  //EXCLUDE 35,201
+  if (I64_IN(idx,56,86,146,170,179,
+      182,187,194,208)) {
+    if (!bav) goto nferror;
+    else
+      if (!type_got(v,FILE)) goto answer;
+  }
 
   switchit:  
     set_prevcmd(cmd);
@@ -146,6 +157,8 @@ U8 execute_cmd(U8 *cmd) {
         else
           e_print(ERR_DRVFILEIDIR,bufa);
 
+          goto answer;
+
       break;
     case  30: //rmdir
     case 214: //rd
@@ -160,14 +173,14 @@ U8 execute_cmd(U8 *cmd) {
 
       if (fc) {
         if (idx==224)
-          if (f_err(FLG_D)) break;
+          if (f_err(FLG_D)) goto answer;
 
         e_print(ERR_FLGI,"info");
-        break;
+        goto answer;
       }
 
       if (I64_IN(idx,30,214) || 224 && fc) {
-        if (!type_got(v,DIR)) break;
+        if (!type_got(v,DIR)) goto answer;
 
         if (trash) {
           CopyTree(bufa,TRASH_DIR);
@@ -177,7 +190,7 @@ U8 execute_cmd(U8 *cmd) {
         break;
       }
 
-      if (!type_got(v,FILE)) break;
+      if (!type_got(v,FILE)) goto answer;
       if (trash) {
         Move(bufa,TRASH_DIR);
         trash_msg(bufa);
@@ -190,7 +203,7 @@ U8 execute_cmd(U8 *cmd) {
       if (bav) Touch(bufa,""); //Update time & date
       else
        if (filenameOK(bufa)) FileWrite(bufa,NULL,0); //Create file
-       else e_print(ERR_FILEI,"info");
+       else { e_print(ERR_FILEI,"info"); goto answer; }
 
       break;
     case  38: //tasks
@@ -207,7 +220,7 @@ U8 execute_cmd(U8 *cmd) {
 
       if (!bav) goto nferror;
       if (!type_got(v,DIR,,FALSE)) {
-        e_print(ERR_FILEIDRVDIR,bufa); break;
+        e_print(ERR_FILEIDRVDIR,bufa); goto answer;
       }
 
       bufe=StrNew(bufa);
@@ -221,12 +234,12 @@ U8 execute_cmd(U8 *cmd) {
     case  56: //cat
     case 187: //view
     case 194: //type
-      if (type_got(v,FILE))
-        viewer(f_str("Type",bufa));
+      viewer(f_str("Type",bufa));
 
       break;
     case  60: //man
-      if (!Man(bufa)) "No symbol entry found for $$RED$$%s$$FG$$\n",bufa;
+      if (!(Fs->answer=Man(bufa)))
+       "No symbol entry found for $$RED$$%s$$FG$$\n",bufa;
 
       break;
     case  61: //pal
@@ -262,7 +275,7 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case  72: //cpu
       if (fc)
-        if (f_err(FLG_F)) break;
+        if (f_err(FLG_F)) goto answer;
 
       CPURep(fc);
 
@@ -282,11 +295,11 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      if (type_got(v,FILE)) ExeFile(bufa);
+      Fs->answer=ExeFile(bufa);
 
       break;
     case 146: //head
-      if (type_got(v,FILE)) Head(bufa);
+      Head(bufa);
 
       break;
     case 158: //date
@@ -294,17 +307,17 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 169: //help
-      if (!FileFind(help_file)) { e_print(ERR_NF,help_file); break; }
+      if (!FileFind(help_file)) { e_print(ERR_NF,help_file); goto answer; }
 
-      if (bav) viewer(f_str("Type",help_file));
+      viewer(f_str("Type",help_file));
 
       break;
     case 170: //tail
-      if (type_got(v,FILE)) Tail(bufa);
+      Tail(bufa);
 
       break;
-    case 174: //grep
-      F(str_NQ(bufa));
+    case 174: //grep      
+      Fs->answer=F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -312,11 +325,11 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 179: //more
-      if (type_got(v,FILE)) More(bufa);
+      More(bufa);
 
       break;
     case 182: //dump
-      if (type_got(v,FILE)) Dump(bufa);
+      Dump(bufa);
 
       break;
     case 184: //term
@@ -339,19 +352,22 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 208: //tosz
-      if (type_got(v,FILE)) {
-        Silent(ON);
-        Move(bufa,ToggleZorNotZ(bufa));
-      }
+      Silent(ON);
+      Move(bufa,ToggleZorNotZ(bufa));
 
       break;
     case 211: //cp
       if (fc) {
-        if (f_err(FLG_D)) break;
-        if (type_got(v,DIR)) CopyTree(bufa,bufb);
+        if (f_err(FLG_D)) goto answer;
+        if (!type_got(v,DIR)) goto answer;
+
+        CopyTree(bufa,bufb);
       }
-      else
-        if (type_got(v,FILE)) Copy(bufa,bufb);
+      else {
+        if (!type_got(v,FILE)) goto answer;
+
+        Copy(bufa,bufb);
+      }
 
       break;
     case 212: //fm
@@ -360,13 +376,8 @@ U8 execute_cmd(U8 *cmd) {
       break;
     case 176: //tree
     case 223: //ls
-      if (*bufa=='*') bav=TRUE;
-
-      if (!bav)
-        if(str_len(bufa)) goto nferror;
-
       if (fc)
-        if (f_err(FLG_T)) break;     
+        if (f_err(FLG_T)) goto answer;
 
       bufe=StrNew(bufa);
 
@@ -383,7 +394,7 @@ U8 execute_cmd(U8 *cmd) {
 //Could then check existance of destination folders & such.
       if (type_got(v,DRV,,FALSE)) {
         e_print(ERR_DRVIDIRFILE,bufa);
-        break;
+        goto answer;
       }
 
       Silent(ON);
@@ -396,23 +407,24 @@ U8 execute_cmd(U8 *cmd) {
       goto unknown;
       break;
     default:
-      ExePutS(cmd); //Probably never get in here.
+      Fs->answer=ExePutS(cmd); //Probably never get in here.
   }
-  goto error;
+  goto error;
 
 unknown:
   e_print(ERR_UNKNOWN,"info");
-  Fs-answer=0;
-  goto error;
+  goto answer;
 
 nferror:
   err_print(ERR_NF,bufa);
-  Fs-answer=0;
-  goto error;
-
-error:
 
- "%8.6fs ans=0x%08X=%d\n",Fs->answer_time,Fs->answer,Fs->answer;
+answer: //Possibly rename
+  Fs->answer=0;
+
+error:
+  if (SHOW_ANSWERS)
+    "\n%8.6fs ans=0x%08X=%d\n",
+     Fs->answer_time,Fs->answer,Fs->answer;
 
   Silent(OFF);
   bufa=bufb=NULL;
@@ -426,7 +438,7 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ?? support ...\n\n\";");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ Maybe -d for grep ...\n\n\";");
 
 //  ADocClear;
 

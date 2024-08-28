@@ -63,7 +63,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {195,  "quit", 1, 1, 0},
   {199,    "cd", 1, 2, 0},
   {201,    "ed", 2, 2, 0},
-  {203,    "df", 1, 1, 0},
+  {203,    "df", 1, 1, 0},
   {208,  "tosz", 2, 2, 0},
   {209,    "md", 2, 2, 0},
   {211,    "cp", 3, 3, 1},
@@ -121,7 +121,7 @@ Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
   for(;i<HASH_TABLE_SIZE;i++)
     if (in->data[i][0]) "%3d%6s%2d%2d%2d\n",in->data[i][0],in->data[i][1],in->data[i][2],in->data[i][3],in->data[i][4];
 }*/
-U0 parse(CHCMDS *in)
+U0 parse(CHCMDS *in)
 {
   U64 h,i,j;
 
