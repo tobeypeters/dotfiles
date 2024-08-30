@@ -25,6 +25,7 @@
 #endif
 
 #define SHOW_ANSWERS TRUE
+#define TIP_OF_DAY   TRUE
 
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
@@ -57,6 +58,8 @@ U0 e_print(U8 *msg,U8 *link="Usage")
 U8 execute_cmd(U8 *cmd) {
   U8 *bufe=NULL; //scratch buffer
 
+  if (SHOW_ANSWERS) F64 t0=tS,t1;
+
   //User is trying to normally run a OS command?
   if (cmd[StrLen(cmd)-1]==';') {
     ExePutS(cmd); return 0;
@@ -64,6 +67,8 @@ U8 execute_cmd(U8 *cmd) {
 
   a->init(a);
   if (!a->parse(a,cmd)) goto answer; //Parsed no args
+
+  //D(a,sizeof(a));
 
   Fs->answer=1;
 
@@ -75,12 +80,12 @@ U8 execute_cmd(U8 *cmd) {
       if (a->args[0][1]==':') {
         if (a->count>1) { e_print(ERR_ARGC); goto answer; }
 
-        if (drv_mounted(a->args[0])) {
+        if (Fs->answer=drv_mounted(a->args[0])) {
           set_prevdir;
           Drv(a->args[0][0]);
+          goto error;
         }
-        else e_print(ERR_DRVIU,a->args[0]);
-        goto answer;
+        else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
 
@@ -90,14 +95,14 @@ U8 execute_cmd(U8 *cmd) {
 
   I64 v,fc;v=fc=0;
 
-  eptr=c->data[idx][1];
-
   fc=flag_cnt(a->flags);
 
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto answer; }
   if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto answer; }
+
+  eptr=c->data[idx][1];
 
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
@@ -109,9 +114,11 @@ U8 execute_cmd(U8 *cmd) {
   if (I64_IN(idx,7,38,61,63,66,68,72,75,81,84,158,
       169,177,184,186,195,203,212,228)) goto switchit;
 
-  U8 *bufa,*bufb; bufa=bufb=NULL;
+  U8 *bufa,*bufb;
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
+
+//  "bufa: %s bufb: %s\n",a->args[0],a->args[1];
 
   U64 bav=0; //bav=v.u8[0];
 
@@ -136,8 +143,7 @@ U8 execute_cmd(U8 *cmd) {
   if (I64_IN(idx,56,86,146,170,179,
       182,187,194,208)) {
     if (!bav) goto nferror;
-    else
-      if (!type_got(v,FILE)) goto answer;
+    else if (!type_got(v,FILE)) goto answer;
   }
 
   switchit:  
@@ -264,8 +270,9 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  63: //mem
+      //MemBIOSRep; PCIRep;
       viewer("MemRep;\"\n\";
-              MemPageRep;\"\n\";");
+              MemPageRep;MemBIOSRep;\"\n\";");
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
@@ -316,8 +323,12 @@ U8 execute_cmd(U8 *cmd) {
       Tail(bufa);
 
       break;
-    case 174: //grep      
-      Fs->answer=F(str_NQ(bufa));
+    case 174: //grep
+      if (fc) {
+        if (f_err(FLG_D)) goto answer;
+        Fs->answer=FD(str_NQ(bufa));
+      }
+      else Fs->answer=F(str_NQ(bufa));
 
       break;
     case 177: //time
@@ -409,7 +420,7 @@ U8 execute_cmd(U8 *cmd) {
     default:
       Fs->answer=ExePutS(cmd); //Probably never get in here.
   }
-  goto error;
+  goto error;
 
 unknown:
   e_print(ERR_UNKNOWN,"info");
@@ -422,32 +433,35 @@ answer: //Possibly rename
   Fs->answer=0;
 
 error:
-  if (SHOW_ANSWERS)
-    "\n%8.6fs ans=0x%08X=%d\n",
-     Fs->answer_time,Fs->answer,Fs->answer;
+  if (SHOW_ANSWERS) {
+    t1=tS-t0;
+    "\n%8.6fs ans=0x%08X=%d\n",t1,t1,Fs->answer;
+  }
 
   Silent(OFF);
   bufa=bufb=NULL;
 
   Free(bufe);
+
   return res;
 }
 
 U8 templeDOS() {
-  Seed; I64 termID = AbsI64(RandI32);
+  Seed; I64 termID=AbsI64(RandI32);
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ Maybe -d for grep ...\n\n\";");
-
-//  ADocClear;
-
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
   set_windowinfo("templedos_task","TempleDOS");
 
   DocClear;DocMax;Cd;
 
+  if (TIP_OF_DAY) {
+    "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
+  }
+
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
@@ -475,8 +489,7 @@ U8 templeDOS() {
 
   Free(input);
 
-
-  Adam("\"templeDOS [%d]: terminated : %D %T\";",termID,Now,Now);
+  Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
 
   return res;
 }

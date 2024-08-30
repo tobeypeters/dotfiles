@@ -87,7 +87,7 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U0 ADocClear()
+public U0 ADocClear()
 {//Clear Adams doc window
   Adam("DocClear;");
 }
@@ -206,7 +206,6 @@ cleanup:
   Free(mask);
   return res;
 }
-
 public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
@@ -230,7 +229,7 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
     throw('FUF');
   if (!filename || *filename && filename[1]==':' && !Let2Drv(*filename,FALSE))
     return FALSE;
-  altname=ToggleZorNotZ(filename);
+  altname=ToggleZorNotZ(filename);
   if (fuf_flags&FUF_Z_OR_NOT_Z)
     j=2;
   else

@@ -18,7 +18,7 @@
   Description:
       String related functions.
 */
-U8 *str_cat(U8 **str,Bool flush=TRUE,...)
+U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first.
   U64 i = 0;
@@ -128,7 +128,7 @@ U8 *str_NQ(U8 *str)
     str++;
   }
   str=p;
-
+
   return MStrUtil(str,SUF_REM_LEADING|SUF_REM_TRAILING);
 }
 U8 *MyGetStr(I64 flags=0)

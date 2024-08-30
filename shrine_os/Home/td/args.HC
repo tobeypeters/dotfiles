@@ -22,7 +22,7 @@
 #define ARG_CNT 64
 #define ARG_LEN 256
 
-class CArgs
+class CArgs
 {
   I64 count,
       cidx;
@@ -95,8 +95,9 @@ U0 init(CArgs *in)
 {//Re-init in
   MemSet(in->flags,'\0',sizeof(U8)*StrLen(in->flags));
   MemSet(in->args,'\0',sizeof(U8)*ARG_CNT*ARG_LEN);
-  MemSet(in,'\0',sizeof(in));
-}
+
+  in->count=in->cidx=0;
+}
 U8* get_current(CArgs *in)
 {
   if (in->count<1) return NULL;
@@ -115,9 +116,6 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->get_current=&get_current;
   a->next=&next;
   a->prev=&prev;
-
-//  a->parse(a,"-a");
-//  "flags: %s\n",a->flags;
 
 //  a->init(a); //Clear args before each proceeding parse() call
 /*    a->parse(a,"one -TWO three four five");
