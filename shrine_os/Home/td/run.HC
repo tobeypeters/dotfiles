@@ -19,6 +19,8 @@
       Spawns an instance of TempleOS.
 */
 
+//#exe {Option(OPTf_WARN_PAREN,ON);};
+
 Cd(__DIR__);;
-#include "load"
-#include "templeDOS"
+#include "load"
+#include "templeDOS"

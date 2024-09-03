@@ -45,12 +45,11 @@ Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
   Bool res=FALSE;
 
   if (ignore_case) {
-    res=(!(StrICmp(stra,strb)));
+    res=!StrICmp(stra,strb);
   }
   else { 
-    res=(!(StrCmp(stra,strb)));
+    res=!StrCmp(stra,strb);
   }
-
   return res;
 }
 Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
@@ -58,7 +57,7 @@ Bool str_cmpEX(U8 *cmp_to,Bool ignore_case=FALSE, ...)
  //to a list of strings.
  //
  //Example: if (!str_cmpEX(entry->name,,".","..")) { ... }
-  if (!cmp_to || (argc < 1)) return FALSE;
+  if (!cmp_to||argc<1) return FALSE;
 
   Bool res=FALSE;
 
@@ -81,7 +80,7 @@ U8 *callocstr(...)
    i++;
   }
 
-  return CAlloc((sizeof(U8)*len)+1);
+  return CAlloc(sizeof(U8)*len+1);
 }
 /*U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
@@ -128,7 +127,7 @@ U8 *str_NQ(U8 *str)
     str++;
   }
   str=p;
-
+
   return MStrUtil(str,SUF_REM_LEADING|SUF_REM_TRAILING);
 }
 U8 *MyGetStr(I64 flags=0)

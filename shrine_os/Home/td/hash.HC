@@ -65,7 +65,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {201,    "ed", 2, 2, 0},
   {203,    "df", 1, 1, 0},
   {208,  "tosz", 2, 2, 0},
-  {209,    "md", 2, 2, 0},
+  {209,    "md", 2, 2, 0},
   {211,    "cp", 3, 3, 1},
   {212,    "fm", 1, 1, 0},
   {214,    "rd", 2, 2, 1},
@@ -96,7 +96,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 
   U8 *p=cmd;
   while (*p) hash+=*p++;
-  idx=(hash % HASH_TABLE_SIZE);
+  idx=hash%HASH_TABLE_SIZE;
 
 //  "%d\n",idx;
   for(;idx < HASH_TABLE_SIZE;idx++)
@@ -107,10 +107,10 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
-    return (in->data[idx][2]<=val<=in->data[idx][3]);
+    return in->data[idx][2]<=val<=in->data[idx][3];
 
   if (type==HFLAGS)
-    return (0<=val<=in->data[idx][4]);
+    return 0<=val<=in->data[idx][4];
 
   return FALSE;
 }

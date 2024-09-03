@@ -69,10 +69,10 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 {
   Bool res=FALSE;
 
-  if ((!(0<=warg<=1)) || 
-      (!(DRV<=type<=FILE))) return FALSE;
+  if (!(0<=warg<=1) || 
+      !(DRV<=type<=FILE)) return FALSE;
 
-  res=ToBool(fvb.u8[((warg<<2)+(type-(warg&1)))]);
+  res=ToBool(fvb.u8[warg<<2+type-warg&1]);
 
   if (!res&&print_err)
   { 
@@ -87,7 +87,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   return res;
 }
-Bool file_char(U8 *chr) return (LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0);
+Bool file_char(U8 *chr) return LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0;
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb=NULL)
@@ -100,20 +100,20 @@ U64 files_valid(U8 *ddfa,U8 *ddfb=NULL)
   U64 res=0;
 
   res.u8[2]=drv_mounted(ddfa);
-  res.u8[3]=IsDir(ddfa);res.u8[3]=(res.u8[3]&(res.u8[2]^1));
-  res.u8[4]=FileFind(ddfa);res.u8[4]=(res.u8[4]&(res.u8[3]^1));
+  res.u8[3]=IsDir(ddfa);res.u8[3]=res.u8[3]&(res.u8[2]^1);
+  res.u8[4]=FileFind(ddfa);res.u8[4]=res.u8[4]&(res.u8[3]^1);
   res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
 
   if (ddfb) {
     res.u8[5]=drv_mounted(ddfb);
-    res.u8[6]=IsDir(ddfb);res.u8[6]=(res.u8[6]&(res.u8[5]^1));
-    res.u8[7]=FileFind(ddfb);res.u8[7]=(res.u8[7]&(res.u8[6]^1));
+    res.u8[6]=IsDir(ddfb);res.u8[6]=res.u8[6]&(res.u8[5]^1);
+    res.u8[7]=FileFind(ddfb);res.u8[7]=res.u8[7]&(res.u8[6]^1);
     res.u8[1]=res.u8[5]|res.u8[6]|res.u8[7];
   }
 
   return res;
 }
-/*I64 ret=0;
+/*I64 ret=0;
 
 //ret=files_valid(NULL,NULL);
 //ret=files_valid("","~/valid.HC");
@@ -189,7 +189,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
                  (entry->size-((entry->size/gb)*gb))/gt;
     else "%8d",entry->size;
   }
-
+
   " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
 
   if (ds.year<dsc.year) "%5d",ds.year;

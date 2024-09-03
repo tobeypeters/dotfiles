@@ -18,9 +18,7 @@
   Description:
       Miscellaneous functions.
 */
-#include "~/td/strings"
-
-Bool I64_between(I64 val, I64 min,I64 max) return (min<=val<=max);
+Bool I64_between(I64 val, I64 min,I64 max) return min<=val<=max;
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name, Fs->task_title
@@ -45,10 +43,10 @@ U8 tern(Bool condition, U64 *first, U64 *second)
 }
 U0 zFree(U8 *cube,Bool free=TRUE)
 {//Zero out mem and free it.
-  MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
+  MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
 }
-U0 viewer(U8 *cmd)
+U0 viewer(U8 *cmd)
 {//Execute cmd and open output in "view" mode.
   if (!StrLen(cmd)) return;
   PopUp(MStrPrint("%sFs->border_src=BDS_CONST;Fs->border_attr=LTRED<<4+WHITE;DocTop;View;",cmd));

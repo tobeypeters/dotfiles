@@ -32,8 +32,8 @@ EdLineDel(doc);
 */
 
 //Was gonna put the help file in "::/Doc".
-U8 *help_file=MStrPrint("%s%s",__DIR__,"/help.DD");
-U8 *menu_file=MStrPrint("%s%s",__DIR__,"/menu.DD");
+U8 *help_file=MStrPrint("%s/help.DD",__DIR__);
+U8 *menu_file=MStrPrint("%s/menu.DD",__DIR__);
 
 U8 *prev_cmd=NULL;
 U0 set_prevcmd(U8 *newcmd) {
@@ -67,9 +67,7 @@ U8 execute_cmd(U8 *cmd) {
 
   a->init(a);
   if (!a->parse(a,cmd)) goto answer; //Parsed no args
-
-  //D(a,sizeof(a));
-
+
   Fs->answer=1;
 
   I64 res,idx;res=idx=0;
@@ -461,7 +459,7 @@ U8 templeDOS() {
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }
-
+
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";

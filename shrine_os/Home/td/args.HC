@@ -22,7 +22,7 @@
 #define ARG_CNT 64
 #define ARG_LEN 256
 
-class CArgs
+class CArgs
 {
   I64 count,
       cidx;
@@ -44,7 +44,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 
   if (!StrLen(cmd)) return res;
 
-  StrUtil(cmd, SUF_REM_LEADING);
+  StrUtil(cmd,SUF_REM_LEADING);
 
   U64 qf=0,
        p=0;
@@ -75,7 +75,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
     p=0;
     while (*in->args[p])
     {
-      if (in->args[p][0]=='-')
+      if (in->args[p][0]=='-')
       {
         in->flags=StrNew(in->args[p]);
         f=TRUE;goto done;
