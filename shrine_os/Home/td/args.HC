@@ -75,7 +75,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
     p=0;
     while (*in->args[p])
     {
-      if (in->args[p][0]=='-')
+      if (in->args[p][0]=='-')
       {
         in->flags=StrNew(in->args[p]);
         f=TRUE;goto done;
@@ -108,7 +108,7 @@ U8* get_current(CArgs *in)
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
-U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
+U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
 CArgs *a=CAlloc(sizeof(CArgs));
   a->init=&init;

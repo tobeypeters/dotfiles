@@ -67,7 +67,7 @@ U8 execute_cmd(U8 *cmd) {
 
   a->init(a);
   if (!a->parse(a,cmd)) goto answer; //Parsed no args
-
+
   Fs->answer=1;
 
   I64 res,idx;res=idx=0;
@@ -113,12 +113,15 @@ U8 execute_cmd(U8 *cmd) {
       169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb;
+
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
-//  "bufa: %s bufb: %s\n",a->args[0],a->args[1];
+//  bufe=bufb;
 
-  U64 bav=0; //bav=v.u8[0];
+//  "%s %s %s\n",bufa,bufb,bufe;
+
+  U64 bav,bbv; bav=bbv=0;
 
   //Pick file support
   if (a->count==2) {
@@ -132,16 +135,24 @@ U8 execute_cmd(U8 *cmd) {
   //Wild card support,grep
   if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
-    bav=v.u8[0];
+    bav=v.u8[0]; bbv=v.u8[1];
 //    bav=(v.u8[0]|(a->count==1)); //Was for NO ARG & NO FLAGS COMMANDS
   }
 
-  //CMD: File needs to exist
+  //CMD: File(s) need to exist
   //EXCLUDE 35,201
-  if (I64_IN(idx,56,86,146,170,179,
+  //153: diff
+  if (I64_IN(idx,56,86,146,153,170,179,
       182,187,194,208)) {
-    if (!bav) goto nferror;
-    else if (!type_got(v,FILE)) goto answer;
+
+    if (!bav) { bufe=bufa; goto nferror; }
+
+    if (idx==153)
+      if (!bbv) { bufe=bufb; goto nferror; }
+
+    if (!type_got(v,FILE)) goto answer;
+    if (idx==153)
+      if (!type_got(v,FILE,1)) goto answer;
   }
 
   switchit:  
@@ -307,6 +318,10 @@ U8 execute_cmd(U8 *cmd) {
       Head(bufa);
 
       break;
+    case 153: //diff
+      Diff(bufa,bufb);
+
+      break;
     case 158: //date
       "%D\n",Now;
 
@@ -425,7 +440,8 @@ unknown:
   goto answer;
 
 nferror:
-  err_print(ERR_NF,bufa);
+  err_print(ERR_NF,bufe);
+  bufe=NULL;
 
 answer: //Possibly rename
   Fs->answer=0;
@@ -437,7 +453,7 @@ error:
   }
 
   Silent(OFF);
-  bufa=bufb=NULL;
+  bufa=bufb;
 
   Free(bufe);
 

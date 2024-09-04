@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  43
+#define CMD_CNT  44
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -48,6 +48,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 84,   "now", 1, 1, 0},
   { 86,   "run", 2, 2, 0},
   {146,  "head", 2, 2, 0},
+  {153,  "diff", 3, 3, 0},
   {158,  "date", 1, 1, 0},
   {169,  "help", 1, 1, 0},
   {170,  "tail", 2, 2, 0},
@@ -72,7 +73,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {223,    "ls", 1, 2, 1},
   {224,    "rm", 2, 2, 2},
   {227,    "mv", 3, 3, 0},
-  {228,    "ps", 1, 1, 0} //43
+  {228,    "ps", 1, 1, 0} //44
 };
 
 class CHCMDS
@@ -90,7 +91,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   I64 idx=0;
 
-  if (!cmd) return idx;
+  if (!cmd) return idx;
 
   U64 hash=0;
 
@@ -107,7 +108,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
-    return in->data[idx][2]<=val<=in->data[idx][3];
+    return in->data[idx][2]<=val<=in->data[idx][3];
 
   if (type==HFLAGS)
     return 0<=val<=in->data[idx][4];

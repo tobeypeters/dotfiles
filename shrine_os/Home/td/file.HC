@@ -78,7 +78,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
   { 
     U64 err=0;
 
-    if (type==DRV)  err=ERR_DIRFILEIDRV;
+    if (type==DRV)  err=ERR_DIRFILEIDRV;
     if (type==DIR)  err=ERR_DRVFILEIDIR;
     if (type==FILE) err=ERR_DRVDIRIFILE;
 
@@ -189,7 +189,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
                  (entry->size-((entry->size/gb)*gb))/gt;
     else "%8d",entry->size;
   }
-
+
   " %03tZ %02d ",ds.mon-1,STM,ds.day_of_mon;
 
   if (ds.year<dsc.year) "%5d",ds.year;
