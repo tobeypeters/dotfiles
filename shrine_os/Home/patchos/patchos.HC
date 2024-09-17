@@ -1,11 +1,46 @@
 /*
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+/*patchos.HC
+  Description:
+      Adds new functions to the system and overrides existing ones,
+      with added or deleted functionality.
+
   The HijackFunc() code is taken from TinkerOS, which is a very enhanced
   branch of TempleOS.
 
   TinkerOS and the Original source can be found at:
 
   http://www.github.com/tinkeros/TinkerOS
+
+  Added system functions:
+   * ADocClear
+   * Cdr
+   * dump_exists
+   * Head
+   * KeyAndCont
+   * More
+   * Tail
+   * trash_msg
+
+  Outside system files modded:
+
+   * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
+
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -87,7 +122,7 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U0 ADocClear()
+public U0 ADocClear()
 {//Clear Adams doc window
   Adam("DocClear;");
 }

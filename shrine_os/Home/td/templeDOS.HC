@@ -113,21 +113,32 @@ U8 execute_cmd(U8 *cmd) {
       169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb;
-
+
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
-
-//  bufe=bufb;
-
-//  "%s %s %s\n",bufa,bufb,bufe;
 
   U64 bav,bbv; bav=bbv=0;
 
   //Pick file support
+//  if (a->count==2)
+//    if (!StrCmp(bufa,"??")) { }
+//  if (a->count>2)
+//    if (!StrCmp(bufb,"??")) { }
+
   if (a->count==2) {
     if (!StrCmp(bufb,"??")) {
-      bufa=StrNew(PopUpPickFile);
-      v=$WW+H,1$4294967297; //0000000100000000000000000000000000000001
+      switch (idx) {
+        case  43: //cdd
+        case 199: //cd
+          bufa=StrNew(PopUpPickDir);
+          v=16777217;   //00000001000000000000000000000001
+
+          break;
+        default:
+          bufa=StrNew(PopUpPickFile);
+          v=$WW+H,1$4294967297; //0000000100000000000000000000000000000001
+      }
+
       bav=TRUE; goto switchit;
     }
   }
@@ -141,10 +152,9 @@ U8 execute_cmd(U8 *cmd) {
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
-  //153: diff
+  //153: diff
   if (I64_IN(idx,56,86,146,153,170,179,
       182,187,194,208)) {
-
     if (!bav) { bufe=bufa; goto nferror; }
 
     if (idx==153)

@@ -1,6 +1,6 @@
 /*
   The MIT License(MIT)
-  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -108,7 +108,7 @@ U8* get_current(CArgs *in)
 }
 
 U0 next(CArgs *in) { in->cidx=Min(in->count-1,++in->cidx); }
-U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
+U0 prev(CArgs *in) { in->cidx=Max(0,--in->cidx); }
 
 CArgs *a=CAlloc(sizeof(CArgs));
   a->init=&init;

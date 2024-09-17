@@ -2,7 +2,7 @@
 //anything you want.
 
 #include "~/theme.HC" // This also loads tp_Compositor.HC
-#include "~/patchos/patchos"
+#include "~/patchos/patchos"
 
 Bool started=FALSE;
 
@@ -58,3 +58,4 @@ U0 StartUpTasks()
 StartUpTasks;
 
 started = TRUE;
+
