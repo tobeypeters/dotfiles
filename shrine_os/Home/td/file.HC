@@ -78,7 +78,7 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
   { 
     U64 err=0;
 
-    if (type==DRV)  err=ERR_DIRFILEIDRV;
+    if (type==DRV)  err=ERR_DIRFILEIDRV;
     if (type==DIR)  err=ERR_DRVFILEIDIR;
     if (type==FILE) err=ERR_DRVDIRIFILE;
 

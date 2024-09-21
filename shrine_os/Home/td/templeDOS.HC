@@ -113,7 +113,7 @@ U8 execute_cmd(U8 *cmd) {
       169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb;
-
+
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
 
@@ -125,18 +125,43 @@ U8 execute_cmd(U8 *cmd) {
 //  if (a->count>2)
 //    if (!StrCmp(bufb,"??")) { }
 
-  if (a->count==2) {
-    if (!StrCmp(bufb,"??")) {
+//#define DRV  2
+//#define DIR  3
+//#define FILE 4
+
+
+  if (a->count>1) {
+    if (v.u8[0]=!StrCmp(bufa,"??")||
+        v.u8[1]=!StrCmp(bufb,"??")) {
+      U64 vt=v.u8[0]*3;
       switch (idx) {
         case  43: //cdd
         case 199: //cd
           bufa=StrNew(PopUpPickDir);
-          v=16777217;   //00000001000000000000000000000001
+          v.u8[vt+DIR]=1;
+
+          break;
+        case 211: //cp
+        case 227: //mv
+          if (fc)
+          if (f_err(FLG_D)) {
+            if (v.u8[0]) bufa=StrNew(PopUpPickDir);
+            else bufb=StrNew(PopUpPickDir);
+
+            v.$WW+H,1$u8[vt+DIR]=1;
+
+            break;
+          }
+
+          if (v.u8[0]) bufa=StrNew(PopUpPickFile);
+          else bufb=StrNew(PopUpPickFile);
+
+          v.$WW+H,1$u8[vt+FILE]=1;
 
           break;
         default:
           bufa=StrNew(PopUpPickFile);
-          v=$WW+H,1$4294967297; //0000000100000000000000000000000000000001
+          v.$WW+H,1$u8[vt+FILE]=1;
       }
 
       bav=TRUE; goto switchit;
