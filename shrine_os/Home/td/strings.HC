@@ -82,6 +82,18 @@ U8 *callocstr(...)
 
   return CAlloc(sizeof(U8)*len+1);
 }
+U8 *str_rev(U8 *str)
+{//Reverse a string.  I thought, TempleOS had one.
+ //I can't find it. If there's one buried in the OS,
+ //I'll get rid of this one.
+ //I'm not using the normal swapping algorithm here.
+  U64 l=StrLen(str)-1,i=0;
+  U8 *st=CAlloc(sizeof(U8)*l);
+
+  for (;i<=l;i++) *(st+i)=str[l-i];
+
+  return st;
+}
 /*U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
   U8 *res=0;
@@ -218,4 +230,3 @@ gs_done:
   "$$PT$$$$FG$$$$BG$$";
   return res;
 }
-

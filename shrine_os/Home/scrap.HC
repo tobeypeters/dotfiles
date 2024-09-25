@@ -725,20 +725,23 @@ v.u8[3]=1;
 "--- %s\n",buffer;
 "---\n";*/
 
-U8 *buffer="reverse",
-   l=StrLen(buffer),
-   i=0,t;
+/*U8 *rev_str(U8 *str)
+{//Reverse a string.  I thought, TempleOS had one.
+ //I can't find it. If there's one buried in the OS,
+ //I'll get rid of this one.
+ //I'm not using the normal swapping algorithm here.
+  U64 l=StrLen(str)-1,i=0;
+  U8 *st=CAlloc(sizeof(U8)*l);
 
-for (i;i<l;i++,l--) {
-  t=buffer[i];  
-  buffer[i]=buffer[l];
-  buffer[l]=t;
-}
+  for (;i<=l;i++) *(st+i)=str[l-i];
 
-"\nbuffer: %c\n",buffer[0];
+  return st;
+}
 
+"reversed string: %s\n\n",rev_str("reverse");
+*/
 
-//KeyAndCont;
+//KeyAndCont;
 
 
 

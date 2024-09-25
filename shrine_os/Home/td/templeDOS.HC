@@ -154,7 +154,7 @@ U8 execute_cmd(U8 *cmd) {
           }
 
           if (v.u8[0]) bufa=StrNew(PopUpPickFile);
-          else bufb=StrNew(PopUpPickFile);
+          else bufb=StrNew(PopUpPickFile);
 
           v.$WW+H,1$u8[vt+FILE]=1;
 
@@ -262,19 +262,19 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  43: //cdd
-    case 199: //cd
+    case 199: //cd;
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
       if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
 
+      bufe=StrNew(bufa);
+
       if (!bav) goto nferror;
       if (!type_got(v,DIR,,FALSE)) {
         e_print(ERR_FILEIDRVDIR,bufa); goto answer;
       }
 
-      bufe=StrNew(bufa);
- 
       prevdir:
         set_prevdir;
         Cd(bufe);

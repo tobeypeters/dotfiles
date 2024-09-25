@@ -1,3 +1,16 @@
+U8 *rev_str(U8 *str)
+{//Reverse a string.  I thought, TempleOS had one.
+ //I can't find it. If there's one buried in the OS,
+ //I'll get rid of this one.
+ //I'm not using the normal swapping algorithm here.
+  U64 l=StrLen(str)-1,i=0;
+  U8 *st=CAlloc(sizeof(U8)*l);
+
+  for (;i<=l;i++) *(st+i)=str[l-i];
+
+  return st;
+}
+
 #define DROPS_NUM	0x2000
 
 class Drop
@@ -11,18 +24,22 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   U64 w=Fs->pix_width,
       h=Fs->pix_height,
-     cx=w/2, cy=h/2,
+     cx=w/2,cy=h/2,
     ctx=TEXT_COLS*FONT_WIDTH/2,
     cty=TEXT_ROWS*FONT_WIDTH/2;
 
-  static U8 *disp_str=MStrPrint("TempleOS");
+  static U8 *disp_str=MStrPrint("Benjamin"),
+            *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
+            l=StrLen(disp_str);
+
+  U64 ctxo=ctx-((l/2)*FONT_WIDTH),
+      ctyo=cty-((l/2)*FONT_HEIGHT);
 
   dc->color=WHITE;
-  GrPrint(dc,ctx,cty,disp_str);
-
-  GrVPrint(dc,w/2,
-           h /2,
-           disp_str);
+  GrPrint(dc,ctxo,ctyo,disp_str);
+  GrPrint(dc,ctxo,ctyo+(l*FONT_HEIGHT)-FONT_HEIGHT,disp_rstr);
+  GrVPrint(dc,ctxo,ctyo,disp_str);
+  GrVPrint(dc,ctxo+(l-1)*FONT_WIDTH,ctyo,disp_rstr);
 
   dc->color=LTRED;
   GrPrint(dc,10,50,
@@ -30,7 +47,14 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrPrint(dc,10,60,
           "%dx%d",Fs->pix_width,Fs->pix_height);
   GrPrint(dc,10,70,
-          "%dx%d",TEXT_COLS,TEXT_ROWS);
+          "%dx%d",TEXT_COLS,TEXT_ROWS);
+  GrPrint(dc,10,80,"FPS: %2tf",winmgr.fps);
+
+  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
+  GrLine(dc,cx+1,cy-1,cx+4,cy-4);
+
+  dc->color=LTGREEN;
+  GrPlot(dc,cx,cy);
 
   I64 i;
   dc->color=WHITE;
