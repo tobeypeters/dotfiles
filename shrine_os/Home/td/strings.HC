@@ -80,7 +80,7 @@ U8 *callocstr(...)
    i++;
   }
 
-  return CAlloc(sizeof(U8)*len+1);
+  return CAlloc(sizeof(U8)*len+1);
 }
 /*U8 *str_new(U8 *buf=NULL,CTask *mem_task=NULL,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
@@ -218,3 +218,4 @@ gs_done:
   "$$PT$$$$FG$$$$BG$$";
   return res;
 }
+
