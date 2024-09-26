@@ -22,35 +22,37 @@ CDC *cur_dc;
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  U64 w=Fs->pix_width,
-      h=Fs->pix_height,
-     cx=w/2,cy=h/2,
-    ctx=TEXT_COLS*FONT_WIDTH/2,
-    cty=TEXT_ROWS*FONT_WIDTH/2;
-
   static U8 *disp_str=MStrPrint("Benjamin"),
             *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
             l=StrLen(disp_str);
 
-  U64 ctxo=ctx-((l/2)*FONT_WIDTH),
-      ctyo=cty-((l/2)*FONT_HEIGHT);
+  U64 w=Fs->pix_width,
+      h=Fs->pix_height,
+     cx=w/2,cy=h/2,
+    ctx=TEXT_COLS*FONT_WIDTH/2,
+    cty=TEXT_ROWS*FONT_WIDTH/2,
+   ctxo=ctx-((l/2)*FONT_WIDTH),
+   ctyo=cty-((l/2)*FONT_HEIGHT),
+     fw=FONT_WIDTH,
+     fh=FONT_HEIGHT;
 
   dc->color=WHITE;
   GrPrint(dc,ctxo,ctyo,disp_str);
-  GrPrint(dc,ctxo,ctyo+(l*FONT_HEIGHT)-FONT_HEIGHT,disp_rstr);
+  GrPrint(dc,ctxo,ctyo+(l*fh)-fh,disp_rstr);
   GrVPrint(dc,ctxo,ctyo,disp_str);
-  GrVPrint(dc,ctxo+(l-1)*FONT_WIDTH,ctyo,disp_rstr);
+  GrVPrint(dc,ctxo+(l-1)*fw,ctyo,disp_rstr);
 
   dc->color=LTRED;
-  GrPrint(dc,10,50,
-          "%dx%d",GR_WIDTH,GR_HEIGHT);
-  GrPrint(dc,10,60,
+  GrPrint(dc,fw,fh,
+          "%dx%d",GR_WIDTH,GR_HEIGHT);
+  GrPrint(dc,fw,fh*2,
           "%dx%d",Fs->pix_width,Fs->pix_height);
-  GrPrint(dc,10,70,
+  GrPrint(dc,fw,fh*3,
           "%dx%d",TEXT_COLS,TEXT_ROWS);
-  GrPrint(dc,10,80,"FPS: %2tf",winmgr.fps);
+  GrPrint(dc,fw,fh*4,"FPS: %2tf",winmgr.fps);
+  GrPrint(dc,fw,fh*5,"%dx%d",fh,fw);
 
-  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
+  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
   GrLine(dc,cx+1,cy-1,cx+4,cy-4);
 
   dc->color=LTGREEN;

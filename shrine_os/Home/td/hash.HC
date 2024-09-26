@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  44
+#define CMD_CNT  45
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -41,6 +41,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 61,   "pal", 1, 2, 1},
   { 63,   "mem", 1, 1, 0},
   { 66,   "cls", 1, 1, 0},
+  { 67,   "ans", 1, 1, 0},
   { 68,   "rnd", 1, 1, 0},
   { 72,   "cpu", 1, 2, 1},
   { 75,   "pwd", 1, 1, 0},
@@ -73,7 +74,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {223,    "ls", 1, 2, 1},
   {224,    "rm", 2, 2, 2},
   {227,    "mv", 3, 3, 0},
-  {228,    "ps", 1, 1, 0} //44
+  {228,    "ps", 1, 1, 0} //45
 };
 
 class CHCMDS
@@ -91,7 +92,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 {//Return the index in the hash table, fo a given command.
   I64 idx=0;
 
-  if (!cmd) return idx;
+  if (!cmd) return idx;
 
   U64 hash=0;
 

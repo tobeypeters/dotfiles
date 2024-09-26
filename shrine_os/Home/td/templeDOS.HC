@@ -24,8 +24,10 @@
   #include "load"
 #endif
 
-#define SHOW_ANSWERS TRUE
-#define TIP_OF_DAY   TRUE
+//#define SHOW_ANSWERS TRUE
+//#define TIP_OF_DAY   TRUE
+Bool SHOW_ANSWERS=TRUE;
+Bool TIP_OF_DAY=TRUE;
 
 /*COMMAND HISTORY stuff
 EdLineDel(doc);
@@ -95,12 +97,12 @@ U8 execute_cmd(U8 *cmd) {
 
   fc=flag_cnt(a->flags);
 
-  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
+  eptr=c->data[idx][1];
+
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto answer; }
   if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto answer; }
-
-  eptr=c->data[idx][1];
 
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
@@ -109,7 +111,7 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   //CMD: No args or flags
-  if (I64_IN(idx,7,38,61,63,66,68,72,75,81,84,158,
+  if (I64_IN(idx,7,38,61,63,66,67,68,72,75,81,84,158,
       169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb;
@@ -269,7 +271,7 @@ U8 execute_cmd(U8 *cmd) {
       if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
 
       bufe=StrNew(bufa);
-
+
       if (!bav) goto nferror;
       if (!type_got(v,DIR,,FALSE)) {
         e_print(ERR_FILEIDRVDIR,bufa); goto answer;
@@ -284,7 +286,8 @@ U8 execute_cmd(U8 *cmd) {
     case  56: //cat
     case 187: //view
     case 194: //type
-      viewer(f_str("Type",bufa));
+//      "%F",bufa;
+      viewer(f_str("Type",FileNameAbs(bufa)));
 
       break;
     case  60: //man
@@ -317,6 +320,10 @@ U8 execute_cmd(U8 *cmd) {
       //MemBIOSRep; PCIRep;
       viewer("MemRep;\"\n\";
               MemPageRep;MemBIOSRep;\"\n\";");
+
+      break;
+    case  67: //ans
+      SHOW_ANSWERS=!SHOW_ANSWERS;
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
@@ -500,7 +507,8 @@ U8 templeDOS() {
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
+//  FF("/*BIN*");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ whereis & ans on/off ...\n\n\";");
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
   set_windowinfo("templedos_task","TempleDOS");
