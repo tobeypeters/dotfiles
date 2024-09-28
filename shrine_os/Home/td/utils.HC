@@ -42,8 +42,8 @@ U8 tern(Bool condition, U64 *first, U64 *second)
   return second;
 }
 U0 zFree(U8 *cube,Bool free=TRUE)
-{//Zero out mem and free it.
-  MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
+{//Zero out mem and free it.
+  MemSet(cube,'\0',sizeof(U8)*StrLen(cube));
   if (free) Free(cube);
 }
 U0 viewer(U8 *cmd)

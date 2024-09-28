@@ -1,6 +1,6 @@
 /*
   The MIT License(MIT)
-  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -133,7 +133,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
     a->next(a);"%6s\n",a->args[a->cidx];
     a->next(a);"%6s\n",a->args[a->cidx];
     a->next(a);"%6s\n",a->args[a->cidx];
-
+
     "$$LTRED$$\nSet a->idx to 1,\nback to \"a->args[2]\"$$FG$$\n\n";
     a->cidx=1;
     a->next(a);"%6s\n",a->args[a->cidx];

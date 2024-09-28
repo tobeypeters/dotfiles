@@ -741,7 +741,13 @@ v.u8[3]=1;
 "reversed string: %s\n\n",rev_str("reverse");
 */
 
-//KeyAndCont;
+U8 *opt_state="ON\0OFF\0";
+
+"%d\n",LstMatch("a",opt_state,LMF_IGNORE_CASE);
+"%d\n",LstMatch("on",opt_state,LMF_IGNORE_CASE);
+"%d\n",LstMatch("off",opt_state,LMF_IGNORE_CASE);
+
+//KeyAndCont;
 
 
 

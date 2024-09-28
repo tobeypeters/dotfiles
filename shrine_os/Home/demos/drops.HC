@@ -18,33 +18,86 @@ class Drop
   I32 x,y;
 } drops[DROPS_NUM];
 
-CDC *cur_dc;
+CDC *cur_dc=DCNew(GR_WIDTH,GR_HEIGHT);
+
+//Change to #define?
+U8  *disp_str=MStrPrint("Benjamin"),
+//   *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
+            l=StrLen(disp_str);
+
+//Normally I wouldn't declare everything global like this.
+//But, declaring them 30times a second isn't needed.
+U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0, scg,
+    w=GR_WIDTH,h=GR_HEIGHT-FONT_HEIGHT,
+   cx=w/2,cy=h/2,
+  ctx=TEXT_COLS*FONT_WIDTH/2,
+  cty=TEXT_ROWS*FONT_WIDTH/2,
+ ctxo=ctx-((l/2)*FONT_WIDTH),
+ ctyo=cty-((l/2)*FONT_HEIGHT),
+   fw=FONT_WIDTH,
+   fh=FONT_HEIGHT,
+   pc=40000;
+
+U0 pinski(CDC *dc)
+{//sierpinski triangle
+  x1=x2=w/2;
+  y1=y2=0;
+
+  dc->color=LTGREEN;
+
+  for(i=0;i<pc;i++)
+  {
+    d=RandU16&3;
+    switch (d)
+    {
+      case 0:
+        x1=(x2+w/2)/2;
+        y1=(y2+0)/2;
+
+        break;
+      case 1:
+        x1=(x2+40)/2;
+        y1=(y2+h-40)/2;
+
+        break;
+      default:
+        x1=(x2+w-40)/2;
+        y1=(y2+h-40)/2;
+    }
+
+    if (i<(pc*.6)) dc->color=GREEN;
+    else dc->color=WHITE;
+//    dc->color=RandU16%COLORS_NUM;
+    GrPlot(dc,x1,y1);
+
+    x2=x1; y2=y1;
+  }
+}
+
+U0 drawGrid(CDC *dc) {
+}
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  static U8 *disp_str=MStrPrint("Benjamin"),
-            *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
-            l=StrLen(disp_str);
+  pinski(dc);
 
-  U64 w=Fs->pix_width,
-      h=Fs->pix_height,
-     cx=w/2,cy=h/2,
-    ctx=TEXT_COLS*FONT_WIDTH/2,
-    cty=TEXT_ROWS*FONT_WIDTH/2,
-   ctxo=ctx-((l/2)*FONT_WIDTH),
-   ctyo=cty-((l/2)*FONT_HEIGHT),
-     fw=FONT_WIDTH,
-     fh=FONT_HEIGHT;
+  if (Bt(kbd.down_bitmap,scg)) {
+    dc->color=PURPLE;
+    GrRect(dc,cx-2,cy-2,5,5);
+  }
 
   dc->color=WHITE;
-  GrPrint(dc,ctxo,ctyo,disp_str);
-  GrPrint(dc,ctxo,ctyo+(l*fh)-fh,disp_rstr);
-  GrVPrint(dc,ctxo,ctyo,disp_str);
-  GrVPrint(dc,ctxo+(l-1)*fw,ctyo,disp_rstr);
+  GrPrint(dc,ctxo+1,cty+1,"The Legend of\n Benjamin");
+  dc->color=BROWN;
+  GrPrint(dc,ctxo,cty,"The Legend of\n Benjamin");
+/*  GrPrint(dc,ctxo,cty,disp_str);
+  GrPrint(dc,ctxo,cty+(l*fh)-fh,disp_rstr);
+  GrVPrint(dc,ctxo,cty,disp_str);
+  GrVPrint(dc,ctxo+(l-1)*fw,cty,disp_rstr);*/
 
   dc->color=LTRED;
   GrPrint(dc,fw,fh,
-          "%dx%d",GR_WIDTH,GR_HEIGHT);
+          "%dx%d",GR_WIDTH,GR_HEIGHT);
   GrPrint(dc,fw,fh*2,
           "%dx%d",Fs->pix_width,Fs->pix_height);
   GrPrint(dc,fw,fh*3,
@@ -52,13 +105,14 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrPrint(dc,fw,fh*4,"FPS: %2tf",winmgr.fps);
   GrPrint(dc,fw,fh*5,"%dx%d",fh,fw);
 
-  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
+//        "$$$$FG,%d$$$$Û",i;i++;
+
+/*  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
   GrLine(dc,cx+1,cy-1,cx+4,cy-4);
 
   dc->color=LTGREEN;
-  GrPlot(dc,cx,cy);
+  GrPlot(dc,cx,cy);*/
 
-  I64 i;
   dc->color=WHITE;
   for (i=0;i<DROPS_NUM;i++)
 //    if (drops[i].y>=0 && GrPeek(dc,drops[i].x,drops[i].y)==WHITE)
@@ -69,15 +123,13 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrBlot(cur_dc,-task->pix_left-task->scroll_x,
 	-task->pix_top-task->scroll_y,dc);
   dc->flags&=~DCF_NO_TRANSPARENTS;
+
 }
 
 U0 AnimateTask(I64)
 {
-  I64 i,j,cur_drop=0,c1,c2,x0,y0,x1,y1,w,h;
+  cur_drop=0;
   while (TRUE) {
-    w=Fs->parent_task->pix_width;
-    h=Fs->parent_task->pix_height;
-
     for (i=0;i<2;i++) {
       j=0;
       do {
@@ -158,14 +210,18 @@ U0 RainDrops()
 	"  Restart(,'\n');"
 	"}"
 	);
-  SettingsPush; //See $LK,"SettingsPush",A="MN:SettingsPush"$
+  SettingsPush;
   AutoComplete;
   WinBorder;
   WinMax;
   DocCursor;
   DocClear;
-  cur_dc=DCNew(GR_WIDTH,GR_HEIGHT);
   Init;
+
+  drawGrid(cur_dc);
+
+  scg=Char2ScanCode('g');
+
   Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
   Fs->draw_it=&DrawIt;
   try {

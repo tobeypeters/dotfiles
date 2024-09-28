@@ -11,12 +11,18 @@ NOTE:	$FG,4$$TX+BK,"IGNORE"$$FD,15$ the $FG,4$_$FD,15$ character, in front of th
 Command	Description
 ---------------------------
 
-$IV,1$_ans:$IV,0$
+$IV,1$_ans:$IV,0$
 	Determines if answers are displayed,
 	when a command is executed.
 
-	default: ON
+	usage:
+		ans
+		ans [$FG,2$OPTION$FG,15$] {$FG,11$ON/OFF$FG,15$}
 
+	options:
+	   $FG,11$ON$FG,15$	    Display the results of commands.
+	   $FG,11$OFF$FG,15$	    Don't display the results of commands.
+
 $IV,1$!!:$IV,0$
 	Executes the previous terminal command,
 	similiar to the Linux implementation.
@@ -104,7 +110,10 @@ $IV,1$_tree:$IV,0$
 $IV,1$_grep:$IV,0$
 	Recursively search files and print any lines
 	which contain the specified string.
-	usage: grep [$FG,2$FILENAME$FG,15$]...
+	usage: grep [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$}
+
+	Options:
+	   $FG,11$-d$FG,15$	    Search just the current directory.
 
 $IV,1$_head:$IV,0$
 	Display the first 10 lines of a specified file.

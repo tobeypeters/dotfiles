@@ -24,8 +24,9 @@
   #include "load"
 #endif
 
-//#define SHOW_ANSWERS TRUE
-//#define TIP_OF_DAY   TRUE
+Bool inLst(U8 *opt)
+  return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
+
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
 
@@ -99,7 +100,7 @@ U8 execute_cmd(U8 *cmd) {
 
   eptr=c->data[idx][1];
 
-  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto answer; }
   if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
     e_print(ERR_FLGC); goto answer; }
@@ -111,7 +112,7 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   //CMD: No args or flags
-  if (I64_IN(idx,7,38,61,63,66,67,68,72,75,81,84,158,
+  if (I64_IN(idx,7,38,61,63,66,68,72,75,81,84,158,
       169,177,184,186,195,203,212,228)) goto switchit;
 
   U8 *bufa,*bufb;
@@ -122,16 +123,6 @@ U8 execute_cmd(U8 *cmd) {
   U64 bav,bbv; bav=bbv=0;
 
   //Pick file support
-//  if (a->count==2)
-//    if (!StrCmp(bufa,"??")) { }
-//  if (a->count>2)
-//    if (!StrCmp(bufb,"??")) { }
-
-//#define DRV  2
-//#define DIR  3
-//#define FILE 4
-
-
   if (a->count>1) {
     if (v.u8[0]=!StrCmp(bufa,"??")||
         v.u8[1]=!StrCmp(bufb,"??")) {
@@ -191,6 +182,8 @@ U8 execute_cmd(U8 *cmd) {
     if (idx==153)
       if (!type_got(v,FILE,1)) goto answer;
   }
+
+  U64 be=FALSE;
 
   switchit:  
     set_prevcmd(cmd);
@@ -298,8 +291,6 @@ U8 execute_cmd(U8 *cmd) {
     case  61: //pal
       if (fc)
       {
-        Bool be=FALSE;
- 
         if (be=!f_err(FLG_P,FALSE))
           Fs->answer=PopUpColor;
          
@@ -323,7 +314,10 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case  67: //ans
-      SHOW_ANSWERS=!SHOW_ANSWERS;
+      if (a->count>1)
+        if (!(be=inLst(bufa))) { e_print(ERR_FLGI); break; }
+
+      SHOW_ANSWERS=a->count==1||!StrICmp(bufa,"ON");
 
       break;
     case 68: //rnd <-Generate a GOD number, for Terry
@@ -495,9 +489,9 @@ error:
   }
 
   Silent(OFF);
-  bufa=bufb;
+//  bufa=bufb;
 
-  Free(bufe);
+  zFree(bufe);
 
   return res;
 }
@@ -508,7 +502,7 @@ U8 templeDOS() {
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
 //  FF("/*BIN*");
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ whereis & ans on/off ...\n\n\";");
+  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
   Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
   set_windowinfo("templedos_task","TempleDOS");
@@ -517,7 +511,7 @@ U8 templeDOS() {
 
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
-  }
+  }
 
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
@@ -535,8 +529,7 @@ U8 templeDOS() {
     if (*input=='é') break;
 
     if (str_cmp(input, "!!")) {
-      zFree(input);
-      input=StrNew(prev_cmd);
+      zFree(input);input=StrNew(prev_cmd);
     }
 
     if (res=execute_cmd(input)) break;
@@ -544,7 +537,7 @@ U8 templeDOS() {
     zFree(input,FALSE);
   }
 
-  Free(input);
+  zFree(input);
 
   Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
 
@@ -566,9 +559,9 @@ Free(a);
 Free(c);
 
 eptr=NULL;
-Free(prev_dir);
-Free(menu_file);
-Free(help_file);
+zFree(prev_dir);
+zFree(menu_file);
+zFree(help_file);
 
 DocBottom; "$$FG$$";
 
