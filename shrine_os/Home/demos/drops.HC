@@ -74,16 +74,33 @@ U0 pinski(CDC *dc)
   }
 }
 
-U0 drawGrid(CDC *dc) {
-}
+U0 drawGrid(CDC *dc)
+{
+  U64 i,j;
+
+  dc->color=YELLOW;
+
+  i=x1=y1=0;
+  for (;x1<w;x1+=16) {
+//    GrPlot(dc,x1,y1);
+    GrLine(dc,x1,y1,x1,h,2,2);
+  }
+
+  i=x1=y1=0;
+  for (;y1<h;y1+=16) {
+//    GrPlot(dc,x1,y1);
+    GrLine(dc,x1,y1,w,y1,2,2);
+  }
+}
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  pinski(dc);
+  pinski(dc);
 
   if (Bt(kbd.down_bitmap,scg)) {
     dc->color=PURPLE;
     GrRect(dc,cx-2,cy-2,5,5);
+    drawGrid(dc);
   }
 
   dc->color=WHITE;
@@ -217,8 +234,6 @@ U0 RainDrops()
   DocCursor;
   DocClear;
   Init;
-
-  drawGrid(cur_dc);
 
   scg=Char2ScanCode('g');
 

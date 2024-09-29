@@ -89,7 +89,7 @@ U8 execute_cmd(U8 *cmd) {
         else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
-
+
     idx=999; 
     goto switchit;
   }
@@ -511,7 +511,7 @@ U8 templeDOS() {
 
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
-  }
+  }
 
   "\nTempleDOS {Version 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
