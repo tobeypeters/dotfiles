@@ -1,16 +1,7 @@
-U8 *rev_str(U8 *str)
-{//Reverse a string.  I thought, TempleOS had one.
- //I can't find it. If there's one buried in the OS,
- //I'll get rid of this one.
- //I'm not using the normal swapping algorithm here.
-  U64 l=StrLen(str)-1,i=0;
-  U8 *st=CAlloc(sizeof(U8)*l);
-
-  for (;i<=l;i++) *(st+i)=str[l-i];
-
-  return st;
-}
-
+/*
+   This is just a random grouping, of graphic related type stuff.
+   This all is potentially, for a game.
+*/
 #define DROPS_NUM	0x2000
 
 class Drop
@@ -27,16 +18,82 @@ U8  *disp_str=MStrPrint("Benjamin"),
 
 //Normally I wouldn't declare everything global like this.
 //But, declaring them 30times a second isn't needed.
-U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0, scg,
+U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0,scg,sch,
     w=GR_WIDTH,h=GR_HEIGHT-FONT_HEIGHT,
    cx=w/2,cy=h/2,
   ctx=TEXT_COLS*FONT_WIDTH/2,
   cty=TEXT_ROWS*FONT_WIDTH/2,
  ctxo=ctx-((l/2)*FONT_WIDTH),
- ctyo=cty-((l/2)*FONT_HEIGHT),
+ ctyo=cty-((l/2)*FONT_HEIGHT),
    fw=FONT_WIDTH,
    fh=FONT_HEIGHT,
    pc=40000;
+
+U0 drawGrid(CDC *dc)
+{
+  U64 i,j;
+
+  dc->color=YELLOW;
+
+  i=x1=y1=0;
+  for (;x1<w;x1+=16) {
+//    GrPlot(dc,x1,y1);
+    GrLine(dc,x1,y1,x1,h,2,2);
+  }
+
+  i=x1=y1=0;
+  for (;y1<h;y1+=16) {
+//    GrPlot(dc,x1,y1);
+    GrLine(dc,x1,y1,w,y1,2,2);
+  }
+}
+U0 drawBox(CDC *dc,U64 x,U64 y,U64 w,U64 h,U64 t=1,U64 c=WHITE)
+{
+  U64 ot=dc->thick,
+      oc=dc->color;
+
+  dc->thick=t;
+  dc->color=c;
+
+  GrBorder(dc,x,y,x+w,y+h);
+
+  dc->thick=ot;
+  dc->color=oc;
+}
+
+U0 drawHUD(CDC *dc)
+{
+  //This will be drastically changed
+  U64 hsx=w*.75;
+
+  dc->color=LTRED;
+  GrPrint(dc,hsx,fh,  "ÄÄLIFEÄÄ");
+
+  drawBox(dc,100,100,100,20,2,LTGREEN);
+
+  GrArrow3(dc,100,100,0,90,90,0);
+}
+U0 RGB2C(U64 red, U64 green, U64 blue) {
+  CBGR48 col=0;
+
+  col.r=ClampI64(red,0,63)<<10;
+  col.g=ClampI64(green,0,63)<<10;
+  col.b=ClampI64(blue,0,63)<<10;
+
+  return col;
+}
+U8 *rev_str(U8 *str)
+{//Reverse a string.  I thought, TempleOS had one.
+ //I can't find it. If there's one buried in the OS,
+ //I'll get rid of this one.
+ //I'm not using the normal swapping algorithm here.
+  U64 l=StrLen(str)-1,i=0;
+  U8 *st=CAlloc(sizeof(U8)*l);
+
+  for (;i<=l;i++) *(st+i)=str[l-i];
+
+  return st;
+}
 
 U0 pinski(CDC *dc)
 {//sierpinski triangle
@@ -74,28 +131,9 @@ U0 pinski(CDC *dc)
   }
 }
 
-U0 drawGrid(CDC *dc)
-{
-  U64 i,j;
-
-  dc->color=YELLOW;
-
-  i=x1=y1=0;
-  for (;x1<w;x1+=16) {
-//    GrPlot(dc,x1,y1);
-    GrLine(dc,x1,y1,x1,h,2,2);
-  }
-
-  i=x1=y1=0;
-  for (;y1<h;y1+=16) {
-//    GrPlot(dc,x1,y1);
-    GrLine(dc,x1,y1,w,y1,2,2);
-  }
-}
-
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  pinski(dc);
+  pinski(dc);
 
   if (Bt(kbd.down_bitmap,scg)) {
     dc->color=PURPLE;
@@ -103,10 +141,13 @@ U0 DrawIt(CTask *task,CDC *dc)
     drawGrid(dc);
   }
 
-  dc->color=WHITE;
-  GrPrint(dc,ctxo+1,cty+1,"The Legend of\n Benjamin");
-  dc->color=BROWN;
+  if (Bt(kbd.down_bitmap,sch)) drawHUD(dc);
+
+  dc->color=WHITE; 
   GrPrint(dc,ctxo,cty,"The Legend of\n Benjamin");
+  dc->color=ROP_XOR+WHITE^TRANSPARENT;
+  GrPrint(dc,ctxo+1,cty+1,"The Legend of\n Benjamin");
+
 /*  GrPrint(dc,ctxo,cty,disp_str);
   GrPrint(dc,ctxo,cty+(l*fh)-fh,disp_rstr);
   GrVPrint(dc,ctxo,cty,disp_str);
@@ -121,14 +162,6 @@ U0 DrawIt(CTask *task,CDC *dc)
           "%dx%d",TEXT_COLS,TEXT_ROWS);
   GrPrint(dc,fw,fh*4,"FPS: %2tf",winmgr.fps);
   GrPrint(dc,fw,fh*5,"%dx%d",fh,fw);
-
-//        "$$$$FG,%d$$$$Û",i;i++;
-
-/*  GrLine(dc,cx-1,cy-1,cx-4,cy-4);
-  GrLine(dc,cx+1,cy-1,cx+4,cy-4);
-
-  dc->color=LTGREEN;
-  GrPlot(dc,cx,cy);*/
 
   dc->color=WHITE;
   for (i=0;i<DROPS_NUM;i++)
@@ -236,6 +269,7 @@ U0 RainDrops()
   Init;
 
   scg=Char2ScanCode('g');
+  sch=Char2ScanCode('h');
 
   Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
   Fs->draw_it=&DrawIt;

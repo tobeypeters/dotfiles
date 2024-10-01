@@ -62,7 +62,7 @@ CBGR48 rr_palette_custom[COLORS_NUM];
      LTCYAN]
      [LTRED] ERRORS
   [LTPURPLE] SELECTIONFG
-    [YELLOW] MENUTEXT, SCROLLBAR GRIPPERS
+    [YELLOW] MENUTEXT, SCROLLBAR GRIPPERS
      [WHITE] BGMAIN
 */
 
@@ -120,7 +120,7 @@ U0 theme2()
   rgb2_CBGR48(&gr_palette_vga[BLUE],0,0,170,-.45); 
   rgb2_CBGR48(&gr_palette_vga[GREEN],0,170,0);
   rgb2_CBGR48(&gr_palette_vga[CYAN],0,170,170);
-  rgb2_CBGR48(&gr_palette_vga[RED],170,0,0,-.35);
+  rgb2_CBGR48(&gr_palette_vga[RED],170,0,0,-.35);
   rgb2_CBGR48(&gr_palette_vga[PURPLE],170,0,170);  //function names
   rgb2_CBGR48(&gr_palette_vga[BROWN],170,85,0);
   rgb2_CBGR48(&gr_palette_vga[LTGRAY],170,170,170);
