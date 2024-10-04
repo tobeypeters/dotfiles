@@ -133,7 +133,7 @@ CArgs *a=CAlloc(sizeof(CArgs));
     a->next(a);"%6s\n",a->args[a->cidx];
     a->next(a);"%6s\n",a->args[a->cidx];
     a->next(a);"%6s\n",a->args[a->cidx];
-
+
     "$$LTRED$$\nSet a->idx to 1,\nback to \"a->args[2]\"$$FG$$\n\n";
     a->cidx=1;
     a->next(a);"%6s\n",a->args[a->cidx];
@@ -143,3 +143,4 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->init(a);
 Free(a);
 */
+

@@ -2,86 +2,90 @@
    This is just a random grouping, of graphic related type stuff.
    This all is potentially, for a game.
 */
+ADocClear;
 #define DROPS_NUM	0x2000
+#define TILES_NUM	0x04b0
 
 class Drop
 {
   I32 x,y;
 } drops[DROPS_NUM];
 
-CDC *cur_dc=DCNew(GR_WIDTH,GR_HEIGHT);
+CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
 
 //Change to #define?
-U8  *disp_str=MStrPrint("Benjamin"),
+U8 *disp_str=MStrPrint("Benjamin"),
 //   *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
             l=StrLen(disp_str);
 
 //Normally I wouldn't declare everything global like this.
 //But, declaring them 30times a second isn't needed.
-U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0,scg,sch,
+U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0,dco,scg,sch,sci,
     w=GR_WIDTH,h=GR_HEIGHT-FONT_HEIGHT,
    cx=w/2,cy=h/2,
   ctx=TEXT_COLS*FONT_WIDTH/2,
   cty=TEXT_ROWS*FONT_WIDTH/2,
  ctxo=ctx-((l/2)*FONT_WIDTH),
- ctyo=cty-((l/2)*FONT_HEIGHT),
+ ctyo=cty-((l/2)*FONT_HEIGHT),
    fw=FONT_WIDTH,
    fh=FONT_HEIGHT,
    pc=40000;
 
-U0 drawGrid(CDC *dc)
+U0 drawGrid()
 {
-  U64 i,j;
-
-  dc->color=YELLOW;
+  cdc->color=YELLOW;
 
   i=x1=y1=0;
-  for (;x1<w;x1+=16) {
-//    GrPlot(dc,x1,y1);
-    GrLine(dc,x1,y1,x1,h,2,2);
-  }
+  for (;x1<w;x1+=16) GrLine(cdc,x1,y1,x1,h,2,2);
 
   i=x1=y1=0;
-  for (;y1<h;y1+=16) {
-//    GrPlot(dc,x1,y1);
-    GrLine(dc,x1,y1,w,y1,2,2);
-  }
+  for (;y1<h;y1+=16) GrLine(cdc,x1,y1,w,y1,2,2);
 }
-U0 drawBox(CDC *dc,U64 x,U64 y,U64 w,U64 h,U64 t=1,U64 c=WHITE)
+U0 drawBox(U64 x,U64 y,U64 w,U64 h,U64 t=1,U64 c=WHITE)
 {
-  U64 ot=dc->thick,
-      oc=dc->color;
+  U64 ot=cdc->thick,
+      oc=cdc->color;
 
-  dc->thick=t;
-  dc->color=c;
+  cdc->thick=t;cdc->color=c;
 
-  GrBorder(dc,x,y,x+w,y+h);
+  GrBorder(cdc,x,y,x+w,y+h);
 
-  dc->thick=ot;
-  dc->color=oc;
+  cdc->thick=ot;cdc->color=oc;
 }
-
-U0 drawHUD(CDC *dc)
+U0 drawHUD()
 {
   //This will be drastically changed
   U64 hsx=w*.75;
 
-  dc->color=LTRED;
-  GrPrint(dc,hsx,fh,  "컴LIFE컴");
+  cdc->color=LTRED;
+  GrPrint(cdc,hsx,fh,  "컴LIFE컴");
 
-  drawBox(dc,100,100,100,20,2,LTGREEN);
+  drawBox(100,100,100,20,2,LTGREEN);
 
-  GrArrow3(dc,100,100,0,90,90,0);
+  GrArrow3(cdc,100,100,0,90,90,0);
 }
-U0 RGB2C(U64 red, U64 green, U64 blue) {
+U0 dispInfo()
+{
+  cdc->color=LTRED;
+  GrPrint(cdc,fw,fh,
+          "GR_WIDTH\nGR_HEIGHT: %dx%d",GR_WIDTH,GR_HEIGHT);
+  GrPrint(cdc,fw,fh*3,
+          "Fs->pix_width\nFs->pix_height:%dx%d",Fs->pix_width,Fs->pix_height);
+  GrPrint(cdc,fw,fh*5,
+          "TEXT_COLS\nTEXT_ROWS: %dx%d",TEXT_COLS,TEXT_ROWS);
+  GrPrint(cdc,fw,fh*7,"FPS: %2tf",winmgr.fps);
+  GrPrint(cdc,fw,fh*8,"FONT_HEIGHT\nFONT_WIDTH; %dx%d",fh,fw);
+  GrPrint(cdc,fw,fh*10,"TILES_NUM: 40x30 : %d",TILES_NUM);
+}
+/*U0 RGB2C(U64 red, U64 green, U64 blue) {
   CBGR48 col=0;
 
   col.r=ClampI64(red,0,63)<<10;
-  col.g=ClampI64(green,0,63)<<10;
+  col.g=ClampI64(green,0,63)<<10;
   col.b=ClampI64(blue,0,63)<<10;
 
   return col;
-}
+}*/
 U8 *rev_str(U8 *str)
 {//Reverse a string.  I thought, TempleOS had one.
  //I can't find it. If there's one buried in the OS,
@@ -95,12 +99,12 @@ U8 *rev_str(U8 *str)
   return st;
 }
 
-U0 pinski(CDC *dc)
+U0 pinski()
 {//sierpinski triangle
   x1=x2=w/2;
   y1=y2=0;
 
-  dc->color=LTGREEN;
+  cdc->color=LTGREEN;
 
   for(i=0;i<pc;i++)
   {
@@ -122,10 +126,10 @@ U0 pinski(CDC *dc)
         y1=(y2+h-40)/2;
     }
 
-    if (i<(pc*.6)) dc->color=GREEN;
-    else dc->color=WHITE;
+    if (i<(pc*.6)) cdc->color=GREEN;
+    else cdc->color=WHITE;
 //    dc->color=RandU16%COLORS_NUM;
-    GrPlot(dc,x1,y1);
+    GrPlot(cdc,x1,y1);
 
     x2=x1; y2=y1;
   }
@@ -133,15 +137,19 @@ U0 pinski(CDC *dc)
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  pinski(dc);
+  cdc=dc;
+
+  pinski;
 
   if (Bt(kbd.down_bitmap,scg)) {
     dc->color=PURPLE;
     GrRect(dc,cx-2,cy-2,5,5);
-    drawGrid(dc);
+
+    drawGrid;
   }
 
-  if (Bt(kbd.down_bitmap,sch)) drawHUD(dc);
+  if (Bt(kbd.down_bitmap,sch)) drawHUD;
+  if (Bt(kbd.down_bitmap,sci)) dispInfo;
 
   dc->color=WHITE; 
   GrPrint(dc,ctxo,cty,"The Legend of\n Benjamin");
@@ -153,27 +161,16 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrVPrint(dc,ctxo,cty,disp_str);
   GrVPrint(dc,ctxo+(l-1)*fw,cty,disp_rstr);*/
 
-  dc->color=LTRED;
-  GrPrint(dc,fw,fh,
-          "%dx%d",GR_WIDTH,GR_HEIGHT);
-  GrPrint(dc,fw,fh*2,
-          "%dx%d",Fs->pix_width,Fs->pix_height);
-  GrPrint(dc,fw,fh*3,
-          "%dx%d",TEXT_COLS,TEXT_ROWS);
-  GrPrint(dc,fw,fh*4,"FPS: %2tf",winmgr.fps);
-  GrPrint(dc,fw,fh*5,"%dx%d",fh,fw);
-
   dc->color=WHITE;
   for (i=0;i<DROPS_NUM;i++)
-//    if (drops[i].y>=0 && GrPeek(dc,drops[i].x,drops[i].y)==WHITE)
+    if (drops[i].y>=0 && GrPeek(dc,drops[i].x,drops[i].y)==BLACK)
       GrPlot(dc,drops[i].x,drops[i].y);
 
-  cur_dc->color=ROP_EQU;
+  cdc->color=ROP_EQU;
   dc->flags|=DCF_NO_TRANSPARENTS;
-  GrBlot(cur_dc,-task->pix_left-task->scroll_x,
+  GrBlot(cdc,-task->pix_left-task->scroll_x,
 	-task->pix_top-task->scroll_y,dc);
   dc->flags&=~DCF_NO_TRANSPARENTS;
-
 }
 
 U0 AnimateTask(I64)
@@ -201,18 +198,18 @@ U0 AnimateTask(I64)
 	else {
 	  x0=x1=drops[i].x;
 	  y0=y1=drops[i].y;
-	  if (GrPeek(cur_dc,x0,y0+1)==BLACK)
+	  if (GrPeek(cdc,x0,y0+1)==BLACK)
 	    y1++;
 	  else {
-	    c1=GrPeek(cur_dc,x0+1,y0);
-	    c2=GrPeek(cur_dc,x0-1,y0);
+	    c1=GrPeek(cdc,x0+1,y0);
+	    c2=GrPeek(cdc,x0-1,y0);
 	    if (c1==BLACK && c2!=BLACK)
 	      x1++;
 	    else if (c2==BLACK && c1!=BLACK)
 	      x1--;
 	    else if (c1==BLACK && c2==BLACK) {
-	      c1=GrPeek(cur_dc,x0+1,y0+1);
-	      c2=GrPeek(cur_dc,x0-1,y0+1);
+	      c1=GrPeek(cdc,x0+1,y0+1);
+	      c2=GrPeek(cdc,x0-1,y0+1);
 	      if (c1==BLACK && c2!=BLACK)
 		x1++;
 	      else if (c2==BLACK && c1!=BLACK)
@@ -222,15 +219,15 @@ U0 AnimateTask(I64)
 	      else
 		x1--;
 	    }
-	    if (GrPeek(cur_dc,x1,y1+1)==BLACK)
+	    if (GrPeek(cdc,x1,y1+1)==BLACK)
 	      y1++;
 	  }
-	  if (GrPeek(cur_dc,x0,y0)==WHITE) {
-	    cur_dc->color=BLACK;
-	    GrPlot(cur_dc,x0,y0);
+	  if (GrPeek(cdc,x0,y0)==WHITE) {
+	    cdc->color=BLACK;
+	    GrPlot(cdc,x0,y0);
 	  }
-	  cur_dc->color=WHITE;
-	  GrPlot(cur_dc,x1,y1);
+	  cdc->color=WHITE;
+	  GrPlot(cdc,x1,y1);
 	  drops[i].x=x1;
 	  drops[i].y=y1;
 	}
@@ -270,6 +267,7 @@ U0 RainDrops()
 
   scg=Char2ScanCode('g');
   sch=Char2ScanCode('h');
+  sci=Char2ScanCode('i');
 
   Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
   Fs->draw_it=&DrawIt;
@@ -283,9 +281,12 @@ U0 RainDrops()
     while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   } catch
     PutExcept;
+
+  cdc=NULL;
+
   SettingsPop;
   MenuPop;
-  DCDel(cur_dc);
+  DCDel(cdc);
 }
 
 RainDrops;

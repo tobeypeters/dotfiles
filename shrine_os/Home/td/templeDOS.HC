@@ -89,7 +89,7 @@ U8 execute_cmd(U8 *cmd) {
         else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
-
+
     idx=999; 
     goto switchit;
   }
@@ -485,7 +485,7 @@ answer: //Possibly rename
 error:
   if (SHOW_ANSWERS) {
     t1=tS-t0;
-    "\n%8.6fs ans=0x%08X=%d\n",t1,t1,Fs->answer;
+    "\n%8.6fs ans=0x%08X=%d\n",t1,t1,Fs->answer;
   }
 
   Silent(OFF);

@@ -38,7 +38,7 @@
 
   Outside system files modded:
 
-   * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
+   * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
 
 public U0 HijackFunc(U8 *orig, U8 *new)
