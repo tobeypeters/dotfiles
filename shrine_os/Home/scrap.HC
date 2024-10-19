@@ -741,12 +741,21 @@ v.u8[3]=1;
 "reversed string: %s\n\n",rev_str("reverse");
 */
 
-U8 *opt_state="ON\0OFF\0";
+/*U8 *opt_state="ON\0OFF\0";
 
 "%d\n",LstMatch("a",opt_state,LMF_IGNORE_CASE);
 "%d\n",LstMatch("on",opt_state,LMF_IGNORE_CASE);
 "%d\n",LstMatch("off",opt_state,LMF_IGNORE_CASE);
-
+*/
+
+//Works perfect
+I64 options[4]={1,1,1,1};
+
+U0 i64array() {
+  //Gives a missing expression error
+  I64 options[4]={1,1,1,1};;
+}
+
 //KeyAndCont;
 
 
