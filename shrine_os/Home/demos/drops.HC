@@ -81,7 +81,7 @@ U0 dispInfo()
   CBGR48 col=0;
 
   col.r=ClampI64(red,0,63)<<10;
-  col.g=ClampI64(green,0,63)<<10;
+  col.g=ClampI64(green,0,63)<<10;
   col.b=ClampI64(blue,0,63)<<10;
 
   return col;
@@ -158,7 +158,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 /*  GrPrint(dc,ctxo,cty,disp_str);
   GrPrint(dc,ctxo,cty+(l*fh)-fh,disp_rstr);
-  GrVPrint(dc,ctxo,cty,disp_str);
+  GrVPrint(dc,ctxo,cty,disp_str);
   GrVPrint(dc,ctxo+(l-1)*fw,cty,disp_rstr);*/
 
   dc->color=WHITE;
