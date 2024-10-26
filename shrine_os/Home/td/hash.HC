@@ -27,6 +27,12 @@
 #define HFLAGS 0
 #define HARGS  1
 
+#define TOK_IDX  0
+#define TOK_CMD  1
+#define TOK_MIN  2
+#define TOK_MAX  3
+#define TOK_FMAX 4
+
 /*HASH idx, command, token min, token max,
   flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
@@ -38,12 +44,12 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 43,   "cdd", 1, 2, 0},
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
-  { 61,   "pal", 1, 1, 1},
+  { 61,   "pal", 1, 1, 1},
   { 63,   "mem", 1, 1, 0},
   { 66,   "cls", 1, 1, 0},
   { 67,   "ans", 1, 2, 0},
   { 68,   "rnd", 1, 1, 0},
-  { 72,   "cpu", 1, 2, 1},
+  { 72,   "cpu", 1, 1, 1},
   { 75,   "pwd", 1, 1, 0},
   { 81,   "vol", 1, 1, 0},
   { 84,   "now", 1, 1, 0},
@@ -53,7 +59,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {158,  "date", 1, 1, 0},
   {169,  "help", 1, 1, 0},
   {170,  "tail", 2, 2, 0},
-  {174,  "grep", 2, 3, 1},
+  {174,  "grep", 2, 2, 1},
   {176,  "tree", 1, 2, 0},
   {177,  "time", 1, 1, 0},
   {179,  "more", 2, 2, 0},
@@ -102,14 +108,14 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 
 //  "%d\n",idx;
   for(;idx < HASH_TABLE_SIZE;idx++)
-    if (!StrCmp(in->data[idx][1],cmd)) return idx;
+    if (!StrCmp(in->data[idx][TOK_CMD],cmd)) return idx;
 
   return -1;
 }
 Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
-    return in->data[idx][2]<=val<=in->data[idx][3];
+    return in->data[idx][TOK_MIN]<=val<=in->data[idx][TOK_MAX];
 
   if (type==HFLAGS)
     return 0<=val<=in->data[idx][4];

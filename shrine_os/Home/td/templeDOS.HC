@@ -98,7 +98,7 @@ U8 execute_cmd(U8 *cmd) {
 
   fc=flag_cnt(a->flags);
 
-  eptr=c->data[idx][1];
+  eptr=c->data[idx][TOK_CMD];
 
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
     e_print(ERR_ARGC); goto answer; }
@@ -112,8 +112,7 @@ U8 execute_cmd(U8 *cmd) {
   }
 
   //CMD: No args or flags
-  if (I64_IN(idx,7,38,61,63,66,68,72,75,81,84,158,
-      169,177,184,186,195,203,212,228)) goto switchit;
+  if (c->data[idx][TOK_MAX]==1) goto switchit;
 
   U8 *bufa,*bufb;
 
@@ -123,49 +122,45 @@ U8 execute_cmd(U8 *cmd) {
   U64 bav,bbv; bav=bbv=0;
 
   //Pick file support
-  if (a->count>1) {
-    if (v.u8[0]=!StrCmp(bufa,"??")||
-        v.u8[1]=!StrCmp(bufb,"??")) {
-      U64 vt=v.u8[0]*3;
-      switch (idx) {
-        case  43: //cdd
-        case 199: //cd
-          bufa=StrNew(PopUpPickDir);
-          v.u8[vt+DIR]=1;
+  v.u8[0]=!StrCmp(bufa,"??");
+  v.u8[1]=!StrCmp(bufb,"??");
+  if (v.u8[0]||v.u8[1]) {
+    U64 vt,ui=0;
+    U8 *p;
 
-          break;
-        case 211: //cp
-        case 227: //mv
-          if (fc)
-          if (f_err(FLG_D)) {
-            if (v.u8[0]) bufa=StrNew(PopUpPickDir);
-            else bufb=StrNew(PopUpPickDir);
+  pickit:
+    vt=ui*3;
 
-            v.$WW+H,1$u8[vt+DIR]=1;
+    switch (idx) {
+      case  30: //rmdir
+      case  43: //cdd
+      case 199: //cd
+      case 214: //rd
+        p=StrNew(PopUpPickDir);
+        v.$WW+H,1$u8[vt+DIR]=1;
 
-            break;
-          }
+        break;
+      default:
+        p=StrNew(PopUpPickFile);
 
-          if (v.u8[0]) bufa=StrNew(PopUpPickFile);
-          else bufb=StrNew(PopUpPickFile);
-
-          v.$WW+H,1$u8[vt+FILE]=1;
-
-          break;
-        default:
-          bufa=StrNew(PopUpPickFile);
-          v.$WW+H,1$u8[vt+FILE]=1;
-      }
-
-      bav=TRUE; goto switchit;
+        v.$WW+H,1$u8[vt+FILE]=1;
     }
+
+    if (ui==0) bufa=StrNew(p);
+    else bufb=StrNew(p);
+
+    if (a->count>2)
+    if (ui==0&&v.u8[1]) {
+     ui=1; goto pickit;
+    }
+
+    bav=TRUE; goto switchit;
   }
 
   //Wild card support,grep
   if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
     bav=v.u8[0]; bbv=v.u8[1];
-//    bav=(v.u8[0]|(a->count==1)); //Was for NO ARG & NO FLAGS COMMANDS
   }
 
   //CMD: File(s) need to exist
@@ -417,6 +412,8 @@ U8 execute_cmd(U8 *cmd) {
 
       break;
     case 211: //cp
+      "cp here\n";
+
       if (fc) {
         if (f_err(FLG_D)) goto answer;
         if (!type_got(v,DIR)) goto answer;
@@ -485,7 +482,7 @@ answer: //Possibly rename
 error:
   if (SHOW_ANSWERS) {
     t1=tS-t0;
-    "\n%8.6fs ans=0x%08X=%d\n",t1,t1,Fs->answer;
+    "\n%8.6fs ans=0x%08X=%d\n",t1,t1,Fs->answer;
   }
 
   Silent(OFF);
@@ -508,7 +505,7 @@ U8 templeDOS() {
   set_windowinfo("templedos_task","TempleDOS");
 
   DocClear;DocMax;Cd;
-
+
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }

@@ -749,11 +749,18 @@ v.u8[3]=1;
 */
 
 //Works perfect
-I64 options[4]={1,1,1,1};
+/*I64 options[4]={1,1,1,1};
 
 U0 i64array() {
   //Gives a missing expression error
-  I64 options[4]={1,1,1,1};;
+  I64 options[4]={1,1,1,1};;
+}
+*/
+
+U64 x,y;
+
+if (x=1||y=1) {
+  "x: %d y: %d\n",x,y;
 }
 
 //KeyAndCont;
