@@ -74,7 +74,7 @@ Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
 
     p=0;
     while (*in->args[p])
-    {
+    {
       if (in->args[p][0]=='-')
       {
         in->flags=StrNew(in->args[p]);
@@ -143,4 +143,3 @@ CArgs *a=CAlloc(sizeof(CArgs));
   a->init(a);
 Free(a);
 */
-

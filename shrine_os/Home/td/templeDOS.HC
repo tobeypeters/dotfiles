@@ -58,15 +58,15 @@ Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
 U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
-U8 execute_cmd(U8 *cmd) {
-  U8 *bufe=NULL; //scratch buffer
-
-  if (SHOW_ANSWERS) F64 t0=tS,t1;
-
+U64 execute_cmd(U8 *cmd) {
   //User is trying to normally run a OS command?
   if (cmd[StrLen(cmd)-1]==';') {
     ExePutS(cmd); return 0;
   }
+
+  if (SHOW_ANSWERS) F64 t0=tS,t1;
+
+  Fs->answer=0;
 
   a->init(a);
   if (!a->parse(a,cmd)) goto answer; //Parsed no args
@@ -86,7 +86,7 @@ U8 execute_cmd(U8 *cmd) {
           Drv(a->args[0][0]);
           goto error;
         }
-        else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
+        else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
 
@@ -157,11 +157,13 @@ U8 execute_cmd(U8 *cmd) {
     bav=TRUE; goto switchit;
   }
 
-  //Wild card support,grep
+  //Wild card support-ls,grep
   if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
     bav=v.u8[0]; bbv=v.u8[1];
   }
+
+  U8 *bufe=NULL; //scratch buffer
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
@@ -505,7 +507,7 @@ U8 templeDOS() {
   set_windowinfo("templedos_task","TempleDOS");
 
   DocClear;DocMax;Cd;
-
+
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }
