@@ -757,12 +757,27 @@ U0 i64array() {
 }
 */
 
-U64 x,y;
+/*U64 x,y;
 
 if (x=1||y=1) {
-  "x: %d y: %d\n",x,y;
+  "x: %d y: %d\n",x,y;
 }
+*/
 
+/*U64 i=10;
+switch (i) {
+case 0...4:
+  '.';
+  break;
+case 5...9:
+  '*';
+  break;
+
+default:
+  '+';
+}
+*/
+
 //KeyAndCont;
 
 

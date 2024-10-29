@@ -148,7 +148,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     drawGrid;
   }
 
-  if (Bt(kbd.down_bitmap,sch)) drawHUD;
+  if (Bt(kbd.down_bitmap,sch)) drawHUD;
   if (Bt(kbd.down_bitmap,sci)) dispInfo;
 
   dc->color=WHITE; 
@@ -158,7 +158,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 /*  GrPrint(dc,ctxo,cty,disp_str);
   GrPrint(dc,ctxo,cty+(l*fh)-fh,disp_rstr);
-  GrVPrint(dc,ctxo,cty,disp_str);
+  GrVPrint(dc,ctxo,cty,disp_str);
   GrVPrint(dc,ctxo+(l-1)*fw,cty,disp_rstr);*/
 
   dc->color=WHITE;
