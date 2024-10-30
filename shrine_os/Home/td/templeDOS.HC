@@ -86,7 +86,7 @@ U64 execute_cmd(U8 *cmd) {
           Drv(a->args[0][0]);
           goto error;
         }
-        else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
+        else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
 
@@ -539,7 +539,7 @@ U8 templeDOS() {
   zFree(input);
 
   Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
-
+
   return res;
 }
 

@@ -1,33 +1,55 @@
+/*
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+/*warp.HC
+  Description:
+      Generates a "starfield" and applies a "warp" effect.
+*/
+
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-#define STAR_COUNT 500 // Number of stars
+#define STAR_COUNT 500 //Number of stars
+#define STREAK_LEN 4
 
 class Star
 {
-  F64  x,y,     // Current position of the star
-     angle,    // Angle of movement from the center
-     speed,    // Speed of the star
-  distance; // Distance from the center
+  F64  x,y, //Current position of the star
+     angle, //Angle of movement from the center
+     speed, //Speed of the star
+  distance; //Distance from the center
 
   F64 color,
       px,py;
 } stars[STAR_COUNT];
 
-U8 COLORS[3]={YELLOW,RED,WHITE};
+Star *p=NULL;
+
+U8 COLORS[4]={YELLOW,RED,WHITE,LTCYAN};
 
 U0 InitStar(U64 i)
 {
-  stars[i].x=WIDTH/2;
-  stars[i].y=HEIGHT/2;
-  stars[i].angle=(RandU16%360)*(ã/180.0); //Random angle in radians
-//  stars[i].speed=(RandU16%50)/50.0+0.5;   //Random speed
-  stars[i].speed=RandU16%50;   //Random speed
-  stars[i].distance=0;                    //Start at the center
-  stars[i].color=RandU16%3;
-
-  stars[i].px=stars[i].x;
-  stars[i].py=stars[i].y;
+  p=&stars[i];
+  p->px=p->x=WIDTH/2;
+  p->py=p->y=HEIGHT/2;
+  p->angle=(RandU16%360)*(ã/180.0); //Random angle in radians
+//  p->speed=(RandU16%50)/50.0+0.5;   //Random speed
+  p->speed=Max(RandU16%50,1);       //Random speed
+  p->distance=0;                    //Start at the center
+  p->color=RandU16%4;
 }
 U0 Init()
 {
@@ -41,35 +63,44 @@ U0 updateStars()
 
   for (i=0;i<STAR_COUNT;i++)
   {
-    // Increase the distance, which simulates moving outward
-    stars[i].distance+=stars[i].speed;
+    p=&stars[i];
 
-    stars[i].px=stars[i].x;
-    stars[i].py=stars[i].y;
+    // Increase the distance, which simulates moving outward
+    p->distance+=p->speed;
+
+    p->px=p->x; p->py=p->y;
 
     // Update x and y based on angle and distance from the center
-    stars[i].x=WIDTH/2+Cos(stars[i].angle)*stars[i].distance;
-    stars[i].y=HEIGHT/2+Sin(stars[i].angle)*stars[i].distance;
+    p->x=WIDTH/2+Cos(p->angle)*p->distance;
+    p->y=HEIGHT/2+Sin(p->angle)*p->distance;
+
+    //Chaotic version
+    //p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
+    //p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
 
     // Reset star if it goes out of bounds
-    if (stars[i].px<0||stars[i].px>WIDTH||
-        stars[i].py<0||stars[i].py>HEIGHT) {
-      InitStar(i);
-    }
+    if (p->x<0||p->x>WIDTH-1||
+        p->y<0||p->y>HEIGHT-1) InitStar(i);
   }
 }
 U0 displayStarfield(CDC *dc)
 {
-  U64 i,j;
+  U64 i,j,ld,rd,ud,dd,t;
 
-U64 x,y;
   for (i=0;i<STAR_COUNT;i++) {
-    x=stars[i].x;
-    y=stars[i].y;
-    dc->color=COLORS[stars[i].color];
-    GrPlot(dc,stars[i].x,stars[i].y);
-    GrLine(dc,stars[i].x,stars[i].y,
-              stars[i].px,stars[i].py);
+    p=&stars[i];
+
+    dc->color=COLORS[p->color];
+    GrPlot(dc,p->x,p->y);
+
+    ld=p->px-p->x; rd=p->x-p->px;
+    ud=p->py-p->y; dd=p->y-p->py;
+
+    t=STREAK_LEN+RandU16%4;
+
+    if (ld<t||rd<t)
+      if (ud<t||dd<t)
+        GrLine(dc,p->x,p->y,p->px,p->py);    
   }
 }
 U0 DrawIt(CTask *task,CDC *dc)
@@ -108,15 +139,12 @@ U0 Warp()
 	  Init;
 	  break;
       }
-    while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
+    while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   } catch
     PutExcept;
 
-//  cdc=NULL;
-
   SettingsPop;
   MenuPop;
-//  DCDel(cdc);
 }
 
 Warp;

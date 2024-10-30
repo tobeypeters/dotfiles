@@ -18,7 +18,7 @@
   Description:
       Build a command array, from a hash table.
 */
-
+
 #define HASH_TABLE_SIZE 256
 
 #define CMD_CNT  45
@@ -32,7 +32,7 @@
 #define TOK_MIN  2
 #define TOK_MAX  3
 #define TOK_FMAX 4
-
+
 /*HASH idx, command, token min, token max,
   flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
