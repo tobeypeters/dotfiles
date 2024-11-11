@@ -87,8 +87,16 @@ U0 displayStarfield(CDC *dc)
 {
   U64 i,j,ld,rd,ud,dd,t;
 
+  U64 test=20;
+
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
+
+//Debug start
+    dc->color=YELLOW;
+//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test); //WORKS
+    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x); //DISPLAYS GARBAGE
+//Debug end
 
     dc->color=COLORS[p->color];
     GrPlot(dc,p->x,p->y);
