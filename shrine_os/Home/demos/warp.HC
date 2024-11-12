@@ -36,7 +36,7 @@ class Star
       px,py;
 } stars[STAR_COUNT];
 
-Star *p=NULL;
+Star *p=NULL;
 
 U8 COLORS[4]={YELLOW,RED,WHITE,LTCYAN};
 
@@ -88,15 +88,10 @@ U0 displayStarfield(CDC *dc)
   U64 i,j,ld,rd,ud,dd,t;
 
   U64 test=20;
+  U8 *buf=NULL;
 
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
-
-//Debug start
-    dc->color=YELLOW;
-//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test); //WORKS
-    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",ToI64(p->x)); //DISPLAYS GARBAGE
-//Debug end
 
     dc->color=COLORS[p->color];
     GrPlot(dc,p->x,p->y);
@@ -108,7 +103,7 @@ U0 displayStarfield(CDC *dc)
 
     if (ld<t||rd<t)
       if (ud<t||dd<t)
-        GrLine(dc,p->x,p->y,p->px,p->py);    
+        GrLine(dc,p->x,p->y,p->px,p->py);
   }
 }
 U0 DrawIt(CTask *task,CDC *dc)
