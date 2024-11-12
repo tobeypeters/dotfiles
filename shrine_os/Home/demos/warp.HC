@@ -41,7 +41,7 @@ class Star
 
 Star *p=NULL;
 
-U8 COLORS[4]={YELLOW,RED,WHITE,LTCYAN};
+U8 COLORS[4]={LTGREEN,WHITE,YELLOW,LTCYAN};
 
 F64 at=30; //Animate task sleep amount
 
@@ -101,7 +101,7 @@ U0 displayStarfield(CDC *dc)
     p=&stars[i];
 
 //    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test);
-    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x);
+//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x);
 
     if (!(MW-4<=p->x<MW+4)||
         !(MH-4<=p->y<MH+4))
@@ -143,6 +143,8 @@ U0 Warp()
 	"}"
 	"Play {"
 	"  Restart(,'\n');"
+	"  Slower(,,SC_CURSOR_RIGHT);"
+	"  Faster(,,SC_CURSOR_LEFT);"
 	"}"
 	);
   SettingsPush;
