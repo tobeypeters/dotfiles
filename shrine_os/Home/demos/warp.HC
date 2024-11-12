@@ -87,7 +87,7 @@ U0 displayStarfield(CDC *dc)
 {
   U64 i,j,ld,rd,ud,dd,t;
 
-  U64 test=20;
+  U64 test=20;
 
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
@@ -95,7 +95,7 @@ U0 displayStarfield(CDC *dc)
 //Debug start
     dc->color=YELLOW;
 //    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test); //WORKS
-    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x); //DISPLAYS GARBAGE
+    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",ToI64(p->x)); //DISPLAYS GARBAGE
 //Debug end
 
     dc->color=COLORS[p->color];
@@ -114,7 +114,15 @@ U0 displayStarfield(CDC *dc)
 U0 DrawIt(CTask *task,CDC *dc)
 {
   displayStarfield(dc);
-  updateStars;
+//  updateStars;
+}
+U0 AnimateTask(I64)
+{
+  while (TRUE)
+  {
+    updateStars;
+    Sleep(30);
+  }
 }
 
 U0 Warp()
@@ -138,7 +146,7 @@ U0 Warp()
 
   Init;
 
-//  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
+  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
   Fs->draw_it=&DrawIt;
   try {
     do
