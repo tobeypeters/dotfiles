@@ -94,11 +94,14 @@ U0 displayStarfield(CDC *dc)
 {
   U64 i,j,ld,rd,ud,dd,t;
 
-  U64 test=20;
+//  U64 test=20;
   U8 *buf=NULL;
 
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
+
+//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test);
+    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x);
 
     if (!(MW-4<=p->x<MW+4)||
         !(MH-4<=p->y<MH+4))
@@ -128,7 +131,7 @@ U0 AnimateTask(I64)
     updateStars;
     Sleep(at);
   }
-}
+}
 
 U0 Warp()
 {
