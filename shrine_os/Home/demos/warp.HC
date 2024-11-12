@@ -144,7 +144,7 @@ U0 Warp()
 	"Play {"
 	"  Restart(,'\n');"
 	"  Slower(,,SC_CURSOR_RIGHT);"
-	"  Faster(,,SC_CURSOR_LEFT);"
+	"  Faster(,,SC_CURSOR_LEFT);"
 	"}"
 	);
   SettingsPush;
@@ -161,7 +161,7 @@ U0 Warp()
   try {
     do
       switch (ch=GetKey(&sc)) {
-        case '\n': //'\n'
+        case '\n':
 	  Init;
           break;
         default:
@@ -173,7 +173,7 @@ U0 Warp()
               at+=10;
               break;
           }
-          at=Clamp(at,10,100);
+          at=Clamp(at,1,100);
       }
     while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   } catch
