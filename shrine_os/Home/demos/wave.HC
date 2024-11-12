@@ -178,7 +178,7 @@ U0 WaveCollapse()
   } catch
     PutExcept;
 
-//  cdc=NULL;
+//  cdc=NULL;
 
   SettingsPop;
   MenuPop;

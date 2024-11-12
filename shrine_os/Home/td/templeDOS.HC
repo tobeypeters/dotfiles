@@ -167,17 +167,23 @@ U64 execute_cmd(U8 *cmd) {
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
-  //153: diff
-  if (I64_IN(idx,56,86,146,153,170,179,
-      182,187,194,208)) {
+  if (I64_IN(idx,56,86,146,153,170,179,
+      182,187,194,208,30,214,224)) {
     if (!bav) { bufe=bufa; goto nferror; }
 
-    if (idx==153)
-      if (!bbv) { bufe=bufb; goto nferror; }
-
-    if (!type_got(v,FILE)) goto answer;
-    if (idx==153)
-      if (!type_got(v,FILE,1)) goto answer;
+    switch(idx)
+    {
+      case 30: case 214:
+      case 224: //rm,rd,rmdir
+        goto switchit;
+        break;
+      case 153: //diff
+        if (!bbv) { bufe=bufb; goto nferror; }
+        if (!type_got(v,FILE,1)) goto answer;
+        break;
+      default:
+        if (!type_got(v,FILE)) goto answer;
+    }
   }
 
   U64 be=FALSE;
@@ -414,7 +420,7 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case 211: //cp
-      if (fc) {
+      if (fc) {
         if (f_err(FLG_D)) goto answer;
         if (!type_got(v,DIR)) goto answer;
 

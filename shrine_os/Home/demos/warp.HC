@@ -78,12 +78,12 @@ U0 updateStars()
     p->px=p->x; p->py=p->y;
 
     // Update x and y based on angle and distance from the center
-    p->x=WIDTH/2+Cos(p->angle)*p->distance;
-    p->y=HEIGHT/2+Sin(p->angle)*p->distance;
+//    p->x=WIDTH/2+Cos(p->angle)*p->distance;
+//    p->y=HEIGHT/2+Sin(p->angle)*p->distance;
 
     //Chaotic version
-    //p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
-    //p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
+    p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
+    p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
 
     // Reset star if it goes out of bounds
     if (p->x<0||p->x>WIDTH-1||
@@ -132,9 +132,8 @@ U0 AnimateTask(I64)
     Sleep(at);
   }
 }
-
 U0 Warp()
-{
+{
   I64 ch,sc;
   MenuPush(
 	"File {"
@@ -165,6 +164,8 @@ U0 Warp()
 	  Init;
           break;
         default:
+//          Adam("\"%d\n\";",sc.u8[0]);
+
           switch (sc.u8[0]) {
             case 75:
               at-=10;
@@ -173,7 +174,7 @@ U0 Warp()
               at+=10;
               break;
           }
-          at=Clamp(at,1,100);
+          at=Clamp(at,1,100);
       }
     while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   } catch
