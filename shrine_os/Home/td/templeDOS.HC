@@ -254,7 +254,7 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case  43: //cdd
-    case 199: //cd;
+    case 199: //cd
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
         if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
@@ -414,9 +414,7 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case 211: //cp
-      "cp here\n";
-
-      if (fc) {
+      if (fc) {
         if (f_err(FLG_D)) goto answer;
         if (!type_got(v,DIR)) goto answer;
 
@@ -539,7 +537,7 @@ U8 templeDOS() {
   zFree(input);
 
   Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
-
+
   return res;
 }
 

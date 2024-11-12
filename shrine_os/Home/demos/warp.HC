@@ -22,6 +22,9 @@
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
+#define MW WIDTH/2
+#define MH HEIGHT/2
+
 #define STAR_COUNT 500 //Number of stars
 #define STREAK_LEN 4
 
@@ -36,15 +39,19 @@ class Star
       px,py;
 } stars[STAR_COUNT];
 
-Star *p=NULL;
+Star *p=NULL;
 
 U8 COLORS[4]={YELLOW,RED,WHITE,LTCYAN};
+
+F64 at=30; //Animate task sleep amount
 
 U0 InitStar(U64 i)
 {
   p=&stars[i];
-  p->px=p->x=WIDTH/2;
-  p->py=p->y=HEIGHT/2;
+//  p->px=p->x=WIDTH/2;
+//  p->py=p->y=HEIGHT/2;
+  p->px=p->x=MW;
+  p->py=p->y=MH;
   p->angle=(RandU16%360)*(ã/180.0); //Random angle in radians
 //  p->speed=(RandU16%50)/50.0+0.5;   //Random speed
   p->speed=Max(RandU16%50,1);       //Random speed
@@ -53,7 +60,7 @@ U0 InitStar(U64 i)
 }
 U0 Init()
 {
-  U64 i;
+  U64 i; at=30;
 
   for (i=0;i<STAR_COUNT;i++) InitStar(i);
 }
@@ -93,32 +100,35 @@ U0 displayStarfield(CDC *dc)
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
 
-    dc->color=COLORS[p->color];
-    GrPlot(dc,p->x,p->y);
+    if (!(MW-4<=p->x<MW+4)||
+        !(MH-4<=p->y<MH+4))
+    {
+      dc->color=COLORS[p->color];
+      GrPlot(dc,p->x,p->y);
 
-    ld=p->px-p->x; rd=p->x-p->px;
-    ud=p->py-p->y; dd=p->y-p->py;
+      ld=p->px-p->x; rd=p->x-p->px;
+      ud=p->py-p->y; dd=p->y-p->py;
 
-    t=STREAK_LEN+RandU16%4;
+      t=STREAK_LEN+RandU16%4;
 
-    if (ld<t||rd<t)
-      if (ud<t||dd<t)
-        GrLine(dc,p->x,p->y,p->px,p->py);
+      if (ld<t||rd<t)
+        if (ud<t||dd<t)
+          GrLine(dc,p->x,p->y,p->px,p->py);
+    }
   }
 }
 U0 DrawIt(CTask *task,CDC *dc)
 {
   displayStarfield(dc);
-//  updateStars;
 }
 U0 AnimateTask(I64)
 {
   while (TRUE)
   {
     updateStars;
-    Sleep(30);
+    Sleep(at);
   }
-}
+}
 
 U0 Warp()
 {
@@ -146,9 +156,19 @@ U0 Warp()
   try {
     do
       switch (ch=GetKey(&sc)) {
-	case '\n':
+        case '\n': //'\n'
 	  Init;
-	  break;
+          break;
+        default:
+          switch (sc.u8[0]) {
+            case 75:
+              at-=10;
+              break;
+            case 77:
+              at+=10;
+              break;
+          }
+          at=Clamp(at,10,100);
       }
     while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   } catch

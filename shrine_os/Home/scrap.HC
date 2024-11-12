@@ -777,7 +777,11 @@ default:
   '+';
 }
 */
-
+
+U64 my=308;
+
+if (310<my<330) "hello\n";
+
 //KeyAndCont;
 
 
