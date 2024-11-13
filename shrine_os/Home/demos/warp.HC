@@ -153,10 +153,10 @@ MenuPush(
 
 SettingsPush;
 AutoComplete;
-WinBorder; WinMax;
+WinBorder; WinMax;
 DocCursor; DocClear;
 
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
 Fs->draw_it=&DrawIt;
 
 ADocClear;
