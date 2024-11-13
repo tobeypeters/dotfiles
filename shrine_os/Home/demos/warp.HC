@@ -33,10 +33,9 @@ class Star
   F64  x,y, //Current position of the star
      angle, //Angle of movement from the center
      speed, //Speed of the star
-  distance; //Distance from the center
-
-  F64 color,
-      px,py;
+  distance, //Distance from the center
+     color,
+     px,py;
 } stars[STAR_COUNT];
 
 Star *p=NULL;
@@ -45,11 +44,11 @@ U8 COLORS[4]={LTGREEN,WHITE,YELLOW,LTCYAN};
 
 F64 at=30; //Animate task sleep amount
 
+Bool cf=FALSE; //Chaotic flag
+
 U0 InitStar(U64 i)
 {
   p=&stars[i];
-//  p->px=p->x=WIDTH/2;
-//  p->py=p->y=HEIGHT/2;
   p->px=p->x=MW;
   p->py=p->y=MH;
   p->angle=(RandU16%360)*(ã/180.0); //Random angle in radians
@@ -77,13 +76,19 @@ U0 updateStars()
 
     p->px=p->x; p->py=p->y;
 
-    // Update x and y based on angle and distance from the center
-//    p->x=WIDTH/2+Cos(p->angle)*p->distance;
-//    p->y=HEIGHT/2+Sin(p->angle)*p->distance;
 
-    //Chaotic version
-    p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
-    p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
+    if (cf)
+    {
+      //Chaotic version
+      p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
+      p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
+    }
+    else
+    {
+      // Update x and y based on angle and distance from the center
+      p->x=WIDTH/2+Cos(p->angle)*p->distance;
+      p->y=HEIGHT/2+Sin(p->angle)*p->distance;
+    }
 
     // Reset star if it goes out of bounds
     if (p->x<0||p->x>WIDTH-1||
@@ -132,56 +137,57 @@ U0 AnimateTask(I64)
     Sleep(at);
   }
 }
-U0 Warp()
-{
-  I64 ch,sc;
-  MenuPush(
-	"File {"
-	"  Abort(,CH_SHIFT_ESC);"
-	"  Exit(,CH_ESC);"
-	"}"
-	"Play {"
-	"  Restart(,'\n');"
-	"  Slower(,,SC_CURSOR_RIGHT);"
-	"  Faster(,,SC_CURSOR_LEFT);"
-	"}"
-	);
-  SettingsPush;
-  AutoComplete;
-  WinBorder;
-  WinMax;
-  DocCursor;
-  DocClear;
 
-  Init;
+I64 ch,sc;
+MenuPush(
+  "File {"
+  "  Abort(,CH_SHIFT_ESC);"
+  "  Exit(,CH_ESC);"
+  "}"
+  "Play {"
+  "  Restart(,'\n');"
+  "  Slower(,,SC_CURSOR_RIGHT);"
+  "  Faster(,,SC_CURSOR_LEFT);"
+  "}"
+);
 
-  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
-  Fs->draw_it=&DrawIt;
-  try {
-    do
-      switch (ch=GetKey(&sc)) {
-        case '\n':
-	  Init;
+SettingsPush;
+AutoComplete;
+WinBorder; WinMax;
+DocCursor; DocClear;
+
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
+Fs->draw_it=&DrawIt;
+
+ADocClear;
+
+Init;
+
+try {
+  do
+    switch (ch=GetKey(&sc)) {
+      case '\n':
+        Init;
+        break;
+    default:
+      //Adam("\"%d\n\";",sc.u8[0]);
+
+      switch (sc.u8[0]) {
+        case 46:
+          cf=!cf;
           break;
-        default:
-//          Adam("\"%d\n\";",sc.u8[0]);
-
-          switch (sc.u8[0]) {
-            case 75:
-              at-=10;
-              break;
-            case 77:
-              at+=10;
-              break;
-          }
-          at=Clamp(at,1,100);
+        case 75:
+          at-=10;
+          break;
+        case 77:
+          at+=10;
       }
-    while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
-  } catch
-    PutExcept;
-
-  SettingsPop;
-  MenuPop;
+      at=Clamp(at,1.0,100.0);
+    }
+  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
 }
+catch
+  PutExcept;
 
-Warp;
+SettingsPop;
+MenuPop;
