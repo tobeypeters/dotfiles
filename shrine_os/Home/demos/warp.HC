@@ -156,9 +156,9 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-Init;
+Init;
 
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
 Fs->draw_it=&DrawIt;
 
 try {

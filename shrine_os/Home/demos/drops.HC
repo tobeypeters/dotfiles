@@ -2,7 +2,6 @@
    This is just a random grouping, of graphic related type stuff.
    This all is potentially, for a game.
 */
-ADocClear;
 #define DROPS_NUM	0x2000
 #define TILES_NUM	0x04b0
 
@@ -148,7 +147,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     drawGrid;
   }
 
-  if (Bt(kbd.down_bitmap,sch)) drawHUD;
+  if (Bt(kbd.down_bitmap,sch)) drawHUD;
   if (Bt(kbd.down_bitmap,sci)) dispInfo;
 
   dc->color=WHITE; 
@@ -233,7 +232,7 @@ U0 AnimateTask(I64)
 	}
       }
     }
-    Sleep(10);
+    Sleep(20);
   }
 }
 
@@ -245,48 +244,46 @@ U0 Init()
     drops[i].y=-I32_MAX;
 }
 
-U0 RainDrops()
-{
-  I64 ch,sc;
-  MenuPush(
-	"File {"
-	"  Abort(,CH_SHIFT_ESC);"
-	"  Exit(,CH_ESC);"
-	"}"
-	"Play {"
-	"  Restart(,'\n');"
-	"}"
-	);
-  SettingsPush;
-  AutoComplete;
-  WinBorder;
-  WinMax;
-  DocCursor;
-  DocClear;
-  Init;
+I64 ch,sc;
+MenuPush(
+  "File {"
+  "  Abort(,CH_SHIFT_ESC);"
+  "  Exit(,CH_ESC);"
+  "}"
+  "Play {"
+  "  Restart(,'\n');"
+  "}"
+);
 
-  scg=Char2ScanCode('g');
-  sch=Char2ScanCode('h');
-  sci=Char2ScanCode('i');
+SettingsPush;
+AutoComplete;
+WinBorder; WinMax;
+DocCursor; DocClear;
 
-  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
-  Fs->draw_it=&DrawIt;
-  try {
-    do
-      switch (ch=GetKey(&sc)) {
-	case '\n':
-	  Init;
-	  break;
-      }
-    while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
-  } catch
-    PutExcept;
+Init;
 
-  cdc=NULL;
+scg=Char2ScanCode('g');
+sch=Char2ScanCode('h');
+sci=Char2ScanCode('i');
 
-  SettingsPop;
-  MenuPop;
-  DCDel(cdc);
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
+Fs->draw_it=&DrawIt;
+
+try {
+  do
+    switch (ch=GetKey(&sc)) {
+      case '\n':
+        Init;
+      break;
+    }
+  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
 }
+catch
+  PutExcept;
 
-RainDrops;
+cdc=NULL;
+DCDel(cdc);
+
+SettingsPop;
+MenuPop;
+

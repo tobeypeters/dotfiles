@@ -125,7 +125,7 @@ U0 generateTerrain() {
   for (y=0;y<HEIGHT;y++) {
     for (x=0;x<WIDTH;x++) {
       if (terrain[y][x]==-1) {
-        terrain[y][x]=chooseTile(x,y);
+        terrain[y][x]=chooseTile(x,y);
       }
     }
   }
@@ -178,7 +178,7 @@ U0 WaveCollapse()
   } catch
     PutExcept;
 
-//  cdc=NULL;
+//  cdc=NULL;
 
   SettingsPop;
   MenuPop;
