@@ -167,7 +167,7 @@ U64 execute_cmd(U8 *cmd) {
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
-  if (I64_IN(idx,56,86,146,153,170,179,
+  if (I64_IN(idx,56,86,146,153,170,179,
       182,187,194,208,30,214,224)) {
     if (!bav) { bufe=bufa; goto nferror; }
 
@@ -350,7 +350,7 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      Fs->answer=ExeFile(bufa);
+      Fs->answer=ExeFile(bufa);
 
       break;
     case 146: //head

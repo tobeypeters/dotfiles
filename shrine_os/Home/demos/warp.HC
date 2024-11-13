@@ -156,10 +156,12 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
-Fs->draw_it=&DrawIt;
 
-ADocClear;
+U64 cc=Max(0,mp_cnt-1);
+Adam("\"%d\n\";",cc); //always works.  My case gives me 3(4 cores)
+
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",cc,);
+Fs->draw_it=&DrawIt;
 
 Init;
 
