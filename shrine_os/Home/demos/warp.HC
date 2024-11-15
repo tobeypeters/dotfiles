@@ -30,12 +30,13 @@
 
 class Star
 {
-  F64  x,y, //Current position of the star
-     angle, //Angle of movement from the center
-     speed, //Speed of the star
-  distance, //Distance from the center
-     color,
-     px,py;
+  CD3 c,p;   //Current and previous position of the star
+
+  F64 angle, //Angle of movement from the center
+      speed, //Speed of the star
+   distance, //Distance from the center
+      color;
+
 } stars[STAR_COUNT];
 
 Star *p=NULL;
@@ -49,9 +50,10 @@ Bool cf=FALSE; //Chaotic flag
 U0 InitStar(U64 i)
 {
   p=&stars[i];
-  p->px=p->x=MW;
-  p->py=p->y=MH;
-  p->angle=(RandU16%360)*(ã/180.0); //Random angle in radians
+  p->p.x=p->c.x=MW;
+  p->p.y=p->c.y=MH;
+  p->p.z=p->c.z=0;
+  p->angle=(RandU16%360)*(ã/180); //Random angle in radians
 //  p->speed=(RandU16%50)/50.0+0.5;   //Random speed
   p->speed=Max(RandU16%50,1);       //Random speed
   p->distance=0;                    //Start at the center
@@ -74,54 +76,56 @@ U0 updateStars()
     // Increase the distance, which simulates moving outward
     p->distance+=p->speed;
 
-    p->px=p->x; p->py=p->y;
-
+    p->p.x=p->c.x; p->p.y=p->c.y;
 
     if (cf)
     {
       //Chaotic version
-      p->x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
-      p->y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
+      p->c.x=(WIDTH/2+RandU16%16)+Cos(p->angle)*p->distance;
+      p->c.y=(HEIGHT/2+RandU16%16)+Sin(p->angle)*p->distance;
     }
     else
     {
       // Update x and y based on angle and distance from the center
-      p->x=WIDTH/2+Cos(p->angle)*p->distance;
-      p->y=HEIGHT/2+Sin(p->angle)*p->distance;
+      p->c.x=WIDTH/2+Cos(p->angle)*p->distance;
+      p->c.y=HEIGHT/2+Sin(p->angle)*p->distance;
     }
 
     // Reset star if it goes out of bounds
-    if (p->x<0||p->x>WIDTH-1||
-        p->y<0||p->y>HEIGHT-1) InitStar(i);
+    if (p->c.x<0||p->c.x>WIDTH-1||
+        p->c.y<0||p->c.y>HEIGHT-1) InitStar(i);
   }
 }
+
 U0 displayStarfield(CDC *dc)
 {
-  U64 i,j,ld,rd,ud,dd,t;
+  CD3 cp,np;
 
-//  U64 test=20;
-  U8 *buf=NULL;
+  U64 i,j,o,ll;
+
+  dc->color=LTRED;
+  GrPlot(dc,MW,MH);
 
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
 
-//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",test);
-//    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"%d",p->x);
+    cp.x=p->c.x; cp.y=p->c.y;
+    np.x=p->p.x; np.y=p->p.y;
 
-    if (!(MW-4<=p->x<MW+4)||
-        !(MH-4<=p->y<MH+4))
+    o=RandU16%2;
+
+    if (!(MW-6-o<=cp.x<MW+6+o)||
+        !(MH-6-o<=cp.y<MH+6+o))
     {
       dc->color=COLORS[p->color];
-      GrPlot(dc,p->x,p->y);
+      GrPlot(dc,cp.x,cp.y);
 
-      ld=p->px-p->x; rd=p->x-p->px;
-      ud=p->py-p->y; dd=p->y-p->py;
+//      Get the Euclidean distance between the current and previous points.
+//      ll=Sqrt((np.x-cp.x)*(np.x-cp.x)+(np.y-cp.y)*(np.y-cp.y));
 
-      t=STREAK_LEN+RandU16%4;
-
-      if (ld<t||rd<t)
-        if (ud<t||dd<t)
-          GrLine(dc,p->x,p->y,p->px,p->py);
+      ll=D3Dist(&cp,&np);
+      if (ll<=STREAK_LEN+RandU16%4)
+        GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }
 }
@@ -137,6 +141,8 @@ U0 AnimateTask(I64)
     Sleep(at);
   }
 }
+
+ADocClear;
 
 I64 ch,sc;
 MenuPush(
@@ -156,8 +162,9 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-Init;
+Init;
 
+//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
 Fs->draw_it=&DrawIt;
 
