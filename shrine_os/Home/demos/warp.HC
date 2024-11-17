@@ -96,15 +96,16 @@ U0 updateStars()
         p->c.y<0||p->c.y>HEIGHT-1) InitStar(i);
   }
 }
-
 U0 displayStarfield(CDC *dc)
 {
   CD3 cp,np;
 
-  U64 i,j,o,ll;
+  U64 i,o;
 
   dc->color=LTRED;
   GrPlot(dc,MW,MH);
+
+  o=8;
 
   for (i=0;i<STAR_COUNT;i++) {
     p=&stars[i];
@@ -112,10 +113,8 @@ U0 displayStarfield(CDC *dc)
     cp.x=p->c.x; cp.y=p->c.y;
     np.x=p->p.x; np.y=p->p.y;
 
-    o=RandU16%2;
-
-    if (!(MW-6-o<=cp.x<MW+6+o)||
-        !(MH-6-o<=cp.y<MH+6+o))
+    if (!(MW-o<=cp.x<=MW+o)||
+        !(MH-o<=cp.y<=MH+o))
     {
       dc->color=COLORS[p->color];
       GrPlot(dc,cp.x,cp.y);
@@ -123,9 +122,8 @@ U0 displayStarfield(CDC *dc)
 //      Get the Euclidean distance between the current and previous points.
 //      ll=Sqrt((np.x-cp.x)*(np.x-cp.x)+(np.y-cp.y)*(np.y-cp.y));
 
-      ll=D3Dist(&cp,&np);
-      if (ll<=STREAK_LEN+RandU16%4)
-        GrLine(dc,np.x,np.y,cp.x,cp.y);
+      if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
+        GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }
 }
