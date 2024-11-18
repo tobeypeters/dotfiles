@@ -121,7 +121,8 @@ set $fp ~/Pictures/Wallpapers
 set $fl ~/Pictures/Wallpapers/wallpaper.lock
 set $flp  ~/Pictures/Wallpapers/wallpaper.prev
 
-$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
+#$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
+$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" -n && feh --bg-scale "$wal_output" &
 $exec_always [ -f $fl ] && wal -i $(cat $flp) &
 $exec_always cat ~/.cache/wal/sequences &
 
