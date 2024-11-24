@@ -59,8 +59,10 @@ U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
 
 U64 execute_cmd(U8 *cmd) {
+  if (!StrLen(cmd)) return 0;
+
   //User is trying to normally run a OS command?
-  if (cmd[StrLen(cmd)-1]==';') {
+  if (cmd[StrLen(cmd)-1]==';') { 
     ExePutS(cmd); return 0;
   }
 
@@ -74,8 +76,14 @@ U64 execute_cmd(U8 *cmd) {
   Fs->answer=1;
 
   I64 res,idx;res=idx=0;
+
+  hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
+    if (str_cmp(a->args[0],"##")) { //pid
+      StrCpy(a->args[0],"pid"); goto hashit;
+    }
+
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
@@ -92,7 +100,7 @@ U64 execute_cmd(U8 *cmd) {
 
     idx=999; 
     goto switchit;
-  }
+  } 
 
   I64 v,fc;v=fc=0;
 
@@ -100,16 +108,16 @@ U64 execute_cmd(U8 *cmd) {
 
   eptr=c->data[idx][TOK_CMD];
 
-  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
-    e_print(ERR_ARGC); goto answer; }
-  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
-    e_print(ERR_FLGC); goto answer; }
-
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
       Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto answer;
     }
   }
+
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
+    e_print(ERR_ARGC); goto answer; }
+  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
+    e_print(ERR_FLGC); goto answer; }
 
   //CMD: No args or flags
   if (c->data[idx][TOK_MAX]==1) goto switchit;
@@ -200,7 +208,7 @@ U64 execute_cmd(U8 *cmd) {
    case  209: //md
       if (!bav) DirMk(bufa);
       else
-        if (type_got(v,DIR))
+        if (type_got(v,DIR))
           e_print(ERR_DIR_EXISTS,bufa);
         else
           e_print(ERR_DRVFILEIDIR,bufa);
@@ -310,6 +318,9 @@ U64 execute_cmd(U8 *cmd) {
       }"\n";
 
       break;
+    case  62: //pid
+      "Process ID: %X\n",Fs;
+      break;
     case  63: //mem
       //MemBIOSRep; PCIRep;
       viewer("MemRep;\"\n\";
@@ -350,7 +361,7 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case  86: //run
-      Fs->answer=ExeFile(bufa);
+      Fs->answer=ExeFile(bufa);
 
       break;
     case 146: //head
@@ -531,7 +542,7 @@ U8 templeDOS() {
 
     if (*input=='é') break;
 
-    if (str_cmp(input, "!!")) {
+    if (str_cmp(input,"!!")) {
       zFree(input);input=StrNew(prev_cmd);
     }
 

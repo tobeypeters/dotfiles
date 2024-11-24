@@ -18,10 +18,10 @@
   Description:
       Build a command array, from a hash table.
 */
-
+
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  45
+#define CMD_CNT  46
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -45,6 +45,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
   { 61,   "pal", 1, 1, 1},
+  { 62,   "pid", 1, 1, 0},
   { 63,   "mem", 1, 1, 0},
   { 66,   "cls", 1, 1, 0},
   { 67,   "ans", 1, 2, 0},
@@ -80,7 +81,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {223,    "ls", 1, 2, 1},
   {224,    "rm", 2, 2, 2},
   {227,    "mv", 3, 3, 0},
-  {228,    "ps", 1, 1, 0} //45
+  {228,    "ps", 1, 1, 0} //46
 };
 
 class CHCMDS
@@ -155,3 +156,6 @@ CHCMDS *c=CAlloc(sizeof(CHCMDS));
 //  c->print_arr=&print_arr;
 
   c->parse(c);
+
+
+  c->hashdx(c,"pid");
