@@ -82,7 +82,7 @@ U8 *callocstr(...)
 
   return CAlloc(sizeof(U8)*len+1);
 }
-U8 *str_rev(U8 *str)
+U8 *str_rev(U8 *str)
 {//Reverse a string.  I thought, TempleOS had one.
  //I can't find it. If there's one buried in the OS,
  //I'll get rid of this one.
@@ -170,14 +170,14 @@ U8 *MyGetStr(I64 flags=0)
 
     if (ch==CH_SHIFT_ESC) {
       if (flags&GSF_SHIFT_ESC_EXIT) {
-	DocLock(doc);
+/*	DocLock(doc);
 	if (doc->doc_signature==DOC_SIGNATURE_VAL && doc->cur_entry!=doc) {
 	  doc_e=DocEntryCopy(doc,doc->cur_entry);
 	  DocBottom(doc);
 	  DocEntryRun(doc,doc_e,TRUE);
 	  DocEntryDel(doc,doc_e);
 	}
-	DocUnlock(doc);
+	DocUnlock(doc);*/
 
         res=StrNew("é");
         goto gs_done;

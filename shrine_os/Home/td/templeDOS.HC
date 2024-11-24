@@ -208,7 +208,7 @@ U64 execute_cmd(U8 *cmd) {
    case  209: //md
       if (!bav) DirMk(bufa);
       else
-        if (type_got(v,DIR))
+        if (type_got(v,DIR))
           e_print(ERR_DIR_EXISTS,bufa);
         else
           e_print(ERR_DRVFILEIDIR,bufa);
@@ -228,31 +228,25 @@ U64 execute_cmd(U8 *cmd) {
       fc-=trash;
 
       if (fc) {
-        if (idx==224)
-          if (f_err(FLG_D)) goto answer;
-
-        e_print(ERR_FLGI,"info");
-        goto answer;
+        if (f_err(FLG_D)) goto answer; idx=30;
       }
 
-      if (I64_IN(idx,30,214) || 224 && fc) {
-        if (!type_got(v,DIR)) goto answer;
+      if (idx==224) {
+        if (!type_got(v,FILE)) goto answer;
 
-        if (trash) {
-          CopyTree(bufa,TRASH_DIR);
-          trash_msg(bufa);
-        }
-        DelTree(bufa);
-        break;
-      }
-
-      if (!type_got(v,FILE)) goto answer;
-      if (trash) {
-        Move(bufa,TRASH_DIR);
-        trash_msg(bufa);
+        if (trash) Move(bufa,TRASH_DIR);
+        else Del(bufa);
       }
       else
-       Del(bufa);
+      {
+        if (!type_got(v,DIR)) goto answer;
+
+        if (trash) CopyTree(bufa,MStrPrint("%s/%s",TRASH_DIR,bufa));
+
+        DelTree(bufa);
+      }
+
+      if (trash) trash_msg(bufa);
 
       break;
     case  35: //touch
