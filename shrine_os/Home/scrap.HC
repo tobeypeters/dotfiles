@@ -798,15 +798,24 @@ F64 el=Sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y));
 
 //"%f\n",p1.x;*/
 
-CD3 test(U64 a,U64 b)
+/*CD3 test(U64 a,U64 b)
 {
   CD3 v;
 
   v.x=a;
   v.y=b;
 
-  return v;
-}
+  return v;
+}*/
+
+I32 a=10;
+
+a*=3284157443;
+
+"%d\n",a;
+
+
+
 
 //KeyAndCont;
 

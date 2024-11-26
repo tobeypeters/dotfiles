@@ -1,6 +1,6 @@
-CD3 randomGradient(U32 ix,U32 iy)
+CD2 randomGradient(U32 ix,U32 iy)
 {
-  I32 a=ix,c=3284157443;
+/*  I32 a=ix,c=3284157443;
 
   "%d\n",a;
   "%d\n",c;
@@ -12,29 +12,32 @@ CD3 randomGradient(U32 ix,U32 iy)
   "%d\n",I64_MAX;//9223372036854775807
 
   a*=3284157443;
-  "\na: %dn",a;//Should get
+  "\na: %d\n\n",a;//Should get
+*/
 
+//  Doesn't matter what types I use. I8,16,32,64 or U8,U16,U32,U64 or F64.
+//I don't get correct answers.
 
-
-/*  // No precomputed gradients mean this works for any number of grid coordinates
-  U32 w=8*sizeof(U32),
+  // No precomputed gradients mean this works for any number of grid coordinates
+  I32 w=8*sizeof(I32),
       s=w/2,
        a=ix,
        b=iy;
 
+    a*=3284157443;
     b ^= a<<s|a>>w-s;
     b *= 1911520717;
     a ^= b<<s|b>>w-s;
     a *= 2048419325;
 
-//    F64 random=a*(3.14159265/I32_MAX);
-*/
-
+    F64 random=a*(3.14159265/I32_MAX);
 
     // Create the vector from the angle
-    CD3 v;
-//    v.x = Sin(random);
-//    v.y = Cos(random);
+    CD2 v;
+    v.x = Sin(random);
+    v.y = Cos(random);
+
+    "\n%f %f\n\n",v.x,v.y;
 
     return v;
 }
