@@ -778,7 +778,7 @@ default:
 }
 */
 
-CD3 p1,p2;
+/*CD3 p1,p2;
 
 p1.x=10;
 p1.y=10;
@@ -792,11 +792,21 @@ p2.z=0;
 
 "%f\n%f\n%f\n",p2.x,p2.y,p2.z;
 "dist: %d\n",ToI64(D3Dist(&p1,&p2));
-//Use Sqrt and not just Sqr ....
+//Use Sqrt and not just Sqr ....
 F64 el=Sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y));
 "dist2: %f\n",el;
 
-//"%f\n",p1.x;
+//"%f\n",p1.x;*/
+
+CD3 test(U64 a,U64 b)
+{
+  CD3 v;
+
+  v.x=a;
+  v.y=b;
+
+  return v;
+}
 
 //KeyAndCont;
 
