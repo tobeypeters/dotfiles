@@ -808,13 +808,16 @@ F64 el=Sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y));
   return v;
 }*/
 
-I32 a=10;
+/*I32 a=10;
 
 a*=3284157443;
 
-"%d\n",a;
+"%d\n",a;*/
 
-
+/*U0 rain(U8 *bow) {
+  if (*bow) "yes\n";
+}
+rain("");*/
 
 
 //KeyAndCont;

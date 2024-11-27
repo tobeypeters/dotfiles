@@ -114,6 +114,8 @@ Bool del_dir=FALSE,Bool print_msg=TRUE)
 }
 public Bool move(U8 *f1,U8 *f2)
 {//Move files from one location to another or rename.
+  if (!*f1||!*f2) return FALSE;
+
   dump_exists;
 
   if (Copy(f1,f2)) {
