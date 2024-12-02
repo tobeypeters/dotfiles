@@ -819,18 +819,22 @@ a*=3284157443;
 }
 rain("");*/
 
-U0 u32tester(U32 x)
+U32 u32tester(U32 x)
 {
 //  "%d\n",10*3284157443; //Prints $WW+H,1$32841574430 <-- Correct please ignore
 //  "%d\n",x*3284157443; //Prints $WW+H,1$32841574430 <-- Correct please ignore
 
   U32 a=x;
   a*=3284157443;
-  "function: a: %d\n",a; //32841574430
+  "function: a: %d\n",a; //32841574430
 
   U32 aa=0;
-  aa=x*3284157443;  
-  "function: aa: %d\n",aa; //32841574430
+  aa=x*3284157443;
+  "function: aa: %d\n",a; //32841574430
+
+  "function: %d\n",aa-(aa/U32_MAX*(U32_MAX+1));
+
+  return aa;
 }
 
 "U32_MAX: %d\n",U32_MAX;
@@ -838,15 +842,14 @@ U0 u32tester(U32 x)
 U32 a=10*3284157443;
 "a: %d\n",a; //Prints $WW+H,1$2776803358
 
-U32 b=10*3284157443;
-"b: %d\n",b; //Prints $WW+H,1$2776803358
-
 U32 c=10;
 c*=3284157443;
 "c: %d\n",c; //Prints $WW+H,1$2776803358
 
+U32 e=u32tester(10);
+
 "\n";
-u32tester(10);
+"%d\n",e;//Prints $WW+H,1$2776803358
 "\n";
 
 //KeyAndCont;
