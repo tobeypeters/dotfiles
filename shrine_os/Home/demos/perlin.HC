@@ -24,7 +24,10 @@ CD2 randomGradient(U32 ix,U32 iy)
        a=ix,
        b=iy;
 
-    a*=3284157443;
+    a*=3284157443;
+
+    "%d", a;
+
     b ^= a<<s|a>>w-s;
     b *= 1911520717;
     a ^= b<<s|b>>w-s;

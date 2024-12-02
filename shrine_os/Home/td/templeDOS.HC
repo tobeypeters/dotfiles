@@ -231,7 +231,7 @@ U64 execute_cmd(U8 *cmd) {
         if (f_err(FLG_D)) goto answer; idx=30;
       }
 
-      if (idx==224) {
+      if (idx==224) {
         if (!type_got(v,FILE)) goto answer;
 
         if (trash) Move(bufa,TRASH_DIR);
@@ -442,6 +442,7 @@ U64 execute_cmd(U8 *cmd) {
       FileMgr;
 
       break;
+    case  64: //dir
     case 176: //tree
     case 223: //ls
       if (fc)

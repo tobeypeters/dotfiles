@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  46
+#define CMD_CNT  47
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -45,8 +45,9 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   { 56,   "cat", 2, 2, 0},
   { 60,   "man", 2, 2, 0},
   { 61,   "pal", 1, 1, 1},
-  { 62,   "pid", 1, 1, 0},
+  { 62,   "pid", 1, 1, 0},
   { 63,   "mem", 1, 1, 0},
+  { 64,   "dir", 1, 2, 1},
   { 66,   "cls", 1, 1, 0},
   { 67,   "ans", 1, 2, 0},
   { 68,   "rnd", 1, 1, 0},
@@ -81,7 +82,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {223,    "ls", 1, 2, 1},
   {224,    "rm", 2, 2, 2},
   {227,    "mv", 3, 3, 0},
-  {228,    "ps", 1, 1, 0} //46
+  {228,    "ps", 1, 1, 0} //47
 };
 
 class CHCMDS
@@ -107,7 +108,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
   while (*p) hash+=*p++;
   idx=hash%HASH_TABLE_SIZE;
 
-//  "%d\n",idx;
+  //"%d\n",idx;
   for(;idx < HASH_TABLE_SIZE;idx++)
     if (!StrCmp(in->data[idx][TOK_CMD],cmd)) return idx;
 
@@ -158,4 +159,4 @@ CHCMDS *c=CAlloc(sizeof(CHCMDS));
   c->parse(c);
 
 
-  c->hashdx(c,"pid");
+  //"%d\n",c->hashdx(c,"dir");
