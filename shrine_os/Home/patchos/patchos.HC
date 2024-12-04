@@ -127,8 +127,8 @@ public Bool move(U8 *f1,U8 *f2)
 public U32 ValU32(U32 vu)
 {/* Return a valid U32
 
-U32 u32tester(U32 x)
-{
+U32 u32tester(U32 x)
+{
   U32 a=x;
   a*=3284157443;
   "function: a: %d\n",a; //32841574430
