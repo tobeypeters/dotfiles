@@ -125,23 +125,20 @@ public Bool move(U8 *f1,U8 *f2)
   return FALSE;
 }
 public U32 ValU32(U32 vu)
-{/* Return a valid U32
+{/* Return a valid U32.  Functions treat everything as 64bit.
+  Bit level is ignored.
+  if it's not inside a function.
 
-U32 u32tester(U32 x)
-{
-  U32 a=x;
-  a*=3284157443;
-  "function: a: %d\n",a; //32841574430
-
-  "function: %d\n",aa-(aa/(U32_MAX+1)*(U32_MAX+1));
-
-  return aa;
-}
-
-"U32_MAX: %d\n\n",U32_MAX;
-
-U32 a=10*3284157443;
-"a: %d\n",a; //Prints $WW+H,1$2776803358
+  U0 test()
+  {
+    U32 a=10*3284157443;
+    //Prints $WW+H,1$a: 32841574430 ValU32(a): 2776803358
+    "a: %d ValU32(a):\n",a,ValU32(a);
+  }
+  U32 a=10*3284157443;
+  //Prints $WW+H,1$a: 2776803358 ValU32(a): 2776803358
+  "a: %d ValU32(a):\n",a,ValU32(a);
+  test;
 */
   return vu;
 }
