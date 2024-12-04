@@ -114,7 +114,7 @@ Bool del_dir=FALSE,Bool print_msg=TRUE)
 }
 public Bool move(U8 *f1,U8 *f2)
 {//Move files from one location to another or rename.
-  if (!*f1||!*f2) return FALSE;
+  if (!*f1||!*f2) return FALSE;
 
   dump_exists;
 
@@ -123,6 +123,27 @@ public Bool move(U8 *f1,U8 *f2)
     return TRUE;
   }
   return FALSE;
+}
+public U32 ValU32(U32 vu)
+{/* Return a valid U32
+
+U32 u32tester(U32 x)
+{
+  U32 a=x;
+  a*=3284157443;
+  "function: a: %d\n",a; //32841574430
+
+  "function: %d\n",aa-(aa/(U32_MAX+1)*(U32_MAX+1));
+
+  return aa;
+}
+
+"U32_MAX: %d\n\n",U32_MAX;
+
+U32 a=10*3284157443;
+"a: %d\n",a; //Prints $WW+H,1$2776803358
+*/
+  return vu;
 }
 public U0 ADocClear()
 {//Clear Adams doc window
