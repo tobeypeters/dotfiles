@@ -124,7 +124,7 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U32 ValU32(U32 vu)
+public U32 ToU32(U32 vu)
 {/* Return a valid U32.  Functions treat everything as 64bit.
   Bit level is ignored.
   if it's not inside a function.
@@ -137,7 +137,7 @@ public U32 ValU32(U32 vu)
   }
   U32 a=10*3284157443;
   //Prints $WW+H,1$a: 2776803358 ValU32(a): 2776803358
-  "a: %d ValU32(a):\n",a,ValU32(a);
+  "a: %d ValU32(a):\n",a,ValU32(a);
   test;
 */
   return vu;

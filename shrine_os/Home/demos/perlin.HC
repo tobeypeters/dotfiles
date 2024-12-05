@@ -1,54 +1,29 @@
-CD2 randomGradient(U32 ix,U32 iy)
+U0 randomGradient(CD2 *p,U32 ix,U32 iy)
 {
-/*  I32 a=ix,c=3284157443;
-
-  "%d\n",a;
-  "%d\n",c;
-
-  "%d\n",I8_MAX; //127
-  "%d\n",I16_MAX;//32767
-  "%d\n",I32_MAX;//2147483647
-  "%d\n",I32_MAX+1;//2147483648 <-NO
-  "%d\n",I64_MAX;//9223372036854775807
-
-  a*=3284157443;
-  "\na: %d\n\n",a;//Should get
-*/
-
-//  Doesn't matter what types I use. I8,16,32,64 or U8,U16,U32,U64 or F64.
-//I don't get correct answers.
-
   // No precomputed gradients mean this works for any number of grid coordinates
-  I32 w=8*sizeof(I32),
+  U32 w=8*sizeof(U32),
       s=w/2,
        a=ix,
        b=iy;
 
-    a*=3284157443;
+  a=ToU32(a*3284157443);
+  b=ToU32(b^(a<<s|a>>(w-s)));
+  b=ToU32(b*1911520717);
 
-    "%d", a;
+  a^=(b<<s)|(b>>(w-s));
+  a=ToU32(a*2048419325);
 
-    b ^= a<<s|a>>w-s;
-    b *= 1911520717;
-    a ^= b<<s|b>>w-s;
-    a *= 2048419325;
+  F64 random=a*(ã/U32_MAX>>1);
 
-    F64 random=a*(3.14159265/I32_MAX);
-
-    // Create the vector from the angle
-    CD2 v;
-    v.x = Sin(random);
-    v.y = Cos(random);
-
-    "\n%f %f\n\n",v.x,v.y;
-
-    return v;
+  // Create the vector from the angle
+  p->x=Sin(random);
+  p->y=Cos(random);
 }
 
-randomGradient(10,10);
+CD2 test;
 
-
-//"%d %d\n",test.x,test.y;
+randomGradient(&test,10,10);
+"%2.8f %2.8f\n",test.x,test.y;
 
 /*
 // Computes the dot product of the distance and gradient vectors.
