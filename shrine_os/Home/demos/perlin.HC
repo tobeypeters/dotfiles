@@ -17,12 +17,14 @@
 /*perlin.HC
   Description:
       Generates perlin noise. This is just one version.
+  Resources:
+      https://en.wikipedia.org/wiki/Perlin_noise
 */
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-#define GRID_SIZE 400
+#define GRID_SIZE 400
 
 U64 pixels[WIDTH*HEIGHT];
 
@@ -87,7 +89,7 @@ F64 perlin(F64 x,F64 y)
 
   return value;
 }
-U0 Init() 
+U0 Init()
 {
   MemSet(pixels,0,sizeof(U64));
 
@@ -107,11 +109,11 @@ U0 Init()
       {
         val+=perlin(x*freq/GRID_SIZE,y*freq/GRID_SIZE)*amp;
 
-        freq*=2; amp/=2;
+        freq*=2; amp/=2;
       }
 
       //Contrast
-      val*=1.2;
+      val*=1.2;//1.2
 
       //Clipping
       if (val>1.0)
