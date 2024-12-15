@@ -84,7 +84,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {227,    "mv", 3, 3, 0},
   {228,    "ps", 1, 1, 0} //47
 };
-
+
 class CHCMDS
 {
   U8 *data[HASH_TABLE_SIZE+1][CMD_ARGS];
@@ -159,4 +159,4 @@ CHCMDS *c=CAlloc(sizeof(CHCMDS));
   c->parse(c);
 
 
-  //"%d\n",c->hashdx(c,"dir");
+  //"%d\n",c->hashdx(c,"dir");

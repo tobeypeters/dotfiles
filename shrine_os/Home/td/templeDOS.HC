@@ -175,8 +175,8 @@ U64 execute_cmd(U8 *cmd) {
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
-  if (I64_IN(idx,56,86,146,153,170,179,
-      182,187,194,208,30,214,224)) {
+  if (I64_IN(idx,30,56,86,146,153,170,179,
+      182,187,194,208,211,214,224)) {
     if (!bav) { bufe=bufa; goto nferror; }
 
     switch(idx)
@@ -442,7 +442,7 @@ U64 execute_cmd(U8 *cmd) {
       FileMgr;
 
       break;
-    case  64: //dir
+    case  64: //dir
     case 176: //tree
     case 223: //ls
       if (fc)
