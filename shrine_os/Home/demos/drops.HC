@@ -267,7 +267,7 @@ sch=Char2ScanCode('h');
 sci=Char2ScanCode('i');
 
 //Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
+Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 
 try {

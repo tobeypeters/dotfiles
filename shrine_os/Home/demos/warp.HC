@@ -123,7 +123,7 @@ U0 displayStarfield(CDC *dc)
 //      ll=Sqrt((np.x-cp.x)*(np.x-cp.x)+(np.y-cp.y)*(np.y-cp.y));
 
       if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
-        GrLine(dc,np.x,np.y,cp.x,cp.y);
+        GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }
 }
@@ -176,7 +176,7 @@ try {
       //Adam("\"%d\n\";",sc.u8[0]);
 
       switch (sc.u8[0]) {
-        case 46:
+        case 46:
           cf=!cf;
           break;
         case 75:
