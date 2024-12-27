@@ -26,7 +26,9 @@ sudo apt install -y npm
 npm config set prefix "${HOME}/.cache/npm/global"
 mkdir -p "${HOME}/.cache/npm/global"
 mkdir -p "${HOME}/.cache/npm/global/libnpm/global"
-"
+
+sudo apt install snapd
+sudo systemctl enable --now snapd
 
 sudo apt install -y python3
 sudo apt install -y python3-pip
@@ -54,6 +56,8 @@ sudo apt install -y libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libx
 # i3: https://i3wm.org/
 # i3ipc :
 pip3 install i3ipc
+
+snap install zig --classic --beta
 
 sudo add-apt-repository ppa:o2sh/onefetch
 sudo apt update -y
