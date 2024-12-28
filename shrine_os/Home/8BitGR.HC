@@ -29,7 +29,7 @@
 
 //Updated strnew: https://github.com/tobeypeters/dotfiles/blob/master/shrine_os/Home/td/strings.HC#L86
 //zFree: https://github.com/tobeypeters/dotfiles/blob/master/shrine_os/Home/td/utils.HC#L104
-#include "~/td/strings"
+#include "strings"
 #include "~/td/utils"
 
 #define BLKCNT 255
@@ -67,7 +67,7 @@ U0 gen_gr(U8 *res=NULL) {
 
     "Pt{(%d,%d)};\n",x,y;
 
-    if (++x==8) y++;
+    if (++x==8) y++;
 
     res++;
   }

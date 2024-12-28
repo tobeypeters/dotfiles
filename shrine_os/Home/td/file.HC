@@ -18,8 +18,10 @@
   Description:
       File system related functions.
 */
-#include "~/td/errors"
-#include "~/td/utils"
+//#include "~/td/errors"
+//#include "~/td/utils"
+//#include "~/td/strings"
+
 U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
 F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
@@ -87,7 +89,9 @@ Bool type_got(U64 fvb,U64 type,U64 warg=0,Bool print_err=TRUE)
 
   return res;
 }
-Bool file_char(U8 *chr) return LstMatch(chr," \0~\0*\0::\0-\0è",LMF_EXACT)>0;
+//file_char(s): Greater than zero means TRUE/VALID chr 
+Bool file_char(U8 *chr) return LstMatch(&chr," \0~\0*\0::\0-\0.\0è",LMF_EXACT)>0;
+I64  file_char2(U8 *chr) return LstMatch(&chr," \0~\0*\0::\0-\0.\0è",LMF_EXACT);
 Bool filenameOK(U8 *name) return FilesFindMatch(name,FILEMASK_TXT);
 
 U64 files_valid(U8 *ddfa,U8 *ddfb=NULL)

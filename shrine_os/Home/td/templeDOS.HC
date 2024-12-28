@@ -30,7 +30,7 @@ Bool inLst(U8 *opt)
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
 
-/*COMMAND HISTORY stuff
+/*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
 
@@ -175,8 +175,13 @@ U64 execute_cmd(U8 *cmd) {
 
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
+  I64 fci=0;
+  if (I64_IN(idx,211,227)) {
+    if (I64_IN(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
+      bav=TRUE; goto switchit; }
+  }
   if (I64_IN(idx,30,56,86,146,153,170,179,
-      182,187,194,208,211,214,224)) {
+      182,187,194,208,211,214,224,227)) {
     if (!bav) { bufe=bufa; goto nferror; }
 
     switch(idx)
@@ -429,10 +434,13 @@ U64 execute_cmd(U8 *cmd) {
         if (f_err(FLG_D)) goto answer;
         if (!type_got(v,DIR)) goto answer;
 
+        //I restrict * and . to file copying.
+        //CopyTree(); does support them.
         CopyTree(bufa,bufb);
       }
       else {
-        if (!type_got(v,FILE)) goto answer;
+        if (!fci)
+          if (!type_got(v,FILE)) goto answer;
 
         Copy(bufa,bufb);
       }

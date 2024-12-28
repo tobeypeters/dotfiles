@@ -20,7 +20,7 @@
   Resources:
       https://en.wikipedia.org/wiki/Perlin_noise
 */
-
+
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
@@ -109,7 +109,7 @@ U0 Init()
       {
         val+=perlin(x*freq/GRID_SIZE,y*freq/GRID_SIZE)*amp;
 
-        freq*=2; amp/=2;
+        freq*=2; amp/=2;
       }
 
       //Contrast

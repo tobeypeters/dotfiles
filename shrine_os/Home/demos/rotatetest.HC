@@ -7,7 +7,7 @@
   and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
   subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
@@ -18,7 +18,6 @@
   Description:
       Displays a rotating square.
 */
-
 U64 cx=GR_WIDTH/2,
     cy=GR_HEIGHT/2,i;
 
@@ -28,7 +27,7 @@ CD2 corners[4];
 
 F64 angle=1.0; // Initial angle
 
-//Function to rotate a point using matrix multiplication
+//Function to rotate a point by a given angle
 U0 rot_matrix(U64 idx) {
   F64 radians=angle*(ã/180.0),
     cos_é=Cos(radians),
@@ -44,10 +43,12 @@ U0 rot_matrix(U64 idx) {
 U0 DrawIt(CTask *task,CDC *dc)
 {
   dc->color=RED;
+  dc->thick=5;
   GrLine(dc,corners[0].x,corners[0].y,corners[1].x,corners[1].y);
   GrLine(dc,corners[3].x,corners[3].y,corners[2].x,corners[2].y);
   GrLine(dc,corners[3].x,corners[3].y,corners[0].x,corners[0].y);
   GrLine(dc,corners[2].x,corners[2].y,corners[1].x,corners[1].y);
+
 }
 U0 AnimateTask(I64)
 {
@@ -55,7 +56,7 @@ U0 AnimateTask(I64)
     for(i=0;i<4;i++) {
       rot_matrix(i); // Rotate 1 degree per frame
     }
-    Sleep(20);
+    Sleep(10);
   }
 
 }

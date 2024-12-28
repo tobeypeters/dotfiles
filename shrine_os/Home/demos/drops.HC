@@ -1,9 +1,25 @@
 /*
-   This is just a random grouping, of graphic related type stuff.
-   This all is potentially, for a game.
+  The MIT License(MIT)
+  Copyright(c), Tobey Peters, https://github.com/tobeypeters
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#define DROPS_NUM	0x2000
-#define TILES_NUM	0x04b0
+
+/*drops.HC
+  Description:
+      Generates raindrops and stuff.
+*/
+#define DROPS_NUM  0x2000
+#define TILES_NUM  0x04b0
 
 class Drop
 {
@@ -13,9 +29,9 @@ class Drop
 CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
 
 //Change to #define?
-U8 *disp_str=MStrPrint("Benjamin"),
-//   *disp_rstr=MStrPrint("%s",rev_str(disp_str)),
+U8 *disp_str=MStrPrint("The Legend of Terry"),
             l=StrLen(disp_str);
+
 
 //Normally I wouldn't declare everything global like this.
 //But, declaring them 30times a second isn't needed.
@@ -24,11 +40,9 @@ U64 d,i,j,x1,y1,x2,y2,cur_drop,c1,c2,x0,y0,dco,scg,sch,sci,
    cx=w/2,cy=h/2,
   ctx=TEXT_COLS*FONT_WIDTH/2,
   cty=TEXT_ROWS*FONT_WIDTH/2,
- ctxo=ctx-((l/2)*FONT_WIDTH),
- ctyo=cty-((l/2)*FONT_HEIGHT),
    fw=FONT_WIDTH,
    fh=FONT_HEIGHT,
-   pc=40000;
+   pc=4000;
 
 U0 drawGrid()
 {
@@ -85,19 +99,6 @@ U0 dispInfo()
 
   return col;
 }*/
-U8 *rev_str(U8 *str)
-{//Reverse a string.  I thought, TempleOS had one.
- //I can't find it. If there's one buried in the OS,
- //I'll get rid of this one.
- //I'm not using the normal swapping algorithm here.
-  U64 l=StrLen(str)-1,i=0;
-  U8 *st=CAlloc(sizeof(U8)*l);
-
-  for (;i<=l;i++) *(st+i)=str[l-i];
-
-  return st;
-}
-
 U0 pinski()
 {//sierpinski triangle
   x1=x2=w/2;
@@ -112,7 +113,7 @@ U0 pinski()
     {
       case 0:
         x1=(x2+w/2)/2;
-        y1=(y2+0)/2;
+        y1=y2/2;
 
         break;
       case 1:
@@ -127,7 +128,6 @@ U0 pinski()
 
     if (i<(pc*.6)) cdc->color=GREEN;
     else cdc->color=WHITE;
-//    dc->color=RandU16%COLORS_NUM;
     GrPlot(cdc,x1,y1);
 
     x2=x1; y2=y1;
@@ -150,16 +150,6 @@ U0 DrawIt(CTask *task,CDC *dc)
   if (Bt(kbd.down_bitmap,sch)) drawHUD;
   if (Bt(kbd.down_bitmap,sci)) dispInfo;
 
-  dc->color=WHITE; 
-  GrPrint(dc,ctxo,cty,"The Legend of\n Benjamin");
-  dc->color=ROP_XOR+WHITE^TRANSPARENT;
-  GrPrint(dc,ctxo+1,cty+1,"The Legend of\n Benjamin");
-
-/*  GrPrint(dc,ctxo,cty,disp_str);
-  GrPrint(dc,ctxo,cty+(l*fh)-fh,disp_rstr);
-  GrVPrint(dc,ctxo,cty,disp_str);
-  GrVPrint(dc,ctxo+(l-1)*fw,cty,disp_rstr);*/
-
   dc->color=WHITE;
   for (i=0;i<DROPS_NUM;i++)
     if (drops[i].y>=0 && GrPeek(dc,drops[i].x,drops[i].y)==BLACK)
@@ -175,7 +165,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 U0 AnimateTask(I64)
 {
   cur_drop=0;
-  while (TRUE) {
+  while (TRUE) {
     for (i=0;i<2;i++) {
       j=0;
       do {
@@ -202,24 +192,21 @@ U0 AnimateTask(I64)
 	  else {
 	    c1=GrPeek(cdc,x0+1,y0);
 	    c2=GrPeek(cdc,x0-1,y0);
-	    if (c1==BLACK && c2!=BLACK)
+
+	    if (c1==BLACK&&c2!=BLACK)
 	      x1++;
-	    else if (c2==BLACK && c1!=BLACK)
+	    else if (c2==BLACK&&c1!=BLACK)
 	      x1--;
-	    else if (c1==BLACK && c2==BLACK) {
+	    else if (c1==BLACK&&c2==BLACK) {
 	      c1=GrPeek(cdc,x0+1,y0+1);
 	      c2=GrPeek(cdc,x0-1,y0+1);
-	      if (c1==BLACK && c2!=BLACK)
-		x1++;
-	      else if (c2==BLACK && c1!=BLACK)
-		x1--;
-	      else if (RandI16>=0)
+	      if ((c1==BLACK&&c2!=BLACK)||(RandI16>=0))
 		x1++;
 	      else
 		x1--;
 	    }
-	    if (GrPeek(cdc,x1,y1+1)==BLACK)
-	      y1++;
+
+	    if (GrPeek(cdc,x1,y1+1)==BLACK)  y1++;
 	  }
 	  if (GrPeek(cdc,x0,y0)==WHITE) {
 	    cdc->color=BLACK;
