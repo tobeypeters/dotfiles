@@ -38,10 +38,7 @@ U64 pc=0;
 
 Bool init=TRUE,run=TRUE,mouse_down=FALSE;
 
-I64 map(I64 x,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-  return (x- in_min)*(out_max-out_min)/(in_max-in_min)+out_min;
-
-U0 spherize(F64 zx,F64 zy,F64 zz,F64 *r,F64 *theta,F64 *phi) {
+U0 spherize(F64 zx,F64 zy,F64 zz,F64 *r,F64 *theta,F64 *phi) {
   *r=Sqrt(zx*zx+zy*zy+zz*zz);
   *theta=ATan2(Sqrt(zx*zx+zy*zy),zz);
   *phi=ATan2(zy,zx);
@@ -79,9 +76,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   F64 px,py,pz;
 
-  for(i=0;i<pc;i++)
+  for(i=0;i<pc;i++)
   {
-    dc->color=map(i,0,ToI64(pc-1),0,15);
+    dc->color=MapI64(i,0,ToI64(pc-1),0,15);
     rot_plot(&mandelbulb[i],&px,&py,&pz);
     GrPlot(dc,(px*WIDTH/4)+WIDTH/2,(py*HEIGHT/4)+HEIGHT/2);
   }
