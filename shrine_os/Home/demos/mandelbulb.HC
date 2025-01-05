@@ -65,12 +65,12 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   if (init) {
    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"Generating points: %d%%",ip);
-   return;
+//   return;
   }
   else
    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"Generating points: Complete");
 
-  GrPrint(dc,FONT_WIDTH,FONT_HEIGHT*2,"Hold left mouse button down and drag the cursor around to rotate the mandelbulb.");
+  GrPrint(dc,FONT_WIDTH,FONT_HEIGHT*2,"Hold left mouse button down and drag the cursor around,\nto rotate the mandelbulb.");
 
   U64 i;
 
@@ -78,7 +78,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   for(i=0;i<pc;i++)
   {
-    dc->color=MapI64(i,0,pc-1,0,15);
+    dc->color=MapI64(i,0,pc-1,0,15);
     rot_plot(&mandelbulb[i],&px,&py,&pz);
     GrPlot(dc,(px*WIDTH/4)+WIDTH/2,(py*HEIGHT/4)+HEIGHT/2);
   }
@@ -86,7 +86,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 U0 Init()
 {
-  U64 i,j,k,n=8,
+  U64 i,j,k,n=10,
       maxiterations=20;
 
   F64 zetax,zetay,zetaz;
@@ -103,7 +103,7 @@ U0 Init()
         F64 x=ToF64(i)/(DIM-1)*2-1,
             y=ToF64(j)/(DIM-1)*2-1,
             z=ToF64(k)/(DIM-1)*2-1;
-
+
         zetax=zetay=zetaz=0;
 
         U64 iteration=0;
