@@ -31,7 +31,7 @@ U64 sch;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   /*cdc=dc;
-
+
   if (Bt(kbd.down_bitmap,sch)) "test";
 
   cdc->color=ROP_EQU;
@@ -68,6 +68,8 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
+//Fs->win_inhibit=WIG_TASK_DFT-WIF_SELF_FOCUS-WIF_SELF_BORDER;
+
 Init;
 
 sch=Char2ScanCode('h');

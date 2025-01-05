@@ -62,7 +62,7 @@ CBGR48 rr_palette_custom[COLORS_NUM];
      LTCYAN]
      [LTRED] ERRORS
   [LTPURPLE] SELECTIONFG
-    [YELLOW] MENUTEXT, SCROLLBAR GRIPPERS
+    [YELLOW] MENUTEXT, SCROLLBAR GRIPPERS
      [WHITE] BGMAIN
 */
 
@@ -143,3 +143,4 @@ set_theme(gr_palette_vga);
 
 //GrPaletteSet(gr_palette_custom);
 //MemCpy(gr_palette_std,gr_palette_custom,sizeof(gr_palette_custom));
+

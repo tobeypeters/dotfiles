@@ -1,3 +1,5 @@
+/*ALL this will replaced*/
+
 /*This was done with <CTRL-SHIFT-L> template code.
 It's conceptually easy to do a ctrl,
 but tedious.You have complete freedom.
@@ -67,7 +69,7 @@ U0 LeftClickSlider(CCtrl *c,I64 x,I64 y,Bool)
     s->left_pos=SLIDER_RANGE-1-(y-(c->top+SLIDER_SPACING));
   else
     s->right_pos=SLIDER_RANGE-1-(y-(c->top+SLIDER_SPACING));
-  if (c->update_derived_vals)
+  if (c->update_derived_vals)
     (*c->update_derived_vals)(c);
 }
 

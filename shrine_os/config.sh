@@ -9,7 +9,7 @@ fi
 #QEMU_FLAGS="-cpu host -smp 4 -m 1g -display gtk,zoom-to-fit=on -enable-kvm"
 #QEMU_FLAGS="-cpu host -smp 4 -m 1g -display gtk,zoom-to-fit=on -enable-kvm -netdev user,id=mynet0,hostfwd=tcp::5555-:22 -device virtio-net-pci,netdev=mynet0"
 #QEMU_FLAGS="-cpu host -smp 4 -m 1g -display gtk,zoom-to-fit=on -enable-kvm -netdev user,id=mynet0,hostfwd=tcp::5555-:22 -device pcnet,netdev=mynet0"
-QEMU_FLAGS="-cpu host -smp 4 -m 1g -display gtk,zoom-to-fit=on -enable-kvm -rtc base=localtime -audiodev alsa,id=snd0 -device adlib,audiodev=snd0
+QEMU_FLAGS="-cpu host -smp 4 -m 4g -display gtk,zoom-to-fit=on -enable-kvm -rtc base=localtime -audiodev alsa,id=snd0 -device adlib,audiodev=snd0
             -drive file=shrineos,format=raw"
 #            -drive file=shrineos,format=raw,index=0,media=disk -cdrom ./Home/cv.ISO"
 

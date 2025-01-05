@@ -172,11 +172,11 @@ try {
       case '\n':
         Init;
         break;
-    default:
+    default:
       //Adam("\"%d\n\";",sc.u8[0]);
 
       switch (sc.u8[0]) {
-        case 46:
+        case 46:
           cf=!cf;
           break;
         case 75:

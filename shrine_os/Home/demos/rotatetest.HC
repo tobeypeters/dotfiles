@@ -43,7 +43,7 @@ U0 rot_matrix(U64 idx) {
 U0 DrawIt(CTask *task,CDC *dc)
 {
   dc->color=RED;
-  dc->thick=5;
+  dc->thick=5;
   GrLine(dc,corners[0].x,corners[0].y,corners[1].x,corners[1].y);
   GrLine(dc,corners[3].x,corners[3].y,corners[2].x,corners[2].y);
   GrLine(dc,corners[3].x,corners[3].y,corners[0].x,corners[0].y);

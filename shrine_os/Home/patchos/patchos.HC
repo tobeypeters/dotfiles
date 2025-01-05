@@ -35,6 +35,10 @@
    * More
    * Tail
    * trash_msg
+   * ToU32
+   * ATan2
+   * MapF64
+   * MapI64
 
   Outside system files modded:
 
@@ -52,6 +56,34 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     *orig=0xe9;
     *(orig+1)(U32*)=new-orig-5;
     POPFD
+}
+
+public F64 ATan2(F64 y,F64 x)
+{//Two number Arc Tangent (Inverse Tan) or four quads.
+  F64 angle=0;
+
+  if (x==0)
+  {
+    if (y>0) return ã/2; //90degrees
+    if (y<0) return -ã/2; //-90degrees
+    else return 0;
+  }
+
+  angle=ATan(y/x);
+
+  if (x>0) return angle; //quad 1 or 4
+  if (x<0&&y>=0) return angle+ã; //quad 2
+  else return angle-ã;           //quad 3
+}
+
+public F64 MapF64(F64 value,F64 in_min,F64 in_max,F64 out_min,F64 out_max)
+{//Take a F64 number from one range and scale it to a different range.
+  return (value-in_min)*(out_max-out_min)/(in_max-in_min)+out_min;
+}
+
+public I64 MapI64(I64 value,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
+{//Take a I64 number from one range and scale it to a different range.
+  return ((value-in_min)*(out_max-out_min)+(in_max-in_min)/2)/(in_max-in_min)+out_min;
 }
 
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
@@ -124,7 +156,7 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U32 ToU32(U32 vu)
+public U32 ToU32(U32 vu)
 {/* Return a valid U32.  Functions treat everything as 64bit.
   Bit level is ignored.
   if it's not inside a function.

@@ -165,7 +165,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 U0 AnimateTask(I64)
 {
   cur_drop=0;
-  while (TRUE) {
+  while (TRUE) {
     for (i=0;i<2;i++) {
       j=0;
       do {
