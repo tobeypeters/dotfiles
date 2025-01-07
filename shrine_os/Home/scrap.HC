@@ -668,7 +668,7 @@ U8 *buffe$IV,0$r=strnew(,,"viper","armed");
 "buffer: %s\n",buffer;
 Free(buffer);*/
 
-$SP,"<1>",BI=1$$ER$
+$ER$$ER$
 
 //https://www.deviantart.com/mariiboops/art/8x8-Pixel-Characters-838322593
 
@@ -857,7 +857,7 @@ c.x=34;c.y=35;
 
   if (x>0) return angle; //quad 1 or 4
   if (x<0&&y>=0) return angle+�; //quad 2
-  else return angle-�;           //quad 3
+  else return angle-�;           //quad 3
 }
 
 "%2.3f\n",ATan3(1,1);
@@ -866,7 +866,7 @@ c.x=34;c.y=35;
 "%2.3f\n",ATan3(-1,-1);
 "%2.3f\n",ATan3(0,0);
 */
-F64 rotation_x,rotation_y;
+/*F64 rotation_x,rotation_y;
 
 CD3 *newCD3(F64 x,F64 y,F64 z) {
   CD3 *ret=MAlloc(sizeof(CD3));
@@ -897,6 +897,59 @@ test=rp(test,&x,&y,&z);
 U64 sx=(px* WIDTH/4)+WIDTH/2;
     sy=(py* HEIGHT/4)+HEIGHT/2;
 
-printf("{-1,-0.13385827,-0.16535433},%2.8f,%2.8f %d %d\n",rotation_x,rotation_y,sx,sy);
+printf("{-1,-0.13385827,-0.16535433},%2.8f,%2.8f %d %d\n",rotation_x,rotation_y,sx,sy);*/
+
+/*U0 ih(U64 idx)
+{
+  U64 i,ii,im;
+
+  i=idx.u8[0];
+  ii=idx.u8[1];
+  im=i+ii;
+
+//  "%d %d\n",i,ii;
+
+  for (;i<im;i++) {
+    "i: %d\n",i;
+  }
+}
+
+U64 in,dim=100,hm=25;
+
+in.u8[1]=25;
+
+in.u8[0]=0;
+ih(in);
+in.u8[0]=25;
+ih(in);
+in.u8[0]=50;
+ih(in);
+in.u8[0]=75;
+ih(in);*/
+
+/*#define DIM 97
+
+U64 bc,bcf,br,i;
+
+U0 Init_Helper(U64 idx)
+{
+  U64 i=idx.u8[0],
+     lc=i+idx.u8[1];
+
+  for (;i<lc;i++)
+  {
+    "%d\n",i;
+  }
+}
+
+bc=DIM/(mp_cnt);
+br=DIM-(bc*(mp_cnt));
+
+for(i=0;i<mp_cnt;i++)
+{
+  bcf.u8[0]=i*bc;
+  bcf.u8[1]=bc+((i+1==mp_cnt)*br);
+  Init_Helper(bcf);
+}*/
 
 //KeyAndCont;

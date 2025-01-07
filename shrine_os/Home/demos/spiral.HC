@@ -14,53 +14,75 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*mytemplate.HC
+/*mandelbulb.HC
   Description:
-      Empty project template.
+      Generates a spiral.
+  Resources:
+      https://en.wikipedia.org/wiki/Mandelbulb
 */
-
-//CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
-
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-U64 sch;
+#define CX WIDTH/2
+#define CY HEIGHT/2
+#define SPIRAL_TURN_FACTOR 0.1
+#define MAX_POINTS WIDTH*HEIGHT
 
-//CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
+CD2 points[MAX_POINTS];
 
-
+U64 pc=0;
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  /*cdc=dc;
+  DCFill(BLACK);
 
-  if (Bt(kbd.down_bitmap,sch)) "test";
+  U64 i,color=0;
 
-  cdc->color=ROP_EQU;
-  dc->flags|=DCF_NO_TRANSPARENTS;
-  GrBlot(cdc,-task->pix_left-task->scroll_x,
-	-task->pix_top-task->scroll_y,dc);
-  dc->flags&=~DCF_NO_TRANSPARENTS;*/
-}
+  F64 px,py,pz;
 
-U0 AnimateTask(I64)
-{
-  while (TRUE) {
-    Sleep(20);
+  for(i=0;i<pc;i++)
+  {
+    dc->color=color;
+
+    GrPlot(dc,points[i].x,points[i].y);
+
+//    color=MaxU64(1,(color+1)%16);
+    color=RandU16%15;
   }
 }
 
 U0 Init()
 {
+  F64 radius=0,
+       angle=0,
+           x,y;
+
+  U64 i;
+
+  for (i=0;i<MAX_POINTS;i++)
+  {
+    //Ppolar coordinates to cartesian coordinates
+    x=CX+radius*Cos(angle);
+    y=CY+radius*Sin(angle);
+
+    //Within screen bounds
+    if (x>=0&&x<WIDTH&&y>=0&&y<HEIGHT) {
+      points[pc].x=x;
+      points[pc].y=y;
+      pc++;
+    }
+
+    radius+=SPIRAL_TURN_FACTOR;
+    angle+=0.2;
+  }
 }
 
-I64 ch,sc;
 MenuPush(
   "File {"
   "  Abort(,CH_SHIFT_ESC);"
   "  Exit(,CH_ESC);"
   "}"
   "Play {"
-  "  Restart(,'\n');"
   "}"
 );
 
@@ -69,31 +91,26 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-//Fs->win_inhibit=WIG_TASK_DFT-WIF_SELF_FOCUS-WIF_SELF_BORDER;
+Fs->draw_it=&DrawIt;
 
 Init;
 
-sch=Char2ScanCode('h');
+I64 arg1,arg2,sc;
 
-//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1);
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
-Fs->draw_it=&DrawIt;
-
+Bool run=TRUE;
 try {
-  do
-    switch (ch=GetKey(&sc)) {
-      case '\n':
-        Init;
-      break;
+  while (run) {
+    sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN);
+    switch (sc) {
+      case MSG_KEY_DOWN:
+        if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
+          run=FALSE;
     }
-  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
-}
-catch
+  }
+} catch
   PutExcept;
 
-//cdc=NULL;
-
-//DCDel(cdc);
 
 SettingsPop;
 MenuPop;
+
