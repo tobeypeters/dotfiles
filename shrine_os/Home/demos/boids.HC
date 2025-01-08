@@ -23,8 +23,8 @@
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-#define NUM_BOIDS 500
-#define MAX_SPEED 8
+#define NUM_BOIDS 1000
+#define MAX_SPEED 8
 #define VIEW_RADIUS 50
 #define SEPARATION_RADIUS 8
 
@@ -134,14 +134,15 @@ U0 DrawIt(CTask *task,CDC *dc)
     if (i>NUM_BOIDS/3) dc->color=LTBLUE;
     if (i>(NUM_BOIDS/3)*2) dc->color=LTRED;
 
-    GrPlot(dc,boids[i].x,boids[i].y);
+    GrPlot(dc,boids[i].x,boids[i].y); //little dot
+//    GrCircle(dc,boids[i].x,boids[i].y,1); //big dot :>
   }
 }
 
 U0 Init()
 {
   MemSet(boids,0,sizeof(boids));
-
+
   U64 i;
 
   for (i=0;i<NUM_BOIDS;i++)
