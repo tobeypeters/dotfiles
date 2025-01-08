@@ -23,7 +23,7 @@
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-#define NUM_BOIDS 1000
+#define NUM_BOIDS 500
 #define MAX_SPEED 8
 #define VIEW_RADIUS 50
 #define SEPARATION_RADIUS 8
@@ -140,6 +140,8 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 U0 Init()
 {
+  MemSet(boids,0,sizeof(boids));
+
   U64 i;
 
   for (i=0;i<NUM_BOIDS;i++)
@@ -159,6 +161,7 @@ MenuPush(
   "  Exit(,CH_ESC);"
   "}"
   "Play {"
+  "  Restart(,'\n');"
   "}"
 );
 
@@ -179,6 +182,7 @@ try {
     sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN);
     switch (sc) {
       case MSG_KEY_DOWN:
+        if (arg1=='\n') Init;
         if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
           run=FALSE;
     }
