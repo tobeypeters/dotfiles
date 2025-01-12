@@ -4,7 +4,7 @@
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
   subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
@@ -30,92 +30,99 @@
 
 class BOID {
   F64 x,y, // Position
-    vx,vy; // Velocity
+    vx,vy, // Velocity
+   leader;
 };
 
 BOID boids[NUM_BOIDS];
+BOID *bpi,*bpj;
 
-U0 limit_speed(U64 idx) {
-  BOID *bp=&boids[idx];
- 
-  F64 speed=Sqrt(bp->vx*bp->vx+
-                 bp->vy*bp->vy);
+U64 i,j,bvx,bvy,sl=2,count;
 
-  if (speed>MAX_SPEED) {
-    bp->vx=(bp->vx/speed)*MAX_SPEED;
-    bp->vy=(bp->vy/speed)*MAX_SPEED;
-  }
-}
+F64 angle_1=ã/3,
+    angle_2=-ã/3,
+    avgVx,avgVy,
+    repelX,repelY,
+    px1,py1,px2,py2,
+    bx,by,lp,cx,cy,
+    distance,dx,dy,
+    speed;
 
 U0 AnimateTask(I64)
 {
-  U64 i,j;
-
   while (TRUE)
   {
     for (i=0;i<NUM_BOIDS;i++)
     {
-      F64 cx=0,cy=0,        // Cohesion
-         avgVx=0,avgVy=0,   // Alignment
-         repelX=0,repelY=0; // Separation
+      cx=0,cy=0,         // Cohesion
+      avgVx=0,avgVy=0,   // Alignment
+      repelX=0,repelY=0; // Separation
 
-      I64 count=0;
+      count=0;
+
+      bpi=&boids[i];
 
       for (j=0;j<NUM_BOIDS;j++)
       {
         if (i==j) goto continue;
 
-        F64 dx=boids[j].x-boids[i].x,
-            dy=boids[j].y-boids[i].y,
-            distance=Sqrt(dx*dx+dy*dy);
+        bpj=&boids[j];
+
+        dx=bpj->x-bpi->x,
+        dy=bpj->y-bpi->y,
+        distance=Sqrt(dx*dx+dy*dy);
 
         if (distance<VIEW_RADIUS)
         {
-          cx+=boids[j].x;
-          cy+=boids[j].y;
-          avgVx+=boids[j].vx;
-          avgVy+=boids[j].vy;
+          cx+=bpj->x;
+          cy+=bpj->y;
+          avgVx+=bpj->vx;
+          avgVy+=bpj->vy;
           count++;
 
-          if (distance<SEPARATION_RADIUS)
-          {
-            repelX-=dx;
-            repelY-=dy;
+          if (distance<SEPARATION_RADIUS) {
+            repelX-=bpj->x-bpi->x;
+            repelY-=bpj->y-bpi->y;
           }
         }
         continue:
       }
 
-      if (count>0)
+      if (count)
       {
         //Cohesion
-        cx/=count;
-        cy/=count;
-        boids[i].vx+=(cx-boids[i].x)*0.01;
-        boids[i].vy+=(cy-boids[i].y)*0.01;
+        cx/=count;cy/=count;
+        bpi->vx+=(cx-bpi->x)*0.01;
+        bpi->vy+=(cy-bpi->y)*0.01;
 
         //Alignment
-        avgVx/=count;
-        avgVy/=count;
-        boids[i].vx+=(avgVx-boids[i].vx)*0.05;
-        boids[i].vy+=(avgVy-boids[i].vy)*0.05;
+        avgVx/=count;avgVy/=count;
+        bpi->vx+=(avgVx-bpi->vx)*0.05;
+        bpi->vy+=(avgVy-bpi->vy)*0.05;
 
         //Separation
-        boids[i].vx+=repelX * 0.1;
-        boids[i].vy+=repelY * 0.1;
+        bpi->vx+=repelX*0.1;
+        bpi->vy+=repelY*0.1;
       }
 
-      limit_speed(i);
+      //Speed
+      speed=Sqrt(bpi->vx*bpi->vx+
+                 bpi->vy*bpi->vy);
 
-      // Update position
-      boids[i].x+=boids[i].vx;
-      boids[i].y+=boids[i].vy;
+      if (speed>MAX_SPEED) {
+        bpi->vx=(bpi->vx/speed)*MAX_SPEED;
+        bpi->vy=(bpi->vy/speed)*MAX_SPEED;
+      }
 
-      // Wrap around screen
-      if (boids[i].x<0) boids[i].x+=WIDTH;
-      if (boids[i].x>=WIDTH) boids[i].x-=WIDTH;
-      if (boids[i].y<0) boids[i].y+=HEIGHT;
-      if (boids[i].y>=HEIGHT) boids[i].y-=HEIGHT;
+      //Position
+      bpi->x+=bpi->vx;
+      bpi->y+=bpi->vy;
+
+      //Bounds checks
+      if (bpi->x<1) bpi->vx=Abs(bpi->vx);
+      if (bpi->x>WIDTH-1) bpi->vx=-bpi->vx;
+      if (bpi->y<1) bpi->vy=Abs(bpi->vy);
+      if (bpi->y>HEIGHT-1) bpi->vy=-bpi->vy;
     }
 
     Sleep(20);
@@ -128,13 +135,30 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   dc->color=LTGREEN;
 
-  U64 i;
   for(i=0;i<NUM_BOIDS;i++)
   {
     if (i>NUM_BOIDS/3) dc->color=LTBLUE;
     if (i>(NUM_BOIDS/3)*2) dc->color=LTRED;
 
-    GrPlot(dc,boids[i].x,boids[i].y); //little dot
+    bx=boids[i].x; by=boids[i].y;
+    bvx=boids[i].vx; bvy=boids[i].vy;
+
+    //Normalize
+    lp=Sqrt(bvx*bvx+bvy*bvy);
+    bvx=bvx/lp; bvy=bvy/lp;
+    //Scale
+    bvx=bvx*sl; bvy=bvy*sl;
+
+    px1=-(bvx*Cos(angle_1)-bvy*Sin(angle_1))+bx;
+    py1=-(bvx*Sin(angle_1)+bvy*Cos(angle_1))+by;
+    px2=-(bvx*Cos(angle_2)-bvy*Sin(angle_2))+bx;
+    py2=-(bvx*Sin(angle_2)+bvy*Cos(angle_2))+by;
+
+    GrLine(dc,bx,by,px1,py1);
+    GrLine(dc,px1,py1,px2,py2);
+    GrLine(dc,px2,py2,bx,by);
+
+//    GrPlot(dc,boids[i].x,boids[i].y); //little dot
 //    GrCircle(dc,boids[i].x,boids[i].y,1); //big dot :>
   }
 }
@@ -143,14 +167,13 @@ U0 Init()
 {
   MemSet(boids,0,sizeof(boids));
 
-  U64 i;
-
   for (i=0;i<NUM_BOIDS;i++)
   {
-    boids[i].x=RandU16%WIDTH;
-    boids[i].y=RandU16%HEIGHT;
-    boids[i].vx=(RandU16%200-100)/100;
-    boids[i].vy=(RandU16%200-100)/100;
+    bpi=&boids[i];
+    bpi->x=RandU16%WIDTH;
+    bpi->y=RandU16%HEIGHT;
+    bpi->vx=(RandU16%200-100)/100;
+    bpi->vy=(RandU16%200-100)/100;
   }
 }
 
@@ -171,7 +194,7 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
+//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
 Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 
