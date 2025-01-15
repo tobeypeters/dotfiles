@@ -122,7 +122,7 @@ U0 displayStarfield(CDC *dc)
 //      Get the Euclidean distance between the current and previous points.
 //      ll=Sqrt((np.x-cp.x)*(np.x-cp.x)+(np.y-cp.y)*(np.y-cp.y));
 
-      if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
+      if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
         GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }
@@ -172,7 +172,7 @@ try {
       case '\n':
         Init;
         break;
-    default:
+    default:
       //Adam("\"%d\n\";",sc.u8[0]);
 
       switch (sc.u8[0]) {

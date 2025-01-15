@@ -45,6 +45,10 @@
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
 
+public U0 clear(CDoc *doc=NULL,Bool clear_holds=FALSE) {
+  DocClear(doc,clear_holds);
+}
+
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -82,7 +86,7 @@ public F64 MapF64(F64 value,F64 in_min,F64 in_max,F64 out_min,F64 out_max)
 }
 
 public I64 MapI64(I64 value,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
-{//Take a I64 number from one range and scale it to a different range.
+{//Take a I64 number from one range and scale it to a different range.
   return ((value-in_min)*(out_max-out_min)+(in_max-in_min)/2)/(in_max-in_min)+out_min;
 }
 

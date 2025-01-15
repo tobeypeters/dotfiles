@@ -28,6 +28,10 @@
 #define VIEW_RADIUS 50
 #define SEPARATION_RADIUS 8
 
+#define COHESION_FACTOR 0.01
+#define ALIGNMENT_FACTOR 0.05
+#define SEPARATION_FACTOR 0.1
+
 class BOID {
   F64 x,y, // Position
     vx,vy, // Velocity
@@ -46,9 +50,9 @@ F64 angle_1=ã/3,
     px1,py1,px2,py2,
     bx,by,lp,cx,cy,
     distance,dx,dy,
-    speed;
+    speed,scale;
 
-U0 AnimateTask(I64)
+U0 AnimateTask(I64)
 {
   while (TRUE)
   {
@@ -68,10 +72,14 @@ U0 AnimateTask(I64)
 
         bpj=&boids[j];
 
-        dx=bpj->x-bpi->x,
-        dy=bpj->y-bpi->y,
-        distance=Sqrt(dx*dx+dy*dy);
+        dx=bpj->x-bpi->x;
+        dy=bpj->y-bpi->y;
 
+        /*This makes it seem to flock more correctly. Less CPU usage.
+        distance=dx*dx+dy*dy;
+        if (distance<VIEW_RADIUS*VIEW_RADIUS)*/
+
+        distance=Sqrt(dx*dx+dy*dy);
         if (distance<VIEW_RADIUS)
         {
           cx+=bpj->x;
@@ -92,17 +100,17 @@ U0 AnimateTask(I64)
       {
         //Cohesion
         cx/=count;cy/=count;
-        bpi->vx+=(cx-bpi->x)*0.01;
-        bpi->vy+=(cy-bpi->y)*0.01;
+        bpi->vx+=(cx-bpi->x)*COHESION_FACTOR;
+        bpi->vy+=(cy-bpi->y)*COHESION_FACTOR;
 
         //Alignment
         avgVx/=count;avgVy/=count;
-        bpi->vx+=(avgVx-bpi->vx)*0.05;
-        bpi->vy+=(avgVy-bpi->vy)*0.05;
+        bpi->vx+=(avgVx-bpi->vx)*ALIGNMENT_FACTOR;
+        bpi->vy+=(avgVy-bpi->vy)*ALIGNMENT_FACTOR;
 
         //Separation
-        bpi->vx+=repelX*0.1;
-        bpi->vy+=repelY*0.1;
+        bpi->vx+=repelX*SEPARATION_FACTOR;
+        bpi->vy+=repelY*SEPARATION_FACTOR;
       }
 
       //Speed
@@ -110,8 +118,8 @@ U0 AnimateTask(I64)
                  bpi->vy*bpi->vy);
 
       if (speed>MAX_SPEED) {
-        bpi->vx=(bpi->vx/speed)*MAX_SPEED;
-        bpi->vy=(bpi->vy/speed)*MAX_SPEED;
+        scale=MAX_SPEED/speed;
+        bpi->vx*=scale;bpi->vy*=scale;
       }
 
       //Position
@@ -131,8 +139,6 @@ U0 AnimateTask(I64)
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(BLACK);
-
   dc->color=LTGREEN;
 
   for(i=0;i<NUM_BOIDS;i++)
@@ -194,7 +200,7 @@ AutoComplete;
 WinBorder; WinMax;
 DocCursor; DocClear;
 
-//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
+//Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",mp_cnt-1,Fs);
 Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 
