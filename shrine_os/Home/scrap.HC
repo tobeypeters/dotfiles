@@ -950,6 +950,21 @@ for(i=0;i<mp_cnt;i++)
   bcf.u8[0]=i*bc;
   bcf.u8[1]=bc+((i+1==mp_cnt)*br);
   Init_Helper(bcf);
-}*/
+}*/
+
+/*CHashFun* FindFunction(U8* name) {
+  CHash* result = HashFind(name, Fs->hash_table, HTT_FUN);
+
+  if (result && (result->type & HTT_FUN) != 0)
+    return result(CHashFun *);
+  else
+    return NULL;
+}
+
+U0 tester() { "Tester ...\n"; };
+
+CHashFun *chf=FindFunction("Cdr");
+chf->exe_addr=&tester;
+Cdr;*/
 
 //KeyAndCont;

@@ -44,11 +44,6 @@
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
-
-public U0 clear(CDoc *doc=NULL,Bool clear_holds=FALSE) {
-  DocClear(doc,clear_holds);
-}
-
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -89,6 +84,41 @@ public I64 MapI64(I64 value,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Take a I64 number from one range and scale it to a different range.
   return ((value-in_min)*(out_max-out_min)+(in_max-in_min)/2)/(in_max-in_min)+out_min;
 }
+public U32 ToU32(U32 vu)
+{/* Return a valid U32.  Functions treat everything as 64bit.
+  Bit level is ignored.
+  if it's not inside a function.
+
+  U0 test()
+  {
+    U32 a=10*3284157443;
+    //Prints $WW+H,1$a: 32841574430 ValU32(a): 2776803358
+    "a: %d ValU32(a):\n",a,ValU32(a);
+  }
+  U32 a=10*3284157443;
+  //Prints $WW+H,1$a: 2776803358 ValU32(a): 2776803358
+  "a: %d ValU32(a):\n",a,ValU32(a);
+  test;
+*/
+  return vu;
+}
+public U0 ADocClear()
+{//Clear Adams doc window
+  Adam("DocClear;");
+}
+public U0 Cdr()
+{//Change to the root directory of the current drive
+  Cd("/");
+}
+public U0 KeyAndCont()
+{//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
+ //Doesn't print any newline characters and "clears" the line after you
+ //press a key.
+  "$FG,2$Press any key to continue ...$FG$";
+
+  GetChar(,FALSE);
+  PutChars(CH_CTRLY);
+}
 
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
 		     Bool del_dir,Bool print_msg)
@@ -100,7 +130,7 @@ public extern I64 RedSeaFilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fu
 #define TRASH 127
 
 public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
-{
+{
 //Display a specified message, when a file or files
  //are sent to the trash.
  Silent(silent_off); "Trashed: %s",msg;
@@ -160,41 +190,6 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U32 ToU32(U32 vu)
-{/* Return a valid U32.  Functions treat everything as 64bit.
-  Bit level is ignored.
-  if it's not inside a function.
-
-  U0 test()
-  {
-    U32 a=10*3284157443;
-    //Prints $WW+H,1$a: 32841574430 ValU32(a): 2776803358
-    "a: %d ValU32(a):\n",a,ValU32(a);
-  }
-  U32 a=10*3284157443;
-  //Prints $WW+H,1$a: 2776803358 ValU32(a): 2776803358
-  "a: %d ValU32(a):\n",a,ValU32(a);
-  test;
-*/
-  return vu;
-}
-public U0 ADocClear()
-{//Clear Adams doc window
-  Adam("DocClear;");
-}
-public U0 Cdr()
-{//Change to the root directory of the current drive
-  Cd("/");
-}
-public U0 KeyAndCont()
-{//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
- //Doesn't print any newline characters and "clears" the line after you
- //press a key.
-  "$FG,2$Press any key to continue ...$FG$";
-
-  GetChar(,FALSE);
-  PutChars(CH_CTRLY);
-}
 public U64 LineCnt(U8 *filename)
 {//Get the line count, for a specified file.
   U64 res=0;
@@ -208,7 +203,7 @@ public U64 LineCnt(U8 *filename)
 public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
 {//Output txt or graphic file to the command line,
  //one screen at a time.
- //line_max is used for the Head()
+ //prn_lines limits the line count
   if (!FileFind(filename)) return;
 
   U8 *buffer=NULL;
@@ -219,32 +214,31 @@ public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
 
   U64 ml=Fs->win_bottom-Fs->win_top,
       cl=0, //Current line count
-      dc=0, //Display count
-       i=0;
+      dc=0; //Display count
 
   Bool di=FALSE; //Display the char(s)
 
   U64 lc=LineCnt(filename)-prn_lines;
 
-  for (;buffer[i]!=TK_EOF;i++)
+  while(*buffer!=TK_EOF)
   {
     if (less) di=(cl>=lc);
     else di=(cl<prn_lines);
 
-    if (di) "%c",buffer[i];
-
-    if (buffer[i]=='\n') { cl++; dc+=di; }
-
-    if (di)
-    {
-      if (dc==ml) { KeyAndCont; dc=0; }
+    if (di) {
+      "%c",*buffer;
       if (cl==prn_lines) break;
     }
+
+    if (*buffer=='\n') { cl++; dc+=di; }
+
+    if (di)
+      if (dc==ml) { KeyAndCont; dc=0; }
+
+    buffer++;
   }
 
   "\n";
-
-  Free(buffer);
 }
 
 public U0 Head(U8 *filename,U64 disp=10)
@@ -255,6 +249,7 @@ public U0 Tail(U8 *filename,U64 disp=10)
 {//Print out the last 10 lines, of the specified file.
   More(filename,disp,TRUE);
 }
+
 
 #define FUf_NO_ATAPI_CHECK	99 //For IsDir & FileFind - Tobey Peters
 
@@ -1370,44 +1365,6 @@ public U0 doctermnew()
   Raw(OFF);
 }
 
-/*public U8 *strnew(U8 *buf=NULL,CTask *mem_task=NULL,...)
-{//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
-  U8 *res=0;
-  I64 size=0;
-
-  if (buf||mem_task) {
-    if (buf) {
-      size=StrLen(buf)+1;
-      res=MAlloc(size,mem_task);
-      MemCpy(res,buf,size);
-      goto done;
-    }
-    res=MAlloc(1,mem_task);
-    goto done;
-  }
-
-  if (argc) {
-    U64 i=0;
-
-    while(i<argc) {
-      size+=StrLen(argv[i]);
-
-      i++;
-    }
-
-    if (size) size+=1;
-
-    res=CAlloc(sizeof(U8)*size);
-    for (i=0;i<argc;i++) {
-      CatPrint(res,argv[i]);
-    }
-  }
-
-done:
-  return res;
-}*/
-
-//U8 blkdev_text_attr[BDT_TYPES_NUM]={BLACK,LTCYAN,WHITE,LTGREEN,LTRED,LTBLUE};
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
 
 public U8 drvtextattrget(U8 drv_let=0)
@@ -1417,6 +1374,19 @@ public U8 drvtextattrget(U8 drv_let=0)
     return drv_text_attr[drv_let%sizeof(drv_text_attr)]<<4|WHITE;
   else
     return BLACK<<4|WHITE;
+}
+
+public U0 HijackFunc(U8 *orig, U8 *new)
+{// Replace a system function with a new function
+
+    // Warning old function address is not saved and this overwrites it!
+    // Assembly code of old function is patched to jump to new instead.
+    // Only a reboot will restore the original function!
+    PUSHFD
+    CLI
+    *orig=0xe9;
+    *(orig+1)(U32*)=new-orig-5;
+    POPFD
 }
 
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);

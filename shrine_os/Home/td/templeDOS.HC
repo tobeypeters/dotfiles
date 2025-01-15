@@ -30,7 +30,7 @@ Bool inLst(U8 *opt)
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
 
-/*COMMAND HISTORY stuff
+/*COMMAND HISTORY stuff
 EdLineDel(doc);
 */
 
@@ -524,7 +524,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear;DocMax;Cd;
+  DocClear;DocMax;Cd;
 
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;

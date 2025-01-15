@@ -1,4 +1,4 @@
-/*ALL this will replaced*/
+/*ALL this will replaced*/
 
 /*This was done with <CTRL-SHIFT-L> template code.
 It's conceptually easy to do a ctrl,
@@ -12,7 +12,7 @@ See $LK,"CCtrl",A="MN:CCtrl"$.
 #define SLIDER_SPACING 20
 #define SLIDER_BORDER  2
 
-class CSliderState
+class CSliderState
 {
   I64 left_pos;
   I64 right_pos;
