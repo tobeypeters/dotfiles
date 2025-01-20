@@ -52,7 +52,7 @@ F64 angle_1=ã/3,
     distance,dx,dy,
     speed,scale;
 
-U0 AnimateTask(I64)
+U0 AnimateTask(I64)
 {
   while (TRUE)
   {
@@ -66,18 +66,18 @@ F64 angle_1=ã/3,
 
       bpi=&boids[i];
 
-      for (j=0;j<NUM_BOIDS;j++)
+      for (j=0;j<NUM_BOIDS;j++)
       {
         if (i==j) goto continue;
 
         bpj=&boids[j];
 
-        dx=bpj->x-bpi->x;
-        dy=bpj->y-bpi->y;
+        dx=bpi->x-bpj->x;
+        dy=bpi->y-bpj->y;
 
-        /*This makes it seem to flock more correctly. Less CPU usage.
-        distance=dx*dx+dy*dy;
-        if (distance<VIEW_RADIUS*VIEW_RADIUS)*/
+          /*This makes it seem to flock more correctly. Less CPU usage.*/
+//        distance=dx*dx+dy*dy;
+//        if (distance<VIEW_RADIUS*VIEW_RADIUS)
 
         distance=Sqrt(dx*dx+dy*dy);
         if (distance<VIEW_RADIUS)
@@ -222,3 +222,4 @@ try {
 
 SettingsPop;
 MenuPop;
+$LK,"",A="FI:"$
