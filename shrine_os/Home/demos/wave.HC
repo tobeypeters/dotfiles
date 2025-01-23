@@ -18,7 +18,7 @@
   Description:
       2d Terrain generator using the wave collapse algorithm.
 */
-
+
 #define WIDTH GR_WIDTH/FONT_WIDTH
 #define HEIGHT GR_HEIGHT/FONT_HEIGHT
 
@@ -153,7 +153,7 @@ U0 WaveCollapse()
 	"}"
 	);
   SettingsPush;
-  AutoComplete;
+  AutoComplete;
   WinBorder;
   WinMax;
   DocCursor;

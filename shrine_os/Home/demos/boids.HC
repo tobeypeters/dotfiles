@@ -66,7 +66,7 @@ U0 AnimateTask(I64)
 
       bpi=&boids[i];
 
-      for (j=0;j<NUM_BOIDS;j++)
+      for (j=0;j<NUM_BOIDS;j++)
       {
         if (i==j) goto continue;
 
@@ -156,7 +156,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     bvx=bvx*sl; bvy=bvy*sl;
 
     px1=-(bvx*Cos(angle_1)-bvy*Sin(angle_1))+bx;
-    py1=-(bvx*Sin(angle_1)+bvy*Cos(angle_1))+by;
+    py1=-(bvx*Sin(angle_1)+bvy*Cos(angle_1))+by;
     px2=-(bvx*Cos(angle_2)-bvy*Sin(angle_2))+bx;
     py2=-(bvx*Sin(angle_2)+bvy*Cos(angle_2))+by;
 
