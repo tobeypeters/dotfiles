@@ -15,7 +15,7 @@
 */
 
 /*collision.HC
-  Description:
+  Description:
       Cheap collision detection.
 */
 #define  WIDTH GR_WIDTH
@@ -67,8 +67,7 @@ U0 Init()
 {
   rect.x=200;rect.y=150;
   rect.w=200;rect.h=100;
-  MemSet(&circle,'0',sizeof(CD3));
-  circle.x=ms.pos.x;
+  circle.x=ms.pos.x;
   circle.y=ms.pos.y;
   circle.z=30.0; //Use for radius
   collision;
