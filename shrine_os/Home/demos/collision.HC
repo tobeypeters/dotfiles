@@ -14,14 +14,14 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*mytemplate.HC
-  Description:
+/*collision.HC
+  Description:
       Cheap collision detection.
 */
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-class rect{
+class RECT{
   U64 x,y,w,h;
 } rect;
 
@@ -34,24 +34,18 @@ Bool hit=FALSE;
 U8 *tf[2]={"FALSE","TRUE"};
 
 U0 collision() {
-  CD3 cp;
+  //Calculate the distance between the circle's center
+  //and the closest point.
+  F64 x=circle.x-Max(rect.x,Min(circle.x,rect.x+rect.w)),
+      y=circle.y-Max(rect.y,Min(circle.y,rect.y+rect.h));
 
-  // Find the closest point on the rectangle to the circle
-  cp.x=Max(rect.x,Min(circle.x,rect.x+rect.w));
-  cp.y=Max(rect.y,Min(circle.y,rect.y+rect.h));
-
-  // Calculate the distance between the circle's center and the closest point
-  F64 x=circle.x-cp.x,
-      y=circle.y-cp.y,
-    dist=Sqrt(x*x+y*y);
-
-  // If the distance is less than the circle's radius, they are colliding
-  hit=dist<circle.z;
+  //hit=distance less than the circle's radius
+  hit=Sqrt(x*x+y*y)<circle.z;
 }
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,WHITE);
-//  DCFill(dc,BLACK); //Standard TempleOS
+//  DCFill(dc,BLACK); //Standard TempleOS
 
   dc->color=LTBLUE;
   GrRect(dc,rect.x,rect.y,rect.w,rect.h);
