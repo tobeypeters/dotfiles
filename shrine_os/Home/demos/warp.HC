@@ -116,13 +116,13 @@ U0 displayStarfield(CDC *dc)
     if (!(MW-o<=cp.x<=MW+o)||
         !(MH-o<=cp.y<=MH+o))
     {
-      dc->color=COLORS[p->color];
+      dc->color=COLORS[p->color];
       GrPlot(dc,cp.x,cp.y);
 
 //      Get the Euclidean distance between the current and previous points.
 //      ll=Sqrt((np.x-cp.x)*(np.x-cp.x)+(np.y-cp.y)*(np.y-cp.y));
 
-      if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
+      if (D3Dist(&cp,&np)<=STREAK_LEN+RandU16%4)
         GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }

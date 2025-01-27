@@ -36,7 +36,7 @@ public _extern _D3_NORM F64 D3Norm(CD3 *d); //Norm
 public _extern _D3_NORM_SQR F64 D3NormSqr(CD3 *d); //Norm Squared
 public _extern _D3_SUB CD3 *D3Sub(CD3 *diff,CD3 *d1,CD3 *d2); //diff=d1-d2
 public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
-public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
+public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
 
@@ -57,6 +57,8 @@ class PARTICLE:CD3
 
   U64 color;
 };
+
+PARTICLE p_arr[PARTICLE_MAX];
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -79,4 +81,3 @@ U0 p_deinit(U8 *p,U64 p_cnt)
 {
   MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
 }
-

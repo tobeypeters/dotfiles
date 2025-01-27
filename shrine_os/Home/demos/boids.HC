@@ -20,7 +20,7 @@
   Resources:
       https://en.wikipedia.org/wiki/Boids
 */
-#define  WIDTH GR_WIDTH
+#define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
 #define NUM_BOIDS 1000
@@ -183,7 +183,7 @@ U0 Init()
   }
 }
 
-I64 arg1,arg2,sc;
+I64 arg1,arg2,sc;
 
 MenuPush(
   "File {"
