@@ -17,17 +17,47 @@
 /*grdefs.HC
   Description:
       Graphics related stuff.
+*/
+/*//I'll incorporate Terry's wherever I can or where I feel I should.
+public _extern _D3_ADD CD3 *D3Add(CD3 *sum,CD3 *d1,CD3 *d2); //sum=d1+d2
+public _extern _D3_ADD_EQU CD3 *D3AddEqu(CD3 *sum,CD3 *d); //sum+=d
+public _extern _D3_COPY CD3 *D3Copy(CD3 *dst,CD3 *src); //dst=src
+public _extern _D3_CROSS CD3 *D3Cross(CD3 *prod,CD3 *d1,CD3 *d2); //prod=d1xd2
+public _extern _D3_DIST F64 D3Dist(CD3 *d1,CD3 *d2); //Distance
+public _extern _D3_DIST_SQR F64 D3DistSqr(CD3 *d1,CD3 *d2); //Distance Squared
+public _extern _D3_DIV CD3 *D3Div(CD3 *quot,CD3 *d,F64 s); //quot=d/s
+public _extern _D3_DIV_EQU CD3 *D3DivEqu(CD3 *quot,F64 s); //quot/=s
+public _extern _D3_DOT F64 D3Dot(CD3 *d1,CD3 *d2); //d1 dot d2
+public _extern _D3_EQU CD3 *D3Equ(
+	CD3 *dst,F64 x=0,F64 y=0,F64 z=0); //dst=(x,y,z)
+public _extern _D3_MUL CD3 *D3Mul(CD3 *prod,F64 s,CD3 *d); //prod=s*d
+public _extern _D3_MUL_EQU CD3 *D3MulEqu(CD3 *prod,F64 s); //prod*=s
+public _extern _D3_NORM F64 D3Norm(CD3 *d); //Norm
+public _extern _D3_NORM_SQR F64 D3NormSqr(CD3 *d); //Norm Squared
+public _extern _D3_SUB CD3 *D3Sub(CD3 *diff,CD3 *d1,CD3 *d2); //diff=d1-d2
+public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
+public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
+public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
+
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
+#define WIDTH_CENTER WIDTH/2
+#define HEIGHT_CENTER HEIGHT/2
 
-class PARTICLE
+class PARTICLE:CD3
 {
   Bool active;
-  F64 x,y,z; //Instead of using CD3
+  F64 vx,vy,vz, //Velocity x,y,z
+      ax,ay,az, //Acceleration x,y,z
+      rx,ry,rz, //Rotation x,y,z
+      angle,    //Angle
+      scale,    //Scale factor
+      speed;    //Acceleration all directions
+
   U64 color;
 };
-
+
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
   p->active=FALSE;
@@ -38,7 +68,7 @@ U0 p_init2(PARTICLE *p)
 U0 p_init(U8 *p,I64 p_cnt)
 {
   PARTICLE *pp;
- 
+
   for (p_cnt--;p_cnt>=0;p_cnt--)
   {
     pp=p+sizeof(PARTICLE)*p_cnt;

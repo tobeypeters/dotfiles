@@ -18,6 +18,7 @@
   Description:
       Empty project template.
 */
+//Cd(__DIR__);;
 
 //CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
 
@@ -28,7 +29,7 @@ U64 sch;
 
 //CDC *cdc=DCNew(GR_WIDTH,GR_HEIGHT);
 
-
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
   /*cdc=dc;

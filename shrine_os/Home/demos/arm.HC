@@ -1,5 +1,4 @@
-//Convert to HOLYC
-#include <SDL2/SDL.h>
+//Convert to HOLYC#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>

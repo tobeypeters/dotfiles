@@ -156,7 +156,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     bvx=bvx*sl; bvy=bvy*sl;
 
     px1=-(bvx*Cos(angle_1)-bvy*Sin(angle_1))+bx;
-    py1=-(bvx*Sin(angle_1)+bvy*Cos(angle_1))+by;
+    py1=-(bvx*Sin(angle_1)+bvy*Cos(angle_1))+by;
     px2=-(bvx*Cos(angle_2)-bvy*Sin(angle_2))+bx;
     py2=-(bvx*Sin(angle_2)+bvy*Cos(angle_2))+by;
 
@@ -183,7 +183,7 @@ U0 Init()
   }
 }
 
-I64 arg1,arg2,sc;
+I64 arg1,arg2,sc;
 
 MenuPush(
   "File {"

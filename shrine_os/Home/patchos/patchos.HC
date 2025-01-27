@@ -43,7 +43,7 @@
   Outside system files modded:
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
-*/
+*/
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -130,7 +130,7 @@ public extern I64 RedSeaFilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fu
 #define TRASH 127
 
 public U0 trash_msg(U8 *msg,Bool silent_off=OFF)
-{
+{
 //Display a specified message, when a file or files
  //are sent to the trash.
  Silent(silent_off); "Trashed: %s",msg;
