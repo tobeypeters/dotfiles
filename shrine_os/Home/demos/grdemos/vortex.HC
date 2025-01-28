@@ -22,7 +22,7 @@ Cd(__DIR__);;
 
 #define PARTICLE_MAX 1000
 
-#include "grdefs"
+#include "grdefs"
 
 PARTICLE vortex;
 
@@ -82,5 +82,13 @@ U0 Init()
   }
 }
 
+U0 MS_L_DOWN(){}
+U0 MS_L_UP(){}
+U0 MS_MOVE(){}
+U0 MS_R_DOWN(){}
+U0 MS_R_UP(){}
+U0 KEY_DOWN(){}
+
+#define MOUSE_TRAP FALSE
+
 #include "grmain"
-

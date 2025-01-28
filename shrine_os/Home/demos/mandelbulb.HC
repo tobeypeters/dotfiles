@@ -59,7 +59,7 @@ U0 rot_plot(CD3 *rp,F64 *rx,F64 *ry,F64 *rz) {
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(WHITE);
+  DCFill(dc,BLACK);
 
   dc->color=LTRED;
 
@@ -208,6 +208,6 @@ try {
 } catch
   PutExcept;
 
-
+
 SettingsPop;
 MenuPop;

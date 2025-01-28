@@ -387,7 +387,7 @@ if (str_cmp(a,b)) {
 //U0 pubext() {
 //  "pubext\n";
 //}
-
+
 //I64 age=12;
 //if (13<=age<20) "teenager\n";
 //else "Not a teenager\n";
@@ -966,38 +966,14 @@ U0 tester() { "Tester ...\n"; };
 CHashFun *chf=FindFunction("Cdr");
 chf->exe_addr=&tester;
 Cdr;*/
-
-F64 clamp(F64 value,F64 min,F64 max) {
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
-}
 
-Bool Touching(F64 cX,F64 cY,F64 r,F64 rX,F64 rY,F64 rW,F64 rH)
+U64 xxx=10;
+
+if (xxx==10)
 {
-  //Find the closest point on the rectangle to the circle's center
-  F64 clX=clamp(cX,rX,rX+rW),
-      clY=clamp(cY,rY,rY+rH);
+  U64 a=9;;
 
-  //Calculate the distance from the circle's center to this point
-  F64 dX=cX-clX,
-      dY=cY-clY,
-      dSqr=dX*dX+dY*dY;//dot product
-
-  //Check if the distance is less than or equal to the radius squared
-  return dSqr<=r*r;
+  //"%d\n",a;
 }
-
-//Circle properties
-F64 cX=5.0,cY=5.0,r=2.0;
-
-//Rectangle properties
-F64 rX=4.0,rY=4.0,rW=6.0,rH=3.0;
-
-// Check if the circle is touching the rectangle
-if (Touching(cX,cY,r,rX,rY,rW,rH))
-  "The circle is touching the rectangle.\n";
-else
-  "The circle is not touching the rectangle.\n";
 
 //KeyAndCont;

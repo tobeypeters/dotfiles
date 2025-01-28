@@ -36,7 +36,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 U0 AnimateTask(I64)
 {
-  while (TRUE) {
+  while (TRUE) {
     Sleep(20);
   }
 }
@@ -45,5 +45,26 @@ U0 Init()
 {
   p_deinit(&p_arr,PARTICLE_MAX);
 }
+
+U0 MS_L_DOWN()
+{
+}
+U0 MS_L_UP()
+{
+}
+U0 MS_MOVE()
+{
+}
+U0 MS_R_DOWN()
+{
+}
+U0 MS_R_UP()
+{
+}
+U0 KEY_DOWN()
+{
+}
+
+#define MOUSE_TRAP FALSE
 
 #include "grmain"
