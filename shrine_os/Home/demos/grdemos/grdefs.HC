@@ -64,11 +64,11 @@ U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
   MemSet(p,0,sizeof(PARTICLE));
   p->color=WHITE;
-
+
 //  p->color=RandU16%COLORS_NUM;
 }
 U0 p_init(U8 *p,I64 p_cnt)
-{
+{
   PARTICLE *pp;
 
   for (p_cnt--;p_cnt>=0;p_cnt--)

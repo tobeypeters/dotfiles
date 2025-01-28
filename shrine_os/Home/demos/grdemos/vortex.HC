@@ -65,11 +65,11 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_deinit(&p_arr,PARTICLE_MAX);
 
   vortex.x=WIDTH_CENTER;
   vortex.y=HEIGHT_CENTER,
-  vortex.speed=1;
+  vortex.speed=1;
   vortex.scale=10;
 
   for (i=0;i<PARTICLE_MAX;i++)
@@ -92,3 +92,5 @@ U0 KEY_DOWN(){}
 #define MOUSE_TRAP FALSE
 
 #include "grmain"
+
+p_deinit(&p_arr,PARTICLE_MAX);

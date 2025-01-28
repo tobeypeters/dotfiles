@@ -28,10 +28,10 @@ U64 i;
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
-  for (i=0;i<PARTICLE_MAX;i++)
+  //DCFill(dc,BLACK);
+  /*for (i=0;i<PARTICLE_MAX;i++)
   {
-  }
+  }*/
 }
 
 U0 AnimateTask(I64)
@@ -43,7 +43,11 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  //p_deinit(&p_arr,PARTICLE_MAX);
+  //p_init(&p_arr,PARTICLE_MAX);
+  /*for (i=0;i<PARTICLE_MAX;i++)
+  {
+  }*/
 }
 
 U0 MS_L_DOWN(){}
@@ -54,5 +58,8 @@ U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
 #define MOUSE_TRAP FALSE
-
+
 #include "grmain"
+
+p_deinit(&p_arr,PARTICLE_MAX);
+
