@@ -58,14 +58,14 @@ class PARTICLE:CD3
   U64 color;
 };
 
-PARTICLE p_arr[PARTICLE_MAX];
+PARTICLE p_arr[PARTICLE_MAX];
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
-  p->active=FALSE;
-  p->x=p->y=p->z=0;
-//  p->color=WHITE;
-  p->color=RandU16%COLORS_NUM;
+  MemSet(p,0,sizeof(PARTICLE));
+  p->color=WHITE;
+
+//  p->color=RandU16%COLORS_NUM;
 }
 U0 p_init(U8 *p,I64 p_cnt)
 {

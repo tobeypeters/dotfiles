@@ -22,7 +22,7 @@ Cd(__DIR__);;
 
 #define PARTICLE_MAX 1000
 
-#include "grdefs"
+#include "grdefs"
 
 PARTICLE vortex;
 
@@ -69,7 +69,7 @@ U0 Init()
 
   vortex.x=WIDTH_CENTER;
   vortex.y=HEIGHT_CENTER,
-  vortex.speed=1;
+  vortex.speed=1;
   vortex.scale=10;
 
   for (i=0;i<PARTICLE_MAX;i++)
