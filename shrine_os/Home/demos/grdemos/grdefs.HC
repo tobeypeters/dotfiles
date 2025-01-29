@@ -58,9 +58,7 @@ class PARTICLE:CD3
   U64 color;
 };
 
-#define PARTICLE_MAX 1000
-
-PARTICLE p_arr[PARTICLE_MAX];
+PARTICLE p_arr[PARTICLE_MAX];
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -89,7 +87,7 @@ F64 grFloatPack(F64 f1,F64 f2)
   F64 res;
   U64 ai,bi;
   MemCpy(&ai,&f1,sizeof(U64));
-  MemCpy(&bi,&f2,sizeof(U64));
+  MemCpy(&bi,&f2,sizeof(U64));
 
   "%d %d\n",ai,bi;
 
