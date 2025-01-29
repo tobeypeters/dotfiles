@@ -39,6 +39,7 @@ floating_modifier $mod
 for_window [class="Alacritty"] floating enable
 for_window [class="ark"] floating enable
 for_window [class="ckb-next"] floating enable
+for_window [class="ChromePrivate"] floating enable
 for_window [class="Code"] floating enable
 for_window [class="Cubic_wizard.py"] floating enable
 for_window [class="Cycle_switcher"] floating enable
@@ -103,6 +104,7 @@ for_window [class="system_updater"] resize set 900 500
 for_window [class="x-terminal-emulator"] resize set 900 500
 for_window [class="XTerm"] resize set 900 500
 # Move:
+for_window [class="ChromePrivate"] move container to workspace 8
 for_window [class="krunner"] move position 1450 20
 for_window [class="Netflix"] move container to workspace 9
 for_window [class="system_updater"] move position 1020 40
@@ -122,7 +124,7 @@ set $fl ~/Pictures/Wallpapers/wallpaper.lock
 set $flp  ~/Pictures/Wallpapers/wallpaper.prev
 
 #$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
-$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && feh --bg-max "$wal_output" &
+$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && feh -d --bg-max "$wal_output" &
 $exec_always [ -f $fl ] && wal -i $(cat $flp) &
 $exec_always cat ~/.cache/wal/sequences &
 
@@ -241,4 +243,5 @@ $exec_always ~/.config/polybar/launch.sh
 $exec_always kill $(pgrep -f "cycle.py") &
 $exec_always ~/.config/polybar/scripts/cycle.py --menu_colors "$bg" "$fg" "$fg" "$bg" &
 
+$exec google-chrome --class="ChromePrivate" --user-data-dir=~/chrome-private2
 $exec google-chrome --class="Netflix" --user-data-dir=~/chrome-private https://www.netflix.com
