@@ -1,133 +1,97 @@
-echo ''<<LICENSE
-	The MIT License(MIT)
-	Copyright(c), Tobey Peters, https://github.com/tobeypeters
-	Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-	and associated documentation files (the "Software"), to deal in the Software without restriction,
-	including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-	and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
-	subject to the following conditions:
-	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
-	 LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-	 IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-LICENSE
+: <<'EOF'
+  The MIT License (MIT)
+  Copyright (c) Tobey Peters
+  See full license at: https://github.com/tobeypeters
+EOF
 
 [[ $- != *i* ]] && return
 
-# ALIASES START ---------------------------
-alias ..='cd ..'
-alias ls='ls -A --group-directories-first --color=auto'
-alias ll='ls -l'
+# ALIASES
+alias ..="cd .."
+alias ll="command ls -lA --color=auto"
+alias cls="clear"
+alias edit="code"
+alias myip="curl -s ifconfig.me"
+alias ip="ip --color=auto"
+alias ports="sudo lsof -i -P | grep LISTEN"
+alias openports="ports"
 
-# Import the colors.
-. "${HOME}/.cache/wal/colors.sh"
+# Navigation shortcuts
+alias cda="cd ~/.config/alacritty"
+alias cdi="cd ~/.config/i3"
+alias cdp="cd ~/.config/polybar"
+alias cds="cd ~/.config/polybar/scripts"
 
-alias myip='curl ip.appspot.com'         # Public facing IP Address
-alias ports='sudo lsof -i -P'            # Display open sockets
-alias openports='ports | grep LISTEN'    # All listening connections
-alias showBlocked='sudo ipfw list'       # All ipfw rules inc/ blocked IPs
-alias ipconfig='ifconfig'                # sudo apt install net-tools
+:<<'NVIM'
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+NVIM
 
-alias ip='ip --color=auto'               # always have color
-
-alias edit='code'                        # Use VSCode as my editor
-
-alias machineinfo='sudo dmidecode'       # Hardware info. You have hwinfo to
-
-#alias vim="nvim -c 'startinsert'"
-alias nvim='vim'                         # Use nvim instead of vim
-
-alias cda='cd ~/.config/alacrityy'       # Quickly jump my alacritty folder
-alias cdi='cd ~/.config/i3'	             # Quickly jump my i3 folder
-alias cdp='cd ~/.config/polybar'         # Quickly jump my polybar folder
-alias cds='cd ~/.config/polybar/scripts' # Quickly jump my polybar scripts folder
-alias cls='clear'                        # Just a alias to clear
-
-# Full instructions to setup git is in the file [ git_bare_repository_instructions ].
-# Cause, I can use to to upload more than just config files,I renamed it to gitexec.
-# USAGE:
-#       gitexec add name_of_file
-#       gitexec commit -m "Desired comment"
-#       gitexec push -u origin master
-alias gitexec='/usr/bin/git --git-dir=/home/tibegato/dotfiles/ --work-tree=$HOME'
+:<<'GIT'
+  Full instructions to setup git is in the file [ git_bare_repository_instructions ].
+  USAGE:
+    gitexec add name_of_file
+    gitexec commit -m "Desired comment"
+    gitexec push -u origin master
+GIT
+alias gitexec='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
 alias gitadd='gitexec add'
 alias gitcommit='gitexec commit -m'
 alias gitpush='gitexec push --force origin master'
 
-# FZF START ---------------------------
+# Enable auto-completions
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 fzf_args="--prompt='~ ' --pointer='▶' --marker='✗' --color='light'"
 alias fp="fzf --preview '([[ -f {} ]] && (bat --style=numbers --color=always {} ||
  cat {})) || ([[ -d {} ]] && (tree -C {} | less)) || echo {} 2> /dev/null | head -200' ${fzf_args}"
-alias dm="find /usr/bin | fzf --bind 'enter:execute({} &>/dev/null &)' --bind 'tab:execute({})' --header='Launch program [<enter> : GUI, <tab> : terminal]:' --height=80 --layout=reverse ${fzf_args}"
+alias dm="compgen -c | fzf --bind 'enter:execute({} &>/dev/null &)' --bind 'tab:execute({})'"
 
-# HISTORY START ---------------------------
-shopt -s histappend # append to the history file, don't overwrite it
+set -o vi
+shopt -s histappend cdspell
 HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=100
-HISTFILESIZE=100
+HISTSIZE=1000
+HISTFILESIZE=2000
 
-# Misc START  ---------------------------
-set -o vi # Hit escape in your terminal and then v, I don't have emacs installed.
-
-set completion-ignore-case on
-shopt -s cdspell
-complete -d cd
-
-# make less more friendly for non-text input files, see lesspipe(1)
+# Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# Nake man output look a tad better
-man() {
-    env LESS_TERMCAP_mb=$(printf "\e[1;33m") \
-    LESS_TERMCAP_md=$(printf "\e[1;36m") \
-    LESS_TERMCAP_me=$(printf "\e[0m") \
-    LESS_TERMCAP_se=$(printf "\e[0m") \
-    LESS_TERMCAP_so=$(printf "\e[1;41;37m") \
-    LESS_TERMCAP_ue=$(printf "\e[0m") \
-    LESS_TERMCAP_us=$(printf "\e[1;33m") \
-    man "$@"
-}
-
-# PROMPT START ---------------------------
-h2d() {
-  echo "ibase=16; $@"|bc
-}
-
-complete -cf sudo
-# NC="\[\033[00m\]"
-# COLOR1=`xrdb -query | awk '/prompt.color1':'/ { print substr($2,2) }'`
-# qq=';2;'$( h2d ${COLOR1:0:2} )';'$( h2d ${COLOR1:2:2} )';'$( h2d ${COLOR1:4:2} )'m\]'
-# COLOR1='\[\033[48'$qq
-# COLOR2='\[\033[38'$qq
-# if [ ${EUID:-$(id -u) } -ne 0 ]; then
-#     COLOR1=${COLOR2}
-#     # cat /etc/os-release
-#     hostnamectl
-# else
-#     COLOR1=${COLOR1}
-# fi
-# export PS1="\n  ${COLOR1}\u${NC}${COLOR2}\h: ${NC}\W ${COLOR2}]${NC} "
-
-# NVIM START ---------------------------
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-#trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-#export CPU_TDLE=$(for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done | grep k10temp | awk '{ print $3 }')
+# Make man output look a tad better
+if [ -t 1 ]; then
+    man() {
+        env LESS_TERMCAP_mb=$(printf "\e[1;33m") \
+        LESS_TERMCAP_md=$(printf "\e[1;36m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[1;41;37m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[1;33m") \
+        man "$@"
+    }
+fi
 
 source ~/.bash_completion/alacritty
-#wal - alacritty background fix
-cat ~/.cache/wal/sequences &
 
-#hostnamectl
-#echo "-------------------------" | lolcat
-#neofetch --off --color_blocks off | lolcat -F 0.06
-echo "-------------------------"
+[ -f "${HOME}/.cache/wal/colors.sh" ] && . "${HOME}/.cache/wal/colors.sh"
+(cat ~/.cache/wal/sequences &)
+
+# Add executables to path
+paths=(
+    "$HOME/.local/bin"
+    "/usr/local/go/bin"
+    "$HOME/WorkSpace/Tool/android-studio/bin"
+    "$HOME/Android/Sdk/platform-tools"
+)
+for p in "${paths[@]}"; do
+    [[ ":$PATH:" != *":$p:"* ]] && PATH="$p:$PATH"
+done
+export PATH
+
 neofetch --off --color_blocks off
-export PS1="\n  \u\h: \W ] "
 
-export PATH=/home/tibagato/WorkSpace/Tool/android-studio-ide-181.5056338-linux/android-studio/bin:/home/tibegato/Android/Sdk/platform-tools:/home/tibegato/Android/Sdk/tools:$PATH
+# Function to get the current git branch
+git_branch() {
+    git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+}
+
+PROMPT_COMMAND='PS1="\n  \u\h: \W $(git_branch) $ "'
