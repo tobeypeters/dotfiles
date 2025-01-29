@@ -33,7 +33,7 @@ U0 rot_matrix(U64 idx) {
     cos_é=Cos(radians),
     sin_é=Sin(radians),
             x=corners[idx].x-center.x,
-            y=corners[idx].y-center.y,
+            y=corners[idx].y-center.y,
         x_new=x*cos_é-y*sin_é,
         y_new=x*sin_é+y*cos_é;
 

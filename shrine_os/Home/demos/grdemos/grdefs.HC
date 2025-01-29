@@ -58,6 +58,8 @@ class PARTICLE:CD3
   U64 color;
 };
 
+#define PARTICLE_MAX 1000
+
 PARTICLE p_arr[PARTICLE_MAX];
 
 U0 p_init2(PARTICLE *p)
@@ -68,7 +70,7 @@ U0 p_init2(PARTICLE *p)
 //  p->color=RandU16%COLORS_NUM;
 }
 U0 p_init(U8 *p,I64 p_cnt)
-{
+{
   PARTICLE *pp;
 
   for (p_cnt--;p_cnt>=0;p_cnt--)
@@ -81,3 +83,55 @@ U0 p_deinit(U8 *p,U64 p_cnt)
 {
   MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
 }
+
+F64 grFloatPack(F64 f1,F64 f2)
+{//Packs two floats, into one single float
+  F64 res;
+  U64 ai,bi;
+  MemCpy(&ai,&f1,sizeof(U64));
+  MemCpy(&bi,&f2,sizeof(U64));
+
+  "%d %d\n",ai,bi;
+
+  U64 packed=(ai<<32)|bi;
+
+  "packed: %d\n",packed;
+
+  MemCpy(&res,&packed,sizeof(res));
+
+  return res;
+}
+U0 grFloatUnPack(F64 packed,F64 *f1,F64 *f2)
+{//UnPacks two floats, from a single packed float
+  U64 raw;
+
+  MemCpy(&raw,&packed,sizeof(raw));
+
+  U64 ai=(raw>>32)&0xFFFFFFFF, //Extract first 32bits
+      bi=raw&0xFFFFFFFF;       //Extract last 32bits
+
+  MemCpy(f1,&ai,sizeof(F64));
+  MemCpy(f2,&bi,sizeof(F64));
+}
+
+F64 x=1.2345,
+    y=-2.3456,
+    packed=grFloatPack(x,y),
+    x_out,y_out;
+
+grFloatUnPack(packed,&x_out,&y_out);
+
+"Original: x=%2.6f,y=%2.6f\n",x,y;
+"UnPacked: x=%2.6f,y=%2.6f\n",x_out,y_out;
+
+
+
+
+
+
+
+
+
+
+
+

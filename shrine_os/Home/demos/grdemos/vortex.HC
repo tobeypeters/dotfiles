@@ -65,7 +65,7 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_deinit(&p_arr,PARTICLE_MAX);
 
   vortex.x=WIDTH_CENTER;
   vortex.y=HEIGHT_CENTER,
@@ -94,3 +94,4 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+

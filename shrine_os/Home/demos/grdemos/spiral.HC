@@ -14,57 +14,64 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*mandelbulb.HC
+/*spiral.HC
   Description:
       Generates a spiral.
-  Resources:
-      https://en.wikipedia.org/wiki/Mandelbulb
 */
-#define  WIDTH GR_WIDTH
-#define HEIGHT GR_HEIGHT
+Cd(__DIR__);;
 
-#define CX WIDTH/2
-#define CY HEIGHT/2
+#define PARTICLE_MAX GR_WIDTH*GR_HEIGHT
+
+#include "grdefs"
+
+U64 i;
+
 #define SPIRAL_TURN_FACTOR 0.1
-#define MAX_POINTS WIDTH*HEIGHT
-
-CD2 points[MAX_POINTS];
 
 U64 pc=0;
+
+F64 px,py,pz;
+
+U64 COLORS[3]={WHITE,LTPURPLE,YELLOW};
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  U64 i,color=0;
-
-  F64 px,py,pz;
-
   for(i=0;i<pc;i++)
   {
-    dc->color=RandU16%15;
-    GrPlot(dc,points[i].x,points[i].y);
-  }
+    dc->color=p_arr[i].color;
+    GrPlot(dc,p_arr[i].x,p_arr[i].y);
+  }
+}
+
+U0 AnimateTask(I64)
+{
+  while (TRUE) {
+    Sleep(20);
+  }
 }
 
 U0 Init()
 {
+  p_deinit(&p_arr,PARTICLE_MAX);
+ 
   F64 radius=0,
        angle=0,
            x,y;
 
-  U64 i;
-
-  for (i=0;i<MAX_POINTS;i++)
+  for (i=0;i<PARTICLE_MAX;i++)
   {
     //Ppolar coordinates to cartesian coordinates
-    x=CX+radius*Cos(angle);
-    y=CY+radius*Sin(angle);
+    x=WIDTH_CENTER+radius*Cos(angle);
+    y=HEIGHT_CENTER+radius*Sin(angle);
 
     //Within screen bounds
     if (x>=0&&x<WIDTH&&y>=0&&y<HEIGHT) {
-      points[pc].x=x;
-      points[pc].y=y;
+      p_arr[pc].x=x;
+      p_arr[pc].y=y;
+      p_arr[pc].color=COLORS[RandU16%3];
+
       pc++;
     }
 
@@ -73,39 +80,15 @@ U0 Init()
   }
 }
 
-MenuPush(
-  "File {"
-  "  Abort(,CH_SHIFT_ESC);"
-  "  Exit(,CH_ESC);"
-  "}"
-  "Play {"
-  "}"
-);
+U0 MS_L_DOWN(){}
+U0 MS_L_UP(){}
+U0 MS_MOVE(){}
+U0 MS_R_DOWN(){}
+U0 MS_R_UP(){}
+U0 KEY_DOWN(){}
 
-SettingsPush;
-AutoComplete;
-WinBorder; WinMax;
-DocCursor; DocClear;
+#define MOUSE_TRAP FALSE
 
-Fs->draw_it=&DrawIt;
+#include "grmain"
 
-Init;
-
-I64 arg1,arg2,sc;
-
-Bool run=TRUE;
-try {
-  while (run) {
-    sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN);
-    switch (sc) {
-      case MSG_KEY_DOWN:
-        if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
-          run=FALSE;
-    }
-  }
-} catch
-  PutExcept;
-
-
-SettingsPop;
-MenuPop;
+p_deinit(&p_arr,PARTICLE_MAX);

@@ -104,7 +104,7 @@ U0 pinski()
   x1=x2=w/2;
   y1=y2=0;
 
-  cdc->color=LTGREEN;
+  cdc->color=GREEN;
 
   for(i=0;i<pc;i++)
   {
@@ -126,8 +126,9 @@ U0 pinski()
         y1=(y2+h-40)/2;
     }
 
-    if (i<(pc*.6)) cdc->color=GREEN;
-    else cdc->color=WHITE;
+//    if (i<(pc*.6)) cdc->color=GREEN;
+//    else cdc->color=WHITE;
+//cdc->color=GREEN;
     GrPlot(cdc,x1,y1);
 
     x2=x1; y2=y1;
@@ -155,11 +156,12 @@ U0 DrawIt(CTask *task,CDC *dc)
     if (drops[i].y>=0 && GrPeek(dc,drops[i].x,drops[i].y)==BLACK)
       GrPlot(dc,drops[i].x,drops[i].y);
 
-  cdc->color=ROP_EQU;
+/*  cdc->color=ROP_EQU;
   dc->flags|=DCF_NO_TRANSPARENTS;
   GrBlot(cdc,-task->pix_left-task->scroll_x,
 	-task->pix_top-task->scroll_y,dc);
   dc->flags&=~DCF_NO_TRANSPARENTS;
+*/
 }
 
 U0 AnimateTask(I64)
