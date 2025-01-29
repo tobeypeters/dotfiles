@@ -23,6 +23,7 @@
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
+
 #define CX WIDTH/2
 #define CY HEIGHT/2
 #define SPIRAL_TURN_FACTOR 0.1
@@ -44,7 +45,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   {
     dc->color=RandU16%15;
     GrPlot(dc,points[i].x,points[i].y);
-  }
+  }
 }
 
 U0 Init()
