@@ -29,7 +29,7 @@ $IV,1$_!!:$IV,0$
 
 $IV,1$_##: _pid:$IV,0$
 	Displays the current process/task ID.
-
+
 $IV,1$_cat: _type: _view:$IV,0$
 	Display a FILE to standard output.
 	usage:	cat [$FG,2$FILENAME$FG,15$]...
@@ -213,6 +213,7 @@ $IV,1$_touch:$IV,0$
 	Update the access and modification times of the FILENAME to the current time.
 	A FILENAME argument that does not exist is created.
 	usage:	touch [$FG,2$FILENAME$FG,15$]...
+                :> [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_vol:$IV,0$
 	Displays volume information of the current drive.

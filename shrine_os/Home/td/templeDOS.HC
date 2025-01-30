@@ -83,7 +83,10 @@ U64 execute_cmd(U8 *cmd) {
     if (str_cmp(a->args[0],"##")) { //pid
       StrCpy(a->args[0],"pid"); goto hashit;
     }
-
+    if (str_cmp(a->args[0],":>")) { //touch
+      StrCpy(a->args[0],"touch"); goto hashit;
+    }
+
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
@@ -524,7 +527,7 @@ U8 templeDOS() {
 
   set_windowinfo("templedos_task","TempleDOS");
 
-  DocClear;DocMax;Cd;
+  DocClear;DocMax;Cd;
 
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
