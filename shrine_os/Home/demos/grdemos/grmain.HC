@@ -30,7 +30,7 @@ MenuPush(
   "  Restart(,'\n');"
   "}"
 );
-
+
 SettingsPush;
 AutoComplete;
 WinBorder; WinMax;
@@ -47,7 +47,8 @@ if (MOUSE_TRAP)
       prev_mouse_y,
       arg1,arg2;;
 
-  Bool mouse_down=FALSE,
+  Bool mouse_ldown=FALSE,
+       mouse_rdown=FALSE,
               run=TRUE;;
 }
 
@@ -59,33 +60,35 @@ if (MOUSE_TRAP)
              1<<MSG_MS_L_UP+1<<MSG_MS_R_DOWN+1<<MSG_MS_R_UP+1<<MSG_MS_MOVE);
     switch (sc) {
       case MSG_MS_L_DOWN:
-        mouse_down=TRUE;
-
-        prev_mouse_x=ms.pos.x;
-        prev_mouse_y=ms.pos.y;
-
+        mouse_ldown=TRUE;
 	MS_L_DOWN;
 
         break;
       case MSG_MS_MOVE:
-        if (mouse_down)
+        if (MOUSE_NODOWN||mouse_ldown||mouse_rdown)
         {
           prev_mouse_x=ms.pos.x;
           prev_mouse_y=ms.pos.y;
+
+          if (MOUSE_NODOWN){MS_MOVE; break;}
         }
-        MS_MOVE;
+
+        if(mouse_ldown) MS_MOVE_LDOWN;
+        if(mouse_rdown) MS_MOVE_RDOWN;
 
         break;
       case MSG_MS_L_UP:
-        mouse_down=FALSE;
+        mouse_ldown=FALSE;
         MS_L_UP;
 
         break;
       case MSG_MS_R_DOWN:
+        mouse_rdown=TRUE;
         MS_R_DOWN;
 
         break;
       case MSG_MS_R_UP:
+        mouse_rdown=FALSE;
         MS_R_UP;
 
         break;

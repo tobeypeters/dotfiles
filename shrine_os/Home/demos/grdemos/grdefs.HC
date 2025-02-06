@@ -39,11 +39,19 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
+//#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 #define WIDTH_CENTER WIDTH/2
 #define HEIGHT_CENTER HEIGHT/2
+
+F64 rotation_x,
+    rotation_y;
+
+I64 ita,itb;
+
+ita,itb,rotation_x,rotation_y=0;
 
 class PARTICLE:CD3
 {
@@ -58,7 +66,9 @@ class PARTICLE:CD3
   U64 color;
 };
 
-PARTICLE p_arr[PARTICLE_MAX];
+PARTICLE p_arr[PARTICLE_MAX];
+
+PARTICLE *pp=NULL;
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -68,7 +78,7 @@ U0 p_init2(PARTICLE *p)
 //  p->color=RandU16%COLORS_NUM;
 }
 U0 p_init(U8 *p,I64 p_cnt)
-{
+{//Initialize the elements in p_arr
   PARTICLE *pp;
 
   for (p_cnt--;p_cnt>=0;p_cnt--)
@@ -78,58 +88,57 @@ U0 p_init(U8 *p,I64 p_cnt)
   }
 }
 U0 p_deinit(U8 *p,U64 p_cnt)
-{
+{//Clear the elements in p_arr
   MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
 }
 
-F64 grFloatPack(F64 f1,F64 f2)
-{//Packs two floats, into one single float
-  F64 res;
-  U64 ai,bi;
-  MemCpy(&ai,&f1,sizeof(U64));
-  MemCpy(&bi,&f2,sizeof(U64));
+U0 p_plot(CDC *dc,U8 *p,U64 p_cnt)
+{
+  PARTICLE *pp;
+  for(ita=0;ita<p_cnt;ita++)
+  {
+    pp=p+sizeof(PARTICLE)*ita;
+    dc->color=pp->color;
 
-  "%d %d\n",ai,bi;
-
-  U64 packed=(ai<<32)|bi;
-
-  "packed: %d\n",packed;
-
-  MemCpy(&res,&packed,sizeof(res));
-
-  return res;
-}
-U0 grFloatUnPack(F64 packed,F64 *f1,F64 *f2)
-{//UnPacks two floats, from a single packed float
-  U64 raw;
-
-  MemCpy(&raw,&packed,sizeof(raw));
-
-  U64 ai=(raw>>32)&0xFFFFFFFF, //Extract first 32bits
-      bi=raw&0xFFFFFFFF;       //Extract last 32bits
-
-  MemCpy(f1,&ai,sizeof(F64));
-  MemCpy(f2,&bi,sizeof(F64));
+    GrPlot(dc,pp->x,pp->y);
+  }
 }
 
-F64 x=1.2345,
-    y=-2.3456,
-    packed=grFloatPack(x,y),
-    x_out,y_out;
+CD3 *p_CD3(F64 x=0,F64 y=0,F64 z=0)
+{//Return a CD3 from a given x,y,z
+  CD3 *ret=MAlloc(sizeof(CD3));
 
-grFloatUnPack(packed,&x_out,&y_out);
+  ret->x=x;
+  ret->y=y;
+  ret->z=z;
+ 
+  return ret;
+}
 
-"Original: x=%2.6f,y=%2.6f\n",x,y;
-"UnPacked: x=%2.6f,y=%2.6f\n",x_out,y_out;
+U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
+{
+  F64 cos_x=Cos(rotation_x),
+       cos_y=Cos(rotation_y),
+       sin_x=Sin(rotation_x),
+       sin_y=Sin(rotation_y),
+          y1=cos_x*rp->y-sin_x*rp->z,
+          z1=sin_x*rp->y+cos_x*rp->z,
+          x2=cos_y*rp->x+sin_y*z1,
+          z2=-sin_y*rp->x+cos_y*z1;
 
+  *ux=x2;*uy=y1;*uz=z2;
+}
+U0 rot_plot(PARTICLE *rp)
+{
+  F64 x,y,z;
 
+  rot_base(&rp,&x,&y,&z);
 
+  rp->x=x;rp->y=y;rp->z=z;  
+}
 
-
-
-
-
-
-
-
-
+U0 rot_plot2(CD3 *rp,CD3 *up)
+{
+  rot_base(&rp,&up->x,&up->y,&up->z);
+};
+

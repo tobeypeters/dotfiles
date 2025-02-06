@@ -64,10 +64,10 @@ U0 p_init2(PARTICLE *p)
   p->color=WHITE;
 
 //  p->color=RandU16%COLORS_NUM;
-}
+}
 
 U0 p_init(U8 *p,I64 p_cnt)
-{
+{//Initizalize all the elements in p_arr
   PARTICLE *pp;
 
   for (p_cnt--;p_cnt>=0;p_cnt--)
@@ -77,6 +77,18 @@ U0 p_init(U8 *p,I64 p_cnt)
   }
 }
 U0 p_deinit(U8 *p,U64 p_cnt)
-{
+{//Clear the elements from p_arr
   MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
 }
+
+CD3 *p_CD3(F64 x=0,F64 y=0,F64 z=0)
+{//Return a CD3 from a given x,y,z
+  CD3 *ret=MAlloc(sizeof(CD3));
+
+  ret->x=x;
+  ret->y=y;
+  ret->z=z;
+ 
+  return ret;
+}
+

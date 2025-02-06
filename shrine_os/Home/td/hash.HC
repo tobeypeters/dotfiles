@@ -84,7 +84,7 @@ U8 *hashed[CMD_CNT][CMD_ARGS] = {
   {227,    "mv", 3, 3, 0},
   {228,    "ps", 1, 1, 0} //47
 };
-
+
 class CHCMDS
 {
   U8 *data[HASH_TABLE_SIZE+1][CMD_ARGS];
@@ -109,12 +109,12 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
   idx=hash%HASH_TABLE_SIZE;
 
   //"%d\n",idx;
-  for(;idx < HASH_TABLE_SIZE;idx++)
+  for(;idx<HASH_TABLE_SIZE;idx++)
     if (!StrCmp(in->data[idx][TOK_CMD],cmd)) return idx;
 
   return -1;
 }
-Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
+Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
     return in->data[idx][TOK_MIN]<=val<=in->data[idx][TOK_MAX];

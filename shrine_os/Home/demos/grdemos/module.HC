@@ -24,12 +24,11 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-U64 i;
-
 U0 DrawIt(CTask *task,CDC *dc)
 {
   //DCFill(dc,BLACK);
-  /*for (i=0;i<PARTICLE_MAX;i++)
+  //p_plot(dc,&p_arr,PARTICLE_MAX);
+  /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
   }*/
 }
@@ -45,7 +44,7 @@ U0 Init()
 {
   //p_deinit(&p_arr,PARTICLE_MAX);
   //p_init(&p_arr,PARTICLE_MAX);
-  /*for (i=0;i<PARTICLE_MAX;i++)
+  /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
   }*/
 }
@@ -53,13 +52,18 @@ U0 Init()
 U0 MS_L_DOWN(){}
 U0 MS_L_UP(){}
 U0 MS_MOVE(){}
+U0 MS_MOVE_LDOWN(){}
+U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
-
+
 #define MOUSE_TRAP FALSE
+
+//Update mouse postion values,
+//even when mouse button not pressed.
+#define MOUSE_NODOWN FALSE
 
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
-

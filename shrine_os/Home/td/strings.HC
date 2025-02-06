@@ -5,7 +5,7 @@
   and associated documentation files (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
   and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
-  subject to the following conditions:
+  subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -177,7 +177,7 @@ U8 *MyGetStr(I64 flags=0)
 	  DocEntryRun(doc,doc_e,TRUE);
 	  DocEntryDel(doc,doc_e);
 	}
-	DocUnlock(doc);*/
+	DocUnlock(doc);*/
 
         res=StrNew("é");
         goto gs_done;

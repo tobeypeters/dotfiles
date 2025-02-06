@@ -29,34 +29,32 @@ PARTICLE vortex;
 F64 dx,dy,vx,vy,
     factor,dt=0.016;
 
-U64 i;
-
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  for (i=0;i<PARTICLE_MAX;i++)
+  for (ita=0;ita<PARTICLE_MAX;ita++)
   {
-    dc->color=p_arr[i].color;
-    GrRect(dc,p_arr[i].x,p_arr[i].y,2,2);
+    dc->color=p_arr[ita].color;
+    GrRect(dc,p_arr[ita].x,p_arr[ita].y,2,2);
   }
 }
 
 U0 AnimateTask(I64)
 {
   while (TRUE) {
-    for (i=0;i<PARTICLE_MAX;i++)
+    for (ita=0;ita<PARTICLE_MAX;ita++)
     {
-      dx=p_arr[i].x-vortex.x;
-      dy=p_arr[i].y-vortex.y;
+      dx=p_arr[ita].x-vortex.x;
+      dy=p_arr[ita].y-vortex.y;
 
       vx=-dy*vortex.speed;
       vy=dx*vortex.speed;
 
-      factor=1/(1+D3DistSqr(&p_arr[i],&vortex)/vortex.scale);
+      factor=1/(1+D3DistSqr(&p_arr[ita],&vortex)/vortex.scale);
 
-      p_arr[i].x+=(vx-p_arr[i].vx)*factor+p_arr[i].vx*dt;
-      p_arr[i].y+=(vy-p_arr[i].vy)*factor+p_arr[i].vy*dt;
+      p_arr[ita].x+=(vx-p_arr[ita].vx)*factor+p_arr[ita].vx*dt;
+      p_arr[ita].y+=(vy-p_arr[ita].vy)*factor+p_arr[ita].vy*dt;
     }
 
     Sleep(8);
@@ -72,24 +70,30 @@ U0 Init()
   vortex.speed=1;
   vortex.scale=10;
 
-  for (i=0;i<PARTICLE_MAX;i++)
+  for (ita=0;ita<PARTICLE_MAX;ita++)
   {
-    p_arr[i].x=RandU16%WIDTH;
-    p_arr[i].y=RandU16%HEIGHT;
-    p_arr[i].vx=(Rand%F64_MAX)*2-1; // Random velocity between -1.0 and 1.0
-    p_arr[i].vy=(Rand%F64_MAX)*2-1;
-    p_arr[i].color=RandU16%15;
+    p_arr[ita].x=RandU16%WIDTH;
+    p_arr[ita].y=RandU16%HEIGHT;
+    p_arr[ita].vx=(Rand%F64_MAX)*2-1; // Random velocity between -1.0 and 1.0
+    p_arr[ita].vy=(Rand%F64_MAX)*2-1;
+    p_arr[ita].color=RandU16%15;
   }
 }
 
 U0 MS_L_DOWN(){}
 U0 MS_L_UP(){}
 U0 MS_MOVE(){}
+U0 MS_MOVE_LDOWN(){}
+U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
 #define MOUSE_TRAP FALSE
+
+//Update mouse postion values,
+//even when mouse button not pressed.
+#define MOUSE_NODOWN FALSE
 
 #include "grmain"
 

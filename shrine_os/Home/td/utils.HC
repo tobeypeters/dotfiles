@@ -63,4 +63,4 @@ U64 god_num(CDoc *doc) {
   GetChar(,FALSE);
   doc_e->tag_cb=NULL;
   return KbdMsEvtTime>>GOD_BAD_BITS;
-}
+}

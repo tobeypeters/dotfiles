@@ -14,29 +14,45 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*spiral.HC
+/*module.HC
   Description:
-      Generates a spiral.
+      Graphics module template.
 */
 Cd(__DIR__);;
 
-#define PARTICLE_MAX GR_WIDTH*GR_HEIGHT
+#define MAJOR_RADIUS 1.5
+#define MINOR_RADIUS 0.5
+#define RESOLUTION 100
+#define DIM 128
+
+#define PARTICLE_MAX RESOLUTION*RESOLUTION
 
 #include "grdefs"
 
-#define SPIRAL_TURN_FACTOR 0.1
+U64 pc=0,sx,sy,color;
 
-U64 pc=0;
-
-F64 px,py,pz;
-
-U64 COLORS[3]={WHITE,LTPURPLE,YELLOW};
+PARTICLE pb;
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  p_plot(dc,&p_arr,pc);
+  for (ita=0;ita<pc;ita++)
+  {
+    pp=&p_arr[ita];
+
+    // Apply rotation
+    rot_plot(pp);
+    
+    // Project to screen space
+    sx=(pp->x*WIDTH/4)+WIDTH_CENTER;
+    sy=(pp->y*HEIGHT/4)+HEIGHT_CENTER;
+
+    // Set color (gradient effect based on z-depth)
+    dc->color=MapI64(pp->z,-MAJOR_RADIUS-MINOR_RADIUS,MAJOR_RADIUS+MINOR_RADIUS,0,15);
+
+    GrPlot(dc,pp->x,pp->y);
+  }
 }
 
 U0 AnimateTask(I64)
@@ -48,31 +64,35 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
- 
-  F64 radius=0,
-       angle=0,
-           x,y;
-
-  for (ita=0;ita<PARTICLE_MAX;ita++)
+  //p_deinit(&p_arr,PARTICLE_MAX);
+  //p_init(&p_arr,PARTICLE_MAX);
+  F64 u,v;
+  for (ita=0;ita<RESOLUTION;ita++)
   {
-    //Ppolar coordinates to cartesian coordinates
-    x=WIDTH_CENTER+radius*Cos(angle);
-    y=HEIGHT_CENTER+radius*Sin(angle);
-
-    //Within screen bounds
-    if (x>=0&&x<WIDTH&&y>=0&&y<HEIGHT) {
-      p_arr[pc].x=x;
-      p_arr[pc].y=y;
-      p_arr[pc].color=COLORS[RandU16%3];
-
+    u=2*ã*ita/RESOLUTION;
+    for (itb=0;itb<RESOLUTION;itb++)
+    {
+      v=2*ã*itb/RESOLUTION;
+      p_arr[pc].x=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Cos(u);
+      p_arr[pc].y=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Sin(u);
+      p_arr[pc].z=MINOR_RADIUS*Sin(v);
       pc++;
     }
-
-    radius+=SPIRAL_TURN_FACTOR;
-    angle+=0.2;
   }
 }
+
+U0 MS_L_DOWN(){}
+U0 MS_L_UP(){}
+U0 MS_MOVE()
+U0 MS_MOVE_DOWN()
+{
+  rotation_x+=(ms.pos.y-prev_mouse_y)*0.01;
+  rotation_y+=(ms.pos.x-prev_mouse_x)*0.01;
+}
+U0 MS_R_DOWN(){}
+U0 MS_R_UP(){}
+U0 KEY_DOWN(){}
+
 
 U0 MS_L_DOWN(){}
 U0 MS_L_UP(){}
@@ -82,9 +102,10 @@ U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
-
-#define MOUSE_TRAP FALSE
 
+
+#define MOUSE_TRAP TRUE
+
 //Update mouse postion values,
 //even when mouse button not pressed.
 #define MOUSE_NODOWN FALSE
