@@ -1,5 +1,15 @@
 #! /bin/sh
 
+: <<'LICENSE'
+  The MIT License (MIT)
+  Copyright (c) Tobey Peters
+  See full license at: https://github.com/tobeypeters
+LICENSE
+
+: <<'DESCRIPTION'
+  Gets the date & time and outputs it.
+DESCRIPTION
+
 WIDTH=${WIDTH:-200}
 HEIGHT=${HEIGHT:-200}
 DATEFMT=${DATEFMT:-"+%a %d %b %H:%M"}
