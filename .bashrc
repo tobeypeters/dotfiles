@@ -1,8 +1,8 @@
-: <<'EOF'
+: <<'LICENSE'
   The MIT License (MIT)
   Copyright (c) Tobey Peters
   See full license at: https://github.com/tobeypeters
-EOF
+LICENSE
 
 [[ $- != *i* ]] && return
 
