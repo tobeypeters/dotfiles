@@ -36,7 +36,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   for (ita=0;ita<pc;ita++)
   {
-    p_DUP(&p_arr[ita],pp);
+    p_DUP(pp,&p_arr[ita]);
 
     //Apply rotation
     rot_plot(pp);
@@ -51,16 +51,31 @@ U0 DrawIt(CTask *task,CDC *dc)
   }
 }
 
-U0 AnimateTask(I64){}
+U0 AnimateTask(I64)
+{
+  F64 tx,ty;
+
+  tx=ty=0;
+  while (TRUE) {
+    rotation_x+=tx*0.001;
+    rotation_y+=ty*0.001;
+    tx+=0.05;ty+=0.05;
+
+    if (tx==1)
+    {
+      rotation_x=rotation_y=0;
+      tx=ty=0.1;
+    }
+    Sleep(20);
+  }
+}
 
 F64 x,y,z;
 
 U64 COLORS[3]={LTBLUE,CYAN,WHITE};
 U0 Init()
 {
-  //p_deinit(&p_arr,PARTICLE_MAX);
-  //p_init(&p_arr,PARTICLE_MAX);
-  F64 u,v;
+  F64 u,v;
   for (ita=0;ita<RESOLUTION;ita++)
   {
     u=2*ã*ita/RESOLUTION;
@@ -85,18 +100,18 @@ U0 MS_L_UP(){}
 U0 MS_MOVE(){}
 U0 MS_MOVE_LDOWN()
 {
-  rotation_x+=(cur_mouse_y-prev_mouse_y)*0.001;
-  rotation_y+=(cur_mouse_x-prev_mouse_x)*0.001;
+//  rotation_x+=(cur_mouse_y-prev_mouse_y)*0.001;
+//  rotation_y+=(cur_mouse_x-prev_mouse_x)*0.001;
 }
 U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
-#define ANIMATE_TASK FALSE
+#define ANIMATE_TASK TRUE
 
-#define MOUSE_TRAP TRUE
-
+#define MOUSE_TRAP FALSE
+
 //Update mouse postion values,
 //even when mouse button not pressed.
 #define MOUSE_NODOWN FALSE

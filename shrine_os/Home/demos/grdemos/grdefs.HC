@@ -39,7 +39,7 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
-//#define PARTICLE_MAX 10
+//#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
@@ -75,7 +75,8 @@ class PARTICLE:CD3
 
 PARTICLE p_arr[PARTICLE_MAX];
 
-PARTICLE *pp=NULL;
+//PARTICLE *pp=MAlloc(sizeof(PARTICLE)); //External use pointer
+PARTICLE *pp=NULL; //External use pointer
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -119,12 +120,9 @@ CD3 *p_2CD3(F64 x=0,F64 y=0,F64 z=0)
  
   return ret;
 }
-U0 p_DUP(PARTICLE *dp,PARTICLE *up)
+U0 p_DUP(U8 *dst,U8 *src)
 {
-  up->x=dp->x;
-  up->y=dp->y;
-  up->z=dp->z;
-  up->color=dp->color;
+  MemCpy(dst,src,sizeof(PARTICLE));
 }
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {
@@ -139,16 +137,23 @@ U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 
   *ux=x2;*uy=y1;*uz=z2;
 }
+U0 rot_plot2(CD3 *rp,CD3 *up)
+{
+  rot_base(&rp,&up->x,&up->y,&up->z);
+};
 U0 rot_plot(PARTICLE *rp)
 {
   F64 x,y,z;
 
   rot_base(rp,&x,&y,&z);
 
-  rp->x=x;rp->y=y;rp->z=z;  
+  rp->x=x;rp->y=y;rp->z=z;
 }
-
-U0 rot_plot2(CD3 *rp,CD3 *up)
+U0 rot_plottest(PARTICLE *rp)
 {
-  rot_base(&rp,&up->x,&up->y,&up->z);
-};
+  F64 x,y,z;
+
+  rot_base(rp,&x,&y,&z);
+
+  rp->x=x;rp->y=y;rp->z=z;
+}
