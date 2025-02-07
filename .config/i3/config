@@ -209,6 +209,8 @@ bindsym $mod+Return exec i3-sensible-terminal
 
 # Menus-----------------------------------
 bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
+bindsym $mod+a exec ~/.config/polybar/scripts/fileselect.sh "$bg" "$fg"
+
 bindsym $mod+m exec ~/.config/polybar/scripts/sysmenu.py --mc "$bg" "$fg" "$fg" "$bg"
 bindsym $mod+p exec ~/.config/polybar/scripts/power.sh "$bg" "$fg"
 # ----------------------------------------
