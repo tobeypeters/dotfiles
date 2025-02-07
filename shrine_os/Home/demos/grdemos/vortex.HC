@@ -35,8 +35,10 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
-    dc->color=p_arr[ita].color;
-    GrRect(dc,p_arr[ita].x,p_arr[ita].y,2,2);
+    pp=&p_arr[ita];
+
+    dc->color=pp->color;
+    GrRect(dc,pp->x,pp->y,2,2);
   }
 }
 
@@ -45,16 +47,18 @@ U0 AnimateTask(I64)
   while (TRUE) {
     for (ita=0;ita<PARTICLE_MAX;ita++)
     {
-      dx=p_arr[ita].x-vortex.x;
-      dy=p_arr[ita].y-vortex.y;
+      pp=&p_arr[ita];
+
+      dx=pp->x-vortex.x;
+      dy=pp->y-vortex.y;
 
       vx=-dy*vortex.speed;
       vy=dx*vortex.speed;
 
-      factor=1/(1+D3DistSqr(&p_arr[ita],&vortex)/vortex.scale);
+      factor=1/(1+D3DistSqr(pp,&vortex)/vortex.scale);
 
-      p_arr[ita].x+=(vx-p_arr[ita].vx)*factor+p_arr[ita].vx*dt;
-      p_arr[ita].y+=(vy-p_arr[ita].vy)*factor+p_arr[ita].vy*dt;
+      pp->x+=(vx-pp->vx)*factor+pp->vx*dt;
+      pp->y+=(vy-pp->vy)*factor+pp->vy*dt;
     }
 
     Sleep(8);
@@ -72,11 +76,12 @@ U0 Init()
 
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
-    p_arr[ita].x=RandU16%WIDTH;
-    p_arr[ita].y=RandU16%HEIGHT;
-    p_arr[ita].vx=(Rand%F64_MAX)*2-1; // Random velocity between -1.0 and 1.0
-    p_arr[ita].vy=(Rand%F64_MAX)*2-1;
-    p_arr[ita].color=RandU16%15;
+    pp=&p_arr[ita];
+    pp->x=RandU16%WIDTH;
+    pp->y=RandU16%HEIGHT;
+    pp->vx=(Rand%F64_MAX)*2-1; // Random velocity between -1.0 and 1.0
+    pp->vy=(Rand%F64_MAX)*2-1;
+    pp->color=RandU16%15;
   }
 }
 
@@ -89,6 +94,8 @@ U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
+#define ANIMATE_TASK TRUE
+
 #define MOUSE_TRAP FALSE
 
 //Update mouse postion values,
@@ -98,4 +105,3 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
-

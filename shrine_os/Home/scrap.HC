@@ -387,7 +387,7 @@ if (str_cmp(a,b)) {
 //U0 pubext() {
 //  "pubext\n";
 //}
-
+
 //I64 age=12;
 //if (13<=age<20) "teenager\n";
 //else "Not a teenager\n";
@@ -967,13 +967,32 @@ CHashFun *chf=FindFunction("Cdr");
 chf->exe_addr=&tester;
 Cdr;*/
 
-U64 xxx=10;
+/*F64 rotation_x=0,
+    rotation_y=0,
+    x,y,z;
 
-if (xxx==10)
+CD3 p;
+
+p.x=2;
+p.y=0;
+p.z=0;
+
+U0 rot(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {
-  U64 a=9;;
+  F64 cos_x=Cos(rotation_x),
+       cos_y=Cos(rotation_y),
+       sin_x=Sin(rotation_x),
+       sin_y=Sin(rotation_y),
+          y1=cos_x*rp->y-sin_x*rp->z,
+          z1=sin_x*rp->y+cos_x*rp->z,
+          x2=cos_y*rp->x+sin_y*z1,
+          z2=-sin_y*rp->x+cos_y*z1;
 
-  //"%d\n",a;
+  *ux=x2;*uy=y1;*uz=z2;
 }
+
+rot(&p,&x,&y,&z);
+
+"%2.8f %2.8f %2.8f\n",x,y,z;*/
 
 //KeyAndCont;

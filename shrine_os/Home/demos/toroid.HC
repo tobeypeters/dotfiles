@@ -63,7 +63,7 @@ Vec3 rotate_point(Vec3 p, float angle_x, float angle_y) {
 
     return (Vec3){x2, y1, z2};
 }
-
+
 // Generate toroid points
 void generate_toroid() {
     for (int i = 0; i < TOROID_RESOLUTION; i++) {
@@ -72,6 +72,7 @@ void generate_toroid() {
             float v = 2.0f * M_PI * j / TOROID_RESOLUTION;
 
             float x = (MAJOR_RADIUS + MINOR_RADIUS * cos(v)) * cos(u);
+
             float y = (MAJOR_RADIUS + MINOR_RADIUS * cos(v)) * sin(u);
             float z = MINOR_RADIUS * sin(v);
 
@@ -81,7 +82,7 @@ void generate_toroid() {
 }
 
 // Draw toroid points
-void draw_toroid(SDL_Renderer *renderer) {
+void draw_toroid(SDL_Renderer *renderer) {
     for (int i = 0; i < num_toroid_points; i++) {
         Vec3 pos = toroid_points[i];
 

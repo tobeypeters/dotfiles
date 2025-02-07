@@ -31,12 +31,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   p_plot(dc,&p_arr,PARTICLE_MAX);
 }
 
-U0 AnimateTask(I64)
-{
-  while (TRUE) {
-    Sleep(20);
-  }
-}
+U0 AnimateTask(I64){}
 
 U0 Init()
 {
@@ -49,32 +44,34 @@ U0 Init()
 
   for(ita=0;ita<PARTICLE_MAX;ita++)
   {
+    pp=&p_arr[ita];
+
     d=RandU16&3;
     switch (d)
     {
       case 0:
-        p_arr[ita].x=(x2+WIDTH_CENTER)/2;
-        p_arr[ita].y=y2/2;
+        pp->x=(x2+WIDTH_CENTER)/2;
+        pp->y=y2/2;
 
         break;
       case 1:
-        p_arr[ita].x=(x2+40)/2;
-        p_arr[ita].y=(y2+HEIGHT-40)/2;
+        pp->x=(x2+40)/2;
+        pp->y=(y2+HEIGHT-40)/2;
 
         break;
       default:
-        p_arr[ita].x=(x2+WIDTH-40)/2;
-        p_arr[ita].y=(y2+HEIGHT-40)/2;
+        pp->x=(x2+WIDTH-40)/2;
+        pp->y=(y2+HEIGHT-40)/2;
     }
 
-    x2=p_arr[ita].x;
-    y2=p_arr[ita].y;
-    p_arr[ita].color=GREEN;
+    x2=pp->x;
+    y2=pp->y;
+    pp->color=GREEN;
   }
 }
 
 U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
+U0 MS_L_UP(){}
 U0 MS_MOVE(){}
 U0 MS_MOVE_LDOWN(){}
 U0 MS_MOVE_RDOWN(){}
@@ -82,12 +79,14 @@ U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
+#define ANIMATE_TASK FALSE
+
 #define MOUSE_TRAP FALSE
 
 //Update mouse postion values,
 //even when mouse button not pressed.
 #define MOUSE_NODOWN FALSE
-
+
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);

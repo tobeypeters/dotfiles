@@ -19,7 +19,6 @@
       Main loop, for graphic demos.
 */
 //Cd(__DIR__);;
-
 I64 ch,sc;
 MenuPush(
   "File {"
@@ -38,14 +37,13 @@ DocCursor; DocClear;
 
 Init;
 
-Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
+if (ANIMATE_TASK)
+  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 
 if (MOUSE_TRAP)
 {
-  I64 prev_mouse_x,
-      prev_mouse_y,
-      arg1,arg2;;
+  I64 arg1,arg2,mx,my;;
 
   Bool mouse_ldown=FALSE,
        mouse_rdown=FALSE,
@@ -58,6 +56,8 @@ if (MOUSE_TRAP)
   while (run) {
     sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN+1<<MSG_MS_L_DOWN+
              1<<MSG_MS_L_UP+1<<MSG_MS_R_DOWN+1<<MSG_MS_R_UP+1<<MSG_MS_MOVE);
+    cur_mouse_x=ms.pos.x;cur_mouse_y=ms.pos.y;
+
     switch (sc) {
       case MSG_MS_L_DOWN:
         mouse_ldown=TRUE;
@@ -65,16 +65,16 @@ if (MOUSE_TRAP)
 
         break;
       case MSG_MS_MOVE:
-        if (MOUSE_NODOWN||mouse_ldown||mouse_rdown)
+        if (MOUSE_NODOWN||mouse_ldown||mouse_rdown)
         {
-          prev_mouse_x=ms.pos.x;
-          prev_mouse_y=ms.pos.y;
-
-          if (MOUSE_NODOWN){MS_MOVE; break;}
+          if (MOUSE_NODOWN) MS_MOVE;
         }
 
         if(mouse_ldown) MS_MOVE_LDOWN;
         if(mouse_rdown) MS_MOVE_RDOWN;
+
+        prev_mouse_x=mx;
+        prev_mouse_y=my;
 
         break;
       case MSG_MS_L_UP:

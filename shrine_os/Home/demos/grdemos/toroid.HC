@@ -23,7 +23,6 @@ Cd(__DIR__);;
 #define MAJOR_RADIUS 1.5
 #define MINOR_RADIUS 0.5
 #define RESOLUTION 100
-#define DIM 128
 
 #define PARTICLE_MAX RESOLUTION*RESOLUTION
 
@@ -31,37 +30,32 @@ Cd(__DIR__);;
 
 U64 pc=0,sx,sy,color;
 
-PARTICLE pb;
-
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
   for (ita=0;ita<pc;ita++)
   {
-    pp=&p_arr[ita];
+    p_DUP(&p_arr[ita],pp);
 
-    // Apply rotation
+    //Apply rotation
     rot_plot(pp);
     
-    // Project to screen space
+    //Project to screen space
     sx=(pp->x*WIDTH/4)+WIDTH_CENTER;
     sy=(pp->y*HEIGHT/4)+HEIGHT_CENTER;
 
-    // Set color (gradient effect based on z-depth)
-    dc->color=MapI64(pp->z,-MAJOR_RADIUS-MINOR_RADIUS,MAJOR_RADIUS+MINOR_RADIUS,0,15);
+    dc->color=pp->color;
 
-    GrPlot(dc,pp->x,pp->y);
+    GrPlot(dc,sx,sy);
   }
 }
 
-U0 AnimateTask(I64)
-{
-  while (TRUE) {
-    Sleep(20);
-  }
-}
+U0 AnimateTask(I64){}
 
+F64 x,y,z;
+
+U64 COLORS[3]={LTBLUE,CYAN,WHITE};
 U0 Init()
 {
   //p_deinit(&p_arr,PARTICLE_MAX);
@@ -72,10 +66,15 @@ U0 Init()
     u=2*ã*ita/RESOLUTION;
     for (itb=0;itb<RESOLUTION;itb++)
     {
+      pp=&p_arr[pc];
+
       v=2*ã*itb/RESOLUTION;
-      p_arr[pc].x=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Cos(u);
-      p_arr[pc].y=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Sin(u);
-      p_arr[pc].z=MINOR_RADIUS*Sin(v);
+
+      pp->x=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Cos(u);
+      pp->y=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Sin(u);
+      pp->z=MINOR_RADIUS*Sin(v);
+      pp->color=COLORS[RandU16%3];
+
       pc++;
     }
   }
@@ -83,29 +82,21 @@ U0 Init()
 
 U0 MS_L_DOWN(){}
 U0 MS_L_UP(){}
-U0 MS_MOVE()
-U0 MS_MOVE_DOWN()
-{
-  rotation_x+=(ms.pos.y-prev_mouse_y)*0.01;
-  rotation_y+=(ms.pos.x-prev_mouse_x)*0.01;
-}
-U0 MS_R_DOWN(){}
-U0 MS_R_UP(){}
-U0 KEY_DOWN(){}
-
-
-U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
 U0 MS_MOVE(){}
-U0 MS_MOVE_LDOWN(){}
+U0 MS_MOVE_LDOWN()
+{
+  rotation_x+=(cur_mouse_y-prev_mouse_y)*0.001;
+  rotation_y+=(cur_mouse_x-prev_mouse_x)*0.001;
+}
 U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
-
+
+#define ANIMATE_TASK FALSE
 
 #define MOUSE_TRAP TRUE
-
+
 //Update mouse postion values,
 //even when mouse button not pressed.
 #define MOUSE_NODOWN FALSE

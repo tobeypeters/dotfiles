@@ -39,12 +39,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   p_plot(dc,&p_arr,pc);
 }
 
-U0 AnimateTask(I64)
-{
-  while (TRUE) {
-    Sleep(20);
-  }
-}
+U0 AnimateTask(I64){}
 
 U0 Init()
 {
@@ -56,15 +51,16 @@ U0 Init()
 
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
+    pp=&p_arr[pc];
     //Ppolar coordinates to cartesian coordinates
     x=WIDTH_CENTER+radius*Cos(angle);
     y=HEIGHT_CENTER+radius*Sin(angle);
 
     //Within screen bounds
     if (x>=0&&x<WIDTH&&y>=0&&y<HEIGHT) {
-      p_arr[pc].x=x;
-      p_arr[pc].y=y;
-      p_arr[pc].color=COLORS[RandU16%3];
+      pp->x=x;
+      pp->y=y;
+      pp->color=COLORS[RandU16%3];
 
       pc++;
     }
@@ -83,8 +79,10 @@ U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
+#define ANIMATE_TASK FALSE
+
 #define MOUSE_TRAP FALSE
-
+
 //Update mouse postion values,
 //even when mouse button not pressed.
 #define MOUSE_NODOWN FALSE
@@ -92,3 +90,4 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+

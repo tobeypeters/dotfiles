@@ -49,9 +49,16 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 F64 rotation_x,
     rotation_y;
 
-I64 ita,itb;
+I64 cur_mouse_x,
+    cur_mouse_y,
+    prev_mouse_x,
+    prev_mouse_y,
+    ita,itb;
 
-ita,itb,rotation_x,rotation_y=0;
+cur_mouse_x=cur_mouse_y=
+prev_mouse_x=prev_mouse_y=
+rotation_x=rotation_y=
+ita=itb=0;
 
 class PARTICLE:CD3
 {
@@ -91,7 +98,6 @@ U0 p_deinit(U8 *p,U64 p_cnt)
 {//Clear the elements in p_arr
   MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
 }
-
 U0 p_plot(CDC *dc,U8 *p,U64 p_cnt)
 {
   PARTICLE *pp;
@@ -103,8 +109,7 @@ U0 p_plot(CDC *dc,U8 *p,U64 p_cnt)
     GrPlot(dc,pp->x,pp->y);
   }
 }
-
-CD3 *p_CD3(F64 x=0,F64 y=0,F64 z=0)
+CD3 *p_2CD3(F64 x=0,F64 y=0,F64 z=0)
 {//Return a CD3 from a given x,y,z
   CD3 *ret=MAlloc(sizeof(CD3));
 
@@ -114,7 +119,13 @@ CD3 *p_CD3(F64 x=0,F64 y=0,F64 z=0)
  
   return ret;
 }
-
+U0 p_DUP(PARTICLE *dp,PARTICLE *up)
+{
+  up->x=dp->x;
+  up->y=dp->y;
+  up->z=dp->z;
+  up->color=dp->color;
+}
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {
   F64 cos_x=Cos(rotation_x),
@@ -132,7 +143,7 @@ U0 rot_plot(PARTICLE *rp)
 {
   F64 x,y,z;
 
-  rot_base(&rp,&x,&y,&z);
+  rot_base(rp,&x,&y,&z);
 
   rp->x=x;rp->y=y;rp->z=z;  
 }
@@ -141,4 +152,3 @@ U0 rot_plot2(CD3 *rp,CD3 *up)
 {
   rot_base(&rp,&up->x,&up->y,&up->z);
 };
-

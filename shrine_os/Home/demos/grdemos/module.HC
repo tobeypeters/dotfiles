@@ -30,6 +30,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   //p_plot(dc,&p_arr,PARTICLE_MAX);
   /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
+    pp=&p_arr[ita];
   }*/
 }
 
@@ -57,7 +58,9 @@ U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
-
+
+#define ANIMATE_TASK FALSE
+
 #define MOUSE_TRAP FALSE
 
 //Update mouse postion values,
@@ -67,3 +70,4 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+
