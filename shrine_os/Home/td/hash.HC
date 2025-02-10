@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  47
+#define CMD_CNT  47
 #define CMD_ARGS  5
 
 #define HFLAGS 0
@@ -114,7 +114,7 @@ I64 hashDX(CHCMDS *in,U8 *cmd)
 
   return -1;
 }
-Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
+Bool tk_minmax(CHCMDS *in,U64 idx,U64 val,U64 type=HARGS)
 { 
   if (type==HARGS)
     return in->data[idx][TOK_MIN]<=val<=in->data[idx][TOK_MAX];
@@ -159,4 +159,4 @@ CHCMDS *c=CAlloc(sizeof(CHCMDS));
   c->parse(c);
 
 
-  //"%d\n",c->hashdx(c,"dir");
+ // "%d\n",c->hashdx(c,"edp");

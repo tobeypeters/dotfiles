@@ -86,7 +86,7 @@ U64 execute_cmd(U8 *cmd) {
     if (str_cmp(a->args[0],":>")) { //touch
       StrCpy(a->args[0],"touch"); goto hashit;
     }
-
+
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
@@ -203,6 +203,12 @@ U64 execute_cmd(U8 *cmd) {
   }
 
   U64 be=FALSE;
+
+  switch(idx)
+  {
+    case 201:
+    bufa=MStrPrint("%s",FileNameAbs(bufa));
+  }  
 
   switchit:  
     set_prevcmd(cmd);
@@ -418,8 +424,8 @@ U64 execute_cmd(U8 *cmd) {
 
       break;
     case 201: //ed
-      if (filenameOK(bufa)) Ed(bufa);
-      else e_print(ERR_FILEI,bufa);
+      if (filenameOK(bufa)) PopUpEd(bufa);
+      else { e_print(ERR_FILEI,bufa); goto answer; }
 
       break;
     case 203: //df
@@ -551,7 +557,7 @@ U8 templeDOS() {
     if (str_cmp(input,"!!")) {
       zFree(input);input=StrNew(prev_cmd);
     }
-
+
     if (res=execute_cmd(input)) break;
 
     zFree(input,FALSE);

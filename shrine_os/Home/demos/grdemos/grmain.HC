@@ -38,7 +38,7 @@ DocCursor; DocClear;
 Init;
 
 if (ANIMATE_TASK)
-  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
+  Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 
 if (MOUSE_TRAP)
@@ -97,7 +97,7 @@ if (MOUSE_TRAP)
         if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
           run=FALSE;
     }
-    Refresh;
+//    Refresh;
   }
 }
 else

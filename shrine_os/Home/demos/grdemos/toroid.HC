@@ -7,7 +7,7 @@
   and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
   subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
@@ -28,7 +28,7 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-U64 pc=0,sx,sy,color;
+U64 pc=0;
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
@@ -41,31 +41,26 @@ U0 DrawIt(CTask *task,CDC *dc)
     //Apply rotation
     rot_plot(pp);
     
-    //Project to screen space
-    sx=(pp->x*WIDTH/4)+WIDTH_CENTER;
-    sy=(pp->y*HEIGHT/4)+HEIGHT_CENTER;
-
     dc->color=pp->color;
-
-    GrPlot(dc,sx,sy);
+    //Project to screen space
+    GrPlot(dc,(pp->x*WIDTH/4)+WIDTH_CENTER,
+              (pp->y*HEIGHT/4)+HEIGHT_CENTER);
   }
 }
 
+Bool spinx=FALSE;
 U0 AnimateTask(I64)
 {
-  F64 tx,ty;
-
-  tx=ty=0;
   while (TRUE) {
-    rotation_x+=tx*0.001;
-    rotation_y+=ty*0.001;
-    tx+=0.05;ty+=0.05;
+    //Spin right or left
+    rotation_x+=spinx*0.1;
+    rotation_y+=!spinx*0.1;
 
-    if (tx==1)
-    {
+    if (rotation_x>ã||
+        rotation_y>ã) {
       rotation_x=rotation_y=0;
-      tx=ty=0.1;
     }
+
     Sleep(20);
   }
 }
@@ -75,7 +70,7 @@ F64 x,y,z;
 U64 COLORS[3]={LTBLUE,CYAN,WHITE};
 U0 Init()
 {
-  F64 u,v;
+  F64 u,v;
   for (ita=0;ita<RESOLUTION;ita++)
   {
     u=2*ã*ita/RESOLUTION;
@@ -93,6 +88,7 @@ U0 Init()
       pc++;
     }
   }
+  pc--;
 }
 
 U0 MS_L_DOWN(){}

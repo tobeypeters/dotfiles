@@ -23,7 +23,7 @@
 #define  WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
-
+
 #define CX WIDTH/2
 #define CY HEIGHT/2
 #define SPIRAL_TURN_FACTOR 0.1
@@ -110,3 +110,4 @@ try {
 
 SettingsPop;
 MenuPop;
+

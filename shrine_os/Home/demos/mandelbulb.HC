@@ -59,7 +59,7 @@ U0 rot_plot(CD3 *rp,F64 *rx,F64 *ry,F64 *rz) {
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
+  DCFill(dc,BLACK);
 
   dc->color=LTRED;
 
@@ -121,7 +121,7 @@ U0 Init()
           iteration++;
 
           if (cr>2) {
-            if (edge) {
+            if (edge) {
               edge=FALSE;
             }
             break;

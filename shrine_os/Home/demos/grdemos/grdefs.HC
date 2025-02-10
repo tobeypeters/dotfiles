@@ -39,7 +39,7 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
-//#define PARTICLE_MAX 10
+//#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
@@ -53,12 +53,12 @@ I64 cur_mouse_x,
     cur_mouse_y,
     prev_mouse_x,
     prev_mouse_y,
-    ita,itb;
+    ita,itb,itc;
 
 cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
-ita=itb=0;
+ita=itb=itc=0;
 
 class PARTICLE:CD3
 {
@@ -66,6 +66,7 @@ class PARTICLE:CD3
   F64 vx,vy,vz, //Velocity x,y,z
       ax,ay,az, //Acceleration x,y,z
       rx,ry,rz, //Rotation x,y,z
+      pr,pt,pp, //Polar coordiantes - r,theta,phi
       angle,    //Angle
       scale,    //Scale factor
       speed;    //Acceleration all directions
@@ -123,6 +124,12 @@ CD3 *p_2CD3(F64 x=0,F64 y=0,F64 z=0)
 U0 p_DUP(U8 *dst,U8 *src)
 {
   MemCpy(dst,src,sizeof(PARTICLE));
+}
+U0 spherize(PARTICLE *z)
+{//Convert to polar coordinates
+  z->pr=Sqrt(z->x*z->x+z->y*z->y+z->z*z->z);
+  z->pt=ATan2(Sqrt(z->x*z->x+z->y*z->y),z->z);
+  z->pp=ATan2(z->y,z->x);
 }
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {

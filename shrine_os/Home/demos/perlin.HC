@@ -1,5 +1,5 @@
 /*
-  The MIT License(MIT)
+  The MIT License(MIT)
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -20,7 +20,7 @@
   Resources:
       https://en.wikipedia.org/wiki/Perlin_noise
 */
-
+
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
 
