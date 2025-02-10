@@ -129,7 +129,7 @@ U0 spherize(PARTICLE *z)
 {//Convert to polar coordinates
   z->pr=Sqrt(z->x*z->x+z->y*z->y+z->z*z->z);
   z->pt=ATan2(Sqrt(z->x*z->x+z->y*z->y),z->z);
-  z->pp=ATan2(z->y,z->x);
+  z->pp=ATan2(z->y,z->x);
 }
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {
@@ -164,3 +164,4 @@ U0 rot_plottest(PARTICLE *rp)
 
   rp->x=x;rp->y=y;rp->z=z;
 }
+

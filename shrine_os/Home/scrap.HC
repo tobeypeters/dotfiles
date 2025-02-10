@@ -995,4 +995,21 @@ rot(&p,&x,&y,&z);
 
 "%2.8f %2.8f %2.8f\n",x,y,z;*/
 
+/*U0 mptest(I64 cnt)
+{
+  Adam("\"\n\n$$LTCYAN$$:..%d..:$$FG$$ ...\n\n\";",cnt);
+}
+ADocClear;
+Spawn(&mptest,5,"mptest",,Fs);
+*/
+
+#define DIM 129
+
+U64 i;
+
+i.u8[0]=DIM/mp_cnt;
+i.u8[1]=DIM-i*mp_cnt;
+"%d %d\n",i.u8[0],i.u8[1];
+
+
 //KeyAndCont;

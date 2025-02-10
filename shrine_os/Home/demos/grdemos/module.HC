@@ -40,7 +40,7 @@ U0 AnimateTask(I64)
     Sleep(20);
   }
 }
-
+
 U0 Init()
 {
   //p_deinit(&p_arr,PARTICLE_MAX);
@@ -69,4 +69,4 @@ U0 KEY_DOWN(){}
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_deinit(&p_arr,PARTICLE_MAX);
