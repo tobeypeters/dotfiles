@@ -40,17 +40,22 @@ F64 ang1=ã/3,ang2=-ang1,count,
 U64 bvx,bvy,sl=2;
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
+//  DCFill(dc,BLACK);
 
   dc->color=LTGREEN;
-
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
-    if (ita>PARTICLE_MAX/3) dc->color=LTBLUE;
-    if (ita>(PARTICLE_MAX/3)*2) dc->color=LTRED;
+    if (ita>PARTICLE_MAX/4) dc->color=LTBLUE;
+    if (ita>(PARTICLE_MAX/4)*2) dc->color=LTRED;
+    if (ita>(PARTICLE_MAX/4)*3) dc->color=YELLOW;
 
     bx=pp->x; by=pp->y;
+
+    GrRegPoly(dc,bx,by,1,1,4);
+    GrFloodFill(dc,bx,by);
+
+/*  Manually draw a triangle
     bvx=pp->vx;bvy=pp->vy;
 
     //Normalize
@@ -67,6 +72,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     GrLine(dc,bx,by,px1,py1);
     GrLine(dc,px1,py1,px2,py2);
     GrLine(dc,px2,py2,bx,by);
+*/
 
 //    GrPlot(dc,pp->x,pp->y); //little dot
 //    GrCircle(dc,pp->x,pp->y,1); //big dot :>
@@ -76,12 +82,13 @@ U0 DrawIt(CTask *task,CDC *dc)
 F64 count,cx,cy,dx,dy,
     distance,speed,scale,
     ax,ay,rx,ry;
+
 U0 AnimateTask(I64)
 {
   while (TRUE)
   {
     for (ita=0;ita<PARTICLE_MAX;ita++)
-    {
+    {
       pp=&p_arr[ita];
 
       cx=cy=0; // Cohesion x,y
@@ -99,6 +106,10 @@ U0 AnimateTask(I64)
         dx=pp->x-ppp->x;
         dy=pp->y-ppp->y;
 
+        //Instead of doing something like spatial hashing.
+        if (Abs(dx)>VIEW_RADIUS/2||
+            Abs(dy)>VIEW_RADIUS/2) goto continue;
+
         /*This makes it seem to flock more correctly. Less CPU usage.*/
         distance=Sqrt(dx*dx+dy*dy);
         if (distance<VIEW_RADIUS)
@@ -114,7 +125,6 @@ U0 AnimateTask(I64)
             ry-=ppp->y-pp->y;
           }
         }
-
         continue:
       }
 
@@ -193,4 +203,3 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
-
