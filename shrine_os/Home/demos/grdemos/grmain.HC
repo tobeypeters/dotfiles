@@ -19,8 +19,7 @@
       Main loop, for graphic demos.
 */
 //Cd(__DIR__);;
-I64 ch,sc;
-MenuPush(
+MenuPush(
   "File {"
   "  Abort(,CH_SHIFT_ESC);"
   "  Exit(,CH_ESC);"
@@ -97,7 +96,7 @@ if (MOUSE_TRAP)
         if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
           run=FALSE;
     }
-//    Refresh;
+//    Refresh;
   }
 }
 else

@@ -161,7 +161,7 @@ U0 Init()
 }
 
 U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
+U0 MS_L_UP(){}
 U0 MS_MOVE(){}
 U0 MS_MOVE_LDOWN()
 {
@@ -184,3 +184,4 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+

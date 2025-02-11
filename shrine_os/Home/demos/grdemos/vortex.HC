@@ -17,6 +17,8 @@
 /*vortex.HC
   Description:
       Creates a "vortex" effect.
+  Resources:
+      https://en.wikipedia.org/wiki/Vortex
 */
 Cd(__DIR__);;
 
@@ -49,7 +51,7 @@ U0 AnimateTask(I64)
     {
       pp=&p_arr[ita];
 
-      dx=pp->x-vortex.x;
+      dx=pp->x-vortex.x;
       dy=pp->y-vortex.y;
 
       vx=-dy*vortex.speed;

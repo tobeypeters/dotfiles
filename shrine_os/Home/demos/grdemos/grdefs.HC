@@ -53,31 +53,35 @@ I64 cur_mouse_x,
     cur_mouse_y,
     prev_mouse_x,
     prev_mouse_y,
-    ita,itb,itc;
+    ita,itb,itc,ch,sc;
 
 cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=0;
 
-class PARTICLE:CD3
+class PARTICLE_BASE:CD3
 {
   Bool active;
+  U64 color;
+}
+class PARTICLE:PARTICLE_BASE
+{
   F64 vx,vy,vz, //Velocity x,y,z
       ax,ay,az, //Acceleration x,y,z
       rx,ry,rz, //Rotation x,y,z
+      px,py,pz, //Previous x,y,z
       pr,pt,pp, //Polar coordiantes - r,theta,phi
+      distance, //Distance
       angle,    //Angle
       scale,    //Scale factor
       speed;    //Acceleration all directions
-
-  U64 color;
 };
 
 PARTICLE p_arr[PARTICLE_MAX];
 
 //PARTICLE *pp=MAlloc(sizeof(PARTICLE)); //External use pointer
-PARTICLE *pp=NULL; //External use pointer
+PARTICLE *pp=NULL,*ppp=NULL; //External use pointer
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -164,4 +168,3 @@ U0 rot_plottest(PARTICLE *rp)
 
   rp->x=x;rp->y=y;rp->z=z;
 }
-

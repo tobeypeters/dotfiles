@@ -16,7 +16,9 @@
 
 /*sierpinski.HC
   Description:
-      Sierpinski triangle.
+      Sierpinski triangle.
+  Resources:
+      https://en.wikipedia.org/wiki/Sierpinkski_triangle
 */
 Cd(__DIR__);;
 
