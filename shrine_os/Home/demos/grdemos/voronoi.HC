@@ -56,11 +56,11 @@ CDC *GenVoronoi() {
     }
   }
 
+  dc->color=WHITE;
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
 
-    dc->color=WHITE;
     GrRect(dc,pp->x-2,pp->y-2,5,5);
   }
 
