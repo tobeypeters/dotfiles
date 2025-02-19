@@ -46,6 +46,12 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 #define WIDTH_CENTER WIDTH/2
 #define HEIGHT_CENTER HEIGHT/2
 
+//I've been using the TempleOS PI symbol <alt>+<1>,
+//But, that chr doesn't "exist" outside of TempleOS.
+//Editing outside TempleOS corrupts your file and viewing on GitHub,
+//shows "garbage" wherever those characted are. :<
+#define M_PI 3.14159265358979323846
+
 F64 rotation_x,
     rotation_y;
 
@@ -59,6 +65,10 @@ cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=0;
+
+F64 lerp(F64 a,F64 b,F64 t) {
+  return a+t*(b-a);
+}
 
 class PARTICLE_BASE:CD3
 {
@@ -81,7 +91,7 @@ class PARTICLE:PARTICLE_BASE
 PARTICLE p_arr[PARTICLE_MAX];
 
 //PARTICLE *pp=MAlloc(sizeof(PARTICLE)); //External use pointer
-PARTICLE *pp=NULL,*ppp=NULL; //External use pointer
+PARTICLE *pp=NULL,*ppp=NULL; //External use pointer
 
 U0 p_init2(PARTICLE *p)
 {//Helper function for p_init
@@ -122,7 +132,7 @@ CD3 *p_2CD3(F64 x=0,F64 y=0,F64 z=0)
   ret->x=x;
   ret->y=y;
   ret->z=z;
- 
+
   return ret;
 }
 U0 p_DUP(U8 *dst,U8 *src)
