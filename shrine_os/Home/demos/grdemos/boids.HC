@@ -19,7 +19,7 @@
       Simulates flock(s) of boids.
   Resources:
       https://en.wikipedia.org/wiki/Boids
-*/
+*/
 Cd(__DIR__);;
 
 #define PARTICLE_MAX 1000

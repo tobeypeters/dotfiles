@@ -17,6 +17,8 @@
 /*voronoi.HC
   Description:
       Generates a voronoi diagram.
+  Resources:
+      https://en.wikipedia.org/wiki/Voronoi_diagram
 */
 Cd(__DIR__);;
 
@@ -94,7 +96,7 @@ U0 Init()
 U0 MS_L_DOWN(){}
 U0 MS_L_UP(){}
 U0 MS_MOVE(){}
-U0 MS_MOVE_LDOWN(){}
+U0 MS_MOVE_LDOWN(){}
 U0 MS_MOVE_RDOWN(){}
 U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
