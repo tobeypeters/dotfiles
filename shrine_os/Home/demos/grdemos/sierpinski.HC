@@ -18,7 +18,7 @@
   Description:
       Sierpinski triangle.
   Resources:
-      https://en.wikipedia.org/wiki/Sierpinkski_triangle
+      https://en.wikipedia.org/wiki/Sierpinkski_triangle
 */
 Cd(__DIR__);;
 

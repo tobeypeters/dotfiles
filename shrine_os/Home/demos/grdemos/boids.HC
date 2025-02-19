@@ -88,7 +88,7 @@ U0 AnimateTask(I64)
   while (TRUE)
   {
     for (ita=0;ita<PARTICLE_MAX;ita++)
-    {
+    {
       pp=&p_arr[ita];
 
       cx=cy=0; // Cohesion x,y
@@ -111,7 +111,7 @@ U0 AnimateTask(I64)
             Abs(dy)>VIEW_RADIUS/2) goto continue;
 
         /*This makes it seem to flock more correctly. Less CPU usage.*/
-        distance=Sqrt(dx*dx+dy*dy);
+        distance=Sqrt(Dist(dx,dy));
         if (distance<VIEW_RADIUS)
         {
           cx+=ppp->x;
@@ -147,9 +147,7 @@ U0 AnimateTask(I64)
       }
 
       //Speed
-      speed=Sqrt(pp->vx*pp->vx+
-                 pp->vy*pp->vy);
-
+      speed=Sqrt(Dist(pp->vx,pp->vy));
       if (speed>MAX_SPEED) {
         scale=MAX_SPEED/speed;
         pp->vx*=scale;pp->vy*=scale;
@@ -176,6 +174,7 @@ U0 Init()
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
+
     pp->x=RandU16%WIDTH;
     pp->y=RandU16%HEIGHT;
     pp->vx=(RandU16%200-100)/100;

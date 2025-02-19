@@ -67,7 +67,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 }
 
-U0 InitStar(PARTICLE *p)
+U0 InitStar(PARTICLE *p)
 {
   p->x=p->px=WIDTH_CENTER;
   p->y=p->py=HEIGHT_CENTER;

@@ -66,8 +66,11 @@ prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=0;
 
-F64 lerp(F64 a,F64 b,F64 t) {
+F64 Lerp(F64 a,F64 b,F64 t) {
   return a+t*(b-a);
+}
+F64 Dist(F64 a,F64 b){
+  return a*a+b*b;
 }
 
 class PARTICLE_BASE:CD3

@@ -1003,13 +1003,13 @@ ADocClear;
 Spawn(&mptest,5,"mptest",,Fs);
 */
 
-#define DIM 129
+/*#define DIM 129
 
 U64 i;
 
 i.u8[0]=DIM/mp_cnt;
 i.u8[1]=DIM-i*mp_cnt;
 "%d %d\n",i.u8[0],i.u8[1];
-
-
-//KeyAndCont;
+*/
+
+//KeyAndCont;

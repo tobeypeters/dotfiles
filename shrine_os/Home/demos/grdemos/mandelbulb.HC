@@ -99,7 +99,7 @@ U0 Init2(U64 it)
         zeta.x=nx+x;zeta.y=ny+y;zeta.z=nz+z;
 
         iter++;
-
+
         if (zeta.pr>2) {
           if (edge)
             edge=FALSE;

@@ -18,7 +18,7 @@
   Description:
       Generates a toroid.
   Resources:
-      https://en.wikipedia.org/wiki/Toroid
+      https://en.wikipedia.org/wiki/Toroid
 */
 Cd(__DIR__);;
 
