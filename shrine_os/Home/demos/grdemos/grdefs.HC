@@ -18,7 +18,8 @@
   Description:
       Graphics related stuff.
 */
-/*//I'll incorporate Terry's wherever I can or where I feel I should.
+/*
+//I'll incorporate Terry's wherever I can or where I feel I should.
 public _extern _D3_ADD CD3 *D3Add(CD3 *sum,CD3 *d1,CD3 *d2); //sum=d1+d2
 public _extern _D3_ADD_EQU CD3 *D3AddEqu(CD3 *sum,CD3 *d); //sum+=d
 public _extern _D3_COPY CD3 *D3Copy(CD3 *dst,CD3 *src); //dst=src
@@ -46,12 +47,14 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 #define WIDTH_CENTER WIDTH/2
 #define HEIGHT_CENTER HEIGHT/2
 
-//I've been using the TempleOS PI symbol <alt>+<1>,
-//But, that chr doesn't "exist" outside of TempleOS.
-//Editing outside TempleOS corrupts your file and viewing on GitHub,
-//shows "garbage" wherever those characted are. :<
-#define M_PI 3.14159265358979323846
-
+/*
+I've been using the TempleOS PI symbol <alt>+<1>,
+But, that chr doesn't "exist" outside of TempleOS.
+Editing outside TempleOS corrupts your file and viewing on GitHub,
+shows "garbage" wherever those characted are. :<
+*/
+#define M_PI 3.14159265
+
 F64 rotation_x,
     rotation_y;
 
@@ -66,12 +69,40 @@ prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=0;
 
-F64 Lerp(F64 a,F64 b,F64 t) {
+F64 Lerp(F64 a,F64 b,F64 t) {
   return a+t*(b-a);
 }
-F64 Dist(F64 a,F64 b){
+F64 Dist(F64 a,F64 b)
+{
   return a*a+b*b;
 }
+F64 DistSqrt(F64 a,F64 b)
+{
+  return Sqrt(Dist(a,b));
+}
+
+F64 DistTaxi2(F64 x1,F64 y1,F64 x2,F64 y2){
+  return Abs(x2-x1)+Abs(y2-y1);
+}
+F64 DistTaxi(CD3 *p1,CD3 *p2){
+  return DistTaxi2(p1->x,p1->y,p2->x,p2->y);
+}
+
+/*CD3 a,aa;
+
+a.x=a.y=10;
+aa.x=aa.y=20;
+
+U64 dx=Abs(a.x-aa.x),
+    dy=Abs(a.y-aa.y);
+
+"DistTaxi: %2.8f\n",DistTaxi(&a,&aa);
+"D3Dist: %2.8f\n",D3Dist(&a,&aa);
+"Dist: %2.8f\n",Dist(dx,dy);
+"DistSqrt: %2.8f\n",DistSqrt(dx,dy);
+"Sqrt(Dist): %2.8f\n",Sqrt(Dist(dx,dy));
+"D3DistSqr: %2.8f\n",D3DistSqr(&a,&aa);
+*/
 
 class PARTICLE_BASE:CD3
 {

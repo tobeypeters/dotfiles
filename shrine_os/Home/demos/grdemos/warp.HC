@@ -72,7 +72,7 @@ U0 InitStar(PARTICLE *p)
   p->x=p->px=WIDTH_CENTER;
   p->y=p->py=HEIGHT_CENTER;
   p->z=p->pz=0;
-  p->angle=(RandU16%360)*(ã/180); //Random angle in radians
+  p->angle=(RandU16%360)*(M_PI/180); //Random angle in radians
 //  p->speed=(RandU16%50)/50.0+0.5;   //Random speed
   p->speed=Max(RandU16%50,1);       //Random speed
   p->distance=0;                    //Start at the center

@@ -19,7 +19,7 @@
       Simulates flock(s) of boids.
   Resources:
       https://en.wikipedia.org/wiki/Boids
-*/
+*/
 Cd(__DIR__);;
 
 #define PARTICLE_MAX 1000
@@ -34,7 +34,7 @@ Cd(__DIR__);;
 #define ALIGNMENT_FACTOR 0.05
 #define SEPARATION_FACTOR 0.1
 
-F64 ang1=ã/3,ang2=-ang1,count,
+F64 ang1=M_PI/3,ang2=-ang1,count,
     bx,by,lp,px1,py1,px2,py2;
 
 U64 bvx,bvy,sl=2;
@@ -79,9 +79,8 @@ U0 DrawIt(CTask *task,CDC *dc)
   }
 }
 
-F64 count,cx,cy,dx,dy,
-    distance,speed,scale,
-    ax,ay,rx,ry;
+F64 count,cx,cy,distance,
+    speed,scale,ax,ay,rx,ry;
 
 U0 AnimateTask(I64)
 {
@@ -103,15 +102,12 @@ U0 AnimateTask(I64)
 
         ppp=&p_arr[itb];
 
-        dx=pp->x-ppp->x;
-        dy=pp->y-ppp->y;
-
         //Instead of doing something like spatial hashing.
-        if (Abs(dx)>VIEW_RADIUS/2||
-            Abs(dy)>VIEW_RADIUS/2) goto continue;
+        if (Abs(pp->x-ppp->x)>VIEW_RADIUS/2||
+            Abs(pp->y-ppp->y)>VIEW_RADIUS/2) goto continue;
 
-        /*This makes it seem to flock more correctly. Less CPU usage.*/
-        distance=Sqrt(Dist(dx,dy));
+        //This makes it seem to flock more correctly. Less CPU usage.
+        distance=D3Dist(pp,ppp);
         if (distance<VIEW_RADIUS)
         {
           cx+=ppp->x;
@@ -127,7 +123,6 @@ U0 AnimateTask(I64)
         }
         continue:
       }
-
 
       if (count)
       {
@@ -147,12 +142,11 @@ U0 AnimateTask(I64)
       }
 
       //Speed
-      speed=Sqrt(Dist(pp->vx,pp->vy));
+      speed=DistSqrt(pp->vx,pp->vy);
       if (speed>MAX_SPEED) {
         scale=MAX_SPEED/speed;
         pp->vx*=scale;pp->vy*=scale;
       }
-
 
       //Position
       pp->x+=pp->vx;

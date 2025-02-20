@@ -58,8 +58,8 @@ U0 AnimateTask(I64)
     rotation_x+=spinx*0.1;
     rotation_y+=!spinx*0.1;
 
-    if (rotation_x>ã||
-        rotation_y>ã) {
+    if (rotation_x>M_PI||
+        rotation_y>M_PI) {
       rotation_x=rotation_y=0;
     }
 
@@ -75,12 +75,12 @@ U0 Init()
   F64 u,v;
   for (ita=0;ita<RESOLUTION;ita++)
   {
-    u=2*ã*ita/RESOLUTION;
+    u=2*M_PI*ita/RESOLUTION;
     for (itb=0;itb<RESOLUTION;itb++)
     {
       pp=&p_arr[pc];
 
-      v=2*ã*itb/RESOLUTION;
+      v=2*M_PI*itb/RESOLUTION;
 
       pp->x=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Cos(u);
       pp->y=(MAJOR_RADIUS+MINOR_RADIUS*Cos(v))*Sin(u);
