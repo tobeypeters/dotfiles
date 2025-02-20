@@ -28,6 +28,8 @@ Cd(__DIR__);;
 
 CDC *vor_dc;
 
+F64 cur_time,delta_time,prev_time;
+
 CDC *GenVoronoi() {
   CDC *dc=DCNew(WIDTH,HEIGHT);
   
@@ -38,7 +40,7 @@ CDC *GenVoronoi() {
     for (itb=0;itb<WIDTH;itb++)
     {
       minDist=WIDTH*HEIGHT;
-      color=BLACK;
+      color=BLACK;
       for (itc=0;itc<PARTICLE_MAX;itc++)
       {
         pp=&p_arr[itc];
@@ -77,21 +79,59 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrBlot(dc,0,0,vor_dc);
 }
 
+F64 xx,yy;
 U0 AnimateTask(I64)
 {
   while (TRUE) {
+
+    for (ita=0;ita<PARTICLE_MAX;ita++)
+    {
+      pp=&p_arr[ita];
+
+      xx=pp->x+pp->vx*delta_time;
+      yy=pp->y+pp->vy*delta_time;
+
+      if (0<=xx&&xx<=WIDTH)
+        pp->x=xx;
+      else
+        pp->vx*=-1;
+
+      if (0<=yy&&yy<=HEIGHT)
+        pp->y=yy;
+      else
+        pp->vy*=-1;
+    }
+
+    cur_time=tS;
+    delta_time=cur_time-prev_time;
+    prev_time=cur_time;   
+
+    vor_dc=GenVoronoi;
+
     Sleep(20);
   }
 }
 U0 Init()
 {
+  F64 angle;
+
+  delta_time=prev_time=0;
+
+  ADocClear;
+
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
 
     pp->x=RandU16%WIDTH;
     pp->y=RandU16%HEIGHT;
-    pp->color=MaxI64(1,RandU16%COLORS_NUM);
+    pp->color=Max(1,RandU16%COLORS_NUM);
+
+    angle=Rand*2*M_PI;
+
+    pp->vx=Cos(angle)*30;
+    pp->vy=Sin(angle)*30;
+
   }
 
   vor_dc=GenVoronoi;
@@ -106,7 +146,7 @@ U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
-#define ANIMATE_TASK FALSE
+#define ANIMATE_TASK TRUE
 
 #define MOUSE_TRAP FALSE
 
