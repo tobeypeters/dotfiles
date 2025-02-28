@@ -40,7 +40,7 @@ F64 ang1=M_PI/3,ang2=-ang1,count,
 U64 bvx,bvy,sl=2;
 U0 DrawIt(CTask *task,CDC *dc)
 {
-//  DCFill(dc,BLACK);
+  DCFill(dc,BLACK);
 
   dc->color=LTGREEN;
   for (ita=0;ita<PARTICLE_MAX;ita++)

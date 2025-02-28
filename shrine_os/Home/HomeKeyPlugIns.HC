@@ -32,15 +32,14 @@ Bool MyPutKey(I64 ch,I64 sc)
 //[+s] <shift>+<esc>
 //  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
 //    !(StrCmp(Fs->task_name,"templedos_task"))) Play("5eC");
-//[+e] <shift>+<esc>
-//[$LK,"tpc",A="FF://Home/patchos/guthub.HC,http"$ start]
+//[+e] <shift>+<esc>
+//[$LK,"tpc",A="FF://Home/patchos/github.HC,http"$ start]
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
-//    BootRAM;
+    BootRAM;
 //    CopyTree("~/td","/Apps/templeDOS");
-    CopyTree("~/td","/Apps/templeDOS");
   }
 //[+e] <CTRL>+<DEL>
-//[$LK,"tpc",A="FF://Home/patchos/guthub.HC,http"$ end]
+//[$LK,"tpc",A="FF://Home/patchos/github.HC,http"$ end]
 
   if (sc&SCF_ALT && !(sc&SCF_CTRL)) {
     switch (ch) {

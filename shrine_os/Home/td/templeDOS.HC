@@ -522,16 +522,24 @@ error:
   return res;
 }
 
+U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
+
 U8 templeDOS() {
+  SettingsPush;
+
+  Fs->cur_menu=MenuFile(menu_file);
+
+  Fs->task_end_cb=&stop_ctrl_alt_x;
+
   Seed; I64 termID=AbsI64(RandI32);
 
 //  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
 
 //  FF("/*BIN*");
-  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
-  Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
+//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
+//  Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
 
-  set_windowinfo("templedos_task","TempleDOS");
+  set_windowinfo(MStrPrint("templedos_task%d",termID),"TempleDOS");
 
   DocClear;DocMax;Cd;
 
@@ -557,7 +565,7 @@ U8 templeDOS() {
     if (str_cmp(input,"!!")) {
       zFree(input);input=StrNew(prev_cmd);
     }
-
+
     if (res=execute_cmd(input)) break;
 
     zFree(input,FALSE);
@@ -565,32 +573,13 @@ U8 templeDOS() {
 
   zFree(input);
 
-  Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
+//  Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
+
+  DocBottom; "\n$$FG$$";
+
+  MenuPop;
+
+  SettingsPop;
 
   return res;
 }
-
-U0 stop_ctrl_alt_x() XTalk(Fs,"exit\n");
-
-SettingsPush;
-
-Fs->cur_menu=MenuFile(menu_file);
-
-Fs->task_end_cb=&stop_ctrl_alt_x;
-
-templeDOS;
-
-a->init(a);
-Free(a);
-Free(c);
-
-eptr=NULL;
-zFree(prev_dir);
-zFree(menu_file);
-zFree(help_file);
-
-DocBottom; "$$FG$$";
-
-MenuPop;
-
-SettingsPop;
