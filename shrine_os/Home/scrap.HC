@@ -952,10 +952,23 @@ for(i=0;i<mp_cnt;i++)
   Init_Helper(bcf);
 }*/
 
-/*CHashFun* FindFunction(U8* name) {
-  CHash* result = HashFind(name, Fs->hash_table, HTT_FUN);
+/*
 
-  if (result && ss(result->type & HTT_FUN) != 0)
+U0 SwapFuncs(U8 *funca,U8 *funcb)
+{//Equivalent of HijackFun();
+  CHash* result=HashFind(funca,Fs->hash_table,HTT_FUN);
+
+  if (result && (result->type & HTT_FUN)!=0)
+  {
+    "result\n";
+    result(CHashFun *)->exe_addr=funcb;
+  }
+}
+
+CHashFun* FindFunction(U8* name) {
+  CHash* result = HashFind(name, Fs->hash_table, HTT_FUN);
+
+  if (result && (result->type & HTT_FUN) != 0)
     return result(CHashFun *);
   else
     return NULL;
@@ -1011,5 +1024,5 @@ i.u8[0]=DIM/mp_cnt;
 i.u8[1]=DIM-i*mp_cnt;
 "%d %d\n",i.u8[0],i.u8[1];
 */
-
+
 //KeyAndCont;

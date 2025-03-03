@@ -43,7 +43,7 @@
   Outside system files modded:
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
-*/
+*/
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -57,6 +57,20 @@ public U0 HijackFunc(U8 *orig, U8 *new)
     POPFD
 }
 
+public U0 SwapFuncs(U8 *funca,U8 *funcb)
+{//Equivalent of HijackFun();
+  CHash* result=HashFind(funca,Fs->hash_table,HTT_FUN);
+
+  if (result && (result->type & HTT_FUN)!=0)
+    result(CHashFun *)->exe_addr=funcb;
+  else
+    Adam("\"\n\n$$LTCYAN$$:SwapFuncs error:$$FG$$ ...\n\n\";");
+}
+
+public U0 ADocClear()
+{//Clear Adams doc window
+  Adam("DocClear;");
+}
 public F64 ATan2(F64 y,F64 x)
 {//Two number Arc Tangent (Inverse Tan) or four quads.
   F64 angle=0;
@@ -74,7 +88,10 @@ public F64 ATan2(F64 y,F64 x)
   if (x<0&&y>=0) return angle+ã; //quad 2
   else return angle-ã;           //quad 3
 }
-
+public U0 Cdr()
+{//Change to the root directory of the current drive
+  Cd("/");
+}
 public F64 MapF64(F64 value,F64 in_min,F64 in_max,F64 out_min,F64 out_max)
 {//Take a F64 number from one range and scale it to a different range.
   return (value-in_min)*(out_max-out_min)/(in_max-in_min)+out_min;
@@ -101,14 +118,6 @@ public U32 ToU32(U32 vu)
   test;
 */
   return vu;
-}
-public U0 ADocClear()
-{//Clear Adams doc window
-  Adam("DocClear;");
-}
-public U0 Cdr()
-{//Change to the root directory of the current drive
-  Cd("/");
 }
 public U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
@@ -250,15 +259,6 @@ public U0 Tail(U8 *filename,U64 disp=10)
   More(filename,disp,TRUE);
 }
 
-
-#define FUf_NO_ATAPI_CHECK	99 //For IsDir & FileFind - Tobey Peters
-
-public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
-	U8 *name,CDirEntry *_res,I64 fuf_flags=0)
-
-public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
-	CDirEntry *_res,I64 fuf_flags=0)
-
 public Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
@@ -292,6 +292,14 @@ cleanup:
   Free(mask);
   return res;
 }
+
+public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
+	U8 *name,CDirEntry *_res,I64 fuf_flags=0)
+
+public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
+	CDirEntry *_res,I64 fuf_flags=0)
+
+//#define FUF_NO_ATAPI_CHECK	99 //FileFind
 public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
@@ -576,6 +584,8 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   return res;
 }
 
+//DocPutKey changes should really just be put,
+//in ~/HomeKeyPlugIns.HC.
 public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
 {//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
   I64 i,x,y;
@@ -1376,19 +1386,6 @@ public U8 drvtextattrget(U8 drv_let=0)
     return BLACK<<4|WHITE;
 }
 
-public U0 HijackFunc(U8 *orig, U8 *new)
-{// Replace a system function with a new function
-
-    // Warning old function address is not saved and this overwrites it!
-    // Assembly code of old function is patched to jump to new instead.
-    // Only a reboot will restore the original function!
-    PUSHFD
-    CLI
-    *orig=0xe9;
-    *(orig+1)(U32*)=new-orig-5;
-    POPFD
-}
-
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
@@ -1399,3 +1396,4 @@ HijackFunc(&DocTermNew,&doctermnew);
 HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
+

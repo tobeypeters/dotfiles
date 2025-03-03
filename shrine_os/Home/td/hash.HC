@@ -21,7 +21,7 @@
 
 #define HASH_TABLE_SIZE 256
 
-#define CMD_CNT  47
+#define CMD_CNT  47
 #define CMD_ARGS  5
 
 #define HFLAGS 0

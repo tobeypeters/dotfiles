@@ -35,7 +35,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 //[+e] <shift>+<esc>
 //[$LK,"tpc",A="FF://Home/patchos/github.HC,http"$ start]
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
-    BootRAM;
+    BootRAM;
 //    CopyTree("~/td","/Apps/templeDOS");
   }
 //[+e] <CTRL>+<DEL>
@@ -64,7 +64,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 		KeyDescSet("Dol/LTRED");
 	      else
 		"$$LTRED$$";
-	    } else {
+	    } else {
 	      if (sc&SCF_KEY_DESC)
 		KeyDescSet("Dol/RED");
 	      else

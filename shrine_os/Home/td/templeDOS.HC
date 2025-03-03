@@ -197,6 +197,14 @@ U64 execute_cmd(U8 *cmd) {
         if (!bbv) { bufe=bufb; goto nferror; }
         if (!type_got(v,FILE,1)) goto answer;
         break;
+      case 211: //cp
+        if (fc) {
+          if (f_err(FLG_D)) goto answer;
+          if (!type_got(v,DIR)) goto answer;
+
+          break;
+        }
+        if (fci) break;
       default:
         if (!type_got(v,FILE)) goto answer;
     }
@@ -440,17 +448,11 @@ U64 execute_cmd(U8 *cmd) {
       break;
     case 211: //cp
       if (fc) {
-        if (f_err(FLG_D)) goto answer;
-        if (!type_got(v,DIR)) goto answer;
-
         //I restrict * and . to file copying.
         //CopyTree(); does support them.
         CopyTree(bufa,bufb);
       }
       else {
-        if (!fci)
-          if (!type_got(v,FILE)) goto answer;
-
         Copy(bufa,bufb);
       }
 
@@ -544,6 +546,7 @@ U8 templeDOS() {
   DocClear;DocMax;Cd;
 
   if (TIP_OF_DAY) {
+//    Adam("\"\n$$LTCYAN$$Tip of the day:$$FG$$\n\",TipOfDay;");
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }
 
@@ -575,7 +578,7 @@ U8 templeDOS() {
 
 //  Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
 
-  DocBottom; "\n$$FG$$";
+  DocBottom; "\n$$FG$$";
 
   MenuPop;
 
