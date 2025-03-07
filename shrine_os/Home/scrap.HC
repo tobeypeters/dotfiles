@@ -967,7 +967,7 @@ U0 SwapFuncs(U8 *funca,U8 *funcb)
 
 CHashFun* FindFunction(U8* name) {
   CHash* result = HashFind(name, Fs->hash_table, HTT_FUN);
-
+
   if (result && (result->type & HTT_FUN) != 0)
     return result(CHashFun *);
   else
@@ -1024,5 +1024,5 @@ i.u8[0]=DIM/mp_cnt;
 i.u8[1]=DIM-i*mp_cnt;
 "%d %d\n",i.u8[0],i.u8[1];
 */
-
+
 //KeyAndCont;

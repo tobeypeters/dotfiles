@@ -40,7 +40,7 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
-//#define PARTICLE_MAX 10
+#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
@@ -54,7 +54,7 @@ Editing outside TempleOS corrupts your file and viewing on GitHub,
 shows "garbage" wherever those characted are. :<
 */
 #define M_PI 3.14159265
-
+
 F64 rotation_x,
     rotation_y;
 
@@ -68,41 +68,6 @@ cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=0;
-
-F64 Lerp(F64 a,F64 b,F64 t) {
-  return a+t*(b-a);
-}
-F64 Dist(F64 a,F64 b)
-{
-  return a*a+b*b;
-}
-F64 DistSqrt(F64 a,F64 b)
-{
-  return Sqrt(Dist(a,b));
-}
-
-F64 DistTaxi2(F64 x1,F64 y1,F64 x2,F64 y2){
-  return Abs(x2-x1)+Abs(y2-y1);
-}
-F64 DistTaxi(CD3 *p1,CD3 *p2){
-  return DistTaxi2(p1->x,p1->y,p2->x,p2->y);
-}
-
-/*CD3 a,aa;
-
-a.x=a.y=10;
-aa.x=aa.y=20;
-
-U64 dx=Abs(a.x-aa.x),
-    dy=Abs(a.y-aa.y);
-
-"DistTaxi: %2.8f\n",DistTaxi(&a,&aa);
-"D3Dist: %2.8f\n",D3Dist(&a,&aa);
-"Dist: %2.8f\n",Dist(dx,dy);
-"DistSqrt: %2.8f\n",DistSqrt(dx,dy);
-"Sqrt(Dist): %2.8f\n",Sqrt(Dist(dx,dy));
-"D3DistSqr: %2.8f\n",D3DistSqr(&a,&aa);
-*/
 
 class PARTICLE_BASE:CD3
 {
@@ -173,12 +138,65 @@ U0 p_DUP(U8 *dst,U8 *src)
 {
   MemCpy(dst,src,sizeof(PARTICLE));
 }
+
 U0 spherize(PARTICLE *z)
 {//Convert to polar coordinates
   z->pr=Sqrt(z->x*z->x+z->y*z->y+z->z*z->z);
   z->pt=ATan2(Sqrt(z->x*z->x+z->y*z->y),z->z);
   z->pp=ATan2(z->y,z->x);
 }
+
+CD3 cube_points[8]={
+{-1.0,  1.0, -1.0}, //Top front left
+{ 1.0,  1.0, -1.0}, //Top front right
+{ 1.0, -1.0, -1.0}, //Bottom front right
+{-1.0, -1.0, -1.0}, //Bottom front left
+{-1.0,  1.0,  1.0}, //Top back left
+{ 1.0,  1.0,  1.0}, //Top back right
+{ 1.0, -1.0,  1.0}, //Bottom back right
+{-1.0, -1.0,  1.0} //Bottom back left
+};
+
+CD2 cube_verts[12]={
+  {0,1},{1,2},{2,3},{3,0},
+  {4,5},{5,6},{6,7},{7,0},
+  {0,4},{1,5},{2,6},{3,7},
+};
+
+F64 Lerp(F64 a,F64 b,F64 t) {
+  return a+t*(b-a);
+}
+F64 Dist(F64 a,F64 b)
+{
+  return a*a+b*b;
+}
+F64 DistSqrt(F64 a,F64 b)
+{
+  return Sqrt(Dist(a,b));
+}
+F64 DistTaxi2(F64 x1,F64 y1,F64 x2,F64 y2){
+  return Abs(x2-x1)+Abs(y2-y1);
+}
+F64 DistTaxi(CD3 *p1,CD3 *p2){
+  return DistTaxi2(p1->x,p1->y,p2->x,p2->y);
+}
+
+/*CD3 a,aa;
+
+a.x=a.y=10;
+aa.x=aa.y=20;
+
+U64 dx=Abs(a.x-aa.x),
+    dy=Abs(a.y-aa.y);
+
+"DistTaxi: %2.8f\n",DistTaxi(&a,&aa);
+"D3Dist: %2.8f\n",D3Dist(&a,&aa);
+"Dist: %2.8f\n",Dist(dx,dy);
+"DistSqrt: %2.8f\n",DistSqrt(dx,dy);
+"Sqrt(Dist): %2.8f\n",Sqrt(Dist(dx,dy));
+"D3DistSqr: %2.8f\n",D3DistSqr(&a,&aa);
+*/
+
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
 {
   F64 cos_x=Cos(rotation_x),
@@ -204,11 +222,4 @@ U0 rot_plot(PARTICLE *rp)
 
   rp->x=x;rp->y=y;rp->z=z;
 }
-U0 rot_plottest(PARTICLE *rp)
-{
-  F64 x,y,z;
-
-  rot_base(rp,&x,&y,&z);
-
-  rp->x=x;rp->y=y;rp->z=z;
-}
+
