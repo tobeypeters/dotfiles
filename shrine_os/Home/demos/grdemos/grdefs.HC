@@ -40,7 +40,7 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
-#define PARTICLE_MAX 10
+//#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
@@ -146,6 +146,7 @@ U0 spherize(PARTICLE *z)
   z->pp=ATan2(z->y,z->x);
 }
 
+//Cube definition
 CD3 cube_points[8]={
 {-1.0,  1.0, -1.0}, //Top front left
 { 1.0,  1.0, -1.0}, //Top front right
@@ -156,11 +157,20 @@ CD3 cube_points[8]={
 { 1.0, -1.0,  1.0}, //Bottom back right
 {-1.0, -1.0,  1.0} //Bottom back left
 };
-
 CD2 cube_verts[12]={
   {0,1},{1,2},{2,3},{3,0},
   {4,5},{5,6},{6,7},{7,0},
   {0,4},{1,5},{2,6},{3,7},
+};
+//Pyramid definition
+CD3 pyramid_points[5] = {
+    {-1.0, -1.0, -1.0}, { 1.0, -1.0, -1.0},
+    { 1.0, -1.0,  1.0}, {-1.0, -1.0,  1.0},
+    { 0.0,  1.0,  0.0}
+};
+CD2 pyramid_edges[8] = {
+    {0, 1}, {1, 2}, {2, 3}, {3, 0},
+    {0, 4}, {1, 4}, {2, 4}, {3, 4}
 };
 
 F64 Lerp(F64 a,F64 b,F64 t) {
@@ -222,4 +232,3 @@ U0 rot_plot(PARTICLE *rp)
 
   rp->x=x;rp->y=y;rp->z=z;
 }
-

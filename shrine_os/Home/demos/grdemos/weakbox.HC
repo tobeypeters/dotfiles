@@ -28,6 +28,9 @@ Cd(__DIR__);;
 #define FOV_ANGLE 45
 #define LINE_WIDTH 3
 
+rotation_x=WIDTH_CENTER;
+rotation_y=HEIGHT_CENTER;
+
 F64 p2DTop3D(F64 xy,F64 z)
 {
   F64 angleRadians=(FOV_ANGLE/180)*M_PI;
@@ -35,7 +38,7 @@ F64 p2DTop3D(F64 xy,F64 z)
 }
 
 PARTICLE transformed[4], rotated;
-U0 DrawIt(CTask *task,CDC *dc)
+U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
@@ -115,3 +118,134 @@ U0 KEY_DOWN(){}
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+
+/*
+
+typedef struct {
+    int start, end;
+} Edge;
+
+typedef struct {
+    double x, y;
+} Point2D;
+
+// Cube definition
+Point3D cube_points[8] = {
+    {-1.0,  1.0, -1.0}, { 1.0,  1.0, -1.0},
+    { 1.0, -1.0, -1.0}, {-1.0, -1.0, -1.0},
+    {-1.0,  1.0,  1.0}, { 1.0,  1.0,  1.0},
+    { 1.0, -1.0,  1.0}, {-1.0, -1.0,  1.0}
+};
+
+Edge cube_edges[12] = {
+    {0, 1}, {1, 2}, {2, 3}, {3, 0},
+    {4, 5}, {5, 6}, {6, 7}, {7, 4},
+    {0, 4}, {1, 5}, {2, 6}, {3, 7}
+};
+
+// Pyramid definition
+Point3D pyramid_points[5] = {
+    {-1.0, -1.0, -1.0}, { 1.0, -1.0, -1.0},
+    { 1.0, -1.0,  1.0}, {-1.0, -1.0,  1.0},
+    { 0.0,  1.0,  0.0}
+};
+
+Edge pyramid_edges[8] = {
+    {0, 1}, {1, 2}, {2, 3}, {3, 0},
+    {0, 4}, {1, 4}, {2, 4}, {3, 4}
+};
+
+int USE_CUBE = 1; // 1 for Cube, 0 for Pyramid
+
+double transform2DTo3D(double xy, double z) {
+    double angleRadians = (45.0 / 180.0) * M_PI;
+    return xy / (z * tan(angleRadians / 2.0));
+}
+
+// Rotation function
+Point3D rotate3D(Point3D p, double roll, double pitch, double yaw) {
+    Point3D rotated;
+    rotated.x =
+        cos(yaw) * cos(pitch) * p.x +
+        (cos(yaw) * sin(pitch) * sin(roll) - sin(yaw) * cos(roll)) * p.y +
+        (cos(yaw) * sin(pitch) * cos(roll) + sin(yaw) * sin(roll)) * p.z;
+
+    rotated.y =
+        sin(yaw) * cos(pitch) * p.x +
+        (sin(yaw) * sin(pitch) * sin(roll) + cos(yaw) * cos(roll)) * p.y +
+        (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll)) * p.z;
+
+    rotated.z =
+        -sin(pitch) * p.x +
+        cos(pitch) * sin(roll) * p.y +
+        cos(pitch) * cos(roll) * p.z;
+
+    return rotated;
+}
+
+void draw(SDL_Renderer *renderer, double mouseX, double mouseY) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    double mouseXratio = (mouseX / WIDTH) * M_PI;
+    double mouseYratio = (mouseY / HEIGHT) * M_PI;
+
+    // Select shape
+    Point3D *points = USE_CUBE ? cube_points : pyramid_points;
+    Edge *edges = USE_CUBE ? cube_edges : pyramid_edges;
+    int pointCount = USE_CUBE ? 8 : 5;
+    int edgeCount = USE_CUBE ? 12 : 8;
+
+    Point2D projected_points[8];
+
+    for (int i = 0; i < pointCount; i++) {
+        Point3D rotated = rotate3D(points[i], mouseYratio, mouseXratio, 0);
+        rotated.z += CUBE_DISTANCE;
+
+        projected_points[i].x = transform2DTo3D(rotated.x, rotated.z) * WIDTH + WIDTH / 2;
+        projected_points[i].y = transform2DTo3D(rotated.y, rotated.z) * HEIGHT + HEIGHT / 2;
+    }
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    for (int i = 0; i < edgeCount; i++) {
+        int start = edges[i].start;
+        int end = edges[i].end;
+        SDL_RenderDrawLine(renderer,
+            (int)projected_points[start].x, (int)projected_points[start].y,
+            (int)projected_points[end].x, (int)projected_points[end].y);
+    }
+
+    SDL_RenderPresent(renderer);
+}
+
+int main() {
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Window *window = SDL_CreateWindow("3D Projection", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    int running = 1;
+    SDL_Event event;
+
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) running = 0;
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
+                USE_CUBE = !USE_CUBE;
+            }
+            if (event.type == SDL_MOUSEMOTION) {
+                mouseX = event.motion.x;
+                mouseY = event.motion.y;
+            }
+        }
+        draw(renderer, mouseX, mouseY);
+        SDL_Delay(16);
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}
+
+*/
