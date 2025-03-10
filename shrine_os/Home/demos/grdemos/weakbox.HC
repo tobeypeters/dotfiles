@@ -25,26 +25,14 @@ Cd(__DIR__);;
 #include "grdefs"
 
 #define CUBE_DISTANCE 8
-#define FOV_ANGLE 45
+#define FOV_ANGLE 45.0
 
 rotation_x=WIDTH_CENTER;
 rotation_y=HEIGHT_CENTER;
 
-Bool once=TRUE;
-
-
-ADocClear;
 F64 p2DTop3D(F64 xy,F64 z)
 {
   F64 angleRadians=(FOV_ANGLE/180)*M_PI;
-
-if (once)
-{
-Adam("\"\n$$LTCYAN$$:%2.4f %2.4f:$$FG$$\";",xy,z);
-Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",angleRadians);
-Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",xy/(z*Tan(angleRadians/2)));
-once=FALSE;
-}
 
   return xy/(z*Tan(angleRadians/2));
 }
@@ -79,35 +67,12 @@ U0 DrawIt(CTask *task,CDC *dc)
 
     pps[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
     pps[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
-
-if (once)
-{
-/*  ADocClear;
-
-  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f:$$FG$$\";",rotation_x,rotation_y);
-  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f %2.4f:$$FG$$\";",cube_points[ita].x,cube_points[ita].y,cube_points[ita].z);
-  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f %2.4f:$$FG$$\";",rotated.x,rotated.y,rotated.z);
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].x);
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].y);
-
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].x);
-
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.x);
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.y);
-  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.z);
-*/
-  once=FALSE;
-}
-
   }
   for (ita=0;ita<edgeCount;ita++)
   {
     ls=cube_verts[ita].x;le=cube_verts[ita].y;
 
-    GrLine(dc,pps[ls].x,pps[ls].y,pps[le].x,pps[le].y);
-
-//GrPrint(dc,10,10,"%d",pps[ls].x);
-
+    GrLine(dc,pps[ls].x,pps[ls].y,pps[le].x,pps[le].y);
   }
 }
 
