@@ -40,7 +40,7 @@ public _extern _D3_SUB_EQU CD3 *D3SubEqu(CD3 *diff,CD3 *d); //diff-=d
 public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
-//#define PARTICLE_MAX 10
+//#define PARTICLE_MAX 10
 
 #define WIDTH GR_WIDTH
 #define HEIGHT GR_HEIGHT
@@ -217,7 +217,7 @@ U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
           z1=sin_x*rp->y+cos_x*rp->z,
           x2=cos_y*rp->x+sin_y*z1,
           z2=-sin_y*rp->x+cos_y*z1;
-
+
   *ux=x2;*uy=y1;*uz=z2;
 }
 U0 rot_plot2(CD3 *rp,CD3 *up)

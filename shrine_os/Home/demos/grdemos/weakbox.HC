@@ -24,67 +24,91 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#define CUBE_DISTANCE 50
+#define CUBE_DISTANCE 8
 #define FOV_ANGLE 45
-#define LINE_WIDTH 3
 
 rotation_x=WIDTH_CENTER;
 rotation_y=HEIGHT_CENTER;
 
+Bool once=TRUE;
+
+
+ADocClear;
 F64 p2DTop3D(F64 xy,F64 z)
 {
   F64 angleRadians=(FOV_ANGLE/180)*M_PI;
+
+if (once)
+{
+Adam("\"\n$$LTCYAN$$:%2.4f %2.4f:$$FG$$\";",xy,z);
+Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",angleRadians);
+Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",xy/(z*Tan(angleRadians/2)));
+once=FALSE;
+}
+
   return xy/(z*Tan(angleRadians/2));
 }
 
-PARTICLE transformed[4], rotated;
+CD2 pps[8];
+CD3 rotated;
+
+U64 ls,le;
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
+  dc->color=LTRED;
 
 //  F64 mouseXratio=(ms.pos.x/WIDTH)*M_PI,
 //      mouseYratio=(ms.pos.y/HEIGHT)*M_PI;
   rotation_x=(ms.pos.x/WIDTH)*M_PI,
   rotation_y=(ms.pos.y/HEIGHT)*M_PI;
 
-/*
-CD3 cube_points[8]={
-{-1.0,  1.0, -1.0}, //Top front left
-{ 1.0,  1.0, -1.0}, //Top front right
-{ 1.0, -1.0, -1.0}, //Bottom front right
-{-1.0, -1.0, -1.0}, //Bottom front left
-{-1.0,  1.0,  1.0}, //Top back left
-{ 1.0,  1.0,  1.0}, //Top back right
-{ 1.0, -1.0,  1.0}, //Bottom back right
-{-1.0, -1.0,  1.0} //Bottom back left
-};
+  rotation_x=1.57079633;
+  rotation_y=1.57079633;
 
-CD2 cube_verts[12]={
-  {0,1},{1,2},{2,3},{3,0},
-  {4,5},{5,6},{6,7},{7,0},
-  {0,4},{1,5},{2,6},{3,7},
-};
-*/
-  for (ita=0;ita<8;ita++)
+  U64 pointCount=8,
+       edgeCount=12;
+
+  for (ita=0;ita<pointCount;ita++)
   {
-      rotated=rot_plot(&FACES[i][j]);
-      rotated.z += CUBE_DISTANCE;
-      transformed[j].x=p2DTop3D(rotated.x, rotated.z);
-      transformed[j].y=p2DTop3D(rotated.y, rotated.z);
-  //      drawPolygon(renderer, transformed);
-  }
+    D3Copy(&rotated,&cube_points[ita]);
+    rot_plot(&rotated);
+    rotated.z+=CUBE_DISTANCE;
 
-/*void drawPolygon(SDL_Renderer *renderer, Point3D points[4]) {
-    for (int i = 0; i < 4; i++) {
-        int x1 = (points[i].x * WIDTH) + WIDTH / 2;
-        int y1 = (points[i].y * HEIGHT) + HEIGHT / 2;
-        int x2 = (points[(i + 1) % 4].x * WIDTH) + WIDTH / 2;
-        int y2 = (points[(i + 1) % 4].y * HEIGHT) + HEIGHT / 2;
-        SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-    }
-}
+    pps[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
+    pps[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
+
+if (once)
+{
+/*  ADocClear;
+
+  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f:$$FG$$\";",rotation_x,rotation_y);
+  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f %2.4f:$$FG$$\";",cube_points[ita].x,cube_points[ita].y,cube_points[ita].z);
+  Adam("\"\n$$LTCYAN$$:%2.4f %2.4f %2.4f:$$FG$$\";",rotated.x,rotated.y,rotated.z);
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].x);
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].y);
+
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",pps[ita].x);
+
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.x);
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.y);
+  Adam("\"\n$$LTCYAN$$:%2.4f:$$FG$$\";",rotated.z);
 */
+  once=FALSE;
+}
+
+  }
+  for (ita=0;ita<edgeCount;ita++)
+  {
+    ls=cube_verts[ita].x;le=cube_verts[ita].y;
+
+    GrLine(dc,pps[ls].x,pps[ls].y,pps[le].x,pps[le].y);
+
+//GrPrint(dc,10,10,"%d",pps[ls].x);
+
+  }
 }
 
 U0 AnimateTask(I64)
@@ -154,7 +178,7 @@ Edge pyramid_edges[8] = {
     {0, 1}, {1, 2}, {2, 3}, {3, 0},
     {0, 4}, {1, 4}, {2, 4}, {3, 4}
 };
-
+
 int USE_CUBE = 1; // 1 for Cube, 0 for Pyramid
 
 double transform2DTo3D(double xy, double z) {

@@ -1024,5 +1024,12 @@ i.u8[0]=DIM/mp_cnt;
 i.u8[1]=DIM-i*mp_cnt;
 "%d %d\n",i.u8[0],i.u8[1];
 */
-
+
+F64 test=2/3;
+"%2.8f\n",test;
+
+if (2/3<0) "yes\n";
+if (test<0) "yes\n";
+
+
 //KeyAndCont;
