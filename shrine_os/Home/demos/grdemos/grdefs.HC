@@ -42,10 +42,10 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
 //#define PARTICLE_MAX 10
 
-#define WIDTH GR_WIDTH
-#define HEIGHT GR_HEIGHT
-#define WIDTH_CENTER WIDTH/2
-#define HEIGHT_CENTER HEIGHT/2
+#define WIDTH ToF64(GR_WIDTH)
+#define HEIGHT ToF64(GR_HEIGHT)
+#define WIDTH_CENTER ToF64(WIDTH/2)
+#define HEIGHT_CENTER ToF64(HEIGHT/2)
 
 /*
 I've been using the TempleOS PI symbol <alt>+<1>,
@@ -146,31 +146,39 @@ U0 spherize(PARTICLE *z)
   z->pp=ATan2(z->y,z->x);
 }
 
+#define SHP_CUBE_POINTS 8
+#define SHP_CUBE_VERTS  12
+#define SHP_PYRAMID_POINTS 5
+#define SHP_PYRAMID_VERTS  8
+
 //Cube definition
-CD3 cube_points[8]={
-{-1.0,  1.0, -1.0}, //Top front left
-{ 1.0,  1.0, -1.0}, //Top front right
-{ 1.0, -1.0, -1.0}, //Bottom front right
-{-1.0, -1.0, -1.0}, //Bottom front left
-{-1.0,  1.0,  1.0}, //Top back left
-{ 1.0,  1.0,  1.0}, //Top back right
-{ 1.0, -1.0,  1.0}, //Bottom back right
-{-1.0, -1.0,  1.0} //Bottom back left
+CD3 cube_points[SHP_CUBE_POINTS]={
+{-1.0,-1.0,-1.0}, //Front bottom left
+{ 1.0,-1.0,-1.0}, //Front bottom right
+{ 1.0, 1.0,-1.0}, //Front top right
+{-1.0, 1.0,-1.0}, //Front top left
+{-1.0,-1.0, 1.0}, //Back bottom left
+{ 1.0,-1.0, 1.0}, //Back bottom right
+{ 1.0, 1.0, 1.0}, //Back top right
+{-1.0, 1.0, 1.0}  //Back top left
 };
-CD2 cube_verts[12]={
+CD2 cube_verts[SHP_CUBE_VERTS]={
   {0,1},{1,2},{2,3},{3,0},
-  {4,5},{5,6},{6,7},{7,0},
+  {4,5},{5,6},{6,7},{7,4},
   {0,4},{1,5},{2,6},{3,7},
 };
+
 //Pyramid definition
-CD3 pyramid_points[5] = {
-    {-1.0, -1.0, -1.0}, { 1.0, -1.0, -1.0},
-    { 1.0, -1.0,  1.0}, {-1.0, -1.0,  1.0},
-    { 0.0,  1.0,  0.0}
+CD3 pyramid_points[SHP_PYRAMID_POINTS] = {
+{-1.0,-1.0,-1.0}, //Front bottom left
+{ 1.0,-1.0,-1.0}, //Front bottom right
+{-1.0,-1.0, 1.0}, //Back bottom left
+{ 1.0,-1.0, 1.0}, //Back bottom right
+{ 0.0, 1.0, 0.0}  //Top center
 };
-CD2 pyramid_edges[8] = {
-    {0, 1}, {1, 2}, {2, 3}, {3, 0},
-    {0, 4}, {1, 4}, {2, 4}, {3, 4}
+CD2 pyramid_edges[SHP_PYRAMID_VERTS] = {
+  {0,1},{1,2},{2,3},{3,0},
+  {0,4},{1,4},{2,4},{3,4}
 };
 
 F64 Lerp(F64 a,F64 b,F64 t) {
@@ -217,7 +225,7 @@ U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
           z1=sin_x*rp->y+cos_x*rp->z,
           x2=cos_y*rp->x+sin_y*z1,
           z2=-sin_y*rp->x+cos_y*z1;
-
+
   *ux=x2;*uy=y1;*uz=z2;
 }
 U0 rot_plot2(CD3 *rp,CD3 *up)

@@ -19,7 +19,7 @@
       Main loop, for graphic demos.
 */
 //Cd(__DIR__);;
-MenuPush(
+MenuPush(
   "File {"
   "  Abort(,CH_SHIFT_ESC);"
   "  Exit(,CH_ESC);"
@@ -99,7 +99,7 @@ if (MOUSE_TRAP)
 //    Refresh;
   }
 }
-else
+else
 {
   do
     switch (ch=GetKey(&sc)) {

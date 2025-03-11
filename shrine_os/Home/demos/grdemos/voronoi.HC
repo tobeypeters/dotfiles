@@ -40,7 +40,7 @@ CDC *GenVoronoi() {
     for (itb=0;itb<WIDTH;itb++)
     {
       minDist=WIDTH*HEIGHT;
-      color=BLACK;
+      color=BLACK;
       for (itc=0;itc<PARTICLE_MAX;itc++)
       {
         pp=&p_arr[itc];

@@ -535,18 +535,17 @@ U8 templeDOS() {
 
   Seed; I64 termID=AbsI64(RandI32);
 
-//  Adam("\"\nBoot Time:%%7.3fs\n\n\",tS;");
+//  AdamLog("\nBoot Time:%7.3fs\n\n",tS);
 
 //  FF("/*BIN*");
-//  Adam("\"\n\n$$LTCYAN$$TODO:$$FG$$ ...\n\n\";");
-//  Adam("\"templeDOS [%d]: started: %D %T\n\";",termID,Now,Now);
+//  AdamLog("\n\n$$LTCYAN$$TODO:el gato:$$FG$$ ...\n\n");
+//  AdamLog("templeDOS [%d]: started: %D %T\n",termID,Now,Now);
 
   set_windowinfo(MStrPrint("templedos_task%d",termID),"TempleDOS");
 
   DocClear;DocMax;Cd;
 
   if (TIP_OF_DAY) {
-//    Adam("\"\n$$LTCYAN$$Tip of the day:$$FG$$\n\",TipOfDay;");
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }
 
@@ -576,7 +575,7 @@ U8 templeDOS() {
 
   zFree(input);
 
-//  Adam("\"templeDOS [%d]: terminated: %D %T\n\";",termID,Now,Now);
+//  AdamLog("templeDOS [%d]: terminated: %D %T\n",termID,Now,Now);
 
   DocBottom; "\n$$FG$$";
 
