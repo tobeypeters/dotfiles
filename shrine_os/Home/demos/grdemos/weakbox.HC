@@ -47,9 +47,6 @@ CD3 rotated;
 
 U64 ls,le;
 
-Bool once=TRUE;
-
-ADocClear;AdamLog("\n");
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
@@ -58,16 +55,8 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   GrPrint(dc,10,10,"Mouse: (%2.8f,%2.8f)\n",rotation_x,rotation_y);
 
-  rotation_x=0;
-  rotation_y=0;
-
-  for (ita=0;ita<OBJ_POINTS;ita++)
+  for (ita=0;ita<OBJ_POINTS;ita++)
   {
-if (once)
-{
-AdamLog("%2.4f %2.4f %2.4f\n",p_obj[ita].x,p_obj[ita].y,p_obj[ita].z);
-  once=FALSE;
-}
     D3Copy(&rotated,&p_obj[ita]);
 
     rot_plot(&rotated);
@@ -76,15 +65,10 @@ AdamLog("%2.4f %2.4f %2.4f\n",p_obj[ita].x,p_obj[ita].y,p_obj[ita].z);
     p_arr[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
     p_arr[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
 
-if (once)    
-AdamLog("%2.4f %2.4f\n",p_arr[ita].x,p_arr[ita].y);
-
     GrPrint(dc,p_arr[ita].x,p_arr[ita].y,"%d",ita);
   }
-if (once) once=FALSE;
 
   for (ita=0;ita<OBJ_VERTS;ita++)
-//  for (ita=0;ita<1;ita++)
   {
     ls=v_obj[ita].x;le=v_obj[ita].y;
 
