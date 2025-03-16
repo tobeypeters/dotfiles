@@ -17,6 +17,7 @@
 """ glbextract.py
 	Description:
 		Generates 2 c style arrays points and edges, from a .glb 3d model file.
+        May contain some HolyC syntax also.
 """
 import numpy as np
 import trimesh #https://trimesh.org/install.html
@@ -33,21 +34,25 @@ def is_file(parser, arg) -> str:
 
 # Argument parsing
 parser: ArgumentParser = ArgumentParser(description="Converts GLB formated 3D mesh into C-style vertex and edge arrays.")
-#parser.add_argument('--input_file', '--i', nargs=1,
 parser.add_argument('input_file',
     type=lambda f : is_file(parser, f),
     help='Path to the .glb file')
-#    help='Path to the .glb file', required=True)
 parser.add_argument("-o", "--output", help="Output file name (default: <glb_name>.c)")
 parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
 parser.add_argument("--no-edges", action="store_true", help="Exclude edges from output")
 args = parser.parse_args()
 
 # Get the GLB file path from command-line arguments
-glb_file_path = args.input_file
-
+glb_file_path: str = args.input_file
 # Extract the base filename (without extension)
-base_name = os.path.splitext(os.path.basename(glb_file_path))[0]
+base_name:    str = os.path.splitext(os.path.basename(glb_file_path))[0].upper()
+shape_points: str = f"SHP_{base_name}_POINTS"
+shape_edges:  str = f"SHP_{base_name}_EDGES"
+base_name=base_name.lower()
+base_points: str = f"{base_name}_points"
+base_edges: str =  f"{base_name}_edges"
+
+output_file:  str = args.output if args.output else f"./models/{base_name}.c"
 
 # Load the GLB file
 mesh = trimesh.load(glb_file_path, force="mesh")
@@ -60,23 +65,31 @@ edges = np.array(mesh.edges_unique)
 unique_vertices, inverse_indices = np.unique(vertices, axis=0, return_inverse=True)
 remapped_edges = inverse_indices[edges]
 
-# Output filename
-output_file = args.output if args.output else f"{base_name}.c"
-
 # Write to C file
 with open(output_file, "w") as f:
+    f.write(f"#define {shape_points} {len(unique_vertices)}\n")
+    f.write(f"//#define OBJ_POINTS {shape_points}\n\n")
+
+    if not args.no_edges:
+        f.write(f"#define {shape_edges} {len(remapped_edges)}\n")
+        f.write(f"//#define OBJ_EDGES {shape_edges}\n\n")
+
     # Vertex array
-    f.write(f"Point3D {base_name}_points[{len(unique_vertices)}] = {{\n")
+    f.write(f"Point3D {base_points}[{shape_points}] = {{\n")
     for v in unique_vertices:
-        f.write(f"    {{ {v[0]:.6f}, {v[1]:.6f}, {v[2]:.6f} }},\n")
+        f.write(f"    {{ {v[0]:.4f}, {v[1]:.4f}, {v[2]:.4f} }},\n")
     f.write("};\n\n")
 
     # Edge array (optional)
     if not args.no_edges:
-        f.write(f"Edge {base_name}_edges[{len(remapped_edges)}] = {{\n")
+        f.write(f"Edge {base_edges}[{shape_edges}] = {{\n")
         for e in remapped_edges:
             f.write(f"    {{ {e[0]}, {e[1]} }},\n")
         f.write("};\n\n")
+
+    f.write(f"//CD3 *p_obj=&{base_points};\n")
+    if not args.no_edges:
+        f.write(f"//CD2 *v_obj=&{base_edges};\n\n")
 
 # Verbose output
 if args.verbose:
