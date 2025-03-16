@@ -147,9 +147,9 @@ U0 spherize(PARTICLE *z)
 }
 
 #define SHP_CUBE_POINTS 8
-#define SHP_CUBE_VERTS  12
+#define SHP_CUBE_EDGES  12
 #define SHP_PYRAMID_POINTS 5
-#define SHP_PYRAMID_VERTS  8
+#define SHP_PYRAMID_EDGES  8
 
 //Cube definition
 CD3 cube_points[SHP_CUBE_POINTS]={
@@ -162,7 +162,7 @@ CD3 cube_points[SHP_CUBE_POINTS]={
 { 1.0, 1.0, 1.0}, //Back top right
 {-1.0, 1.0, 1.0}  //Back top left
 };
-CD2 cube_verts[SHP_CUBE_VERTS]={
+CD2 cube_edges[SHP_CUBE_EDGES]={
   {0,1},{1,2},{2,3},{3,0},
   {4,5},{5,6},{6,7},{7,4},
   {0,4},{1,5},{2,6},{3,7},
@@ -176,8 +176,8 @@ CD3 pyramid_points[SHP_PYRAMID_POINTS] = {
 { 1.0,-1.0, 1.0}, //Back bottom right
 { 0.0, 1.0, 0.0}  //Top center
 };
-CD2 pyramid_edges[SHP_PYRAMID_VERTS] = {
-  {0,1},{1,2},{2,3},{3,0},
+CD2 pyramid_edges[SHP_PYRAMID_EDGES] = {
+  {0,1},{1,2},{2,3},{3,0},
   {0,4},{1,4},{2,4},{3,4}
 };
 

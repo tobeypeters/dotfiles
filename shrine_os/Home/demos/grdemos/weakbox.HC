@@ -16,7 +16,7 @@
 
 /*weakbox.HC
   Description:
-      Draws shape objects.
+      Draws 3D/shape objects.
 */
 Cd(__DIR__);;
 
@@ -24,16 +24,19 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#define CUBE_DISTANCE 24
+#include "models/crobot"
+
+#define CUBE_DISTANCE 3
 #define FOV_ANGLE 45.0
 
-#define OBJ_POINTS SHP_CUBE_POINTS
-#define OBJ_VERTS  SHP_CUBE_VERTS
-//#define OBJ_POINTS SHP_PYRAMID_POINTS
-//#define OBJ_VERTS  SHP_PYRAMID_VERTS
-
+//These are defined in each "model" file :start
+/*#define OBJ_POINTS SHP_CUBE_POINTS
+#define OBJ_EDGES SHP_CUBE_EDGES
 CD3 *p_obj=&cube_points;
-CD2 *v_obj=&cube_verts;
+CD2 *v_obj=&cube_edges;*/
+//:end
+
+Bool draw_lines=FALSE; //Maybe a define and stick in each model
 
 F64 p2DTop3D(F64 xy,F64 z)
 {
@@ -42,7 +45,7 @@ F64 p2DTop3D(F64 xy,F64 z)
   return xy/(z*Tan(angleRadians/2));
 }
 
-CD2 p_arr[OBJ_POINTS];
+CD3 p_arr[OBJ_POINTS];
 CD3 rotated;
 
 U64 ls,le;
@@ -51,42 +54,55 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  dc->color=LTRED;
+  dc->color=LTGREEN;
 
   GrPrint(dc,10,10,"Mouse: (%2.8f,%2.8f)\n",rotation_x,rotation_y);
 
-  for (ita=0;ita<OBJ_POINTS;ita++)
+  for (ita=0;ita<OBJ_POINTS;ita++)
   {
-    D3Copy(&rotated,&p_obj[ita]);
+    dc->color=p_arr[ita].z;
+    GrPlot(dc,p_arr[ita].x,p_arr[ita].y);
 
-    rot_plot(&rotated);
-    rotated.z+=CUBE_DISTANCE;
 
-    p_arr[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
-    p_arr[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
-
-    GrPrint(dc,p_arr[ita].x,p_arr[ita].y,"%d",ita);
+//    GrPrint(dc,p_arr[ita].x,p_arr[ita].y,"%d",ita);
   }
 
-  for (ita=0;ita<OBJ_VERTS;ita++)
+  if (draw_lines)
   {
-    ls=v_obj[ita].x;le=v_obj[ita].y;
+    for (ita=0;ita<OBJ_EDGES;ita++)
+    {
+      ls=v_obj[ita].x;le=v_obj[ita].y;
 
-    GrLine(dc,p_arr[ls].x,p_arr[ls].y,p_arr[le].x,p_arr[le].y);
+      GrLine(dc,p_arr[ls].x,p_arr[ls].y,p_arr[le].x,p_arr[le].y);
+    }
   }
 }
 
 U0 AnimateTask(I64)
 {
-  while (TRUE) {
-    Sleep(20);
+  while (TRUE)
+  {
+    for (ita=0;ita<OBJ_POINTS;ita++)
+    {
+      D3Copy(&rotated,&p_obj[ita]);
+
+      rot_plot(&rotated);
+      rotated.z+=CUBE_DISTANCE;
+
+      p_arr[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
+      p_arr[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
+
+      if (p_arr[ita].x<WIDTH_CENTER-10-RandU16%10) p_arr[ita].z=LTGRAY;
+      else p_arr[ita].z=GREEN;
+    }
+
+    Sleep(30);
   }
 }
 
 U0 Init()
 {
-  rotation_x=WIDTH_CENTER;
-  rotation_y=HEIGHT_CENTER;
+  rotation_x=M_PI;
 }
 
 U0 MS_L_DOWN(){}
@@ -102,7 +118,7 @@ U0 MS_R_DOWN(){}
 U0 MS_R_UP(){}
 U0 KEY_DOWN(){}
 
-#define ANIMATE_TASK FALSE
+#define ANIMATE_TASK TRUE
 
 #define MOUSE_TRAP TRUE
 
@@ -112,5 +128,5 @@ U0 KEY_DOWN(){}
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+//p_deinit(&p_arr,PARTICLE_MAX);
 
