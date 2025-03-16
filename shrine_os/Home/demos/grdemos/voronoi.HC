@@ -137,22 +137,7 @@ U0 Init()
   vor_dc=GenVoronoi;
 }
 
-U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
-U0 MS_MOVE(){}
-U0 MS_MOVE_LDOWN(){}
-U0 MS_MOVE_RDOWN(){}
-U0 MS_R_DOWN(){}
-U0 MS_R_UP(){}
-U0 KEY_DOWN(){}
-
-#define ANIMATE_TASK TRUE
-
-#define MOUSE_TRAP FALSE
-
-//Update mouse postion values,
-//even when mouse button not pressed.
-#define MOUSE_NODOWN FALSE
+ANIMATE_TASK=TRUE;
 
 #include "grmain"
 

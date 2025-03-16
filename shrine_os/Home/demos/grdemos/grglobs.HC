@@ -14,43 +14,31 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*module.HC
+/*grglobs.HC
   Description:
-      Graphics module template.
+      Global/default variables and functions.
 */
-Cd(__DIR__);;
+F64 rotation_x,
+    rotation_y;
 
-#define PARTICLE_MAX 1000
+I64 cur_mouse_x,
+    cur_mouse_y,
+    prev_mouse_x,
+    prev_mouse_y,
+    ita,itb,itc,ch,sc;
 
-#include "grdefs"
+cur_mouse_x=cur_mouse_y=
+prev_mouse_x=prev_mouse_y=
+rotation_x=rotation_y=
+ita=itb=itc=0;
 
-U0 DrawIt(CTask *task,CDC *dc)
-{
-  //DCFill(dc,BLACK);
-  //p_plot(dc,&p_arr,PARTICLE_MAX);
-  /*for (ita=0;ita<PARTICLE_MAX;ita++)
-  {
-    pp=&p_arr[ita];
-  }*/
-}
+Bool ANIMATE_TASK,MOUSE_TRAP,
+     MOUSE_NODOWN; //Update mouse postion values
+                   //even when mouse button not pressed.
 
-U0 AnimateTask(I64)
-{
-  while (TRUE) {
-    Sleep(20);
-  }
-}
+ANIMATE_TASK=MOUSE_TRAP=MOUSE_NODOWN=FALSE;
 
-U0 Init()
-{
-  //p_deinit(&p_arr,PARTICLE_MAX);
-  //p_init(&p_arr,PARTICLE_MAX);
-  /*for (ita=0;ita<PARTICLE_MAX;ita++)
-  {
-  }*/
-}
-
-/*U0 ms_l_down(){}
+U0 ms_l_down(){}
 U0 ms_l_up(){}
 U0 ms_move(){}
 U0 ms_move_ldown(){}
@@ -59,23 +47,11 @@ U0 ms_r_down(){}
 U0 ms_r_up(){}
 U0 key_down(){}
 
-MS_L_DOWN=&ms_l_down;
-MS_L_UP=&ms_l_up;
-MS_MOVE=&ms_move;
-MS_MOVE_LDOWN=&ms_move_ldown;
-MS_MOVE_RDOWN=&ms_move_rdown;
-MS_R_DOWN=&ms_r_down;
-MS_R_UP=&ms_r_up;
-KEY_DOWN=&key_down;
-*/
-#define ANIMATE_TASK FALSE
-
-#define MOUSE_TRAP FALSE
-
-//Update mouse postion values,
-//even when mouse button not pressed.
-#define MOUSE_NODOWN FALSE
-
-#include "grmain"
-
-p_deinit(&p_arr,PARTICLE_MAX);
+U0 (*MS_L_DOWN)()=&ms_l_down;
+U0 (*MS_L_UP)()=&ms_l_up;
+U0 (*MS_MOVE)()=&ms_move;
+U0 (*MS_MOVE_LDOWN)()=&ms_move_ldown;
+U0 (*MS_MOVE_RDOWN)()=&ms_move_rdown;
+U0 (*MS_R_DOWN)()=&ms_r_down;
+U0 (*MS_R_UP)()=&ms_r_up;
+U0 (*KEY_DOWN)()=&key_down;

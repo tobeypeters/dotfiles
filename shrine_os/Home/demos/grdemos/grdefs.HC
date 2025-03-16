@@ -41,6 +41,11 @@ public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
 //#define PARTICLE_MAX 10
+/*#ifndef GRGLOBS
+  Cd(__DIR__);;
+  #include "grglobs"
+#endif*/
+#include "grglobs"
 
 #define WIDTH ToF64(GR_WIDTH)
 #define HEIGHT ToF64(GR_HEIGHT)
@@ -54,20 +59,6 @@ Editing outside TempleOS corrupts your file and viewing on GitHub,
 shows "garbage" wherever those characted are. :<
 */
 #define M_PI 3.14159265
-
-F64 rotation_x,
-    rotation_y;
-
-I64 cur_mouse_x,
-    cur_mouse_y,
-    prev_mouse_x,
-    prev_mouse_y,
-    ita,itb,itc,ch,sc;
-
-cur_mouse_x=cur_mouse_y=
-prev_mouse_x=prev_mouse_y=
-rotation_x=rotation_y=
-ita=itb=itc=0;
 
 class PARTICLE_BASE:CD3
 {

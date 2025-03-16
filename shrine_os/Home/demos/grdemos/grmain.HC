@@ -56,21 +56,19 @@ if (MOUSE_TRAP)
     sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN+1<<MSG_MS_L_DOWN+
              1<<MSG_MS_L_UP+1<<MSG_MS_R_DOWN+1<<MSG_MS_R_UP+1<<MSG_MS_MOVE);
     cur_mouse_x=ms.pos.x;cur_mouse_y=ms.pos.y;
-
     switch (sc) {
       case MSG_MS_L_DOWN:
         mouse_ldown=TRUE;
-	MS_L_DOWN;
+        MS_L_DOWN();
 
         break;
       case MSG_MS_MOVE:
-        if (MOUSE_NODOWN||mouse_ldown||mouse_rdown)
+        if (MOUSE_NODOWN) MS_MOVE();
+        else
         {
-          if (MOUSE_NODOWN) MS_MOVE;
+          if(mouse_ldown) MS_MOVE_LDOWN();
+          if(mouse_rdown) MS_MOVE_RDOWN();
         }
-
-        if(mouse_ldown) MS_MOVE_LDOWN;
-        if(mouse_rdown) MS_MOVE_RDOWN;
 
         prev_mouse_x=mx;
         prev_mouse_y=my;
@@ -78,28 +76,29 @@ if (MOUSE_TRAP)
         break;
       case MSG_MS_L_UP:
         mouse_ldown=FALSE;
-        MS_L_UP;
+        MS_L_UP();
 
         break;
       case MSG_MS_R_DOWN:
         mouse_rdown=TRUE;
-        MS_R_DOWN;
+        MS_R_DOWN();
 
         break;
       case MSG_MS_R_UP:
         mouse_rdown=FALSE;
-        MS_R_UP;
+        MS_R_UP();
 
         break;
       case MSG_KEY_DOWN:
-        KEY_DOWN;
+        if (arg1==0) ch=arg2.u8[0]; else ch=arg1;
+        KEY_DOWN();
         if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
           run=FALSE;
     }
 //    Refresh;
   }
 }
-else
+else
 {
   do
     switch (ch=GetKey(&sc)) {
@@ -107,9 +106,9 @@ if (MOUSE_TRAP)
         Init;
       	break;
       default:
-        KEY_DOWN;
+        KEY_DOWN();
         break;
-    }
+    }
   while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
 }
 

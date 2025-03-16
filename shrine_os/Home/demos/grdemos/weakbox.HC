@@ -26,8 +26,9 @@ Cd(__DIR__);;
 
 #include "models/crobot"
 
-#define CUBE_DISTANCE 3
 #define FOV_ANGLE 45.0
+
+I64 CUBE_DISTANCE=6;
 
 //These are defined in each "model" file :start
 /*#define OBJ_POINTS SHP_CUBE_POINTS
@@ -103,30 +104,37 @@ U0 AnimateTask(I64)
 U0 Init()
 {
   rotation_x=M_PI;
+  rotation_y=0;
 }
 
-U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
-U0 MS_MOVE()
+U0 ms_move()
 {
   rotation_x=(ms.pos.y/WIDTH)*M_PI*2;
   rotation_y=(ms.pos.x/HEIGHT)*M_PI*2;
 }
-U0 MS_MOVE_LDOWN(){}
-U0 MS_MOVE_RDOWN(){}
-U0 MS_R_DOWN(){}
-U0 MS_R_UP(){}
-U0 KEY_DOWN(){}
+U0 key_down(){
+  switch(ch)
+  {
+    case '\n':
+      Init;
+      break;
+    case SC_CURSOR_UP:
+      CUBE_DISTANCE-=1;
+      break;
+    case SC_CURSOR_DOWN:
+      CUBE_DISTANCE+=1;
+      break;
+  };
+}
 
-#define ANIMATE_TASK TRUE
+MS_MOVE=&ms_move;
+KEY_DOWN=&key_down;
 
-#define MOUSE_TRAP TRUE
-
-//Update mouse postion values,
-//even when mouse button not pressed.
-#define MOUSE_NODOWN TRUE
+ANIMATE_TASK=TRUE;
+MOUSE_TRAP=TRUE;
+MOUSE_NODOWN=TRUE;
 
 #include "grmain"
 
-//p_deinit(&p_arr,PARTICLE_MAX);
+//p_deinit(&p_arr,PARTICLE_MAX);
 

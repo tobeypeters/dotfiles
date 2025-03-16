@@ -58,13 +58,21 @@ public U0 HijackFunc(U8 *orig, U8 *new)
 }
 
 public U0 SwapFuncs(U8 *funca,U8 *funcb)
-{//Equivalent of HijackFun();
+{//Equivalent of HijackFun(); pretty much.
   CHash* result=HashFind(funca,Fs->hash_table,HTT_FUN);
 
   if (result && (result->type & HTT_FUN)!=0)
     result(CHashFun *)->exe_addr=funcb;
   else
     Adam("\"\n\n$$LTCYAN$$:SwapFuncs error:$$FG$$ ...\n\n\";");
+}
+public Bool InRangeI64(I64 val,I64 min,I64 max) return min<=val<=max;
+
+public U8 ToLower(U8 chr)
+{//Convert a char to lowercase
+  if (InRangeI64(chr,'A','Z'))
+    return chr+32;
+  return chr;
 }
 
 public U0 ADocClear()
@@ -585,7 +593,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
 }
 
 //DocPutKey changes should really just be put,
-//in ~/HomeKeyPlugIns.HC.
+//in ~/HomeKeyPlugIns.HC.
 public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
 {//$LK,"PutKey",A="MN:PutKey"$(ch,sc) at doc insert pt, cur_entry.
   I64 i,x,y;
@@ -1397,3 +1405,4 @@ HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
 
+

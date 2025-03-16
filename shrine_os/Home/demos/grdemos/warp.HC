@@ -124,14 +124,7 @@ U0 AnimateTask(I64)
   }
 }
 
-U0 MS_L_DOWN(){}
-U0 MS_L_UP(){}
-U0 MS_MOVE(){}
-U0 MS_MOVE_LDOWN(){}
-U0 MS_MOVE_RDOWN(){}
-U0 MS_R_DOWN(){}
-U0 MS_R_UP(){}
-U0 KEY_DOWN()
+U0 key_down()
 {
   switch (sc.u8[0]) {
     case 46:
@@ -145,14 +138,9 @@ U0 KEY_DOWN()
   }
   at=Clamp(at,1.0,100.0);
 }
+KEY_DOWN=&key_down;
 
 #define ANIMATE_TASK TRUE
-
-#define MOUSE_TRAP FALSE
-
-//Update mouse postion values,
-//even when mouse button not pressed.
-#define MOUSE_NODOWN FALSE
 
 #include "grmain"
 

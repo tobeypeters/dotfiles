@@ -1025,11 +1025,26 @@ i.u8[1]=DIM-i*mp_cnt;
 "%d %d\n",i.u8[0],i.u8[1];
 */
 
-F64 test=2/3;
+/*F64 test=2/3;
 "%2.8f\n",test;
 
 if (2/3<0) "yes\n";
-if (test<0) "yes\n";
+if (test<0) "yes\n";
+*/
+/*public U8 ToLower(U8 chr)
+{//Convert a char to lowercase
+  if (InRangeI64(chr,'A','Z'))
+    return chr+32;
+  return chr;
+}
 
+"%c\n",ToLower('*');*/
+
+U0 YOU() { "you\n";}
+U0 (*hate)();
+
+hate=&YOU;
+
+hate();
 
 //KeyAndCont;

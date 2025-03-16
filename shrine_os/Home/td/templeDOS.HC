@@ -23,7 +23,7 @@
   Cd(__DIR__);;
   #include "load"
 #endif
-
+
 Bool inLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
 
@@ -519,7 +519,7 @@ error:
   Silent(OFF);
 //  bufa=bufb;
 
-  zFree(bufe);
+//  zFree(bufe);
 
   return res;
 }
@@ -554,18 +554,19 @@ U8 templeDOS() {
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 res=0;
-  U8 *input=NULL;
+  U8 *input=CAlloc(sizeof(U8)*1024);
 
   while (TRUE)
   {
     DocBottom;
-    "\n%c:%s: ",(cur_drv),Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
     input=MyGetStr(GSF_SHIFT_ESC_EXIT);
 
     if (*input=='é') break;
 
     if (str_cmp(input,"!!")) {
-      zFree(input);input=StrNew(prev_cmd);
+//      zFree(input);input=StrNew(prev_cmd);
+      zFree(input,FALSE);StrCpy(input,prev_cmd);
     }
 
     if (res=execute_cmd(input)) break;
