@@ -25,6 +25,10 @@ Cd(__DIR__);;
 #include "grdefs"
 
 #include "models/crobot"
+//#include "models/wolf_plane"
+//#include "models/tie_fighter"
+//#include "models/zoid"
+//#include "models/x-wing"
 
 #define FOV_ANGLE 45.0
 
@@ -127,7 +131,7 @@ U0 key_down(){
   };
 }
 
-MS_MOVE=&ms_move;
+MS_MOVE=&ms_move;
 KEY_DOWN=&key_down;
 
 ANIMATE_TASK=TRUE;
