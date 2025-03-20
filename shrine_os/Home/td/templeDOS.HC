@@ -23,7 +23,7 @@
   Cd(__DIR__);;
   #include "load"
 #endif
-
+
 Bool inLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
 
@@ -301,6 +301,7 @@ U64 execute_cmd(U8 *cmd) {
         set_prevdir;
         Cd(bufe);
         if (idx==43) ls;
+        ACDirList;
 
       break;
     case  56: //cat
@@ -544,6 +545,8 @@ U8 templeDOS() {
   set_windowinfo(MStrPrint("templedos_task%d",termID),"TempleDOS");
 
   DocClear;DocMax;Cd;
+
+  ACDirList;
 
   if (TIP_OF_DAY) {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;

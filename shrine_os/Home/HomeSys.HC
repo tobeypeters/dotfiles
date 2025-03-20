@@ -33,7 +33,7 @@ U0 SrvStartUp()
 U0 StartUpTasks()
 {
   "\nTempleOS V%5.3f\t%D %T\n",sys_os_version,sys_compile_time,sys_compile_time;
-
+
   //Terry said GOD's favorite color is BLUE
   Fs->border_src=BDS_CONST;
   Fs->border_attr=BLACK<<4+WHITE;
@@ -49,10 +49,16 @@ U0 StartUpTasks()
 //  XTalk(user1,"#include \"AdLib/OPL2\";\n");
 //  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
 
-  XTalk(user1,"templeDOS;\n");
+//Uncomment if templeDOS is not used.
 
-  ACInit("/*;!*/Bible.TXT*");
+  ACInit("::/Adam/*");
+
+//  XTalk(user1,"ACDirList;");
+//  ACDirList;
+
   AutoComplete; //Hide autocomplete window.
+
+  XTalk(user1,"templeDOS;\n");
 
   Silent(OFF); //Turn on output, to the screen.
 }

@@ -1040,11 +1040,32 @@ if (test<0) "yes\n";
 
 "%c\n",ToLower('*');*/
 
-U0 YOU() { "you\n";}
+/*U0 YOU() { "you\n";}
 U0 (*hate)();
-
+
 hate=&YOU;
 
-hate();
+hate();*/
+
+/*U0 ACDirList()
+{
+  CDirEntry *tmpde,*tmpde1;
+
+  U8 *st=MAlloc(sizeof(U8)*(1000*256)); //Larger then we need.
+
+  tmpde=tmpde1=FilesFind('*',
+        FUF_RECURSE|FUF_JUST_TXT|FUF_JUST_FILES);
+  while (tmpde) {
+    st=MStrPrint("%s\n%s",st,tmpde->full_name);
+    tmpde=tmpde->next;
+  }
+
+  FileWrite("~/ac_dirlist.DD",st,StrLen(st));
+
+  DirTreeDel(tmpde1);
+}
+
+ACDirList;*/
+
 
 //KeyAndCont;

@@ -26,10 +26,12 @@
 
   http://www.github.com/tinkeros/TinkerOS
 
-  Added system functions:
-   * ADocClear
+  Added functions:
+   * ACDirList
+   * ADocClear
    * Cdr
    * dump_exists
+   * ExtFilename(U8 *str)
    * Head
    * KeyAndCont
    * More
@@ -136,6 +138,49 @@ public U0 KeyAndCont()
   GetChar(,FALSE);
   PutChars(CH_CTRLY);
 }
+
+public U8 *ExtFilename(U8 *str)
+{//Extracts filename "file.HC" from say an absolute path "C:/Home/file.HC" 
+  U8 *buffer;
+
+  if (buffer=StrLastOcc(str, "/"))
+    return buffer+1;
+  else
+    return str;
+}
+
+public U0 ACDirList()
+{//Adds current directory filenames to the autocomplete
+  CDirEntry *tmpde,*tmpde1;
+
+  CHashAC *tmpw;
+
+  U8 *buffer;
+
+  tmpde=tmpde1=FilesFind("./*",FUF_JUST_FILES);
+  while (tmpde) {
+    buffer=StrNew(ExtFilename(tmpde->full_name));
+//    FileExtRem(buffer,buffext);
+
+    tmpw=HashFind(buffer,ac.hash_table,HTT_WORD);
+    if (!tmpw) {
+      tmpw=ACAlloc(sizeof(CHashAC));
+      tmpw->str=AStrNew(buffer);
+      tmpw->type=HTT_WORD;
+      tmpw->use_cnt=1;
+      tmpw->hits=1;
+      HashAdd(tmpw,ac.hash_table);
+      ac.num_words++;
+    }
+
+    Free(buffer);
+
+    tmpde=tmpde->next;
+  }
+
+  DirTreeDel(tmpde1);
+}
+
 
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
 		     Bool del_dir,Bool print_msg)
@@ -1405,4 +1450,3 @@ HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
 
-
