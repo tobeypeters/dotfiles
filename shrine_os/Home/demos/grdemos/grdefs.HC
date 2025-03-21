@@ -41,10 +41,6 @@ public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
 //#define PARTICLE_MAX 10
-/*#ifndef GRGLOBS
-  Cd(__DIR__);;
-  #include "grglobs"
-#endif*/
 #include "grglobs"
 
 #define WIDTH ToF64(GR_WIDTH)
