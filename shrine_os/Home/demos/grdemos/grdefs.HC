@@ -72,6 +72,7 @@ class PARTICLE:PARTICLE_BASE
       rx,ry,rz, //Rotation x,y,z
       px,py,pz, //Previous x,y,z
       pr,pt,pp, //Polar coordiantes - r,theta,phi
+      dx,dy,dz, //Distance x,y,z
       distance, //Distance
       angle,    //Angle
       scale,    //Scale factor

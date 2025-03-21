@@ -67,15 +67,10 @@ MS_MOVE_RDOWN=&ms_move_rdown;
 MS_R_DOWN=&ms_r_down;
 MS_R_UP=&ms_r_up;
 KEY_DOWN=&key_down;
-*/
-#define ANIMATE_TASK FALSE
 
-#define MOUSE_TRAP FALSE
-
-//Update mouse postion values,
-//even when mouse button not pressed.
-#define MOUSE_NODOWN FALSE
-
-#include "grmain"
+ANIMATE_TASK=FALSE;
+MOUSE_TRAP=FALSE;
+MOUSE_NODOWN=FALSE;
+*/
 
 p_deinit(&p_arr,PARTICLE_MAX);
