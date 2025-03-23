@@ -33,7 +33,7 @@ Cd(__DIR__);;
 
 U8 colors[2]={LTGREEN,WHITE};
 
-U64 lgoff=0,loff=3;
+U64 lgoff,loff;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
@@ -61,8 +61,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 U0 AnimateTask(I64)
 {
-  while (TRUE) {
-
+  F64 time=tS;
+  while (TRUE)
+  {
     for (ita=0;ita<PARTICLE_MAX;ita++)
     {
       pp=&p_arr[ita];
@@ -75,30 +76,37 @@ U0 AnimateTask(I64)
         pp->dy=-pp->dy;
     }
 
+    if (tS-time>2)
+    {
+      for (ita=0;ita<NUM_GROUPS;ita++)
+      {
+        if (colors[ita]+1==COLORS_NUM) colors[ita]=BLUE;
+        //Take out DKGRAY check, if your DKGRAY is visible
+        // in your COLOR scheme.
+        else colors[ita]=colors[ita]+(1+(colors[ita]==DKGRAY));
+      }
+      time=tS;
+    }
+    
     Sleep(20);
   }
 }
 
-U64 Init3() return RandU16%5+1;
-Bool Init2() {
-  if (RandU16%2==0) return 1;
-  else return -1;
-}
-
+U64 Init2() return RandU16%5+1;
+U64 Init3() return -1+((RandU16%2==0)*2);
 U0 Init()
 {
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
-
+    
     pp->x=RandU16%WIDTH;
     pp->y=RandU16%HEIGHT;
 
-    pp->dx=Init3*Init2;
-    pp->dy=Init3*Init2;
+    pp->dx=Init2*Init3;
+    pp->dy=Init2*Init3;
   }
 }
-
 ANIMATE_TASK=TRUE;
 
 #include "grmain"

@@ -64,7 +64,7 @@ Bool MyPutKey(I64 ch,I64 sc)
 		KeyDescSet("Dol/LTRED");
 	      else
 		"$$LTRED$$";
-	    } else {
+	    } else {
 	      if (sc&SCF_KEY_DESC)
 		KeyDescSet("Dol/RED");
 	      else

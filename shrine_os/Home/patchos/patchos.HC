@@ -28,7 +28,7 @@
 
   Added functions:
    * ACDirList
-   * ADocClear
+   * ADocClear
    * Cdr
    * dump_exists
    * ExtFilename(U8 *str)

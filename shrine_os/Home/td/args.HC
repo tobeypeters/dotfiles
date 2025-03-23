@@ -38,7 +38,7 @@ class CArgs
 };
 
 Bool parse(CArgs *in,U8 *cmd,U64 ins_idx=0,Bool init=TRUE)
-{//Parse command buffer.  This version uses
+{//Parse command buffer.  This version uses
  //space as the delimeter.
   Bool res=FALSE;
 

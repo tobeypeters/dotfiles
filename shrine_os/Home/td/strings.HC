@@ -33,7 +33,7 @@ U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 }
 U8 str_upper(U8 *str)
 {//Convert a string to uppercase.
-  return MStrUtil(str,SUF_TO_UPPER);
+  return MStrUtil(str,SUF_TO_UPPER);
 }
 U8 str_lower(U8 *str)
 {//Convert a string to lowercase. 

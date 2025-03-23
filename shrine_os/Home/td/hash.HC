@@ -145,8 +145,6 @@ U0 parse(CHCMDS *in)
   //in->print_arr(in);
 
   MemSet(hashed,'\0',sizeof(U8)*HASH_TABLE_SIZE*CMD_ARGS);
-  Free(hashed);
-
 }
 
 CHCMDS *c=CAlloc(sizeof(CHCMDS));
@@ -158,5 +156,6 @@ CHCMDS *c=CAlloc(sizeof(CHCMDS));
 
   c->parse(c);
 
+// "%d\n",c->hashdx(c,"edp");
 
- // "%d\n",c->hashdx(c,"edp");
+Free(hashed);

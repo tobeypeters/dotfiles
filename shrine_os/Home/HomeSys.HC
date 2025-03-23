@@ -47,15 +47,9 @@ U0 StartUpTasks()
   user1=User;
 
 //  XTalk(user1,"#include \"AdLib/OPL2\";\n");
-//  XTalk(user1,"#include \"C:/Apps/templeDOS/run\";Cd;\n");
-
-//Uncomment if templeDOS is not used.
 
   ACInit("::/Adam/*");
 
-//  XTalk(user1,"ACDirList;");
-//  ACDirList;
-
   AutoComplete; //Hide autocomplete window.
 
   XTalk(user1,"templeDOS;\n");
