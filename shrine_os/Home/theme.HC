@@ -132,6 +132,24 @@ U0 theme2()
   rgb2_CBGR48(&gr_palette_vga[YELLOW],255,255,85,-.3);
   rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.2);
 }
+U0 theme3()
+{//Standard VGA Palette
+  rgb2_CBGR48(&gr_palette_vga[BLACK],15,21,27);
+  rgb2_CBGR48(&gr_palette_vga[BLUE],0,0,95);
+  rgb2_CBGR48(&gr_palette_vga[GREEN],0,170,0);
+  rgb2_CBGR48(&gr_palette_vga[CYAN],0,170,170);
+  rgb2_CBGR48(&gr_palette_vga[RED],170,0,0);
+  rgb2_CBGR48(&gr_palette_vga[PURPLE],170,0,170);  //function names
+  rgb2_CBGR48(&gr_palette_vga[BROWN],170,85,0);
+  rgb2_CBGR48(&gr_palette_vga[LTGRAY],170,170,170);
+  rgb2_CBGR48(&gr_palette_vga[LTBLUE],88,88,255);
+  rgb2_CBGR48(&gr_palette_vga[LTGREEN],85,255,85);
+  rgb2_CBGR48(&gr_palette_vga[LTCYAN],85,255,255);
+  rgb2_CBGR48(&gr_palette_vga[LTRED],255,85,85);
+  rgb2_CBGR48(&gr_palette_vga[LTPURPLE],255,85,255);
+  rgb2_CBGR48(&gr_palette_vga[YELLOW],255,255,85);
+  rgb2_CBGR48(&gr_palette_vga[WHITE],255,255,255,-.10);
+}
 
 public CBGR48 amicus[COLORS_NUM] = {
 0x0, 0x1A4883, 0x8D2E75, 0xFFA995, 0xA10000, 0xFFC0FF, 0x8B5858, 0xB2B6AF, 0x555753, 0xE4D2, 0x82BC49, 0x8AE0C0, 0xDF2100, 0xB800B2, 0xFFFFFF, 0x969696
@@ -160,6 +178,7 @@ public CBGR24 zsnes[COLORS_NUM] = {
 
 //theme1;
 theme2;
+//theme3;
 
 set_theme(gr_palette_vga);
 
@@ -201,4 +220,4 @@ if (pal_select) pal_set(lst);
 
 //GrPaletteSet(gr_palette_custom);
 //MemCpy(gr_palette_std,gr_palette_custom,sizeof(gr_palette_custom));
-*/
+*/

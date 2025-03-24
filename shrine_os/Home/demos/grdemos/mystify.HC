@@ -22,14 +22,14 @@ Cd(__DIR__);;
 
 #define NUM_GROUPS 2
 #define NUM_LINES 5
-#define POINTS_PER_LINE 4
+#define POINTS_PER_LINE 5
 #define GAP 3
 
 #define PARTICLE_MAX NUM_GROUPS*POINTS_PER_LINE
 
 #include "grdefs"
 
-U8 colors[2]={LTGREEN,WHITE};
+U8 colors[2]={BROWN,LTRED};
 
 U64 lgoff,loff;
 U0 DrawIt(CTask *task,CDC *dc)
@@ -46,7 +46,7 @@ U0 DrawIt(CTask *task,CDC *dc)
       loff=GAP*itb;
       for (itc=0;itc<POINTS_PER_LINE-1;)
       {
-    dc->color=colors[ita];
+        dc->color=colors[ita];
         pp=&p_arr[itc+lgoff];ppp=&p_arr[++itc+lgoff];
         GrLine(dc,pp->x+loff,pp->y+loff,ppp->x+loff,ppp->y+loff);
       }

@@ -38,16 +38,16 @@ EdLineDel(doc);
 U8 *help_file=MStrPrint("%s/help.DD",__DIR__);
 U8 *menu_file=MStrPrint("%s/menu.DD",__DIR__);
 
-U8 prev_cmd[256];
+U8 prev_cmd[512];
 U0 set_prevcmd(U8 *new_cmd) {
   MemSet(prev_cmd,'\0',sizeof(prev_cmd));
   StrCpy(prev_cmd,new_cmd);
 }
 
-U8 *prev_dir=NULL;
+U8 prev_dir[515];
 U0 set_prevdir() {
-  if (StrLen(prev_dir)) Free(prev_dir);
-  prev_dir=DirNameAbs(Fs->cur_dir);
+  MemSet(prev_dir,'\0',sizeof(prev_dir));
+  StrCpy(prev_dir,DirNameAbs(Fs->cur_dir));
 }
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
