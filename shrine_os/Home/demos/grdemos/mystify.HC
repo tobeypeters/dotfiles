@@ -29,8 +29,6 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#define LINE_SPACING 5
-
 U8 colors[2]={LTGREEN,WHITE};
 
 U64 lgoff,loff;
@@ -48,6 +46,7 @@ U0 DrawIt(CTask *task,CDC *dc)
       loff=GAP*itb;
       for (itc=0;itc<POINTS_PER_LINE-1;)
       {
+    dc->color=colors[ita];
         pp=&p_arr[itc+lgoff];ppp=&p_arr[++itc+lgoff];
         GrLine(dc,pp->x+loff,pp->y+loff,ppp->x+loff,ppp->y+loff);
       }
