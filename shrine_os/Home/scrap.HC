@@ -1040,13 +1040,6 @@ if (test<0) "yes\n";
 
 "%c\n",ToLower('*');*/
 
-/*U0 YOU() { "you\n";}
-U0 (*hate)();
-
-hate=&YOU;
-
-hate();*/
-
 /*U0 ACDirList()
 {
   CDirEntry *tmpde,*tmpde1;
@@ -1066,5 +1059,11 @@ hate();*/
 }
 
 ACDirList;*/
-
+
+U8 buff[5]="viper";
+
+if (*buff='q') "yes\n";
+
+//"%c\n",*buff;
+
 //KeyAndCont;

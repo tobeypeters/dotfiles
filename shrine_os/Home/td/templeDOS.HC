@@ -38,17 +38,17 @@ EdLineDel(doc);
 U8 *help_file=MStrPrint("%s/help.DD",__DIR__);
 U8 *menu_file=MStrPrint("%s/menu.DD",__DIR__);
 
-U8 prev_cmd[512];
-U0 set_prevcmd(U8 *new_cmd) {
-  MemSet(prev_cmd,'\0',sizeof(prev_cmd));
-  StrCpy(prev_cmd,new_cmd);
+U0 buff_add(U8 *buf, U8 *str)
+{//Assign a string to buffer.
+  MemSet(buf,'\0',sizeof(buf));
+  StrCpy(buf,str);
 }
 
-U8 prev_dir[515];
-U0 set_prevdir() {
-  MemSet(prev_dir,'\0',sizeof(prev_dir));
-  StrCpy(prev_dir,DirNameAbs(Fs->cur_dir));
-}
+U8 prev_cmd[512];
+U0 set_prevcmd(U8 *new_cmd) buff_add(prev_cmd,new_cmd);
+
+U8 prev_dir[512];
+U0 set_prevdir() buff_add(prev_dir,DirNameAbs(Fs->cur_dir));
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
 
@@ -81,10 +81,10 @@ U64 execute_cmd(U8 *cmd) {
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     if (str_cmp(a->args[0],"##")) { //pid
-      StrCpy(a->args[0],"pid"); goto hashit;
+      buff_add(a->args[0],"pid"); goto hashit;
     }
     if (str_cmp(a->args[0],":>")) { //touch
-      StrCpy(a->args[0],"touch"); goto hashit;
+      buff_add(a->args[0],"touch"); goto hashit;
     }
 
     //Switching drives DOS style?
@@ -143,6 +143,7 @@ U64 execute_cmd(U8 *cmd) {
     vt=ui*3;
 
     switch (idx) {
+    start:
       case  30: //rmdir
       case  43: //cdd
       case 199: //cd
@@ -155,17 +156,27 @@ U64 execute_cmd(U8 *cmd) {
         p=StrNew(PopUpPickFile);
 
         v.$WW+H,1$u8[vt+FILE]=1;
+    end:
+      if (ui==0) buff_add(bufa,p);
+      else buff_add(bufb,p);
+      Free(p);
+      break;
     }
-
-    if (ui==0) bufa=StrNew(p);
-    else bufb=StrNew(p);
 
     if (a->count>2)
     if (ui==0&&v.u8[1]) {
-     ui=1; goto pickit;
+      ui=1; goto pickit;
     }
 
     bav=TRUE; goto switchit;
+  }
+
+  //In case, you don't feel like providing a file extension ".HC".
+  //This list can be expanded to many other commands. But,
+  //since you can have two source files, with the same name,
+  //like utils.HC & utils.HC.Z, I haven't expanded it ... yet.
+  if (I64_IN(idx,86)) { 
+    buff_add(bufa,ExtDft(bufa,"HC"));
   }
 
   //Wild card support-ls,grep
@@ -554,30 +565,26 @@ U8 templeDOS() {
 
   "\nTempleDOS {$$YELLOW$$Version$$FG$$ 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
-  "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
+  "Type '$$LTRED$$help$$FG$$' for internal command list.";
+  "\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
   U64 res=0;
-  U8 *input=CAlloc(sizeof(U8)*1024);
+  U8 input[512];
 
   while (TRUE)
   {
     DocBottom;
     "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
-    input=MyGetStr(GSF_SHIFT_ESC_EXIT);
+    buff_add(input,MyGetStr(GSF_SHIFT_ESC_EXIT));
 
-    if (*input=='é') break;
+    if (input[0]=='é') break;
 
     if (str_cmp(input,"!!")) {
-//      zFree(input);input=StrNew(prev_cmd);
-      zFree(input,FALSE);StrCpy(input,prev_cmd);
+      buff_add(input,prev_cmd);
     }
 
     if (res=execute_cmd(input)) break;
-
-    zFree(input,FALSE);
   }
-
-  zFree(input);
 
 //  AdamLog("templeDOS [%d]: terminated: %D %T\n",termID,Now,Now);
 
