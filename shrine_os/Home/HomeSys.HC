@@ -48,7 +48,7 @@ U0 StartUpTasks()
 
 //  XTalk(user1,"#include \"AdLib/OPL2\";\n");
 
-  ACInit("::/Adam/*");
+  ACInit("::/Adam/*;!/*Bible.TXT*");
 
   AutoComplete; //Hide autocomplete window.
 

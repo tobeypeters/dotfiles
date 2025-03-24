@@ -24,9 +24,9 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#include "models/crobot"
+//#include "models/crobot"
 //#include "models/wolf_plane"
-//#include "models/tie_fighter"
+#include "models/tie_fighter"
 //#include "models/zoid"
 //#include "models/x-wing"
 
@@ -35,7 +35,8 @@ Cd(__DIR__);;
 I64 CUBE_DISTANCE=6;
 
 //These are defined in each "model" file :start
-/*#define OBJ_POINTS SHP_CUBE_POINTS
+/*#define MODEL_NAME "basic_shape"
+#define OBJ_POINTS SHP_CUBE_POINTS
 #define OBJ_EDGES SHP_CUBE_EDGES
 CD3 *p_obj=&cube_points;
 CD2 *v_obj=&cube_edges;*/
@@ -53,21 +54,26 @@ F64 p2DTop3D(F64 xy,F64 z)
 CD3 p_arr[OBJ_POINTS];
 CD3 rotated;
 
-U64 ls,le;
-
+U8 *TrueFalse(U64 bval)
+{
+  if (bval) return "TRUE";
+  else return "FALSE";
+}
+U64 ls,le,fh=FONT_HEIGHT;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
   dc->color=LTGREEN;
 
-  GrPrint(dc,10,10,"Mouse: (%2.8f,%2.8f)\n",rotation_x,rotation_y);
+  GrPrint(dc,fh,fh,"Model: %s",MODEL_NAME);
+  GrPrint(dc,fh,fh*2,"Mouse: (%2.8f,%2.8f)\n",rotation_x,rotation_y);
+  GrPrint(dc,fh,fh*3,"Lines: %s",tf_arr[draw_lines]);
 
   for (ita=0;ita<OBJ_POINTS;ita++)
   {
     dc->color=p_arr[ita].z;
     GrPlot(dc,p_arr[ita].x,p_arr[ita].y);
-
 
 //    GrPrint(dc,p_arr[ita].x,p_arr[ita].y,"%d",ita);
   }
@@ -121,6 +127,9 @@ U0 key_down(){
   {
     case '\n':
       Init;
+      break;
+    case 'l':
+      draw_lines=!draw_lines;
       break;
     case SC_CURSOR_UP:
       CUBE_DISTANCE-=1;

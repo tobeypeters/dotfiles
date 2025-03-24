@@ -68,6 +68,9 @@ public U0 SwapFuncs(U8 *funca,U8 *funcb)
   else
     Adam("\"\n\n$$LTCYAN$$:SwapFuncs error:$$FG$$ ...\n\n\";");
 }
+
+U8 *tf_arr[2]={"FALSE","TRUE"};
+
 public Bool InRangeI64(I64 val,I64 min,I64 max) return min<=val<=max;
 
 public U8 ToLower(U8 chr)

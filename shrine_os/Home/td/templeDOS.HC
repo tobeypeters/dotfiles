@@ -552,7 +552,7 @@ U8 templeDOS() {
     "\n$$LTCYAN$$Tip of the day:$$FG$$";TipOfDay;
   }
 
-  "\nTempleDOS {Version 1.0}\n";
+  "\nTempleDOS {$$YELLOW$$Version$$FG$$ 1.0}\n";
   "(c) 2024 No rights reserved. For Public Domain use.\n";
   "Type 'help' for internal command list.\n\n$LK,"TempleOS commands",A="HI:Cmd Line (Typically)"$\n";
 
