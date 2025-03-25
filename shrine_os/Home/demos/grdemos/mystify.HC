@@ -22,7 +22,7 @@ Cd(__DIR__);;
 
 #define NUM_GROUPS 2
 #define NUM_LINES 5
-#define POINTS_PER_LINE 5
+#define POINTS_PER_LINE 5
 #define GAP 3
 
 #define PARTICLE_MAX NUM_GROUPS*POINTS_PER_LINE

@@ -77,7 +77,7 @@ U64 execute_cmd(U8 *cmd) {
 
   I64 res,idx;res=idx=0;
 
-  hashit:
+hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     if (str_cmp(a->args[0],"##")) { //pid
@@ -87,6 +87,7 @@ U64 execute_cmd(U8 *cmd) {
       buff_add(a->args[0],"touch"); goto hashit;
     }
 
+//drvchange:
     //Switching drives DOS style?
     if (StrLen(a->args[0])==2) {
       if (a->args[0][1]==':') {
@@ -100,15 +101,18 @@ U64 execute_cmd(U8 *cmd) {
         else { e_print(ERR_DRVIU,a->args[0]); goto answer; }
       }
     }
+//drvchange_end:
 
     idx=999; 
     goto switchit;
   } 
+hashit_end:
 
   I64 v,fc;v=fc=0;
 
   fc=flag_cnt(a->flags);
 
+//error_handler:
   eptr=c->data[idx][TOK_CMD];
 
   if (a->count==2&&fc) {
@@ -124,6 +128,7 @@ U64 execute_cmd(U8 *cmd) {
 
   //CMD: No args or flags
   if (c->data[idx][TOK_MAX]==1) goto switchit;
+//error_handler_end:
 
   U8 *bufa,*bufb;
 
@@ -132,6 +137,7 @@ U64 execute_cmd(U8 *cmd) {
 
   U64 bav,bbv; bav=bbv=0;
 
+pickit:
   //Pick file support
   v.u8[0]=!StrCmp(bufa,"??");
   v.u8[1]=!StrCmp(bufb,"??");
@@ -139,7 +145,6 @@ U64 execute_cmd(U8 *cmd) {
     U64 vt,ui=0;
     U8 *p;
 
-  pickit:
     vt=ui*3;
 
     switch (idx) {
@@ -170,6 +175,7 @@ U64 execute_cmd(U8 *cmd) {
 
     bav=TRUE; goto switchit;
   }
+//pickit_end:
 
   //In case, you don't feel like providing a file extension ".HC".
   //This list can be expanded to many other commands. But,
@@ -179,18 +185,21 @@ U64 execute_cmd(U8 *cmd) {
     buff_add(bufa,ExtDft(bufa,"HC"));
   }
 
+//validation:
   //Wild card support-ls,grep
   if (!(*bufa=='*')&&!(idx==174)) {
     v=files_valid(bufa,bufb);
     bav=v.u8[0]; bbv=v.u8[1];
   }
+//validation_end:
 
   U8 *bufe=NULL; //scratch buffer
 
+//filesexist:
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
   I64 fci=0;
-  if (I64_IN(idx,211,227)) {
+  if (I64_IN(idx,211,227)) { //cp,mv
     if (I64_IN(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
       bav=TRUE; goto switchit; }
   }
@@ -220,6 +229,7 @@ U64 execute_cmd(U8 *cmd) {
         if (!type_got(v,FILE)) goto answer;
     }
   }
+//filesexist_end:
 
   U64 be=FALSE;
 
@@ -246,8 +256,7 @@ U64 execute_cmd(U8 *cmd) {
         else
           e_print(ERR_DRVFILEIDIR,bufa);
 
-          goto answer;
-
+        goto answer;
       break;
     case  30: //rmdir
     case 214: //rd
@@ -340,7 +349,7 @@ U64 execute_cmd(U8 *cmd) {
       }
 
       U64 i=0;
-      while (i<16)
+      while (i<COLORS_NUM)
       {
         "$$FG,%d$$Û",i;i++;
       }"\n";
