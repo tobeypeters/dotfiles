@@ -38,6 +38,9 @@ sudo apt install -y php
 sudo apt install -y php-curl
 
 # https://code.visualstudio.com/Download
+#//.NET install
+#sudo apt-get update && \
+#  sudo apt-get install -y dotnet-sdk-9.0
 
 # After setting up the git bare repository, go setup two-way auth on their site
 sudo apt install -y git
@@ -83,6 +86,9 @@ cargo install alacritty
 # sudo update-alternatives --install /usr/bin/x-terminal-emualtor x-terminal-emulator /usr/local/bin/alacritty 10
 # sudo update-alternatives --config x-terminal-emulator
 # alacritty end
+
+# Set the default terminal to alacritty.  For like the 'open in terminal' option in nemo/etc...
+#gsettings set org.cinnamon.desktop.default-applications.terminal exec 'alacritty'
 
 sudo apt install -y btop
 # sudo apt install -y composer
