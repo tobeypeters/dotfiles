@@ -26,9 +26,10 @@ Cd(__DIR__);;
 
 //#include "models/crobot"
 //#include "models/wolf_plane"
-#include "models/tie_fighter"
+//#include "models/tie_fighter"
 //#include "models/zoid"
 //#include "models/x-wing"
+#include "models/shotgun"
 
 #define FOV_ANGLE 45.0
 
