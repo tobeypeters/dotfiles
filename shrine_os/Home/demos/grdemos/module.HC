@@ -27,7 +27,7 @@ Cd(__DIR__);;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   //DCFill(dc,BLACK);
-  //p_plot(dc,&p_arr,PARTICLE_MAX);
+  //p_plot(dc,&p_arr,PARTICLE_MAX);
   /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
@@ -72,5 +72,7 @@ ANIMATE_TASK=FALSE;
 MOUSE_TRAP=FALSE;
 MOUSE_NODOWN=FALSE;
 */
+
+#include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);

@@ -1059,11 +1059,5 @@ if (test<0) "yes\n";
 }
 
 ACDirList;*/
-
-U8 buff[5]="viper";
-
-if (*buff='q') "yes\n";
-
-//"%c\n",*buff;
-
+
 //KeyAndCont;
