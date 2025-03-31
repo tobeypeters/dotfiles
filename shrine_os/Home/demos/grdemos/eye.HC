@@ -17,6 +17,7 @@
 /*eye.HC
   Description:
       Eye which tracks the mouse pointer.
+      Works best if it's drawn,in the center of the screen;
 */
 Cd(__DIR__);;
 
@@ -24,7 +25,7 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#define EYE_SIZE 64
+//#define EYE_SIZE 64
 #define PUPIL_SIZE 2
 
 U8 base_eye[8] = {
@@ -42,41 +43,30 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
   dc->color=LTGREEN;
-  GrPrint(dc,10,10,"%s","ÿ");
+//  GrPrint(dc,WIDTH_CENTER,HEIGHT_CENTER,"%s","ÿ");
+  GrPrint(dc,0,0,"%s","ÿ");
 }
 
-I64 cx=4,cy=4,dx,dy,px,py,pxp,pyp;
-
-Bool once=TRUE;ADocClear;
+U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 AnimateTask(I64)
 {
+  U64 px,py;
+
+  F64 angle=0;
+
   while (TRUE)
   {
     text.font[255]=base_eye[0](U64);
 
-    dx=(ms.pos.x)/(WIDTH/8)-cx;
-    dy=(ms.pos.y)/(HEIGHT/8)-cy;
+    angle=ATan2(ms.pos.y/(GR_HEIGHT/8)-4,
+                ms.pos.x/(GR_WIDTH/8)-4);
 
-    if (dx<-2) dx=-2;
-    if (dx>2) dx=2;
-    if (dy<-2) dy=-2;
+    px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
 
-    if (dy>1) dy=1; // Restrict top movement to base_eye[4]
-
-    px=cx+dx;py=cy+dy;
-
-    if (px>5) px=5;
-
-    for (ita=-PUPIL_SIZE/2;ita<=PUPIL_SIZE/2;ita++)
-    {
-      for (itb=-PUPIL_SIZE/2;itb<=PUPIL_SIZE/2;itb++)
-      {
-        pxp=px+itb; pyp=py+ita;
-        if (pxp>=0&&pxp<8&&pyp>=0&&pyp<8)
-          Btr(&text.font[255],(pyp*8)+pxp);
-        else Bts(&text.font[255],(pyp*8)+pxp);
-      }
-    }
+    Btr(&text.font[255],bitdex(px,py));
+    Btr(&text.font[255],bitdex(px+1,py));
+    Btr(&text.font[255],bitdex(px,py+1));
+    Btr(&text.font[255],bitdex(px+1,py+1));
 
     Sleep(20);
   }

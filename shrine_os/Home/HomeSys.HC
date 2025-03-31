@@ -1,9 +1,9 @@
 //Place this file in /Home and change
 //anything you want.
 
-#include "~/demos/grdemos/eye_wallpaper"
 #include "~/theme" // This also loads tp_Compositor.HC
 #include "~/patchos/patchos"
+#include "~/demos/grdemos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
 
 Bool started=FALSE;

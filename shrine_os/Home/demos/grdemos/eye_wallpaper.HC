@@ -20,9 +20,6 @@
 */
 #help_index "Windows"
 
-#define EYE_SIZE 64
-#define PUPIL_SIZE 2
-
 U8 base_eye[8] = {
     0b00111100,
     0b01111110,
@@ -34,62 +31,62 @@ U8 base_eye[8] = {
     0b00111100
 };
 
-I64 ita,itb,cx=4,cy=4,dx,dy,px,py,pxp,pyp;
+I64 ita,itb;
+
+U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 EyeWall(CTask *task)
 {
   CDC *dc2=DCAlias(gr.dc2,task);
 
-//  CCPU *c;
+  CCPU *c;
 
-  U64 chr=127;
+  U64 px,py,chr=127,c_percent,pos,
+      cb=FONT_WIDTH*2+1;
+
+  F64 angle=0;
 
   CDateStruct ds;
   Date2Struct(&ds,Now+local_time_offset);
 
-  task->text_attr=LTGRAY<<4+BLACK;
-
   text.font[chr]=base_eye[0](U64);
 
-  dx=(ms.pos.x)/(GR_WIDTH/8)-cx;
-  dy=(ms.pos.y)/(GR_HEIGHT/8)-cy;
+  angle=ATan2(ms.pos.y/(GR_HEIGHT/8)-4,
+                ms.pos.x/(GR_WIDTH/8)-4);
 
-  if (dx<-2) dx=-2;
-  if (dx>2) dx=2;
-  if (dy<-2) dy=-2;
+  px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
 
-  if (dy>1) dy=1; // Restrict top movement to base_eye[4]
+  Btr(&text.font[chr],bitdex(px,py));
+  Btr(&text.font[chr],bitdex(px+1,py));
+  Btr(&text.font[chr],bitdex(px,py+1));
+  Btr(&text.font[chr],bitdex(px+1,py+1));
 
-  px=dx+4;py=cy+dy;
+  pos=1;
+  GrPrint(dc2,pos,0,"%c",chr);
 
-  if (px>5) px=5;
-
-  for (ita=-PUPIL_SIZE/2;ita<=PUPIL_SIZE/2;ita++)
-  {
-    for (itb=-PUPIL_SIZE/2;itb<=PUPIL_SIZE/2;itb++)
-    {
-      pxp=px+itb; pyp=py+ita;
-      if (pxp>=0&&pxp<8&&pyp>=0&&pyp<8)
-        Btr(&text.font[chr],(pyp*8)+pxp);
-      else Bts(&text.font[chr],(pyp*8)+pxp);
-    }
-  }
-
-  GrPrint(dc2,2,0,"%c",chr);
+  pos=GR_WIDTH-(FONT_WIDTH*17)-1;
+  GrPrint(dc2,pos,0,"%3tZ%02d/%02d%02d:%02d%s",
+	  ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,
+	  ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);  
 
 /*  if (scrncast.record)
     TextPrint(Fs,44-4,0,LTGRAY<<4+BLACK,"*");
-  for (i=0;i<mp_cnt;i++) {
-    c=&cpu_structs[i];
-    if (i&1)
-      TextPrint(Fs,44+i*2,0,LTGRAY<<4+BLACK,"%2tf",100.0*(1.0-c->idle_factor));
-    else
-      TextPrint(Fs,44+i*2,0,LTGRAY<<4+BLACK,"%2tf",100.0*(1.0-c->idle_factor));
-  }
-*/
 
-  GrPrint(dc2,GR_WIDTH-(FONT_WIDTH*17)-2,0,"%3tZ%02d/%02d%02d:%02d%s",
-	  ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,
-	  ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);  
+*/
+  pos-=FONT_WIDTH;
+  for (ita=mp_cnt-1;ita>=0;ita--)
+  {
+    c=&cpu_structs[ita];
+
+    c_percent=100.0*(1.0-c->idle_factor);
+    
+    pos-=cb; 
+
+if (ita==0||c_percent)
+    GrPrint(dc2,pos,0,"%2d",c_percent);
+  }
+
+  pos-=(FONT_WIDTH*3);
+  GrPrint(dc2,pos,0,"CPU");
 }
 
 gr.fp_wall_paper=&EyeWall;
