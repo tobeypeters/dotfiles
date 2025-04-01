@@ -18,7 +18,6 @@
   Description:
       Command-line interpreter for TempleOS.
 */
-
 #ifndef TEMPLE_DOS_PATH
   Cd(__DIR__);;
   #include "load"

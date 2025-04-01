@@ -148,6 +148,8 @@ ANIMATE_TASK=TRUE;
 MOUSE_TRAP=TRUE;
 MOUSE_NODOWN=TRUE;
 
+Fs->win_inhibit|=WIG_DBL_CLICK;
+
 #include "grmain"
 
 //p_deinit(&p_arr,PARTICLE_MAX);

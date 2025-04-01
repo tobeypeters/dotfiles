@@ -169,6 +169,8 @@ MS_MOVE_LDOWN=&ms_move_ldown;
 
 MOUSE_TRAP=TRUE;
 
+Fs->win_inhibit|=WIG_DBL_CLICK;
+
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);

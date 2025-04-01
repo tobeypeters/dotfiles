@@ -75,6 +75,8 @@ U0 Init()
   p_plot(sier_dc,&p_arr,PARTICLE_MAX);
 }
 
+Fs->win_inhibit|=WIG_DBL_CLICK;
+
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);

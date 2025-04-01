@@ -72,6 +72,8 @@ U0 Init()
   p_plot(spiral_dc,&p_arr,pc);
 }
 
+Fs->win_inhibit|=WIG_DBL_CLICK;
+
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
