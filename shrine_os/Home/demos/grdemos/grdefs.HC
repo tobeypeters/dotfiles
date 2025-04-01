@@ -104,9 +104,9 @@ U0 p_deinit(U8 *p,U64 p_cnt)
 U0 p_plot(CDC *dc,U8 *p,U64 p_cnt)
 {
   PARTICLE *pp;
-  for(ita=0;ita<p_cnt;ita++)
+  for(itp=0;itp<p_cnt;itp++)
   {
-    pp=p+sizeof(PARTICLE)*ita;
+    pp=p+sizeof(PARTICLE)*itp;
     dc->color=pp->color;
 
     GrPlot(dc,pp->x,pp->y);

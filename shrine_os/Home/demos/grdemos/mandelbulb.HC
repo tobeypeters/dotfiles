@@ -30,7 +30,7 @@ Cd(__DIR__);;
 
 Bool pgr=FALSE,init;
 
-U8 *pgrc[2]={"-","|"};
+U8 pgrc[2][1]={"-","|"};
 
 U64 pc;
 
@@ -40,7 +40,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   dc->color=LTRED;
 
   if (init) {
-    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"[%s] Generating points ...",pgrc[pgr]);
+    GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"[%c] Generating points ...",pgrc[pgr][0]);
     pgr=!pgr;
   }
   else

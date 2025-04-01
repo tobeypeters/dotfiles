@@ -31,8 +31,10 @@
    * ADocClear
    * Cdr
    * dump_exists
-   * ExtFilename(U8 *str)
+   * ExtFilename
    * Head
+   * I64InLst
+   * InRangeI64
    * KeyAndCont
    * More
    * Tail
@@ -46,6 +48,9 @@
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
+Bool WALL_CPU=TRUE,
+     WALL_MEM=TRUE;
+
 public U0 HijackFunc(U8 *orig, U8 *new)
 {// Replace a system function with a new function
 
@@ -72,6 +77,16 @@ public U0 SwapFuncs(U8 *funca,U8 *funcb)
 U8 *tf_arr[2]={"FALSE","TRUE"};
 
 public Bool InRangeI64(I64 val,I64 min,I64 max) return min<=val<=max;
+Bool I64InLst(I64 inval,...)
+{//Check to see if an I64 is in a given argv list.
+  U64 i=0;
+
+  for (;i<argc;i++) {
+    if (inval==argv[i])
+      return TRUE;
+  }
+  return FALSE;
+}
 
 public U8 ToLower(U8 chr)
 {//Convert a char to lowercase
@@ -152,6 +167,7 @@ public U8 *ExtFilename(U8 *str)
     return str;
 }
 
+public U0 acdwordsload() {}
 public U0 ACDirList()
 {//Adds current directory filenames to the autocomplete
   CDirEntry *tmpde,*tmpde1;
@@ -1453,3 +1469,4 @@ HijackFunc(&Ed,&ed);
 HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
 
+HijackFunc(&ACDWordsLoad,&acdwordsload);

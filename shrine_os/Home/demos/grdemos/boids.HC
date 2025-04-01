@@ -81,14 +81,13 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 F64 count,cx,cy,distance,
     speed,scale,ax,ay,rx,ry;
-
 U0 AnimateTask(I64)
 {
   while (TRUE)
   {
-    for (ita=0;ita<PARTICLE_MAX;ita++)
+    for (itb=0;itb<PARTICLE_MAX;itb++)
     {
-      pp=&p_arr[ita];
+      pp=&p_arr[itb];
 
       cx=cy=0; // Cohesion x,y
       ax=ay=0; // Alignment x,y
@@ -96,11 +95,11 @@ U0 AnimateTask(I64)
 
       count=0;
 
-      for (itb=0;itb<PARTICLE_MAX;itb++)
+      for (itc=0;itc<PARTICLE_MAX;itc++)
       {
-        if (ita==itb) goto continue;
+        if (itb==itc) goto continue;
 
-        ppp=&p_arr[itb];
+        ppp=&p_arr[itc];
 
         //Instead of doing something like spatial hashing.
         if (Abs(pp->x-ppp->x)>VIEW_RADIUS/2||
@@ -165,6 +164,8 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
+  p_deinit(&p_arr,PARTICLE_MAX);
+
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];

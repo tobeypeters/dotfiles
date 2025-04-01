@@ -26,7 +26,7 @@ Cd(__DIR__);;
 
 #define STREAK_LEN 4
 
-F64 at=30; //Animate task sleep amount
+F64 at; //Animate task sleep amount
 
 Bool cf=FALSE; //Chaotic flag
 
@@ -64,7 +64,6 @@ U0 DrawIt(CTask *task,CDC *dc)
         GrLine(dc,np.x,np.y,cp.x,cp.y);
     }
   }
-
 }
 
 U0 InitStar(PARTICLE *p)
@@ -78,7 +77,6 @@ U0 InitStar(PARTICLE *p)
   p->distance=0;                    //Start at the center
   p->color=RandU16%4;
 }
-
 U0 Init()
 {
   at=30;
@@ -140,7 +138,7 @@ U0 key_down()
 }
 KEY_DOWN=&key_down;
 
-#define ANIMATE_TASK TRUE
+ANIMATE_TASK=TRUE;
 
 #include "grmain"
 

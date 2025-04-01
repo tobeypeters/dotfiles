@@ -47,9 +47,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 U0 AnimateTask(I64)
 {
   while (TRUE) {
-    for (ita=0;ita<PARTICLE_MAX;ita++)
+    for (itc=0;itc<PARTICLE_MAX;itc++)
     {
-      pp=&p_arr[ita];
+      pp=&p_arr[itc];
 
       dx=pp->x-vortex.x;
       dy=pp->y-vortex.y;

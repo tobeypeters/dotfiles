@@ -1059,5 +1059,12 @@ if (test<0) "yes\n";
 }
 
 ACDirList;*/
-
-//KeyAndCont;
+
+/*U64 i=sys_code_bp->alloced_u8s-sys_code_bp->used_u8s;
+
+  if (sys_data_bp)
+    i+=sys_data_bp->alloced_u8s-sys_data_bp->used_u8s;
+
+"Mem:%010X\n",i;
+*/
+//KeyAndCont;

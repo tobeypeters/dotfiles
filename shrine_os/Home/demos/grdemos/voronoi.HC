@@ -22,16 +22,27 @@
 */
 Cd(__DIR__);;
 
-#define PARTICLE_MAX 20
+#define PARTICLE_MAX 10
 
 #include "grdefs"
 
-CDC *vor_dc;
+CDC *vor_dc=DCNew(WIDTH,HEIGHT);
+
+U64 GetColor()
+{
+  U64 res;
+
+  pick:
+  res=RandU16%COLORS_NUM;
+
+  if (I64InLst(res,0,8,15)) goto pick;
+  return res;
+}
 
 F64 cur_time,delta_time,prev_time;
 
-CDC *GenVoronoi() {
-  CDC *dc=DCNew(WIDTH,HEIGHT);
+U0 GenVoronoi() {
+  DCFill(vor_dc,GetColor);
   
   U64 minDist,dx,dy,dist,color;
 
@@ -52,30 +63,26 @@ CDC *GenVoronoi() {
           minDist=dist;
           color=pp->color;
         }
-        dc->color=color;
-        GrPlot(dc,itb,ita);
+        vor_dc->color=color;
+        GrPlot(vor_dc,itb,ita);
       }
     }
   }
 
   U64 x,y;
-  dc->color=WHITE;
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
 
-    dc->color=WHITE;
-    GrRegPoly(dc,pp->x-2,pp->y-2,2,2,4);
-    dc->color=BLACK;
-    GrFloodFill(dc,pp->x-2,pp->y-2);
+    vor_dc->color=WHITE;
+    GrRegPoly(vor_dc,pp->x-2,pp->y-2,2,2,4);
+    vor_dc->color=BLACK;
+    GrFloodFill(vor_dc,pp->x-2,pp->y-2);
   }
-
-  return dc;
 }
 
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  vor_dc->flags|=DCF_NO_TRANSPARENTS;
   GrBlot(dc,0,0,vor_dc);
 }
 
@@ -84,9 +91,9 @@ U0 AnimateTask(I64)
 {
   while (TRUE) {
 
-    for (ita=0;ita<PARTICLE_MAX;ita++)
+    for (itc=0;itc<PARTICLE_MAX;itc++)
     {
-      pp=&p_arr[ita];
+      pp=&p_arr[itc];
 
       xx=pp->x+pp->vx*delta_time;
       yy=pp->y+pp->vy*delta_time;
@@ -94,30 +101,29 @@ U0 AnimateTask(I64)
       if (0<=xx&&xx<=WIDTH)
         pp->x=xx;
       else
-        pp->vx*=-1;
+        pp->vx*=-2;
 
       if (0<=yy&&yy<=HEIGHT)
         pp->y=yy;
       else
-        pp->vy*=-1;
+        pp->vy*=-2;
     }
 
     cur_time=tS;
     delta_time=cur_time-prev_time;
     prev_time=cur_time;   
 
-    vor_dc=GenVoronoi;
+    GenVoronoi;
 
-    Sleep(20);
+    Sleep(120);
   }
 }
+
 U0 Init()
 {
   F64 angle;
 
   delta_time=prev_time=0;
-
-  ADocClear;
 
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
@@ -125,16 +131,16 @@ U0 Init()
 
     pp->x=RandU16%WIDTH;
     pp->y=RandU16%HEIGHT;
-    pp->color=Max(1,RandU16%COLORS_NUM);
+
+    pp->color=GetColor;
 
     angle=Rand*2*M_PI;
 
     pp->vx=Cos(angle)*30;
     pp->vy=Sin(angle)*30;
-
   }
 
-  vor_dc=GenVoronoi;
+  GenVoronoi;
 }
 
 ANIMATE_TASK=TRUE;

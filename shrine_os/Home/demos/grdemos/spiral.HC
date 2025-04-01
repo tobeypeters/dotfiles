@@ -32,11 +32,11 @@ F64 px,py,pz;
 
 U64 COLORS[3]={WHITE,LTPURPLE,YELLOW};
 
+CDC *spiral_dc=DCNew(WIDTH,HEIGHT);
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
-
-  p_plot(dc,&p_arr,pc);
+  GrBlot(dc,0,0,spiral_dc);
 }
 
 U0 AnimateTask(I64){}
@@ -68,8 +68,12 @@ U0 Init()
     radius+=SPIRAL_TURN_FACTOR;
     angle+=0.2;
   }
+
+  p_plot(spiral_dc,&p_arr,pc);
 }
 
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+
+DCDel(spiral_dc);

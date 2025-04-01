@@ -63,9 +63,9 @@ U0 AnimateTask(I64)
   F64 time=tS;
   while (TRUE)
   {
-    for (ita=0;ita<PARTICLE_MAX;ita++)
+    for (itc=0;itc<PARTICLE_MAX;itc++)
     {
-      pp=&p_arr[ita];
+      pp=&p_arr[itc];
       pp->x+=pp->dx;
       pp->y+=pp->dy;
 
@@ -77,12 +77,12 @@ U0 AnimateTask(I64)
 
     if (tS-time>2)
     {
-      for (ita=0;ita<NUM_GROUPS;ita++)
+      for (itc=0;itc<NUM_GROUPS;itc++)
       {
-        if (colors[ita]+1==COLORS_NUM) colors[ita]=BLUE;
+        if (colors[itc]+1==COLORS_NUM) colors[itc]=BLUE;
         //Take out DKGRAY check, if your DKGRAY is visible
         // in your COLOR scheme.
-        else colors[ita]=colors[ita]+(1+(colors[ita]==DKGRAY));
+        else colors[itc]=colors[itc]+(1+(colors[itc]==DKGRAY));
       }
       time=tS;
     }
@@ -95,6 +95,8 @@ U64 Init2() return RandU16%5+1;
 U64 Init3() return -1+((RandU16%2==0)*2);
 U0 Init()
 {
+  p_deinit(&p_arr,PARTICLE_MAX);
+
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
@@ -106,6 +108,7 @@ U0 Init()
     pp->dy=Init2*Init3;
   }
 }
+
 ANIMATE_TASK=TRUE;
 
 #include "grmain"

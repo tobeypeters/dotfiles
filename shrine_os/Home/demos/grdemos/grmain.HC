@@ -108,7 +108,7 @@ else
       default:
         KEY_DOWN();
         break;
-    }
+    }
   while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
 }
 

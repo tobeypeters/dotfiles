@@ -3,6 +3,9 @@
 
 #include "~/theme" // This also loads tp_Compositor.HC
 #include "~/patchos/patchos"
+
+WALL_MEM=WALL_CPU=FALSE;
+
 #include "~/demos/grdemos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
 
@@ -43,9 +46,7 @@ U0 StartUpTasks()
 
   Silent; //Turn off output, to the screen.
 
-  CTask *user1;
-
-  user1=User;
+  CTask *user1=User;
 
 //  XTalk(user1,"#include \"AdLib/OPL2\";\n");
 
@@ -60,4 +61,4 @@ U0 StartUpTasks()
 
 StartUpTasks;
 
-started = TRUE;
+started = TRUE;

@@ -26,11 +26,11 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
+CDC *sier_dc=DCNew(WIDTH,HEIGHT);
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
-
-  p_plot(dc,&p_arr,PARTICLE_MAX);
+  GrBlot(dc,0,0,sier_dc);
 }
 
 U0 AnimateTask(I64){}
@@ -70,8 +70,13 @@ U0 Init()
     y2=pp->y;
     pp->color=GREEN;
   }
+
+  DCFill(sier_dc,BLACK);
+  p_plot(sier_dc,&p_arr,PARTICLE_MAX);
 }
 
 #include "grmain"
 
 p_deinit(&p_arr,PARTICLE_MAX);
+
+DCDel(sier_dc);
