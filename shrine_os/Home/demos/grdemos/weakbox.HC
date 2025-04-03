@@ -24,16 +24,17 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-//#include "models/crobot"
+#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
 //#include "models/zoid"
 //#include "models/x-wing"
-#include "models/shotgun"
+//#include "models/shotgun"
+//#include "models/zombicide"
 
-#define FOV_ANGLE 45.0
+#define FOV_ANGLE 90.0
 
-I64 CUBE_DISTANCE=6;
+I64 CUBE_DISTANCE=100;
 
 //These are defined in each "model" file :start
 /*#define MODEL_NAME "basic_shape"

@@ -19,6 +19,9 @@
       Adds new functions to the system and overrides existing ones,
       with added or deleted functionality.
 
+  I WIL REFACTOR AND MAKE SURE I FULLY MARK TERRYS CODE.  I ACTUALLY HAVE AN
+  IDEA, WHERE I'LL BE ABLE TO PATCH HIS CODE, WHILE KEEPING HIS CODE SEPERATE.
+
   The HijackFunc() code is taken from TinkerOS, which is a very enhanced
   branch of TempleOS.
 
@@ -35,6 +38,7 @@
    * Head
    * I64InLst
    * InRangeI64
+   * ToLower
    * KeyAndCont
    * More
    * Tail
@@ -48,6 +52,8 @@
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
 */
+#help_index "Patched"
+
 Bool WALL_CPU=TRUE,
      WALL_MEM=TRUE;
 
@@ -89,7 +95,7 @@ Bool I64InLst(I64 inval,...)
 }
 
 public U8 ToLower(U8 chr)
-{//Convert a char to lowercase
+{//Cvt char to upper case.
   if (InRangeI64(chr,'A','Z'))
     return chr+32;
   return chr;
