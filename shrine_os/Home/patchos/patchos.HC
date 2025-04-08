@@ -1569,6 +1569,12 @@ public U8 drvtextattrget(U8 drv_let=0)
     return BLACK<<4|WHITE;
 }
 
+public U0 ctrlaltt(I64)
+{
+  DocEntryRan=FALSE;
+  User;
+}
+
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&IsDir,&isdir);
 HijackFunc(&FileFind,&filefind);
@@ -1581,3 +1587,4 @@ HijackFunc(&Del,&del);
 HijackFunc(&Move,&move);
 HijackFunc(&ACDWordsLoad,&acdwordsload);
 HijackFunc(&DocEntryRun,&docentryrun);
+HijackFunc(&CtrlAltT,&ctrlaltt);

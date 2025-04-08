@@ -23,12 +23,9 @@ U0 UserStartUp()
 {
   spawned; //Ran when a user is spawned.
 
-  if (started) {
-
-   if (DocEntryRan)
-     DocEntryRan=FALSE;
-   else
-     templeDOS;
+  if (started)
+  {
+    if (!DocEntryRan) templeDOS;
   }
 }
 
