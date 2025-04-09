@@ -25,9 +25,10 @@ I64 cur_mouse_x,
     cur_mouse_y,
     prev_mouse_x,
     prev_mouse_y,
+    iaa,iab,iac,
     ida,idb,idc,
-    ita,itb,itc,itp,
-    ch,sc;
+    ita,itb,itc,
+    itp,ch,sc;
 
 cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=

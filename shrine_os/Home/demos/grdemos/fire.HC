@@ -20,7 +20,7 @@
 */
 Cd(__DIR__);;
 
-U64 PIXEL_SIZE=1;
+I64 PIXEL_SIZE=4;
 
 #define FIRE_WIDTH (WIDTH/PIXEL_SIZE)
 #define FIRE_HEIGHT (HEIGHT/PIXEL_SIZE)
@@ -37,11 +37,13 @@ U64 Color_IDX(U64 color)
     if (COLORS[itc]==color) return itc;
 }
 
-U64 Init2(U64 x,U64 y) return y*FIRE_WIDTH+x;
+I64 ft,ft2;
 
+U64 Init2(U64 x,U64 y) return y*FIRE_WIDTH+x;
 U0 DrawIt(CTask *task,CDC *dc)
 {
-  DCFill(dc,BLACK);
+//  DCFill(dc,BLACK);
+
 //  p_plot(dc,&p_arr,PARTICLE_MAX);
 
   for (ida=0;ida<FIRE_HEIGHT;ida++)
@@ -49,10 +51,17 @@ U0 DrawIt(CTask *task,CDC *dc)
     for (idb=0;idb<FIRE_WIDTH;idb++)
     {
       pp=&p_arr[Init2(idb,ida)];
+
       dc->color=pp->color;
       GrRect(dc,pp->x,pp->y,PIXEL_SIZE,PIXEL_SIZE);
+      GrRegPoly(dc,pp->x,pp->y,ft,ft2,PIXEL_SIZE);
+      GrFloodFill(dc,pp->x,pp->y);
+
     }
   }
+
+  dc->color=LTBLUE;
+  GrPrint(dc,FONT_WIDTH,FONT_HEIGHT,"FLAME STYLE: %d.%d",ft,ft2);
 }
 
 U64 color,dx,nx,rnd;
@@ -77,7 +86,6 @@ U0 AnimateTask(I64)
           p_arr[Init2(nx,ita-1)].color=COLORS[color];
 
         } else p_arr[Init2(itb,ita-1)].color=COLORS[0];
-
       }
     }
 
@@ -91,23 +99,27 @@ U0 Init()
   {
     for (itb=0;itb< FIRE_WIDTH;itb++)
     {
-      itc=Init2(itb,ita);
-      p_arr[itc].color=COLORS[4];
-      p_arr[itc].x=itb*PIXEL_SIZE;
-      p_arr[itc].y=ita*PIXEL_SIZE;
+      pp=&p_arr[Init2(itb,ita)];
+      pp->color=COLORS[4];
+      pp->x=itb*PIXEL_SIZE;
+      pp->y=ita*PIXEL_SIZE;
     }
   }
 
+  ft=1,ft2=5;
 }
-
 U0 key_down()
 {
   switch (sc.u8[0]) {
     case 72:
     case 80:
-      PIXEL_SIZE+=2-((sc.u8[0]==80)*4);
-      Init;
+      ft+=(sc.u8[0]==72)-(sc.u8[0]==80);
+      ft=Max(0,ft)%10;
       break;
+    case 75:
+    case 77:
+      ft2+=(sc.u8[0]==77)-(sc.u8[0]==75);
+      ft2=Max(0,ft2)%10;
   }
 }
 KEY_DOWN=&key_down;

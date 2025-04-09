@@ -19,7 +19,8 @@
       Graphics related stuff.
 */
 /*
-//I'll incorporate Terry's wherever I can or where I feel I should.
+//I'll incorporate Terry's wherever I can or atleast leave
+//commented out code, which shows how to use his to do whatever I'm doing.
 public _extern _D3_ADD CD3 *D3Add(CD3 *sum,CD3 *d1,CD3 *d2); //sum=d1+d2
 public _extern _D3_ADD_EQU CD3 *D3AddEqu(CD3 *sum,CD3 *d); //sum+=d
 public _extern _D3_COPY CD3 *D3Copy(CD3 *dst,CD3 *src); //dst=src
@@ -43,8 +44,10 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 //#define PARTICLE_MAX 10
 #include "grglobs"
 
+//You really need to do WinBorder;WinMax; first and
+//Get Fs->pix_width & Fs->pix_heigh. That'll give you 640 x 472
 #define WIDTH ToF64(GR_WIDTH)
-#define HEIGHT ToF64(GR_HEIGHT)
+#define HEIGHT ToF64(GR_HEIGHT-9)
 #define WIDTH_CENTER ToF64(WIDTH/2)
 #define HEIGHT_CENTER ToF64(HEIGHT/2)
 

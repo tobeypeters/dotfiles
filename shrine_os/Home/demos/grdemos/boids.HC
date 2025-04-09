@@ -54,7 +54,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
     GrRegPoly(dc,bx,by,1,1,4);
     GrFloodFill(dc,bx,by);
-
+
 /*  Manually draw a triangle
     bvx=pp->vx;bvy=pp->vy;
 

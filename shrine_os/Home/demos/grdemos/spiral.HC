@@ -17,7 +17,7 @@
 /*spiral.HC
   Description:
       Generates a spiral.
-*/
+*/
 Cd(__DIR__);;
 
 #define PARTICLE_MAX GR_WIDTH*GR_HEIGHT

@@ -31,7 +31,7 @@ MenuPush(
 
 SettingsPush;
 AutoComplete;
-WinBorder; WinMax;
+WinBorder;WinMax;
 DocCursor; DocClear;
 
 Init;

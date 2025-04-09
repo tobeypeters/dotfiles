@@ -20,7 +20,7 @@
 */
 #help_index "Windows"
 
-//U8 AMPM[2][0]={"PM","AM"};
+U8 AMPM[2][2]={"PM","AM"};
 
 /*U8 base_eye[8] = {
     0b00111100,
@@ -45,13 +45,13 @@ U8 base_eye2[8] = {
 };
 
 I64 ita,itb;
-
 U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 EyeWall(CTask *task)
 {
   CDC *dc2=DCAlias(gr.dc2,task);
 
   CCPU *c;
+//AdamLog("%s\n",task->task_name);
 
   U64 px,py,chr=127,c_percent,pos,
       cb=FONT_WIDTH*2+1,mem,oc;
@@ -85,7 +85,7 @@ U0 EyeWall(CTask *task)
   pos=GR_WIDTH-(FONT_WIDTH*17)-1;
   GrPrint(dc2,pos,0,"%3tZ%02d/%02d%02d:%02d%s",
 	  ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,
-	  ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);  
+	  ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);
 
   if (WALL_CPU)
   {
@@ -118,5 +118,7 @@ U0 EyeWall(CTask *task)
 
   DCDel(dc2);
 }
+
+sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
 
 gr.fp_wall_paper=&EyeWall;

@@ -27,9 +27,9 @@
       graphic.
 */
 
-//Updated strnew: https://github.com/tobeypeters/dotfiles/blob/master/shrine_os/Home/td/strings.HC#L86
+//Updated str_new: https://github.com/tobeypeters/dotfiles/blob/master/shrine_os/Home/td/strings.HC#L86
 //zFree: https://github.com/tobeypeters/dotfiles/blob/master/shrine_os/Home/td/utils.HC#L104
-#include "strings"
+#include "~/td/strings"
 #include "~/td/utils"
 
 #define BLKCNT 255
@@ -60,7 +60,7 @@ U0 gen_gr(U8 *res=NULL) {
 
     if (!str_cmp(prev_chr,res[0])) {
       zFree(prev_chr);
-      prev_chr=strnew(res[0]);
+      prev_chr=str_new(res[0]);
 
       "Color{%s};\n",blocks[res[0]][0];
     }
@@ -78,7 +78,7 @@ U0 gen_gr(U8 *res=NULL) {
   return;
 }
 
-U8 *warrior=strnew(,,
+U8 *warrior=str_new(,,
   "xxxxxx  ",
   " xxxxxx ",
   "xxx0|0x ",
@@ -90,7 +90,7 @@ U8 *warrior=strnew(,,
 );
 "warrior";gen_gr(warrior);
 
-U8 *shield=strnew(,,
+U8 *shield=str_new(,,
   "0 000 0 ",
   "00   00 ",
   "0  0  0 ", 
@@ -102,7 +102,7 @@ U8 *shield=strnew(,,
 );
 "shield";gen_gr(shield);
 
-U8 *cross=strnew(,,
+U8 *cross=str_new(,,
   "cccccccc",
   "ccc cccc",
   "ccc0cccc", 
@@ -114,17 +114,29 @@ U8 *cross=strnew(,,
 );
 "cross";gen_gr(cross);
 
+U8 *window=str_new(,,
+  "cccccccc",
+  "ccc cccc",
+  "ccc0cccc", 
+  "c 0c0 cc",
+  "ccc0cccc",
+  "ccc cccc",
+  "ccc cccc",
+  "cccccccc"
+);
+"window";gen_gr(window);
+
 /*
      xx
     xxxx
-    xx x x
+    xx x x
     x   xx
    xxxxxxx
   xxxxxx x
   xx xx x
   x xxx 
 */
-U8 *ghost=strnew(,,
+U8 *ghost=str_new(,,
  "ccc00ccc",
  "cc0000cc",
  "cc00c0c0",
@@ -136,7 +148,7 @@ U8 *ghost=strnew(,,
 );
 "ghost";gen_gr(ghost);
 
-U8 *grip=strnew(,,
+U8 *grip=str_new(,,
  "        ",
  "  w  w  ",
  "  wb wb ",
@@ -148,7 +160,7 @@ U8 *grip=strnew(,,
 );
 "grip";gen_gr(grip);
 
-U8 *cross2=strnew(,,
+U8 *cross2=str_new(,,
  "   b    ",
  "   bw   ",
  "bbbbbbb ",
