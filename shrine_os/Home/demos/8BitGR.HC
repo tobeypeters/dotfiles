@@ -46,7 +46,7 @@ blocks[124][0]="RED"; //|
 
 blocks[98][0]="BLACK"; //b <-black
 blocks[119][0]="WHITE"; //w <-white
-blocks[116][0]="LTCYAN"; //t <-"transparent"
+blocks[116][0]="LTGREY"; //t <-"transparent"
 
 U0 gen_gr(U8 *res=NULL) {
   U8 *prev_chr='\0';
@@ -115,21 +115,21 @@ U8 *cross=str_new(,,
 "cross";gen_gr(cross);
 
 U8 *window=str_new(,,
-  "cccccccc",
-  "ccc cccc",
-  "ccc0cccc", 
-  "c 0c0 cc",
-  "ccc0cccc",
-  "ccc cccc",
-  "ccc cccc",
-  "cccccccc"
+  "bbbbbbbt",
+  "btttttbt",
+  "btttttbt",
+  "bbbbbbbb",
+  "tbtttttb",
+  "tbtttttb",
+  "tbbbbbbb",
+  "tttttttt"
 );
 "window";gen_gr(window);
 
 /*
      xx
     xxxx
-    xx x x
+    xx x x
     x   xx
    xxxxxxx
   xxxxxx x

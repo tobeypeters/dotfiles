@@ -3,7 +3,7 @@ $FG,2$$TX+CX,"Customized Help"$$FG,15$
 $TR-C,"Shortcuts"$
 $ID,2$$MA,LM="Cd;Dir;\n"$
 $MA,LM="Cd(\"::/Kernel\");ls;\n"$
-$MA,LM="Cd(\"::/Kernel\\BlkDev\");ls;\n"$
+$MA,LM="Cd(\"::/Kernel/BlkDev\");ls;\n"$
 $MA,LM="Cd(\"::/Demo/Lectures\");ls;\n"$
 $MA,LM="Cd(\"::/Demo\");ls;\n"$
 $MA,LM="Cd(\"::/Doc\");ls;\n"$

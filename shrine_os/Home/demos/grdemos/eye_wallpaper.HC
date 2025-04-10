@@ -44,14 +44,25 @@ U8 base_eye2[8] = {
     0b00000000
 };
 
+U8 terminal[8] = {
+    0b00000000,
+    0b01111111,
+    0b01000001,
+    0b11000001,
+    0b11111111,
+    0b10000010,
+    0b11111110,
+    0b00000000
+};
+
 I64 ita,itb;
+U64 chr2=128;
 U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 EyeWall(CTask *task)
 {
   CDC *dc2=DCAlias(gr.dc2,task);
 
   CCPU *c;
-//AdamLog("%s\n",task->task_name);
 
   U64 px,py,chr=127,c_percent,pos,
       cb=FONT_WIDTH*2+1,mem,oc;
@@ -62,6 +73,7 @@ U0 EyeWall(CTask *task)
   Date2Struct(&ds,Now+local_time_offset);
 
   text.font[chr]=base_eye2[0](U64);
+  text.font[chr2]=terminal[0](U64);
 
   angle=ATan2(ms.pos.y/(GR_HEIGHT/8)-4,
                 ms.pos.x/(GR_WIDTH/8)-4);
@@ -119,6 +131,41 @@ U0 EyeWall(CTask *task)
   DCDel(dc2);
 }
 
-sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
+U0 DrawTermChar(CDC *dc,CCtrl *c)
+{//I use a char, so I don't have to compress the file.
+  GrPrint(dc,c->left,c->top,"%c",chr2);
+}
 
+U0 LeftClickTerminal(CCtrl *,I64,I64,Bool down)  if (down) User;
+
+//CCtrl *TerminalButt()
+U0 TerminalButt()
+{
+  CCtrl *c=ACAlloc(sizeof(CCtrl));
+
+  c->win_task=sys_winmgr_task;
+  c->flags=CTRLF_SHOW;
+  c->type=CTRLT_GENERIC;
+  c->draw_it=&DrawTermChar;
+  c->left_click=&LeftClickTerminal;
+
+  c->left=GR_WIDTH-FONT_WIDTH*2;
+  c->right=GR_WIDTH-FONT_WIDTH;
+  c->top=GR_HEIGHT-FONT_HEIGHT*2;
+  c->bottom=GR_HEIGHT-FONT_HEIGHT;
+
+  QueIns(c,sys_winmgr_task->last_ctrl);
+  TaskDerivedValsUpdate(sys_winmgr_task);
+
+//  return c;
+}
+
+sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
+
+//Not sure how safe these next two lines are.
+//Should be? But, this removes the orig terminal button.
+QueRem(sys_winmgr_task->last_ctrl);
+TaskDerivedValsUpdate(sys_winmgr_task);
+
+TerminalButt;
 gr.fp_wall_paper=&EyeWall;
