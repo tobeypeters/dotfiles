@@ -190,7 +190,7 @@ U0 ls_entry_info(CDirEntry *entry=NULL)
   {
     if (entry->size >= gb)
       "%8d.%dg",entry->size/gb,
-                 (entry->size-((entry->size/gb)*gb))/gt;
+                 (entry->size-(entry->size/gb)*gb)/gt;
     else "%8d",entry->size;
   }
 

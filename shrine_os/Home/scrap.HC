@@ -1,5 +1,5 @@
-#include "./td/strings"
-#include "./shared"
+//#include "./td/strings"
+//#include "./shared"
 
 //"\n";
 //
@@ -1067,4 +1067,9 @@ ACDirList;*/
 
 "Mem:%010X\n",i;
 */
-//KeyAndCont;
+
+U8  buf[15]="Big Bufford\n";
+U8 *buf2=MAllocIdent(&buf);
+"" buf2;
+
+//KeyAndCont;

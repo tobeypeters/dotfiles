@@ -138,7 +138,6 @@ U0 DrawTermChar(CDC *dc,CCtrl *c)
 
 U0 LeftClickTerminal(CCtrl *,I64,I64,Bool down)  if (down) User;
 
-//CCtrl *TerminalButt()
 U0 TerminalButt()
 {
   CCtrl *c=ACAlloc(sizeof(CCtrl));
@@ -156,14 +155,13 @@ U0 TerminalButt()
 
   QueIns(c,sys_winmgr_task->last_ctrl);
   TaskDerivedValsUpdate(sys_winmgr_task);
-
-//  return c;
 }
 
 sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
 
 //Not sure how safe these next two lines are.
-//Should be? But, this removes the orig terminal button.
+//Should be. If this works like I think, it 100% is.
+//Anyhow, this removes the orig terminal button.
 QueRem(sys_winmgr_task->last_ctrl);
 TaskDerivedValsUpdate(sys_winmgr_task);
 
