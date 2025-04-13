@@ -1075,8 +1075,8 @@ Free(buf2);
 */
 
 I64 *TupleI64(...)
-{//Build a Tuple out of up to 8 numbers.
-  I64 it=-1;
+{//Build a compressed Tuple, out of up to 8 numbers.
+  I64 it=-1;
 
   if (0<argc>8) return it;
 
@@ -1125,4 +1125,4 @@ StrScan(buf4,"%s %s",&buf5,&buf6);
 "buf4: [%s %s]\n",buf5,buf6;
 Free(buf4);
 
-//KeyAndCont;
+//KeyAndCont;
