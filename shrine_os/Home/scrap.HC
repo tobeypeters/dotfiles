@@ -705,7 +705,7 @@ Main();
   FINDER::
     PUSH RBP
     MOV  RBP,RSP
-    MOV  RAX,"str_cmp"
+    MOV  RAX,"Find"
     CALL &Find
     LEAVE
     RET
@@ -1074,9 +1074,9 @@ U8 *buf2=MAllocIdent(&buf);
 Free(buf2);
 */
 
-I64 *TupleI64(...)
+/*I64 *TupleI64(...)
 {//Build a compressed Tuple, out of up to 8 numbers.
-  I64 it=-1;
+  I64 it=-1;
 
   if (0<argc>8) return it;
 
@@ -1116,13 +1116,13 @@ StrScan(buf3,"%d %d",&aa,&bb);
 "buf3: [%d %d]\n",aa,bb;
 Free(buf3);
 
-//U8 tuple
+//U8* tuple
 U8 *buf4=Tuple("%s %s","hello","world");
 "buf4: [%s]\n",buf4;
 U8 *buf5=MAlloc(sizeof(U8)*128),
    *buf6=MAlloc(sizeof(U8)*128);
 StrScan(buf4,"%s %s",&buf5,&buf6);
 "buf4: [%s %s]\n",buf5,buf6;
-Free(buf4);
-
+Free(buf4);Free(buf5);Free(buf6);
+*/
 //KeyAndCont;
