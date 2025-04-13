@@ -1068,8 +1068,61 @@ ACDirList;*/
 "Mem:%010X\n",i;
 */
 
-U8  buf[15]="Big Bufford\n";
+/*U8  buf[15]="Big Bufford\n";
 U8 *buf2=MAllocIdent(&buf);
 "" buf2;
-
-//KeyAndCont;
+Free(buf2);
+*/
+
+I64 *TupleI64(...)
+{//Build a Tuple out of up to 8 numbers.
+  I64 it=-1;
+
+  if (0<argc>8) return it;
+
+  for (;argc>0;argc--)
+    it.u8[argc-1]=argv[argc-1];
+
+  return it;
+}
+
+//The return value of TupleI64, should be be checked for -1.
+//Cause, each .u8 will be equal to 255.
+I64 tup=TupleI64(67,68,69,70,71,72,73,76);
+"tup: [%d] %d %d %d\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
+
+U8 *Tuple(U8 *fmt,...)
+{
+  if (argc==0) return NULL;
+
+  U8 *st=NULL;
+
+  U64 i;
+
+  for (i=0;i<argc;i++)
+    st=MStrPrint(fmt,st,argv[i]);
+
+  st=MStrUtil(st,SUF_REM_LEADING);
+  st=MStrUtil(st,SUF_REM_TRAILING);
+
+  return st;
+}
+
+//I64/U64 tuple
+U8 *buf3=Tuple("%s %d",68,69);
+I64 aa, bb;
+"buf3: [%s]\n",buf3;
+StrScan(buf3,"%d %d",&aa,&bb);
+"buf3: [%d %d]\n",aa,bb;
+Free(buf3);
+
+//U8 tuple
+U8 *buf4=Tuple("%s %s","hello","world");
+"buf4: [%s]\n",buf4;
+U8 *buf5=MAlloc(sizeof(U8)*128),
+   *buf6=MAlloc(sizeof(U8)*128);
+StrScan(buf4,"%s %s",&buf5,&buf6);
+"buf4: [%s %s]\n",buf5,buf6;
+Free(buf4);
+
+//KeyAndCont;
