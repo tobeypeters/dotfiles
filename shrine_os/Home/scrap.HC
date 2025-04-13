@@ -1074,7 +1074,7 @@ U8 *buf2=MAllocIdent(&buf);
 Free(buf2);
 */
 
-/*I64 *TupleI64(...)
+I64 *TupleI64(...)
 {//Build a compressed Tuple, out of up to 8 numbers.
   I64 it=-1;
 
@@ -1098,12 +1098,11 @@ U8 *Tuple(U8 *fmt,...)
   U8 *st=NULL;
 
   U64 i;
-
+
   for (i=0;i<argc;i++)
     st=MStrPrint(fmt,st,argv[i]);
 
-  st=MStrUtil(st,SUF_REM_LEADING);
-  st=MStrUtil(st,SUF_REM_TRAILING);
+  StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING);
 
   return st;
 }
@@ -1124,5 +1123,5 @@ U8 *buf5=MAlloc(sizeof(U8)*128),
 StrScan(buf4,"%s %s",&buf5,&buf6);
 "buf4: [%s %s]\n",buf5,buf6;
 Free(buf4);Free(buf5);Free(buf6);
-*/
+
 //KeyAndCont;
