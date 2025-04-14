@@ -1089,22 +1089,20 @@ I64 *TupleI64(...)
 //The return value of TupleI64, should be be checked for -1.
 //Cause, each .u8 will be equal to 255.
 I64 tup=TupleI64(67,68,69,70,71,72,73,76);
-"tup: [%d] %d %d %d\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
+"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
 
-U8 *Tuple(U8 *fmt,...)
+U8 Tuple(U8 *fmt,...)
 {
   if (argc==0) return NULL;
 
   U8 *st=NULL;
 
   U64 i;
-
+
   for (i=0;i<argc;i++)
     st=MStrPrint(fmt,st,argv[i]);
 
-  StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING);
-
-  return st;
+  return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
 }
 
 //I64/U64 tuple
@@ -1112,7 +1110,7 @@ U8 *buf3=Tuple("%s %d",68,69);
 I64 aa, bb;
 "buf3: [%s]\n",buf3;
 StrScan(buf3,"%d %d",&aa,&bb);
-"buf3: [%d %d]\n",aa,bb;
+"buf3: [%d %d]\n\n",aa,bb;
 Free(buf3);
 
 //U8* tuple
@@ -1121,7 +1119,8 @@ U8 *buf4=Tuple("%s %s","hello","world");
 U8 *buf5=MAlloc(sizeof(U8)*128),
    *buf6=MAlloc(sizeof(U8)*128);
 StrScan(buf4,"%s %s",&buf5,&buf6);
-"buf4: [%s %s]\n",buf5,buf6;
+"buf4: [%s %s]\n\n",buf5,buf6;
 Free(buf4);Free(buf5);Free(buf6);
+
 
 //KeyAndCont;

@@ -32,7 +32,7 @@ Cd(__DIR__);;
 //#include "models/shotgun"
 //#include "models/zombicide"
 
-#define FOV_ANGLE 90.0
+#define FOV_ANGLE 90.0
 
 I64 CUBE_DISTANCE=100;
 

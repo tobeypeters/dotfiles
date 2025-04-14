@@ -32,7 +32,7 @@ MenuPush(
 SettingsPush;
 AutoComplete;
 WinBorder;WinMax;
-DocCursor; DocClear;
+DocCursor;DocClear;
 
 Init;
 
@@ -42,7 +42,7 @@ Fs->draw_it=&DrawIt;
 
 if (MOUSE_TRAP)
 {
-  I64 arg1,arg2,mx,my;;
+  I64 arg1,arg2;;
 
   Bool mouse_ldown=FALSE,
        mouse_rdown=FALSE,
@@ -52,11 +52,13 @@ if (MOUSE_TRAP)
 try {
 if (MOUSE_TRAP)
 {
+  cur_mouse_x=ms.pos.x;cur_mouse_y=ms.pos.y-8;
   while (run) {
     sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN+1<<MSG_MS_L_DOWN+
              1<<MSG_MS_L_UP+1<<MSG_MS_R_DOWN+1<<MSG_MS_R_UP+1<<MSG_MS_MOVE);
-    cur_mouse_x=ms.pos.x;cur_mouse_y=ms.pos.y;
+    cur_mouse_x=arg1;cur_mouse_y=arg2;
     switch (sc) {
+    start:
       case MSG_MS_L_DOWN:
         mouse_ldown=TRUE;
         MS_L_DOWN();
@@ -69,9 +71,6 @@ if (MOUSE_TRAP)
           if(mouse_ldown) MS_MOVE_LDOWN();
           if(mouse_rdown) MS_MOVE_RDOWN();
         }
-
-        prev_mouse_x=mx;
-        prev_mouse_y=my;
 
         break;
       case MSG_MS_L_UP:
@@ -86,16 +85,20 @@ if (MOUSE_TRAP)
         break;
       case MSG_MS_R_UP:
         mouse_rdown=FALSE;
-        MS_R_UP();
+        MS_R_UP();
 
         break;
+    end:
+      prev_mouse_x=cur_mouse_x;
+      prev_mouse_y=cur_mouse_y;
+      break;
       case MSG_KEY_DOWN:
         if (arg1==0) ch=arg2.u8[0]; else ch=arg1;
         KEY_DOWN();
         if (arg1==CH_SHIFT_ESC||arg1==CH_ESC)
           run=FALSE;
     }
-//    Refresh;
+    Refresh;
   }
 }
 else
