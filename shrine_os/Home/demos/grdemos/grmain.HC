@@ -85,7 +85,7 @@ if (MOUSE_TRAP)
         break;
       case MSG_MS_R_UP:
         mouse_rdown=FALSE;
-        MS_R_UP();
+        MS_R_UP();
 
         break;
     end:

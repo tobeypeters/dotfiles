@@ -28,12 +28,12 @@ I64 cur_mouse_x,
     iaa,iab,iac,
     ida,idb,idc,
     ita,itb,itc,
-    itp,ch,sc;
+    itp,ch,sc,mx,my;
 
 cur_mouse_x=cur_mouse_y=
 prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
-ita=itb=itc=0;
+ita=itb=itc=mx=my=0;
 
 Bool ANIMATE_TASK,MOUSE_TRAP,
      MOUSE_NODOWN; //Update mouse postion values

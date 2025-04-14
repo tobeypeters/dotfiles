@@ -29,12 +29,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-dc->color=LTRED;
-  GrPlot(dc,0,0);
-//  U64 mx=cur_mouse_x,my=cur_mouse_y;
-//You don't have to subtract 8, if you use 
-//cur_mouse_x and cur_mouse_y.  But it's "laggy".
-  U64 mx=ms.pos.x,my=ms.pos.y-8;
+  MouseXY(task,&mx,&my);
 
   dc->color=RED;
   GrRect(dc,200,200,100,100);

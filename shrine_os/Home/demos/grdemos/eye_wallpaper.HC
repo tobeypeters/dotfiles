@@ -56,7 +56,7 @@ U8 terminal[8] = {
 };
 
 I64 ita,itb;
-U64 chr2=128;
+U64 chr2=128,mx,my;
 U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 EyeWall(CTask *task)
 {
@@ -75,8 +75,9 @@ U0 EyeWall(CTask *task)
   text.font[chr]=base_eye2[0](U64);
   text.font[chr2]=terminal[0](U64);
 
-  angle=ATan2(ms.pos.y/(GR_HEIGHT/8)-4,
-                ms.pos.x/(GR_WIDTH/8)-4);
+  MouseXY(task,&mx,&my);
+  angle=ATan2(my/(GR_HEIGHT/8)-4,
+                mx/(GR_WIDTH/8)-4);
 
   px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
 

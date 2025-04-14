@@ -121,8 +121,8 @@ U0 Init()
 
 U0 ms_move()
 {
-  rotation_x=(ms.pos.y/WIDTH)*M_PI*2;
-  rotation_y=(ms.pos.x/HEIGHT)*M_PI*2;
+  rotation_x=(cur_mouse_y/WIDTH)*M_PI*2;
+  rotation_y=(cur_mouse_x/HEIGHT)*M_PI*2;
 }
 U0 key_down(){
   switch(ch)

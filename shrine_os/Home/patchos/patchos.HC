@@ -337,6 +337,42 @@ public U0 Tail(U8 *filename,U64 disp=10)
   More(filename,disp,TRUE);
 }
 
+I64 *TupleI64(...)
+{//Build a compressed Tuple, out of up to 8 numbers.
+  I64 it=-1;
+
+  if (0<argc>8) return it;
+
+  for (;argc>0;argc--)
+    it.u8[argc-1]=argv[argc-1];
+
+  return it;
+}
+
+//The return value of TupleI64, should be be checked for -1.
+//Cause, each .u8 will be equal to 255.
+I64 tup=TupleI64(67,68,69,70,71,72,73,76);
+"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
+
+U8 Tuple(U8 *fmt,...)
+{
+  if (argc==0) return NULL;
+
+  U8 *st=NULL;
+
+  U64 i;
+
+  for (i=0;i<argc;i++)
+    st=MStrPrint(fmt,st,argv[i]);
+
+  return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
+}
+
+public U0 MouseXY(CTask *task,U64 *x,U64 *y)
+{
+  *x=ms.pos.x-task->pix_left;
+  *y=ms.pos.y-task->pix_top;
+}
 public Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,

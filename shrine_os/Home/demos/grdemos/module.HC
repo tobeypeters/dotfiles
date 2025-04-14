@@ -27,6 +27,7 @@ Cd(__DIR__);;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   //DCFill(dc,BLACK);
+  //MouseXY(task,&mx,&my);
   //p_plot(dc,&p_arr,PARTICLE_MAX);
   /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
