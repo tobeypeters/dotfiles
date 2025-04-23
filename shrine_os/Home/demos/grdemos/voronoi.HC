@@ -91,9 +91,9 @@ U0 AnimateTask(I64)
 {
   while (TRUE) {
 
-    for (itc=0;itc<PARTICLE_MAX;itc++)
+    for (iaa=0;iaa<PARTICLE_MAX;iaa++)
     {
-      pp=&p_arr[itc];
+      pp=&p_arr[iaa];
 
       xx=pp->x+pp->vx*delta_time;
       yy=pp->y+pp->vy*delta_time;
@@ -115,7 +115,7 @@ U0 AnimateTask(I64)
 
     GenVoronoi;
 
-    Sleep(120);
+    Sleep(30);
   }
 }
 
@@ -149,6 +149,6 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
-
 DCDel(vor_dc);
+
+p_init;

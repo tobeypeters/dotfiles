@@ -35,9 +35,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  for (ita=0;ita<PARTICLE_MAX;ita++)
+  for (ida=0;ida<PARTICLE_MAX;ida++)
   {
-    pp=&p_arr[ita];
+    pp=&p_arr[ida];
 
     dc->color=pp->color;
     GrRect(dc,pp->x,pp->y,2,2);
@@ -47,9 +47,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 U0 AnimateTask(I64)
 {
   while (TRUE) {
-    for (itc=0;itc<PARTICLE_MAX;itc++)
+    for (iaa=0;iaa<PARTICLE_MAX;iaa++)
     {
-      pp=&p_arr[itc];
+      pp=&p_arr[iaa];
 
       dx=pp->x-vortex.x;
       dy=pp->y-vortex.y;
@@ -69,7 +69,7 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_init;
 
   vortex.x=WIDTH_CENTER;
   vortex.y=HEIGHT_CENTER,
@@ -93,4 +93,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

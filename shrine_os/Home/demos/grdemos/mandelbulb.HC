@@ -46,14 +46,14 @@ U0 DrawIt(CTask *task,CDC *dc)
   else
     GrPrint(dc,FONT_WIDTH,FONT_HEIGHT*2,"Hold left mouse button down and drag the cursor around,\nto rotate the mandelbulb.");
 
-  for(ita=0;ita<pc;ita++)
+  for(ida=0;ida<pc;ida++)
   {
-    p_DUP(pp,&p_arr[ita]);
+    p_DUP(pp,&p_arr[ida]);
 
     //Apply rotation
     rot_plot(pp);
 
-    dc->color=MapI64(ita,0,pc-1,0,15);
+    dc->color=MapI64(ida,0,pc-1,0,15);
     GrPlot(dc,(pp->x*WIDTH/4)+WIDTH/2,(pp->y*HEIGHT/4)+HEIGHT/2);
   }
 
@@ -173,4 +173,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

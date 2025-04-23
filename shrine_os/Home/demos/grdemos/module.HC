@@ -28,10 +28,10 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   //DCFill(dc,BLACK);
   //MouseXY(task,&mx,&my);
-  //p_plot(dc,&p_arr,PARTICLE_MAX);
-  /*for (ita=0;ita<PARTICLE_MAX;ita++)
+  //p_plot(dc);
+  /*for (ida=0;ida<PARTICLE_MAX;ida++)
   {
-    pp=&p_arr[ita];
+    pp=&p_arr[ida];
   }*/
 }
 
@@ -45,7 +45,7 @@ U0 AnimateTask(I64)
 U0 Init()
 {
   //p_deinit(&p_arr,PARTICLE_MAX);
-  //p_init(&p_arr,PARTICLE_MAX);
+  //p_init;
   /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
   }*/
@@ -77,4 +77,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

@@ -37,7 +37,7 @@ U0 AnimateTask(I64){}
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_init;
 
   U64 x2,y2;
 
@@ -79,6 +79,6 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
-
 DCDel(sier_dc);
+
+p_init;

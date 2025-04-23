@@ -36,9 +36,9 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  for (ita=0;ita<pc;ita++)
+  for (ida=0;ida<pc;ida++)
   {
-    p_DUP(pp,&p_arr[ita]);
+    p_DUP(pp,&p_arr[ida]);
 
     //Apply rotation
     rot_plot(pp);
@@ -67,12 +67,11 @@ U0 AnimateTask(I64)
   }
 }
 
-F64 x,y,z;
-
 U64 COLORS[3]={LTBLUE,CYAN,WHITE};
 U0 Init()
 {
   F64 u,v;
+
   for (ita=0;ita<RESOLUTION;ita++)
   {
     u=2*M_PI*ita/RESOLUTION;
@@ -99,4 +98,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

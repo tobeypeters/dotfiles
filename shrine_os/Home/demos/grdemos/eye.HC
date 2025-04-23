@@ -79,4 +79,3 @@ ANIMATE_TASK=TRUE;
 Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
-

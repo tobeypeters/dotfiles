@@ -17,7 +17,7 @@
 /*spiral.HC
   Description:
       Generates a spiral.
-*/
+*/
 Cd(__DIR__);;
 
 #define PARTICLE_MAX GR_WIDTH*GR_HEIGHT
@@ -43,7 +43,7 @@ U0 AnimateTask(I64){}
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_init;
  
   F64 radius=0,
        angle=0,
@@ -76,6 +76,6 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;
 
 DCDel(spiral_dc);

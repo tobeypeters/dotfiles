@@ -42,6 +42,8 @@ public _extern _D3_UNIT CD3 *D3Unit(CD3 *d); //To unit vect
 public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 */
 //#define PARTICLE_MAX 10
+//U64 itp;
+
 #include "grglobs"
 
 //You really need to do WinBorder;WinMax; first and
@@ -63,7 +65,7 @@ class PARTICLE_BASE:CD3
 {
   Bool active;
   U64 color;
-}
+};
 class PARTICLE:PARTICLE_BASE
 {
   F64 vx,vy,vz, //Velocity x,y,z
@@ -80,37 +82,46 @@ class PARTICLE:PARTICLE_BASE
 
 PARTICLE p_arr[PARTICLE_MAX];
 
-//PARTICLE *pp=MAlloc(sizeof(PARTICLE)); //External use pointer
 PARTICLE *pp=NULL,*ppp=NULL; //External use pointer
 
+U0 p_DUP(U8 *dst,U8 *src)
+{//Duplicat a PARTICLE
+  MemCpy(dst,src,sizeof(PARTICLE));
+}
+
 U0 p_init2(PARTICLE *p)
-{//Helper function for p_init
+{//(Re)Init a PARTICLE element
   MemSet(p,0,sizeof(PARTICLE));
   p->color=WHITE;
-
-//  p->color=RandU16%COLORS_NUM;
 }
-U0 p_init(U8 *p,I64 p_cnt)
-{//Initialize the elements in p_arr
-  PARTICLE *pp;
-
+U0 p_init(U8 *p=p_arr,U64 p_cnt=PARTICLE_MAX)
+{//Re(Init) a PARTICLE array
+  MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
+}
+U0 p_init_rep(U8 *p=p_arr,PARTICLE *el,I64 p_cnt=PARTICLE_MAX)
+{//(Re)Init a PARTICLE array,populating it with a given PARTICLE
   for (p_cnt--;p_cnt>=0;p_cnt--)
   {
     pp=p+sizeof(PARTICLE)*p_cnt;
-    p_init2(pp);
+    p_DUP(pp,el);
   }
 }
-U0 p_deinit(U8 *p,U64 p_cnt)
-{//Clear the elements in p_arr
-  MemSet(p,'\0',sizeof(PARTICLE)*p_cnt);
-}
-U0 p_plot(CDC *dc,U8 *p,U64 p_cnt)
+
+/*PARTICLE tp;
+tp.angle=37;tp.speed=68;
+
+p_init_rep(,&tp);
+"speed: %2.8f\n",p_arr[0].speed;
+"angle: %2.8f\n",p_arr[0].angle;
+"speed: %2.8f\n",p_arr[4].speed;
+"angle: %2.8f\n\n",p_arr[7].angle;
+*/
+U0 p_plot(CDC *dc,U8 *p=p_arr,U64 p_cnt=PARTICLE_MAX)
 {
-  PARTICLE *pp;
   for(itp=0;itp<p_cnt;itp++)
   {
     pp=p+sizeof(PARTICLE)*itp;
-    dc->color=pp->color;
+    dc->color=pp->color; //If you used p_init... WHITE
 
     GrPlot(dc,pp->x,pp->y);
   }
@@ -125,10 +136,6 @@ CD3 *p_2CD3(F64 x=0,F64 y=0,F64 z=0)
 
   return ret;
 }
-U0 p_DUP(U8 *dst,U8 *src)
-{
-  MemCpy(dst,src,sizeof(PARTICLE));
-}
 
 U0 spherize(PARTICLE *z)
 {//Convert to polar coordinates
@@ -137,56 +144,23 @@ U0 spherize(PARTICLE *z)
   z->pp=ATan2(z->y,z->x);
 }
 
-#define SHP_CUBE_POINTS 8
-#define SHP_CUBE_EDGES  12
-#define SHP_PYRAMID_POINTS 5
-#define SHP_PYRAMID_EDGES  8
-
-//Cube definition
-CD3 cube_points[SHP_CUBE_POINTS]={
-{-1.0,-1.0,-1.0}, //Front bottom left
-{ 1.0,-1.0,-1.0}, //Front bottom right
-{ 1.0, 1.0,-1.0}, //Front top right
-{-1.0, 1.0,-1.0}, //Front top left
-{-1.0,-1.0, 1.0}, //Back bottom left
-{ 1.0,-1.0, 1.0}, //Back bottom right
-{ 1.0, 1.0, 1.0}, //Back top right
-{-1.0, 1.0, 1.0}  //Back top left
-};
-CD2 cube_edges[SHP_CUBE_EDGES]={
-  {0,1},{1,2},{2,3},{3,0},
-  {4,5},{5,6},{6,7},{7,4},
-  {0,4},{1,5},{2,6},{3,7},
-};
-
-//Pyramid definition
-CD3 pyramid_points[SHP_PYRAMID_POINTS] = {
-{-1.0,-1.0,-1.0}, //Front bottom left
-{ 1.0,-1.0,-1.0}, //Front bottom right
-{-1.0,-1.0, 1.0}, //Back bottom left
-{ 1.0,-1.0, 1.0}, //Back bottom right
-{ 0.0, 1.0, 0.0}  //Top center
-};
-CD2 pyramid_edges[SHP_PYRAMID_EDGES] = {
-  {0,1},{1,2},{2,3},{3,0},
-  {0,4},{1,4},{2,4},{3,4}
-};
-
-F64 Lerp(F64 a,F64 b,F64 t) {
+F64 Lerp(F64 a,F64 b,F64 t)
+{//Linearly interpolate between two points
   return a+t*(b-a);
 }
 F64 Dist(F64 a,F64 b)
-{
+{//Distance Squared
   return a*a+b*b;
 }
 F64 DistSqrt(F64 a,F64 b)
-{
+{//Distance
   return Sqrt(Dist(a,b));
 }
 F64 DistTaxi2(F64 x1,F64 y1,F64 x2,F64 y2){
   return Abs(x2-x1)+Abs(y2-y1);
 }
-F64 DistTaxi(CD3 *p1,CD3 *p2){
+F64 DistTaxi(CD3 *p1,CD3 *p2)
+{//Manhattan distance between two points
   return DistTaxi2(p1->x,p1->y,p2->x,p2->y);
 }
 
@@ -198,12 +172,12 @@ aa.x=aa.y=20;
 U64 dx=Abs(a.x-aa.x),
     dy=Abs(a.y-aa.y);
 
-"DistTaxi: %2.8f\n",DistTaxi(&a,&aa);
-"D3Dist: %2.8f\n",D3Dist(&a,&aa);
-"Dist: %2.8f\n",Dist(dx,dy);
-"DistSqrt: %2.8f\n",DistSqrt(dx,dy);
-"Sqrt(Dist): %2.8f\n",Sqrt(Dist(dx,dy));
-"D3DistSqr: %2.8f\n",D3DistSqr(&a,&aa);
+"DistTaxi         : %2.8f\n",DistTaxi(&a,&aa);
+"D3Dist    (Terry): %2.8f\n",D3Dist(&a,&aa);
+"DistSqrt         : %2.8f\n",DistSqrt(dx,dy);
+
+"D3DistSqr (Terry): %2.8f\n",D3DistSqr(&a,&aa);
+"Dist             : %2.8f\n\n",Dist(dx,dy);
 */
 
 U0 rot_base(CD3 *rp,F64 *ux,F64 *uy,F64 *uz)
@@ -224,7 +198,7 @@ U0 rot_plot2(CD3 *rp,CD3 *up)
   rot_base(&rp,&up->x,&up->y,&up->z);
 };
 U0 rot_plot(PARTICLE *rp)
-{
+{//Rotate a PARTICLE
   F64 x,y,z;
 
   rot_base(rp,&x,&y,&z);

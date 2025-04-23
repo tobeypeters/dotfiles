@@ -72,19 +72,19 @@ U0 DrawIt(CTask *task,CDC *dc)
   GrPrint(dc,fh,fh*2,"Mouse: (%2.8f,%2.8f)\n",rotation_x,rotation_y);
   GrPrint(dc,fh,fh*3,"Lines: %s",tf_arr[draw_lines]);
 
-  for (ita=0;ita<OBJ_POINTS;ita++)
+  for (ida=0;ida<OBJ_POINTS;ida++)
   {
-    dc->color=p_arr[ita].z;
-    GrPlot(dc,p_arr[ita].x,p_arr[ita].y);
+    dc->color=p_arr[ida].z;
+    GrPlot(dc,p_arr[ida].x,p_arr[ida].y);
 
-//    GrPrint(dc,p_arr[ita].x,p_arr[ita].y,"%d",ita);
+//    GrPrint(dc,p_arr[ida].x,p_arr[ida].y,"%d",ida);
   }
 
   if (draw_lines)
   {
-    for (ita=0;ita<OBJ_EDGES;ita++)
+    for (ida=0;ida<OBJ_EDGES;ida++)
     {
-      ls=v_obj[ita].x;le=v_obj[ita].y;
+      ls=v_obj[ida].x;le=v_obj[ida].y;
 
       GrLine(dc,p_arr[ls].x,p_arr[ls].y,p_arr[le].x,p_arr[le].y);
     }
@@ -95,18 +95,18 @@ U0 AnimateTask(I64)
 {
   while (TRUE)
   {
-    for (ita=0;ita<OBJ_POINTS;ita++)
+    for (iaa=0;iaa<OBJ_POINTS;iaa++)
     {
-      D3Copy(&rotated,&p_obj[ita]);
+      D3Copy(&rotated,&p_obj[iaa]);
 
       rot_plot(&rotated);
       rotated.z+=CUBE_DISTANCE;
 
-      p_arr[ita].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
-      p_arr[ita].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
+      p_arr[iaa].x=p2DTop3D(rotated.x,rotated.z)*WIDTH+WIDTH/2;
+      p_arr[iaa].y=p2DTop3D(rotated.y,rotated.z)*HEIGHT+HEIGHT/2;
 
-      if (p_arr[ita].x<WIDTH_CENTER-10-RandU16%10) p_arr[ita].z=LTGRAY;
-      else p_arr[ita].z=GREEN;
+      if (p_arr[iaa].x<WIDTH_CENTER-10-RandU16%10) p_arr[iaa].z=LTGRAY;
+      else p_arr[iaa].z=GREEN;
     }
 
     Sleep(30);
@@ -153,5 +153,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-//p_deinit(&p_arr,PARTICLE_MAX);
-
+p_init;

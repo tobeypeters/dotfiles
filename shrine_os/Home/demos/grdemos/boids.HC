@@ -43,12 +43,12 @@ U0 DrawIt(CTask *task,CDC *dc)
   DCFill(dc,BLACK);
 
   dc->color=LTGREEN;
-  for (ita=0;ita<PARTICLE_MAX;ita++)
+  for (ida=0;ida<PARTICLE_MAX;ida++)
   {
-    pp=&p_arr[ita];
-    if (ita>PARTICLE_MAX/4) dc->color=LTBLUE;
-    if (ita>(PARTICLE_MAX/4)*2) dc->color=LTRED;
-    if (ita>(PARTICLE_MAX/4)*3) dc->color=YELLOW;
+    pp=&p_arr[ida];
+    if (ida>PARTICLE_MAX/4) dc->color=LTBLUE;
+    if (ida>(PARTICLE_MAX/4)*2) dc->color=LTRED;
+    if (ida>(PARTICLE_MAX/4)*3) dc->color=YELLOW;
 
     bx=pp->x; by=pp->y;
 
@@ -85,9 +85,9 @@ U0 AnimateTask(I64)
 {
   while (TRUE)
   {
-    for (itb=0;itb<PARTICLE_MAX;itb++)
+    for (iaa=0;iaa<PARTICLE_MAX;iaa++)
     {
-      pp=&p_arr[itb];
+      pp=&p_arr[iaa];
 
       cx=cy=0; // Cohesion x,y
       ax=ay=0; // Alignment x,y
@@ -95,11 +95,11 @@ U0 AnimateTask(I64)
 
       count=0;
 
-      for (itc=0;itc<PARTICLE_MAX;itc++)
+      for (iab=0;iab<PARTICLE_MAX;iab++)
       {
-        if (itb==itc) goto continue;
+        if (iaa==iab) goto continue;
 
-        ppp=&p_arr[itc];
+        ppp=&p_arr[iab];
 
         //Instead of doing something like spatial hashing.
         if (Abs(pp->x-ppp->x)>VIEW_RADIUS/2||
@@ -164,7 +164,7 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
+  p_init;
 
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
@@ -185,4 +185,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

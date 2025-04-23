@@ -68,24 +68,24 @@ U64 color,dx,nx,rnd;
 U0 AnimateTask(I64)
 {
   while (TRUE) {
-    for (ita=1;ita<FIRE_HEIGHT;ita++)
+    for (iaa=1;iaa<FIRE_HEIGHT;iaa++)
     {
-      for (itb=0;itb<FIRE_WIDTH;itb++)
+      for (iab=0;iab<FIRE_WIDTH;iab++)
       {
-        ppp=&p_arr[Init2(itb,ita)];
+        ppp=&p_arr[Init2(iab,iaa)];
 
         if ((color=Color_IDX(ppp->color))>0)
         {
           rnd=RandU16&3;
-          nx=itb-rnd+1;
+          nx=iab-rnd+1;
           if (nx<0) nx=0;
           if (nx>=FIRE_WIDTH) nx=FIRE_WIDTH-1;
 
           color=color-(rnd&1);
 
-          p_arr[Init2(nx,ita-1)].color=COLORS[color];
+          p_arr[Init2(nx,iaa-1)].color=COLORS[color];
 
-        } else p_arr[Init2(itb,ita-1)].color=COLORS[0];
+        } else p_arr[Init2(iab,iaa-1)].color=COLORS[0];
       }
     }
 
@@ -130,4 +130,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

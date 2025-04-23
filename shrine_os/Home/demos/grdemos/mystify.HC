@@ -36,18 +36,18 @@ U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
 
-  for (ita=0;ita<NUM_GROUPS;ita++)
+  for (ida=0;ida<NUM_GROUPS;ida++)
   {
-    dc->color=colors[ita];
+    dc->color=colors[ida];
 
-    lgoff=(ita*POINTS_PER_LINE);
-    for (itb=0;itb<NUM_LINES;itb++)
+    lgoff=(ida*POINTS_PER_LINE);
+    for (idb=0;idb<NUM_LINES;idb++)
     {
-      loff=GAP*itb;
-      for (itc=0;itc<POINTS_PER_LINE-1;)
+      loff=GAP*idb;
+      for (idc=0;idc<POINTS_PER_LINE-1;)
       {
-        dc->color=colors[ita];
-        pp=&p_arr[itc+lgoff];ppp=&p_arr[++itc+lgoff];
+        dc->color=colors[ida];
+        pp=&p_arr[idc+lgoff];ppp=&p_arr[++idc+lgoff];
         GrLine(dc,pp->x+loff,pp->y+loff,ppp->x+loff,ppp->y+loff);
       }
 
@@ -63,9 +63,9 @@ U0 AnimateTask(I64)
   F64 time=tS;
   while (TRUE)
   {
-    for (itc=0;itc<PARTICLE_MAX;itc++)
+    for (iaa=0;iaa<PARTICLE_MAX;iaa++)
     {
-      pp=&p_arr[itc];
+      pp=&p_arr[iaa];
       pp->x+=pp->dx;
       pp->y+=pp->dy;
 
@@ -77,12 +77,12 @@ U0 AnimateTask(I64)
 
     if (tS-time>2)
     {
-      for (itc=0;itc<NUM_GROUPS;itc++)
+      for (iaa=0;iaa<NUM_GROUPS;iaa++)
       {
-        if (colors[itc]+1==COLORS_NUM) colors[itc]=BLUE;
+        if (colors[iaa]+1==COLORS_NUM) colors[iaa]=BLUE;
         //Take out DKGRAY check, if your DKGRAY is visible
         // in your COLOR scheme.
-        else colors[itc]=colors[itc]+(1+(colors[itc]==DKGRAY));
+        else colors[iaa]=colors[iaa]+(1+(colors[iaa]==DKGRAY));
       }
       time=tS;
     }
@@ -95,8 +95,7 @@ U64 Init2() return RandU16%5+1;
 U64 Init3() return -1+((RandU16%2==0)*2);
 U0 Init()
 {
-  p_deinit(&p_arr,PARTICLE_MAX);
-
+  p_init;
   for (ita=0;ita<PARTICLE_MAX;ita++)
   {
     pp=&p_arr[ita];
@@ -115,4 +114,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;

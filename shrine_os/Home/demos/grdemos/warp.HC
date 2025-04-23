@@ -32,10 +32,8 @@ Bool cf=FALSE; //Chaotic flag
 
 U8 COLORS[4]={LTGREEN,WHITE,YELLOW,LTCYAN};
 
-U64 o,cw=WIDTH_CENTER,ch=HEIGHT_CENTER;
-
 PARTICLE cp,np;
-
+U64 o,cw=WIDTH_CENTER,ch=HEIGHT_CENTER;
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
@@ -45,8 +43,8 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   o=8;
 
-  for (ita=0;ita<PARTICLE_MAX;ita++) {
-    pp=&p_arr[ita];
+  for (ida=0;ida<PARTICLE_MAX;ida++) {
+    pp=&p_arr[ida];
 
     cp.x=pp->x; cp.y=pp->y;
     np.x=pp->px; np.y=pp->py;
@@ -91,9 +89,9 @@ U0 Init()
 U0 AnimateTask(I64)
 {
   while (TRUE) {
-    for (ita=0;ita<PARTICLE_MAX;ita++)
+    for (iaa=0;iaa<PARTICLE_MAX;iaa++)
     {
-      pp=&p_arr[ita];
+      pp=&p_arr[iaa];
 
       // Increase the distance, which simulates moving outward
       pp->distance+=pp->speed;
@@ -144,4 +142,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_deinit(&p_arr,PARTICLE_MAX);
+p_init;
