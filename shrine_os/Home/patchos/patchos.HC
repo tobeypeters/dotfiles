@@ -82,29 +82,15 @@ public U0 SwapFuncs(U8 *funca,U8 *funcb)
 
 U8 *tf_arr[2]={"FALSE","TRUE"};
 
-public Bool InRangeI64(I64 val,I64 min,I64 max) return min<=val<=max;
-Bool I64InLst(I64 inval,...)
-{//Check to see if an I64 is in a given argv list.
-  U64 i=0;
-
-  for (;i<argc;i++) {
-    if (inval==argv[i])
-      return TRUE;
-  }
-  return FALSE;
+//#help_index "Mouse"
+public U0 MouseXY(CTask *task,U64 *x,U64 *y)
+{
+  *x=ms.pos.x-task->pix_left;
+  *y=ms.pos.y-task->pix_top;
 }
+//#help_index ""
 
-public U8 ToLower(U8 chr)
-{//Cvt char to upper case.
-  if (InRangeI64(chr,'A','Z'))
-    return chr+32;
-  return chr;
-}
-
-public U0 ADocClear()
-{//Clear Adams doc window
-  Adam("DocClear;");
-}
+#help_index "Math"
 public F64 ATan2(F64 y,F64 x)
 {//Two number Arc Tangent (Inverse Tan) or four quads.
   F64 angle=0;
@@ -122,15 +108,14 @@ public F64 ATan2(F64 y,F64 x)
   if (x<0&&y>=0) return angle+ã; //quad 2
   else return angle-ã;           //quad 3
 }
-public U0 Cdr()
-{//Change to the root directory of the current drive
-  Cd("/");
+public Bool InRangeI64(I64 val,I64 min,I64 max)
+{//Take a I64 number and determine if it's in a given range.
+  return min<=val<=max;
 }
 public F64 MapF64(F64 value,F64 in_min,F64 in_max,F64 out_min,F64 out_max)
 {//Take a F64 number from one range and scale it to a different range.
   return (value-in_min)*(out_max-out_min)/(in_max-in_min)+out_min;
 }
-
 public I64 MapI64(I64 value,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
 {//Take a I64 number from one range and scale it to a different range.
   return ((value-in_min)*(out_max-out_min)+(in_max-in_min)/2)/(in_max-in_min)+out_min;
@@ -153,6 +138,71 @@ public U32 ToU32(U32 vu)
 */
   return vu;
 }
+I64 *TupleI64(...)
+{//Build a compressed Tuple, out of up to 8 numbers.
+  I64 it=-1;
+
+  if (0<argc>8) return it;
+
+  for (;argc>0;argc--)
+    it.u8[argc-1]=argv[argc-1];
+
+  return it;
+}
+
+//The return value of TupleI64, should be be checked for -1.
+//Cause, each .u8 will be equal to 255.
+I64 tup=TupleI64(67,68,69,70,71,72,73,76);
+//"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
+
+U8 Tuple(U8 *fmt,...)
+{
+  if (argc==0) return NULL;
+
+  U8 *st=NULL;
+
+  U64 i;
+
+  for (i=0;i<argc;i++)
+    st=MStrPrint(fmt,st,argv[i]);
+
+  return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
+}
+
+#help_index ""
+
+#help_index "Char/Conversion"
+public U8 ToLower(U8 chr)
+{//Cvt char to upper case.
+  if (InRangeI64(chr,'A','Z'))
+    return chr+32;
+  return chr;
+}
+#help_index ""
+
+#help_index "DolDoc"
+public U0 ADocClear()
+{//Clear Adams doc window
+  Adam("DocClear;");
+}
+public U0 Cdr()
+{//Change to the root directory of the current drive
+  Cd("/");
+}
+#help_index ""
+
+Bool I64InLst(I64 inval,...)
+{//Check to see if an I64 is in a given argv list.
+  U64 i=0;
+
+  for (;i<argc;i++) {
+    if (inval==argv[i])
+      return TRUE;
+  }
+  return FALSE;
+}
+
+#help_index "Keyboard Devices;Char/Input;StdIn"
 public U0 KeyAndCont()
 {//Print "Press any key to continue ..." and wait for non-zero $$LK,"ASCII",A="MN:CH_CTRLA"$$ key.
  //Doesn't print any newline characters and "clears" the line after you
@@ -162,6 +212,7 @@ public U0 KeyAndCont()
   GetChar(,FALSE);
   PutChars(CH_CTRLY);
 }
+#help_index ""
 
 public U8 *ExtFilename(U8 *str)
 {//Extracts filename "file.HC" from say an absolute path "C:/Home/file.HC" 
@@ -173,6 +224,7 @@ public U8 *ExtFilename(U8 *str)
     return str;
 }
 
+#help_index "AutoComplete/Dictionary"
 public U0 acdwordsload() {}
 public U0 ACDirList()
 {//Adds current directory filenames to the autocomplete
@@ -205,8 +257,72 @@ public U0 ACDirList()
 
   DirTreeDel(tmpde1);
 }
+#help_index ""
 
+#help_index "Graphics/GR Files;"\
+	"File/Cmd Line (Typically);DolDoc/Cmd Line (Typically);"\
+	"StdOut;Cmd Line (Typically)"
+public U64 LineCnt(U8 *filename)
+{//Get the line count, for a specified file.
+  U64 res=0;
+  CDirEntry *tmpde=NULL;
+  if (tmpde=FilesFind(filename)) {
+    res=LineRep1(tmpde);
+    DirTreeDel(tmpde);
+  }
+  return res;
+}
+public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
+{//Output txt or graphic file to the command line,
+ //one screen at a time.
+ //prn_lines limits the line count
+  if (!FileFind(filename)) return;
 
+  U8 *buffer=NULL;
+
+  I64 size=0;
+
+  buffer=FileRead(filename,&size,DOCF_PLAIN_TEXT);
+
+  U64 ml=Fs->win_bottom-Fs->win_top,
+      cl=0, //Current line count
+      dc=0; //Display count
+
+  Bool di=FALSE; //Display the char(s)
+
+  U64 lc=LineCnt(filename)-prn_lines;
+
+  while(*buffer!=TK_EOF)
+  {
+    if (less) di=(cl>=lc);
+    else di=(cl<prn_lines);
+
+    if (di) {
+      "%c",*buffer;
+      if (cl==prn_lines) break;
+    }
+
+    if (*buffer=='\n') { cl++; dc+=di; }
+
+    if (di)
+      if (dc==ml) { KeyAndCont; dc=0; }
+
+    buffer++;
+  }
+
+  "\n";
+}
+public U0 Head(U8 *filename,U64 disp=10)
+{//Print out the first 10 lines, of the specified file.
+  More(filename,disp);
+}
+public U0 Tail(U8 *filename,U64 disp=10)
+{//Print out the last 10 lines, of the specified file.
+  More(filename,disp,TRUE);
+}
+#help_index ""
+
+#help_index "File/Cmd Line (Typically);Cmd Line (Typically)"
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
 		     Bool del_dir,Bool print_msg)
 
@@ -277,102 +393,6 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public U64 LineCnt(U8 *filename)
-{//Get the line count, for a specified file.
-  U64 res=0;
-  CDirEntry *tmpde=NULL;
-  if (tmpde=FilesFind(filename)) {
-    res=LineRep1(tmpde);
-    DirTreeDel(tmpde);
-  }
-  return res;
-}
-public U0 More(U8 *filename,U64 prn_lines=U64_MAX,Bool less=FALSE)
-{//Output txt or graphic file to the command line,
- //one screen at a time.
- //prn_lines limits the line count
-  if (!FileFind(filename)) return;
-
-  U8 *buffer=NULL;
-
-  I64 size=0;
-
-  buffer=FileRead(filename,&size,DOCF_PLAIN_TEXT);
-
-  U64 ml=Fs->win_bottom-Fs->win_top,
-      cl=0, //Current line count
-      dc=0; //Display count
-
-  Bool di=FALSE; //Display the char(s)
-
-  U64 lc=LineCnt(filename)-prn_lines;
-
-  while(*buffer!=TK_EOF)
-  {
-    if (less) di=(cl>=lc);
-    else di=(cl<prn_lines);
-
-    if (di) {
-      "%c",*buffer;
-      if (cl==prn_lines) break;
-    }
-
-    if (*buffer=='\n') { cl++; dc+=di; }
-
-    if (di)
-      if (dc==ml) { KeyAndCont; dc=0; }
-
-    buffer++;
-  }
-
-  "\n";
-}
-
-public U0 Head(U8 *filename,U64 disp=10)
-{//Print out the first 10 lines, of the specified file.
-  More(filename,disp);
-}
-public U0 Tail(U8 *filename,U64 disp=10)
-{//Print out the last 10 lines, of the specified file.
-  More(filename,disp,TRUE);
-}
-
-I64 *TupleI64(...)
-{//Build a compressed Tuple, out of up to 8 numbers.
-  I64 it=-1;
-
-  if (0<argc>8) return it;
-
-  for (;argc>0;argc--)
-    it.u8[argc-1]=argv[argc-1];
-
-  return it;
-}
-
-//The return value of TupleI64, should be be checked for -1.
-//Cause, each .u8 will be equal to 255.
-I64 tup=TupleI64(67,68,69,70,71,72,73,76);
-"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
-
-U8 Tuple(U8 *fmt,...)
-{
-  if (argc==0) return NULL;
-
-  U8 *st=NULL;
-
-  U64 i;
-
-  for (i=0;i<argc;i++)
-    st=MStrPrint(fmt,st,argv[i]);
-
-  return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
-}
-
-public U0 MouseXY(CTask *task,U64 *x,U64 *y)
-{
-  *x=ms.pos.x-task->pix_left;
-  *y=ms.pos.y-task->pix_top;
-}
 public Bool isdir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
@@ -406,6 +426,7 @@ cleanup:
   Free(mask);
   return res;
 }
+#help_index ""
 
 public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
 	U8 *name,CDirEntry *_res,I64 fuf_flags=0)
@@ -413,7 +434,7 @@ public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
 public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
 	CDirEntry *_res,I64 fuf_flags=0)
 
-//#define FUF_NO_ATAPI_CHECK	99 //FileFind
+#help_index "File/Program Routines"
 public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
@@ -524,6 +545,9 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 
   return res;
 }
+#help_index ""
+
+#help_index "DolDoc/Cmd Line (Typically);Cmd Line (Typically)"
 public Bool ed(U8 *link_st,I64 edf_dof_flags=0)
 {//Invoke document editor.
   U8 *filename,*needle_str;
@@ -697,7 +721,9 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   }
   return res;
 }
+#help_index ""
 
+#help_index "DolDoc/Output;StdOut/DolDoc"
 //DocPutKey changes should really just be put,
 //in ~/HomeKeyPlugIns.HC.
 public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
@@ -1433,7 +1459,9 @@ public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
   if (!(doc->flags&DOCF_DONT_SWAP_OUT))
     Yield;
 }
+#help_index ""
 
+#help_index "DolDoc/Task;StdOut/Task"
 public CDoc *docbordernew(CDoc *pdoc)
 {//Make new std border doc.
   CDocEntry *doc_e;
@@ -1488,6 +1516,8 @@ public U0 doctermnew()
   WinScrollsInit(Fs);
   Raw(OFF);
 }
+#help_index ""
+#help_index "DolDoc"
 public Bool DocEntryRan=FALSE;
 public I64 docentryrun(CDoc *doc,CDocEntry *doc_e,
 	Bool exited,I64 *_has_action=NULL)
@@ -1592,7 +1622,7 @@ er_done:
   if (_has_action) *_has_action=has_action;
   return res;
 }
-
+#help_index ""
 
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
 
@@ -1604,6 +1634,7 @@ public U8 drvtextattrget(U8 drv_let=0)
   else
     return BLACK<<4|WHITE;
 }
+#help_index ""
 
 public U0 ctrlaltt(I64)
 {

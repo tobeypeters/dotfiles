@@ -42,6 +42,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   dc->bkcolor=BLACK;
   dc->collision_cnt=0;
   GrCircle(dc,mx,my,30);
+  GrRect(dc,mx,my,30,30);
   dc->color=YELLOW;
   GrCircle(dc,mx,my,30);
 
@@ -50,6 +51,7 @@ U0 DrawIt(CTask *task,CDC *dc)
 
   dc->color=WHITE;
   GrPlot(dc,mx,my);
+
 }
 
 U0 AnimateTask(I64)
