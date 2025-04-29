@@ -173,10 +173,28 @@ U8 Tuple(U8 *fmt,...)
 
 #help_index "Char/Conversion"
 public U8 ToLower(U8 chr)
-{//Cvt char to upper case.
+{//Cvt char to lower case.
   if (InRangeI64(chr,'A','Z'))
     return chr+32;
   return chr;
+}
+#help_index ""
+
+#help_index "Char/Operations;Memory"
+U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
+{//Build a str, from strings stored in argv.
+ //flush clears the buffer first. This way,
+ //keeps you from using a fmt string  & needing to know the 
+ //the format of it.
+  U64 i = 0;
+
+  if (flush) *dst = '\0';
+
+  for (;i<argc;i++) {
+    CatPrint(dst,argv[i]);
+  }
+
+  return dst;
 }
 #help_index ""
 

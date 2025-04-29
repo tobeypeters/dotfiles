@@ -18,9 +18,14 @@
   Description:
       String related functions.
 */
+//#help_index "Char/Operations"
+//#help_index "Char/Operations;Memory"
+
 U8 *str_cat(U8 **str,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
- //flush clears the buffer first.
+ //flush clears the buffer first. This way,
+ //keeps you from using a fmt string  & needing to know the 
+ //the format of it.
   U64 i = 0;
 
   if (flush) *str = '\0';
@@ -36,7 +41,7 @@ U8 str_upper(U8 *str)
   return MStrUtil(str,SUF_TO_UPPER);
 }
 U8 str_lower(U8 *str)
-{//Convert a string to lowercase. 
+{//Convert a string to lowercase. 
   return MStrUtil(str,SUF_TO_LOWER);
 }
 Bool str_cmp(U8 *stra, U8 *strb, Bool ignore_case=FALSE)
