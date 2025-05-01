@@ -79,10 +79,10 @@ U64 execute_cmd(U8 *cmd) {
 hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
-    if (str_cmp(a->args[0],"##")) { //pid
+    if (!StrCmp(a->args[0],"##")) { //pid
       buff_add(a->args[0],"pid"); goto hashit;
     }
-    if (str_cmp(a->args[0],":>")) { //touch
+    if (!StrCmp(a->args[0],":>")) { //touch
       buff_add(a->args[0],"touch"); goto hashit;
     }
 
@@ -92,7 +92,7 @@ hashit:
       if (a->args[0][1]==':') {
         if (a->count>1) { e_print(ERR_ARGC); goto answer; }
 
-        if (Fs->answer=drv_mounted(a->args[0])) {
+        if (Fs->answer=DrvMounted(a->args[0])) {
           set_prevdir;
           Drv(a->args[0][0]);
           goto error;
@@ -180,7 +180,7 @@ pickit:
   //This list can be expanded to many other commands. But,
   //since you can have two source files, with the same name,
   //like utils.HC & utils.HC.Z, I haven't expanded it ... yet.
-  if (I64_IN(idx,86)) { 
+  if (I64Cmp(idx,86)) { 
     buff_add(bufa,ExtDft(bufa,"HC"));
   }
 
@@ -198,11 +198,11 @@ pickit:
   //CMD: File(s) need to exist
   //EXCLUDE 35,201
   I64 fci=0;
-  if (I64_IN(idx,211,227)) { //cp,mv
-    if (I64_IN(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
+  if (I64Cmp(idx,211,227)) { //cp,mv
+    if (I64Cmp(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
       bav=TRUE; goto switchit; }
   }
-  if (I64_IN(idx,30,56,86,146,153,170,179,
+  if (I64Cmp(idx,30,56,86,146,153,170,179,
       182,187,194,208,211,214,224,227)) {
     if (!bav) { bufe=bufa; goto nferror; }
 
@@ -306,8 +306,8 @@ pickit:
     case 199: //cd
       if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
       if (a->count==2&&fc==0)
-        if (str_len(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
-      if (str_cmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
+        if (StrLen(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
+      if (!StrCmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
 
       bufe=StrNew(bufa);
 
@@ -388,8 +388,8 @@ pickit:
       break;
     case  81: //vol
         //Don't think drives have labels in this OS.
-        "Volume in drive %c: has no label.\n",cur_drv;
-        "Volume Serial Number is %s\n",DrvSerialNum(cur_drv);
+        "Volume in drive %c: has no label.\n",CurDrv;
+        "Volume Serial Number is %s\n",DrvSerialNum(CurDrv);
 
       break;
     case  84: //now
@@ -458,7 +458,7 @@ pickit:
       break;
     case 203: //df
       DrvRep; "\n";
-      drv_free;
+      DrvFree;
 
       break;
     case 208: //tosz
@@ -492,7 +492,7 @@ pickit:
       if (a->count==1) bufe=StrNew(".");
 
       if (a->count==2)
-        if (str_cmp(bufa,"-")) bufe=StrNew(prev_dir);
+        if (!StrCmp(bufa,"-")) bufe=StrNew(prev_dir);
       
       ls(bufe,(fc||idx==176));"\n";
 
@@ -582,12 +582,12 @@ U8 templeDOS() {
   while (TRUE)
   {
     DocBottom;
-    "\n%c:%s: ",cur_drv,Fs->cur_dir; // Display prompt
+    "\n%c:%s: ",CurDrv,Fs->cur_dir; // Display prompt
     buff_add(input,MyGetStr(GSF_SHIFT_ESC_EXIT));
 
     if (input[0]=='é') break;
 
-    if (str_cmp(input,"!!")) {
+    if (!StrCmp(input,"!!")) {
       buff_add(input,prev_cmd);
     }
 

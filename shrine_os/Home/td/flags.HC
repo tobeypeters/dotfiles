@@ -47,7 +47,7 @@
 
 Bool flag_val(U8 *flags,U64 chr)
 {//Is chr present, in the the flags we got?
-  flags=str_lower(flags);
+  flags=StrLower(flags);
   while (*flags) {
     if (*flags==chr) return TRUE;
     flags++;
@@ -111,7 +111,7 @@ U64 flags_val(U8 *flag)
   flag++;
   while (*flag&&i<7)
   {
-    res.u8[i]=I64_between(*flag,'A','Z');
+    res.u8[i]=InRangeI64(*flag,'A','Z');
 
     i++;flag++;
   }
@@ -122,7 +122,7 @@ U64 flags_val(U8 *flag)
 /*U64 cnt=flags_val("-ABCD9FG");
 "\n";
 U8 *buffer=CAlloc(sizeof(U8)*8);
-debug_prn(StrPrint(buffer,"%d",cnt.u8[7]));
+DebugPRN(StrPrint(buffer,"%d",cnt.u8[7]));
 Free(buffer);
 "\n";
 */

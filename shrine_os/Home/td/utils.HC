@@ -18,22 +18,11 @@
   Description:
       Miscellaneous functions.
 */
-Bool I64_between(I64 val, I64 min,I64 max) return min<=val<=max;
 U0 set_windowinfo(U8 *name=NULL,U8 *title=NULL)
 {//Allows you to set Fs values:
  //Fs->task_name, Fs->task_title
   if (name) StrCpy(Fs->task_name,name);
   if (title) StrCpy(Fs->task_title,title);
-}
-Bool I64_IN(I64 inval,...)
-{//Check to see if an I64 is in a given argv list.
-  U64 i=0;
-
-  for (;i<argc;i++) {
-    if (inval==argv[i])
-      return TRUE;
-  }
-  return FALSE;
 }
 U8 tern(Bool condition, U64 *first, U64 *second)
 {//Ternary operator like function.

@@ -21,48 +21,6 @@
 //#include "~/td/errors"
 //#include "~/td/utils"
 //#include "~/td/strings"
-
-U8* cur_drv() return Drv2Let(Fs->cur_dv); //Current drive letter.
-
-F64 drv_free(U8 *drv='',Bool ret_free=FALSE)
-{//Display free space for each mounted drive
- //or a specified mounted drive.
- //Or just return the free space, for a specific mounted drive.
-  CDrv *dv;
-  U64 d=26,
-       c=0,
-       i=0;
-
-  F64 s=0;
-
-  for (;i<d;i++) {
-    if (drv)
-      dv=Let2Drv(ToUpper(drv),FALSE);
-    else
-      dv=Let2Drv(i+'A',FALSE);
-
-    if (dv&&(dv->fs_type==FSt_FAT32 || dv->fs_type==FSt_REDSEA))
-    {
-      c=Drv2Let(dv);
-      s=DrvUnused(c)*100.0/(dv->size*BLK_SIZE);
-
-      if (drv&&ret_free) return s;
-
-      "%C: %3.2f%% Free\n",c,s;
-      if (drv) break;
-    }
-  }
-  return 0;
-}
-Bool drv_mounted(U8 *drv)
-{//Valid mounted drive. Must be passed in
- //Force format "C:"
-  if (StrLen(drv)!=2) return FALSE;
-  if (drv[1]!=58) return FALSE;
-
-  return ToBool(Let2Drv(ToUpper(drv[0]),FALSE));
-}
-
 #define DRV  2
 #define DIR  3
 #define FILE 4
@@ -103,13 +61,13 @@ U64 files_valid(U8 *ddfa,U8 *ddfb=NULL)
  //NOTE: Could be expanded to accept and use a fifo.
   U64 res=0;
 
-  res.u8[2]=drv_mounted(ddfa);
+  res.u8[2]=DrvMounted(ddfa);
   res.u8[3]=IsDir(ddfa);res.u8[3]=res.u8[3]&(res.u8[2]^1);
   res.u8[4]=FileFind(ddfa);res.u8[4]=res.u8[4]&(res.u8[3]^1);
   res.u8[0]=res.u8[2]|res.u8[3]|res.u8[4];
 
   if (ddfb) {
-    res.u8[5]=drv_mounted(ddfb);
+    res.u8[5]=DrvMounted(ddfb);
     res.u8[6]=IsDir(ddfb);res.u8[6]=res.u8[6]&(res.u8[5]^1);
     res.u8[7]=FileFind(ddfb);res.u8[7]=res.u8[7]&(res.u8[6]^1);
     res.u8[1]=res.u8[5]|res.u8[6]|res.u8[7];
@@ -212,7 +170,7 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   while (entry)
   {
-    if (!str_cmpEX(entry->name,,".",".."))
+    if (!StrCmpEX(entry->name,,".",".."))
     {
       "\n";
       ls_entry_info(entry);
@@ -274,7 +232,7 @@ U0 ls(U8 *files_find_mask='*',Bool tree_mode=FALSE)
 
         if (tree_mode)
         {
-          if (!str_cmpEX(entry->name,,".",".."))
+          if (!StrCmpEX(entry->name,,".",".."))
           {
 //            "$$LTBLUE$$";
             tree_top(entry->name);

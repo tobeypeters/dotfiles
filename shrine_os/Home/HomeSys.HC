@@ -2,7 +2,7 @@
 //anything you want.
 
 #include "~/theme" // This also loads tp_Compositor.HC
-#include "~/patchos/patchos"
+#include "~/patchos/patcha"
 
 WALL_MEM=WALL_CPU=FALSE;
 
@@ -49,7 +49,7 @@ U0 StartUpTasks()
 
   CTask *user1=User;
 
-  ACInit("::/Adam/*;!/*Bible.TXT*");
+  ACInit("::/Adam/*;!/*Bible.TXT*");
 
   AutoComplete; //Hide autocomplete window.
 
