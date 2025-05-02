@@ -95,6 +95,9 @@ U0 EyeWall(CTask *task)
     dc2->color=oc;
   }
 
+  if (WALL_DEBUG)
+    GrPrint(dc2,12,0,"DEBUG: %d",WALL_DEBUG_VAL);
+
   pos=GR_WIDTH-(FONT_WIDTH*17)-1;
   GrPrint(dc2,pos,0,"%3tZ%02d/%02d%02d:%02d%s",
 	  ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,

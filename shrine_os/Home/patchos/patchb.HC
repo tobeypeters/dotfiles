@@ -20,18 +20,10 @@
 */
 #help_index "Patched"
 
-Bool WALL_CPU=TRUE,
+Bool WALL_DEBUG=FALSE,
+     WALL_DEBUG_VAL=FALSE,
+     WALL_CPU=TRUE,
      WALL_MEM=TRUE;
-
-public U0 SwapFuncs(U8 *funca,U8 *funcb)
-{//Equivalent of HijackFun(); pretty much.
-  CHash* result=HashFind(funca,Fs->hash_table,HTT_FUN);
-
-  if (result && (result->type & HTT_FUN)!=0)
-    result(CHashFun *)->exe_addr=funcb;
-  else
-    Adam("\"\n\n$$LTCYAN$$:SwapFuncs error:$$FG$$ ...\n\n\";");
-}
 
 U8 *tf_arr[2]={"FALSE","TRUE"};
 

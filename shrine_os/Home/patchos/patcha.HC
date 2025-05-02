@@ -10,11 +10,6 @@
 
   http://www.github.com/tinkeros/TinkerOS
 
-  NOTE:
-  HijackFunc only really needs to be used for a few functions, once I can 
-  alter SwapFunc, I won't need it.  I'll also be able to remove Terrys code from
-  here.  I'll be able to just call his functions, from mine.  More explaination later.
-
   Sstem files modded:
 
    * FileMgr: $LK,"Mouse support removed",A="FF:/Adam/ABlkDev/FileMgr.HC.Z,mouse_removed"$
@@ -22,18 +17,33 @@
 
 #include "~/patchos/patchb"
 
-public U0 HijackFunc(U8 *orig, U8 *new)
-{// Replace a system function with a new function
+public U0 SwapFuncs(U8 *funca,U8 *funcb,CHashTable *ht=adam_task->hash_table)
+{//Swap the addresses of two functions
+  CHash* result=HashFind(funca,ht,HTT_FUN);
 
-    // Warning old function address is not saved and this overwrites it!
-    // Assembly code of old function is patched to jump to new instead.
-    // Only a reboot will restore the original function!
-    PUSHFD
-    CLI
-    *orig=0xe9;
-    *(orig+1)(U32*)=new-orig-5;
-    POPFD
+  if (result && (result->type & HTT_FUN)!=0)
+    result(CHashFun *)->exe_addr=funcb;
+  else
+    Adam("\"\n\n$$LTCYAN$$:SwapFuncs error:$$FG$$ ...\n\n\";");
 }
+
+#help_index "Hash"
+#help_file "::/Doc/Hash"
+public U0 WipeFunc(U8 *func,CHashTable *ht=adam_task->hash_table)
+{//Remove a function from adam's hash_table.
+  CHash* result=HashFind(func,ht,HTT_FUN);
+
+  if (result && (result->type & HTT_FUN)!=0)
+    HashRemDel(result,ht);
+}
+#help_index ""
+
+WipeFunc("Del");
+WipeFunc("DocBorderNew");
+WipeFunc("DocTermNew");
+WipeFunc("FileFind");
+WipeFunc("IsDir");
+WipeFunc("Move");
 
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
 		     Bool del_dir,Bool print_msg)
@@ -47,7 +57,7 @@ public extern Bool FAT32FileFind(CDrv *dv,I64 cur_dir_clus,
 public extern Bool RedSeaFileFind(CDrv *dv,I64 cur_dir_clus,U8 *name,
 	CDirEntry *_res,I64 fuf_flags=0)
 
-public I64 del(U8 *files_find_mask,Bool make_mask=FALSE,
+public I64 Del(U8 *files_find_mask,Bool make_mask=FALSE,
 Bool del_dir=FALSE,Bool print_msg=TRUE)
 {//Delete files or move files, to the "trash can".
  //To move them to the trash can, set make_mask to TRASH
@@ -55,7 +65,6 @@ Bool del_dir=FALSE,Bool print_msg=TRUE)
  //           Del("filea.HC",TRASH);
  //           Del("*",TRASH); //Deletes all files in a given directory.
  //           Del("filea.HC",TRASH+TRUE); //Allow make_mask to used as before.
-
   if (make_mask>=TRASH)
   {
     dump_exists;
@@ -85,7 +94,7 @@ Bool del_dir=FALSE,Bool print_msg=TRUE)
   }
   return res;
 }
-public Bool move(U8 *f1,U8 *f2)
+public Bool Move(U8 *f1,U8 *f2)
 {//Move files from one location to another or rename.
   if (!*f1||!*f2) return FALSE;
 
@@ -97,7 +106,7 @@ public Bool move(U8 *f1,U8 *f2)
   }
   return FALSE;
 }
-public Bool isdir(U8 *dir_name)
+public Bool IsDir(U8 *dir_name)
 {//Is a str a valid, existing Dir?
 // Desc: Added validation code and restructed the code,
 //       to prevent infinite loops and exceptions
@@ -130,7 +139,7 @@ cleanup:
   Free(mask);
   return res;
 }
-public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
+public Bool FileFind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
 {//$LK,"FUF_JUST_DIRS",A="MN:FUF_JUST_DIRS"$, $LK,"FUF_JUST_FILES",A="MN:FUF_JUST_FILES"$, $LK,"FUF_Z_OR_NOT_Z",A="MN:FUF_Z_OR_NOT_Z"$, $LK,"FUF_SCAN_PARENTS",A="MN:FUF_SCAN_PARENTS"$
 //If you pass _de, you must Free(_de->full_name);
 // Desc: Added validation code and restructed the code,
@@ -238,50 +247,6 @@ public Bool filefind(U8 *filename,CDirEntry *_de=NULL,I64 fuf_flags=0)
   }
   Free(altname);
 
-  return res;
-}
-public Bool ed(U8 *link_st,I64 edf_dof_flags=0)
-{//Invoke document editor.
-  U8 *filename,*needle_str;
-  I64 i,num;
-  Bool cont,res=FALSE;
-  CDoc *doc;
-
-  switch (i=EdLinkCvt(link_st,&filename,&needle_str,&num,edf_dof_flags)) {
-    case -1:
-      break;
-    case LK_DEF:
-      doc=DocNew;
-      doc->desc='DictDef';
-      ACDDefsPut(doc,filename,num);
-      goto ej_doc;
-    case LK_HELP_INDEX:
-      doc=DocNew;
-      doc->desc='HelpIndx';
-      DocHelpIdx(doc,filename);
-ej_doc:
-      if (!(edf_dof_flags&EDF_BAIL)) {
-	DocEd(doc);
-	DocDel(doc);
-      }
-      if (!(edf_dof_flags&EDF_WAS_WRITE))
-	res=TRUE;
-      break;
-    default:
-      if (IsRaw)
-	res=EdLite(filename,num,edf_dof_flags);
-      else {
-	cont=TRUE;
-	if (!(edf_dof_flags&EDF_BAIL) && !(LK_DOC<=i<=LK_DOC_LINE) &&
-	      !FilesFindMatch(filename,FILEMASK_TXT) &&
-	      !PopUpCancelOk(ST_WARN_ST "Not Text File\n\n"))
-	  cont=FALSE;
-	if (cont)
-	  res=DocFileEd(i,filename,needle_str,&num,edf_dof_flags);
-      }
-  }
-  Free(filename);
-  Free(needle_str);
   return res;
 }
 public Bool doced(CDoc *doc,I64 dof_flags=0)
@@ -410,6 +375,50 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
     WinHorz(old_left,old_right);
     WinVert(old_top,old_bottom);
   }
+  return res;
+}
+public Bool ed(U8 *link_st,I64 edf_dof_flags=0)
+{//Invoke document editor.
+  U8 *filename,*needle_str;
+  I64 i,num;
+  Bool cont,res=FALSE;
+  CDoc *doc;
+
+  switch (i=EdLinkCvt(link_st,&filename,&needle_str,&num,edf_dof_flags)) {
+    case -1:
+      break;
+    case LK_DEF:
+      doc=DocNew;
+      doc->desc='DictDef';
+      ACDDefsPut(doc,filename,num);
+      goto ej_doc;
+    case LK_HELP_INDEX:
+      doc=DocNew;
+      doc->desc='HelpIndx';
+      DocHelpIdx(doc,filename);
+ej_doc:
+      if (!(edf_dof_flags&EDF_BAIL)) {
+	DocEd(doc);
+	DocDel(doc);
+      }
+      if (!(edf_dof_flags&EDF_WAS_WRITE))
+	res=TRUE;
+      break;
+    default:
+      if (IsRaw)
+	res=EdLite(filename,num,edf_dof_flags);
+      else {
+	cont=TRUE;
+	if (!(edf_dof_flags&EDF_BAIL) && !(LK_DOC<=i<=LK_DOC_LINE) &&
+	      !FilesFindMatch(filename,FILEMASK_TXT) &&
+	      !PopUpCancelOk(ST_WARN_ST "Not Text File\n\n"))
+	  cont=FALSE;
+	if (cont)
+	  res=DocFileEd(i,filename,needle_str,&num,edf_dof_flags);
+      }
+  }
+  Free(filename);
+  Free(needle_str);
   return res;
 }
 //DocPutKey changes should really just be put,
@@ -1147,7 +1156,7 @@ public U0 docputkey(CDoc *doc,I64 ch=0,I64 sc=0)
   if (!(doc->flags&DOCF_DONT_SWAP_OUT))
     Yield;
 }
-public CDoc *docbordernew(CDoc *pdoc)
+public CDoc *DocBorderNew(CDoc *pdoc)
 {//Make new std border doc.
   CDocEntry *doc_e;
   CDoc *bdoc;
@@ -1187,7 +1196,7 @@ public CDoc *docbordernew(CDoc *pdoc)
 
   return bdoc;
 }
-public U0 doctermnew()
+public U0 DocTermNew()
 {//Make into term win task with Put/Display/Border docs.
   CDoc *pdoc=DocNew;
   pdoc->right_click_link=&TermRightClickLink;
@@ -1306,7 +1315,9 @@ er_done:
   return res;
 }
 U8 drv_text_attr[3]={BLACK,BLUE,RED};
+
 public U8 drvtextattrget(U8 drv_let=0)
+//public U8 drvtextattrget(U8 drv_let=0)
 {//Get color of drive.
   drv_let=Let2Let(drv_let);
   if ('A'<=drv_let<='Z')
@@ -1320,16 +1331,24 @@ public U0 ctrlaltt(I64)
   User;
 }
 
-HijackFunc(&DrvTextAttrGet,&drvtextattrget);
-HijackFunc(&IsDir,&isdir);
-HijackFunc(&FileFind,&filefind);
-HijackFunc(&DocEd,&doced);
-HijackFunc(&DocPutKey,&docputkey);
-HijackFunc(&DocBorderNew,&docbordernew);
-HijackFunc(&DocTermNew,&doctermnew);
-HijackFunc(&Ed,&ed);
-HijackFunc(&Del,&del);
-HijackFunc(&Move,&move);
+public U0 HijackFunc(U8 *orig, U8 *new)
+{// Replace a system function with a new function
+
+  // Warning old function address is not saved and this overwrites it!
+  // Assembly code of old function is patched to jump to new instead.
+  // Only a reboot will restore the original function!
+  PUSHFD
+  CLI
+  *orig=0xe9;
+  *(orig+1)(U32*)=new-orig-5;
+  POPFD
+}
+
+//NEED to figure out, how to get WipeFunc to work, with these.
 HijackFunc(&ACDWordsLoad,&acdwordsload);
-HijackFunc(&DocEntryRun,&docentryrun);
 HijackFunc(&CtrlAltT,&ctrlaltt);
+HijackFunc(&DocEd,&doced);
+HijackFunc(&DocEntryRun,&docentryrun);
+HijackFunc(&DocPutKey,&docputkey);
+HijackFunc(&DrvTextAttrGet,&drvtextattrget);
+HijackFunc(&Ed,&ed);
