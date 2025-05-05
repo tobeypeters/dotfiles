@@ -54,12 +54,58 @@ F64 p2DTop3D(F64 xy,F64 z)
 }
 
 CD3 p_arr[OBJ_POINTS];
-CD3 rotated;
+CD3 rotated,rotated2;
 
 U8 *TrueFalse(U64 bval)
 {
   if (bval) return "TRUE";
   else return "FALSE";
+}
+
+U64 ge=10;
+
+#define CUBE_SIZE 50
+
+CD3 p1,p2;
+F64 floorY = 1.0;
+F64 range = 20;
+I64 lines = 20;
+U64 x1,y1,x2,y2;
+U0 DrawFloor(CDC *dc)
+{
+
+  dc->color=YELLOW;
+    for (ida=-lines;ida<=lines; ida++) {
+        for (idb = 0; idb <= 1; idb++) {
+            if (idb) {
+              p1.x=p2.x=ida;
+            }
+            else {
+              p1.x=-range;p2.x=range;
+            }
+            p1.y=p2.y=floorY;
+            if (idb) {
+              p1.z=-range;
+              p2.z=range;
+            }
+            else {
+              p1.z=p2.z=ida;
+            }
+
+            rot_plot(&p1);rot_plot(&p2);
+            p1.z += CUBE_DISTANCE;
+            p2.z += CUBE_DISTANCE;
+
+            if (p1.z > 0.1 && p2.z > 0.1) { // avoid divide-by-zero
+                x1 = p2DTop3D(p1.x, p1.z) * WIDTH / 2 + WIDTH / 2;
+                y1 = p2DTop3D(-p1.y, p1.z) * HEIGHT / 2 + HEIGHT / 2;
+                x2 = p2DTop3D(p2.x, p2.z) * WIDTH / 2 + WIDTH / 2;
+                y2 = p2DTop3D(-p2.y, p2.z) * HEIGHT / 2 + HEIGHT / 2;
+                GrLine(dc, x1, y1, x2, y2);
+            }
+        }
+    }
+
 }
 U64 ls,le,fh=FONT_HEIGHT;
 U0 DrawIt(CTask *task,CDC *dc)
@@ -89,6 +135,8 @@ U0 DrawIt(CTask *task,CDC *dc)
       GrLine(dc,p_arr[ls].x,p_arr[ls].y,p_arr[le].x,p_arr[le].y);
     }
   }
+
+  DrawFloor(dc);
 }
 
 U0 AnimateTask(I64)
