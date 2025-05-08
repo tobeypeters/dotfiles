@@ -25,7 +25,7 @@ Cd(__DIR__);;
 #include "grdefs"
 
 //#include "models/cube"
-//#include "models/pyramid"
+#include "models/pyramid"
 //#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
@@ -47,7 +47,7 @@ CD2 *v_obj=&cube_edges;*/
 //:end
 
 Bool draw_lines=FALSE; //Maybe a define and stick in each model
-
+draw_lines=TRUE;
 F64 p2DTop3D(F64 xy,F64 z)
 {
   F64 angleRadians=(FOV_ANGLE/180.0)*M_PI;
@@ -69,47 +69,50 @@ U64 ge=10;
 #define CUBE_SIZE 50
 
 CD3 p1,p2;
-F64 floorY = 1.5;
-F64 range = 20;
-I64 lines = 20;
+F64 floorY=-1.5,
+    range=20;
+I64 lines=20;
 U64 x1,y1,x2,y2;
 U0 DrawFloor(CDC *dc)
 {
+//  dc->color=ROPF_DITHER+WHITE<<16+RED;
+  dc->color=LTRED;
+  for (ida=-lines;ida<=lines; ida++)
+  {
+    for (idb=0;idb<=1;idb++)
+    {
+      if (idb)
+      {
+        p1.x=p2.x=ida;
+        p1.z=-range;
+        p2.z=range;
+      }
+      else
+      {
+        p1.x=-range;
+        p2.x=range;
+        p1.z=p2.z=ida;
+      }
 
-  dc->color=YELLOW;
-    for (ida=-lines;ida<=lines; ida++) {
-        for (idb = 0; idb <= 1; idb++) {
-            if (idb) {
-              p1.x=p2.x=ida;
-            }
-            else {
-              p1.x=-range;p2.x=range;
-            }
-            p1.y=p2.y=floorY;
-            if (idb) {
-              p1.z=-range;
-              p2.z=range;
-            }
-            else {
-              p1.z=p2.z=ida;
-            }
+      p1.y=p2.y=floorY;
 
-            rot_plot(&p1);rot_plot(&p2);
-            p1.z += CUBE_DISTANCE;
-            p2.z += CUBE_DISTANCE;
+      rot_plot(&p1);rot_plot(&p2);
+      p1.z+=CUBE_DISTANCE;
+      p2.z+=CUBE_DISTANCE;
 
-            if (p1.z > 0.1 && p2.z > 0.1) { // avoid divide-by-zero
-                x1 = p2DTop3D(p1.x, p1.z) * WIDTH / 2 + WIDTH / 2;
-                y1 = p2DTop3D(-p1.y, p1.z) * HEIGHT / 2 + HEIGHT / 2;
-                x2 = p2DTop3D(p2.x, p2.z) * WIDTH / 2 + WIDTH / 2;
-                y2 = p2DTop3D(-p2.y, p2.z) * HEIGHT / 2 + HEIGHT / 2;
-                GrLine(dc, x1, y1, x2, y2);
-            }
-        }
+      if (p1.z>0.1&&p2.z>0.1) { // avoid divide-by-zero
+        x1=p2DTop3D(p1.x,p1.z)*WIDTH/2+WIDTH/2;
+        y1=p2DTop3D(-p1.y,p1.z)*HEIGHT/2+HEIGHT/2;
+        x2=p2DTop3D(p2.x,p2.z)*WIDTH/2+WIDTH/2;
+        y2=p2DTop3D(-p2.y,p2.z)*HEIGHT/2+HEIGHT/2;
+        GrLine(dc,x1,y1,x2,y2);
+      }
     }
+  }
 
 }
 U64 ls,le,fh=FONT_HEIGHT;
+
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
@@ -165,7 +168,7 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  rotation_x=M_PI;
+//  rotation_x=M_PI;
   rotation_y=0;
 }
 

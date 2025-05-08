@@ -14,7 +14,7 @@ text.font[129]=chat[0](U64);
 
 U0 WildWestGame()
 {
-  "===%c WILD WEST ADVENTURE %c===\n\n",129,129;
+  "===%c WILD WEST ADVENTURE %c===\n\n",129,129;
   "You're a lone cowboy riding into the dusty town of Rusty Spur.\n"
   "Do you want to stop at the saloon ";
 
@@ -71,7 +71,11 @@ U0 WildWestGame()
     }
   }
 
-  "\n=== THE END ===\n\n"; PressAKey;
+  "\n=== THE END ===\n\n";
+//CDoc *WinCursorPosSet(CTask *task,I64 msx,I64 msy,Bool set_cursor=TRUE)
+
+WinCursorPosSet(Fs,ms.pos.x,ms.pos.y);
+PressAKey;
 }
 
 SettingsPush;
