@@ -41,8 +41,8 @@ U0 DrawIt(CTask *task,CDC *dc)
   dc->color=ROP_COLLISION;
   dc->bkcolor=BLACK;
   dc->collision_cnt=0;
+  GrRect(dc,mx-15,my-15,30,30);
   GrCircle(dc,mx,my,30);
-  GrRect(dc,mx,my,30,30);
   dc->color=YELLOW;
   GrCircle(dc,mx,my,30);
 
