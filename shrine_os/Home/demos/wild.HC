@@ -14,7 +14,7 @@ text.font[129]=chat[0](U64);
 
 U0 WildWestGame()
 {
-  "===Å WILD WEST ADVENTURE === Å\n\n"
+  "===%c WILD WEST ADVENTURE === %c\n\n",129,129;
   "You're a lone cowboy riding into the dusty town of Rusty Spur.\n"
   "Do you want to stop at the saloon ";
 
