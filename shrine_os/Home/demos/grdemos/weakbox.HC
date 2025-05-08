@@ -24,7 +24,9 @@ Cd(__DIR__);;
 
 #include "grdefs"
 
-#include "models/crobot"
+//#include "models/cube"
+//#include "models/pyramid"
+//#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
 //#include "models/zoid"
@@ -67,7 +69,7 @@ U64 ge=10;
 #define CUBE_SIZE 50
 
 CD3 p1,p2;
-F64 floorY = 1.0;
+F64 floorY = 1.5;
 F64 range = 20;
 I64 lines = 20;
 U64 x1,y1,x2,y2;
