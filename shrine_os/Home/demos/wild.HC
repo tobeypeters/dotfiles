@@ -14,7 +14,7 @@ text.font[129]=chat[0](U64);
 
 U0 WildWestGame()
 {
-  "===%c WILD WEST ADVENTURE === %c\n\n",129,129;
+  "===%c WILD WEST ADVENTURE %c===\n\n",129,129;
   "You're a lone cowboy riding into the dusty town of Rusty Spur.\n"
   "Do you want to stop at the saloon ";
 
@@ -90,7 +90,8 @@ DocClear;
 Fs->text_attr=RED<<4+LTRED;
 WildWestGame;
 
-SettingsPop;
 MenuPop;
+
+SettingsPop;
 
 Kill(Fs);
