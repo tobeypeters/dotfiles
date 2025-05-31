@@ -43,6 +43,8 @@
 #define ERR_DRVIDIRFILE "Drive provided instead of a directory or file"
 #define ERR_FILEIDRVDIR "File provided instead of a drv or directory"
 
+#define ERR_DIRSRCDST   "Directory provided for source. But, a file was provided for the destination."
+
 #define ERR_UNKNOWN     "Unrecognized command provided"
 
 U0 err_print(U8 *msg,U8 *link="Usage",U8 *help_file=NULL,U8 *cmd=NULL)

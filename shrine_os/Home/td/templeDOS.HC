@@ -155,11 +155,11 @@ hashit_end:
   v.u8[0]=TF(p1);v.u8[1]=TF(p2);
 
   if (v.u8[0]||v.u8[1]) {
-    U64 vt,ui=1-v.u8[0],ui2=1;
+    U64 vt,ui=1-v.u8[0];
 
     U8 p[512];
 
-    Bool of=c->data[idx][TOK_ATYPE]==ONLY_FILES;
+    Bool of=c->data[idx][TOK_ATYPE]==ONLY_FILES,fpd=FALSE;
 
 pickit:
     vt=ui*3;
@@ -181,11 +181,18 @@ pickit:
           buff_add(p,StrNew(PopUpPickDirStrict));
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
-          if (p3==3&&StrLen(p))
-            buff_add(p,MStrPrint("%s/*.*",p));
+AdamLog("l: %d %d\n",StrLen(p),v.u8[vt+DIR]);
+
+
+          if (ui==0&&v.u8[vt+DIR]) {
+            if (p3==3&&StrLen(p))
+              buff_add(p,MStrPrint("%s/*.*",p));
+            fpd=TRUE;
+AdamLog("el gato\n");
+          }
         }
         if (p3==0||p3==2)
-        {
+        {
           buff_add(p,StrNew(PopUpPickFile));
           v.$WW+H,1$u8[vt+FILE]=1;
         }
@@ -194,19 +201,21 @@ pickit:
       if (ui==0) buff_add(bufa,p);
       else buff_add(bufb,p);
 
-      ui2++;
-
       break;
     }
 
-    if (a->count>2)
     if (ui==0&&v.u8[1]) {
-      ui=1; goto pickit;
+      ui++; goto pickit;
     }
 
-    if (ui2==a->count) {
-     bav=bbv=TRUE; goto switchit;
+    if (fpd) {
+      if (!IsDir(bufb)) AdamLog("Nope\n");
+      else AdamLog("Yeppers\n");
     }
+
+goto error;
+
+    bav=bbv=TRUE; goto switchit;
   }
 
 pickit_end:
