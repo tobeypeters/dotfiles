@@ -23,8 +23,12 @@
   #include "load"
 #endif
 
+Bool inPickerLst(U8 *opt)
+  return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"??\0?D\0?F\0?DM\0",LMF_EXACT);
 Bool inLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
+
+Bool TF(I64 val) return val>-1;
 
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
@@ -56,6 +60,7 @@ Bool f_err(U8 *flg_want,Bool prn_err=TRUE)
   return flag_err(a->flags,flg_want,prn_err,help_file,eptr);
 U0 e_print(U8 *msg,U8 *link="Usage")
   err_print(msg,link,help_file,eptr);
+
 
 U64 execute_cmd(U8 *cmd) {
   if (!StrLen(cmd)) return 0;
@@ -107,27 +112,32 @@ hashit:
   } 
 hashit_end:
 
-  I64 v,fc;v=fc=0;
+  I64 v,fc;v=0;
 
   fc=flag_cnt(a->flags);
 
 //error_handler:
   eptr=c->data[idx][TOK_CMD];
 
+  //Valid argument and flag count start
+  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
+    e_print(ERR_ARGC); goto answer; }
+  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
+    e_print(ERR_FLGC); goto answer; }
+  //Valid argument and flag count end
+
+//error_handler_end:
+
+//help start
   if (a->count==2&&fc) {
     if (!f_err(FLG_H,FALSE)) {
       Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto answer;
     }
   }
-
-  if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
-    e_print(ERR_ARGC); goto answer; }
-  if (!c->tk_minmax(c,idx,fc,HFLAGS)) {
-    e_print(ERR_FLGC); goto answer; }
+//help end
 
   //CMD: No args or flags
   if (c->data[idx][TOK_MAX]==1) goto switchit;
-//error_handler_end:
 
   U8 *bufa,*bufb;
 
@@ -136,34 +146,56 @@ hashit_end:
 
   U64 bav,bbv; bav=bbv=0;
 
-pickit:
-  //Pick file support
-  v.u8[0]=!StrCmp(bufa,"??");
-  v.u8[1]=!StrCmp(bufb,"??");
-  if (v.u8[0]||v.u8[1]) {
-    U64 vt,ui=0;
-    U8 *p;
+//Pick file support start
+  I64 p1,p2,p3; p1=p2=p3=0;
 
+  if ((p1=inPickerLst(bufa))==-1 &&
+      (p2=inPickerLst(bufb))==-1) goto pickit_end;
+
+  v.u8[0]=TF(p1);v.u8[1]=TF(p2);
+
+  if (v.u8[0]||v.u8[1]) {
+    U64 vt,ui=1-v.u8[0],ui2=1;
+
+    U8 p[512];
+
+    Bool of=c->data[idx][TOK_ATYPE]==ONLY_FILES;
+
+pickit:
     vt=ui*3;
+
+    if (ui==1) p3=p2;
+    else p3=p1;
 
     switch (idx) {
     start:
       case  30: //rmdir
       case  43: //cdd
       case 199: //cd
+      case 211: //cp
       case 214: //rd
-        p=StrNew(PopUpPickDir);
-        v.$WW+H,1$u8[vt+DIR]=1;
-
-        break;
+        p3=1;
       default:
-        p=StrNew(PopUpPickFile);
+        if (p3==1||p3==3)
+        {
+          buff_add(p,StrNew(PopUpPickDirStrict));
+          v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
-        v.$WW+H,1$u8[vt+FILE]=1;
+          if (p3==3&&StrLen(p))
+            buff_add(p,MStrPrint("%s/*.*",p));
+        }
+        if (p3==0||p3==2)
+        {
+          buff_add(p,StrNew(PopUpPickFile));
+          v.$WW+H,1$u8[vt+FILE]=1;
+        }
     end:
+
       if (ui==0) buff_add(bufa,p);
       else buff_add(bufb,p);
-      Free(p);
+
+      ui2++;
+
       break;
     }
 
@@ -172,9 +204,13 @@ pickit:
       ui=1; goto pickit;
     }
 
-    bav=TRUE; goto switchit;
+    if (ui2==a->count) {
+     bav=bbv=TRUE; goto switchit;
+    }
   }
-//pickit_end:
+
+pickit_end:
+//Pick file support end
 
   //In case, you don't feel like providing a file extension ".HC".
   //This list can be expanded to many other commands. But,

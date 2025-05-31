@@ -1,12 +1,24 @@
 $FG,2$$TX+CX,"templeDOS Command Manual"$$FG,15$
 
-
 command -h:
 	Displays this help file and the syntax, for
 	the desired command.
 
-NOTE:	$FG,4$$TX+BK,"IGNORE"$$FD,15$ the $FG,4$_$FD,15$ character, in front of the below commands.
-	They are used internally, for the help/error lookup system.
+Parameter Picker:
+	For commands that accept directory or filename arguments,
+	you can invoke an interactive picker by using `??` in place
+	of the DIRECTORY/FILENAME.  You can invoke specific
+        interactive pickers:
+
+	options:
+	 	 `?D`  - DIRECTORY
+		 `?DM` - DIRECTORY - Appends the mask `/*.*` to it
+		 '?F'  - FILE
+	usage:
+		 command [$FG,2$??$FG,15$]
+		 command [$FG,2$??$FG,15$] [$FG,2$??$FG,15$]
+		 command [$FG,2$FILENAME$FG,15$] [$FG,2$??$FG,15$]
+		 command [$FG,2$??$FG,15$] [$FG,2$DIRECTORY$FG,15$]
 
 Command	Description
 ---------------------------
@@ -25,17 +37,17 @@ $IV,1$_ans:$IV,0$
 
 $IV,1$_!!:$IV,0$
 	Executes the previous terminal command,
-	similiar to the Linux implementation.
+	similar to the Linux implementation.
 
 $IV,1$_##: _pid:$IV,0$
 	Displays the current process/task ID.
-
+
 $IV,1$_cat: _type: _view:$IV,0$
-	Display a FILE to standard output.
+	Display a FILE to standard output *STDOUT*.
 	usage:	cat [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_cd: _cdd:$IV,0$
-	Change the current working directory, to
+	Change the current working directory to
 	your HOME directory, a specified directory,
 	or to a different mounted drive.
 
@@ -71,11 +83,11 @@ $IV,1$_cp:$IV,0$
 	   $FG,11$-d$FG,15$	Directory copy
 
 $IV,1$_cpu:$IV,0$
-	Display cpu info.
+	Display CPU info.
 	usage:	cpu [$FG,2$OPTION$FG,15$] {$FG,11$-f$FG,15$}
 
 	Options:
-	   $FG,11$-f$FG,15$	Detailed cpu info
+	   $FG,11$-f$FG,15$	Detailed CPU info.
 
 $IV,1$_date:$IV,0$
 	Display the current date.
@@ -102,7 +114,7 @@ $IV,1$_fm:$IV,0$
 	usage:	fm
 
 $IV,1$_tree:$IV,0$
-	Displays a ls expanded treeview, of the
+	Displays an expanded `ls`-style tree view, of the
 	current or specified directory.
 	usage:	tree [$FG,2$DIR$FG,15$]...
 
@@ -118,7 +130,7 @@ $IV,1$_grep:$IV,0$
 
 $IV,1$_head:$IV,0$
 	Display the first 10 lines of a specified file.
-	usage:	tail [$FG,2$FILENAME$FG,15$]...
+	usage:	head [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_help:$IV,0$
 	Displays this list of TempleDOS commands.
@@ -130,10 +142,11 @@ $IV,1$_ls: _dir:$IV,0$
 		ls / dir [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$}
 
 	options:
-	   $FG,11$-t$FG,15$	Displays a ls expanded treeview, of
+	   $FG,11$-t$FG,15$	Displays an expanded ls-style tree view, of
 		the current or specified directory
+
 	symbols:
-	   $FG,11$-$FG,15$	Displays the contents, of the previous directory
+	   $FG,11$-$FG,15$	Displays the contents of the previous directory
 		you were in.
 
 	default: Current directory
@@ -152,7 +165,7 @@ $IV,1$_mkdir:$IV,0$
 	usage:	mkdir [$FG,2$DIR$FG,15$]
 
 $IV,1$_more:$IV,0$
-	Display a FILE to stdout, one screen at a time.
+	Display a file to standard ouput *STDOUT*, one screen at a time.
 	usage:	more [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_mv:$IV,0$
@@ -176,7 +189,7 @@ $IV,1$_pwd:$IV,0$
 	usage:	pwd
 
 $IV,1$_rm _rd _rmdir:$IV,0$
-	Remove files or directioes.
+	Remove files or directories.
 	usage:	rm [$FG,2$OPTION$FG,15$]... {$FG,11$-d,-t$FG,15$} [$FG,2$FILENAME/DIRECTORY$FG,15$]...
 	usage:	rd / rmdir [$FG,2$OPTION$FG,15$]... {$FG,11$-t$FG,15$} [$FG,2$DIRECTORY$FG,15$]...
 
@@ -206,16 +219,15 @@ $IV,1$_time:$IV,0$
 	usage:	time
 
 $IV,1$_tosz:$IV,0$
-	Toggle the compression status, of a file.
+	Toggle the compression status of a file.
 	usage:	tosz [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_touch:$IV,0$
 	Update the access and modification times of the FILENAME to the current time.
 	A FILENAME argument that does not exist is created.
 	usage:	touch [$FG,2$FILENAME$FG,15$]...
-                :> [$FG,2$FILENAME$FG,15$]...
+			:> [$FG,2$FILENAME$FG,15$]...
 
 $IV,1$_vol:$IV,0$
 	Displays volume information of the current drive.
 	usage:	vol
-	

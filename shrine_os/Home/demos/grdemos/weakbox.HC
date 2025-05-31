@@ -25,8 +25,8 @@ Cd(__DIR__);;
 #include "grdefs"
 
 //#include "models/cube"
-#include "models/pyramid"
-//#include "models/crobot"
+//#include "models/pyramid"
+#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
 //#include "models/zoid"
@@ -36,7 +36,7 @@ Cd(__DIR__);;
 
 #define FOV_ANGLE 90.0
 
-I64 CUBE_DISTANCE=100;
+I64 CUBE_DISTANCE=8;
 
 //These are defined in each "model" file :start
 /*#define MODEL_NAME "basic_shape"

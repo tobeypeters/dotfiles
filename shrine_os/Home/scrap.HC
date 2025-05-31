@@ -1122,5 +1122,19 @@ StrScan(buf4,"%s %s",&buf5,&buf6);
 "buf4: [%s %s]\n\n",buf5,buf6;
 Free(buf4);Free(buf5);Free(buf6);
 */
+/*U8 *p=MAlloc(sizeof(U8)*256);
+
+U0 buff_add(U8 *buf, U8 *str)
+{//Assign a string to buffer.
+  MemSet(buf,'\0',sizeof(buf));
+  StrCpy(buf,str);
+}
+buff_add(p,StrNew(PopUpPickDir));
+
+"p: %s\n",p;
+
+Free(p);
+*/
+
 
 //KeyAndCont;

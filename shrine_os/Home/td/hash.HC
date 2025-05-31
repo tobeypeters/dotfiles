@@ -22,67 +22,73 @@
 #define HASH_TABLE_SIZE 256
 
 #define CMD_CNT  47
-#define CMD_ARGS  5
+#define CMD_ARGS  6
 
 #define HFLAGS 0
 #define HARGS  1
 
-#define TOK_IDX  0
-#define TOK_CMD  1
-#define TOK_MIN  2
-#define TOK_MAX  3
-#define TOK_FMAX 4
+#define TOK_IDX   0
+#define TOK_CMD   1
+#define TOK_MIN   2
+#define TOK_MAX   3
+#define TOK_FMAX  4
+#define TOK_ATYPE 5
+
+#define ONLY_NONE  0
+#define ONLY_DIRS  1
+#define ONLY_FILES 2
+#define ONLY_BOTH  3
 
 /*HASH idx, command, token min, token max,
   flag max */
 U8 *hashed[CMD_CNT][CMD_ARGS] = {
-  {  7, "clear", 1, 1, 0},
-  { 23, "mkdir", 2, 2, 0},
-  { 30, "rmdir", 2, 2, 1},
-  { 35, "touch", 2, 2, 0},
-  { 38, "tasks", 1, 1, 0},
-  { 43,   "cdd", 1, 2, 0},
-  { 56,   "cat", 2, 2, 0},
-  { 60,   "man", 2, 2, 0},
-  { 61,   "pal", 1, 1, 1},
-  { 62,   "pid", 1, 1, 0},
-  { 63,   "mem", 1, 1, 0},
-  { 64,   "dir", 1, 2, 1},
-  { 66,   "cls", 1, 1, 0},
-  { 67,   "ans", 1, 2, 0},
-  { 68,   "rnd", 1, 1, 0},
-  { 72,   "cpu", 1, 1, 1},
-  { 75,   "pwd", 1, 1, 0},
-  { 81,   "vol", 1, 1, 0},
-  { 84,   "now", 1, 1, 0},
-  { 86,   "run", 2, 2, 0},
-  {146,  "head", 2, 2, 0},
-  {153,  "diff", 3, 3, 0},
-  {158,  "date", 1, 1, 0},
-  {169,  "help", 1, 1, 0},
-  {170,  "tail", 2, 2, 0},
-  {174,  "grep", 2, 2, 1},
-  {176,  "tree", 1, 2, 0},
-  {177,  "time", 1, 1, 0},
-  {179,  "more", 2, 2, 0},
-  {182,  "dump", 2, 2, 0},
-  {184,  "term", 1, 1, 0},
-  {186,  "exit", 1, 1, 0},
-  {187,  "view", 2, 2, 0},
-  {194,  "type", 2, 2, 0},
-  {195,  "quit", 1, 1, 0},
-  {199,    "cd", 1, 2, 0},
-  {201,    "ed", 2, 2, 0},
-  {203,    "df", 1, 1, 0},
-  {208,  "tosz", 2, 2, 0},
-  {209,    "md", 2, 2, 0},
-  {211,    "cp", 3, 3, 1},
-  {212,    "fm", 1, 1, 0},
-  {214,    "rd", 2, 2, 1},
-  {223,    "ls", 1, 2, 1},
-  {224,    "rm", 2, 2, 2},
-  {227,    "mv", 3, 3, 0},
-  {228,    "ps", 1, 1, 0} //47
+  {  7, "clear", 1, 1, 0, ONLY_NONE},
+  { 23, "mkdir", 2, 2, 0, ONLY_DIRS},
+  { 30, "rmdir", 2, 2, 1, ONLY_DIRS},
+  { 35, "touch", 2, 2, 0, ONLY_BOTH},
+  { 38, "tasks", 1, 1, 0, ONLY_NONE},
+  { 43,   "cdd", 1, 2, 0, ONLY_DIRS},
+  { 56,   "cat", 2, 2, 0, ONLY_FILES},
+  { 60,   "man", 2, 2, 0, ONLY_NONE},
+  { 61,   "pal", 1, 1, 1, ONLY_NONE},
+  { 62,   "pid", 1, 1, 0, ONLY_NONE},
+  { 63,   "mem", 1, 1, 0, ONLY_NONE},
+  { 64,   "dir", 1, 2, 1, ONLY_BOTH},
+  { 66,   "cls", 1, 1, 0, ONLY_NONE},
+  { 67,   "ans", 1, 2, 0, ONLY_NONE},
+  { 68,   "rnd", 1, 1, 0, ONLY_NONE},
+  { 72,   "cpu", 1, 1, 1, ONLY_NONE},
+  { 75,   "pwd", 1, 1, 0, ONLY_NONE},
+  { 81,   "vol", 1, 1, 0, ONLY_NONE},
+  { 84,   "now", 1, 1, 0, ONLY_NONE},
+  { 86,   "run", 2, 2, 0, ONLY_FILES},
+  {146,  "head", 2, 2, 0, ONLY_FILES},
+  {153,  "diff", 3, 3, 0, ONLY_FILES},
+  {158,  "date", 1, 1, 0, ONLY_NONE},
+  {169,  "help", 1, 1, 0, ONLY_NONE},
+  {170,  "tail", 2, 2, 0, ONLY_FILES},
+  {174,  "grep", 2, 2, 1, ONLY_NONE},
+  {176,  "tree", 1, 2, 0, ONLY_BOTH},
+  {177,  "time", 1, 1, 0, ONLY_NONE},
+  {179,  "more", 2, 2, 0, ONLY_FILES},
+  {182,  "dump", 2, 2, 0, ONLY_FILES},
+  {184,  "term", 1, 1, 0, ONLY_NONE},
+  {186,  "exit", 1, 1, 0, ONLY_NONE},
+  {187,  "view", 2, 2, 0, ONLY_FILES},
+  {194,  "type", 2, 2, 0, ONLY_FILES},
+  {195,  "quit", 1, 1, 0, ONLY_NONE},
+  {199,    "cd", 1, 2, 0, ONLY_DIRS},
+  {201,    "ed", 2, 2, 0, ONLY_FILES},
+  {203,    "df", 1, 1, 0, ONLY_NONE},
+  {208,  "tosz", 2, 2, 0, ONLY_FILES},
+  {209,    "md", 2, 2, 0, ONLY_DIRS},
+  {211,    "cp", 3, 3, 1, ONLY_BOTH},
+  {212,    "fm", 1, 1, 0, ONLY_BOTH},
+  {214,    "rd", 2, 2, 1, ONLY_DIRS},
+  {223,    "ls", 1, 2, 1, ONLY_BOTH},
+  {224,    "rm", 2, 2, 2, ONLY_BOTH},
+  {227,    "mv", 3, 3, 0, ONLY_BOTH},
+  {228,    "ps", 1, 1, 0, ONLY_NONE} //47
 };
 
 class CHCMDS
