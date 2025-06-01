@@ -60,6 +60,8 @@ U64 chr2=128,mx,my;
 U64 bitdex(U64 x,U64 y) return y*8+x;
 U0 EyeWall(CTask *task)
 {
+  sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
+
   CDC *dc2=DCAlias(gr.dc2,task);
 
   CCPU *c;

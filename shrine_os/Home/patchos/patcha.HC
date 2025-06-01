@@ -1368,17 +1368,10 @@ public U0 ctrlaltt(I64)
 }
 
 #help_index "File/Cmd Line (Typically);Cmd Line (Typically)"
-#define FM_PICK_DIRFILE	  3
-#define FM_PICK_DIRSTRICT 4
-/*
-	    //ADD start
-	    if (mode==FM_PICK_DIRFILE)
-	    {
-	      res=StrNew(tmpde->full_name,mem_task);
-	      break;
-	    }
-	    //ADD end
-*/
+#define FM_PICK_DIRFILE	   3
+#define FM_PICK_DIRSTRICT  4
+#define FM_PICK_FILESTRICT 5
+
 public U8 *filemgr(I64 mode=FM_NORMAL,CTask *mem_task=NULL)
 {//File manager. Also, used to choose files and dirs.
   CDirEntry *head=NULL,*tmpde,*tmpde1,*tmpde2;
@@ -1550,6 +1543,16 @@ public U8 *filemgr(I64 mode=FM_NORMAL,CTask *mem_task=NULL)
 	    if (mode==FM_PICK_DIRFILE)
 	    {
 	      res=StrNew(tmpde->full_name,mem_task);
+
+	      break;
+	    }
+	    if (mode==FM_PICK_FILESTRICT)
+	    {
+	      if (doc_ce->type_u8==DOCT_MENU_VAL)
+		res=StrNew(tmpde->full_name,mem_task);
+	      else
+		res=StrNew("",mem_task);
+
 	      break;
 	    }
 	    //ADD end
@@ -1599,8 +1602,6 @@ fm_regular_key:
     }
   } while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
 
-//AdamLog("res: %s\n",res);
-
   gr.fp_final_scrn_update=fp_old_final_scrn_update;
   Fs->put_doc	 =old_put_doc;
   Fs->display_doc=old_display_doc;
@@ -1617,35 +1618,38 @@ fm_regular_key:
 #help_index ""
 
 #help_index "DolDoc/Input;File/FileNames;StdIn/DolDoc"
-public U8 *PopUpPickDirFile(U8 *dir=NULL)
-{//Directory or Filename chooser.  Uses $LK,"FileMgr",A="MN:FileMgr"$().
+//ALL these PopUpPickers will be replaced, with a 
+//generic function that excepts mode type.
+
+public U8 *PopUpPickerGen(U8 *dir=NULL,I64 mode=FM_NORMAL)
+{
   U8 *res,*st,*st2;
   if (dir)
-    st=MStrPrint("Cd(\"%Q\");FileMgr(FM_PICK_DIRFILE,Fs->parent_task);",dir);
+    st=MStrPrint("Cd(\"%Q\");FileMgr(%d,Fs->parent_task);",dir,mode);
   else {
     st2=DirCur;
-    st=MStrPrint("Cd(\"%Q\");FileMgr(FM_PICK_DIRFILE,Fs->parent_task);",st2);
+    st=MStrPrint("Cd(\"%Q\");FileMgr(%d,Fs->parent_task);",st2,mode);
     Free(st2);
   }
   res=PopUp(st,Fs);
   Free(st);
   return res;
 }
+public U8 *PopUpPickDirFile(U8 *dir=NULL)
+{//Directory or Filename chooser.  Uses $LK,"FileMgr",A="MN:FileMgr"$().
+  return PopUpPickerGen(dir,FM_PICK_DIRFILE);
+}
 public U8 *PopUpPickDirStrict(U8 *dir=NULL)
 {//Directory chooser. Uses $LK,"FileMgr",A="MN:FileMgr"$().
  //Strict requires you to select a folder. Hitting ESC on a file,
  //won't extract return the containing folder, as the non-strict does.
-  U8 *res,*st,*st2;
-  if (dir)
-    st=MStrPrint("Cd(\"%Q\");FileMgr(FM_PICK_DIRSTRICT,Fs->parent_task);",dir);
-  else {
-    st2=DirCur;
-    st=MStrPrint("Cd(\"%Q\");FileMgr(FM_PICK_DIRSTRICT,Fs->parent_task);",st2);
-    Free(st2);
-  }
-  res=PopUp(st,Fs);
-  Free(st);
-  return res;
+  return PopUpPickerGen(dir,FM_PICK_DIRSTRICT);
+}
+public U8 *PopUpPickFileStrict(U8 *dir=NULL)
+{//Directory chooser. Uses $LK,"FileMgr",A="MN:FileMgr"$().
+ //Strict requires you to select a folder. Hitting ESC on a file,
+ //won't extract return the containing folder, as the non-strict does.
+  return PopUpPickerGen(dir,FM_PICK_FILESTRICT);
 }
 #help_index ""
 
@@ -1671,3 +1675,8 @@ HijackFunc(&DocPutKey,&docputkey);
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&Ed,&ed);
 HijackFunc(&FileMgr,&filemgr);
+
+public U0 tdit()
+{
+  Copy("C:/Home/td/*.*","C:/Apps/templeDOS");
+}

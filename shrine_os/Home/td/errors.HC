@@ -43,7 +43,7 @@
 #define ERR_DRVIDIRFILE "Drive provided instead of a directory or file"
 #define ERR_FILEIDRVDIR "File provided instead of a drv or directory"
 
-#define ERR_DIRSRCDST   "Directory provided for source. But, a file was provided for the destination."
+#define ERR_DIRSRCDST   "Directory provided for source and file provided for destination"
 
 #define ERR_UNKNOWN     "Unrecognized command provided"
 

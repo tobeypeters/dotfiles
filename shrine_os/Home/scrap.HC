@@ -1135,6 +1135,24 @@ buff_add(p,StrNew(PopUpPickDir));
 
 Free(p);
 */
-
+
+/*U0 test(I64 mode=FM_NORMAL)
+{
+  AdamLog("%d\n",mode);
+}
+
+U0 test2(I64 mode=FM_NORMAL)
+{
+test(mode);
+}
+
+test2(FM_PICK_DIRFILE);
+*/
+
+I64 p1,p2,pp1,pp2;
+
+if (((p1=5)>4)&&((p2=3)>4)) "yes\n";
+
+"p1: %d p2: %d\n",p1,p2;
 
 //KeyAndCont;

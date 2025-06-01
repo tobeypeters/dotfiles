@@ -24,11 +24,11 @@
 #endif
 
 Bool inPickerLst(U8 *opt)
-  return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"??\0?D\0?F\0?DM\0",LMF_EXACT);
+  return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"τυ\0??\0?D\0?F\0?DM\0",LMF_EXACT);
 Bool inLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
 
-Bool TF(I64 val) return val>-1;
+Bool TF(I64 val) return val>0;
 
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
@@ -149,8 +149,13 @@ hashit_end:
 //Pick file support start
   I64 p1,p2,p3; p1=p2=p3=0;
 
-  if ((p1=inPickerLst(bufa))==-1 &&
-      (p2=inPickerLst(bufb))==-1) goto pickit_end;
+  if (a->count==2) bufb=StrNew("");
+
+  p1=inPickerLst(bufa); p2=inPickerLst(bufb);
+
+  if ((p1==-1)&&(p2==-1)) goto pickit_end;
+
+  if (a->count==2) p2=0;
 
   v.u8[0]=TF(p1);v.u8[1]=TF(p2);
 
@@ -159,13 +164,20 @@ hashit_end:
 
     U8 p[512];
 
-    Bool of=c->data[idx][TOK_ATYPE]==ONLY_FILES,fpd=FALSE;
+    Bool od=(c->data[idx][TOK_ATYPE]==ONLY_DIRS),
+	 of=(c->data[idx][TOK_ATYPE]==ONLY_FILES),fpd=FALSE;
 
 pickit:
     vt=ui*3;
 
     if (ui==1) p3=p2;
-    else p3=p1;
+    else p3=p1; p3--;//Cause we don't want zeroes.  See the list.
+
+    //Just one silent error prevention method.  I'll look at making
+    //error handling, for source and destination arguments. But,
+    //this will stop: `cat ?D` giving you `cat C:/Home`
+    if (od) p3=1;
+    if (of) p3=2;
 
     switch (idx) {
     start:
@@ -181,20 +193,16 @@ pickit:
           buff_add(p,StrNew(PopUpPickDirStrict));
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
-AdamLog("l: %d %d\n",StrLen(p),v.u8[vt+DIR]);
-
-
           if (ui==0&&v.u8[vt+DIR]) {
             if (p3==3&&StrLen(p))
               buff_add(p,MStrPrint("%s/*.*",p));
             fpd=TRUE;
-AdamLog("el gato\n");
           }
         }
         if (p3==0||p3==2)
         {
-          buff_add(p,StrNew(PopUpPickFile));
-          v.$WW+H,1$u8[vt+FILE]=1;
+          buff_add(p,StrNew(PopUpPickFileStrict));
+          v.$WW+H,1$u8[vt+FILE]=1*(StrLen(p)>0);
         }
     end:
 
@@ -205,17 +213,17 @@ AdamLog("el gato\n");
     }
 
     if (ui==0&&v.u8[1]) {
-      ui++; goto pickit;
+      ui++; goto pickit;
     }
 
-    if (fpd) {
-      if (!IsDir(bufb)) AdamLog("Nope\n");
-      else AdamLog("Yeppers\n");
+    if (fpd&&ui==1) {
+      if (!IsDir(bufb)) {
+        e_print(ERR_DIRSRCDST); goto error;
+      }
+      else {
+	bav=bbv=TRUE; goto switchit;
+      }
     }
-
-goto error;
-
-    bav=bbv=TRUE; goto switchit;
   }
 
 pickit_end:
@@ -469,6 +477,7 @@ pickit_end:
       break;
     case 174: //grep
       if (fc) {
+
         if (f_err(FLG_D)) goto answer;
         Fs->answer=FD(str_NQ(bufa));
       }
