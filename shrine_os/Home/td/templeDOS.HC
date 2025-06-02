@@ -112,7 +112,7 @@ hashit:
   } 
 hashit_end:
 
-  I64 v,fc;v=0;
+  I64 v=0,fc;
 
   fc=flag_cnt(a->flags);
 
@@ -151,7 +151,7 @@ hashit_end:
 
   if (a->count==2) bufb=StrNew("");
 
-  p1=inPickerLst(bufa); p2=inPickerLst(bufb);
+  p1=p3=inPickerLst(bufa); p2=inPickerLst(bufb);
 
   if ((p1==-1)&&(p2==-1)) goto pickit_end;
 
@@ -160,18 +160,19 @@ hashit_end:
   v.u8[0]=TF(p1);v.u8[1]=TF(p2);
 
   if (v.u8[0]||v.u8[1]) {
-    U64 vt,ui=1-v.u8[0];
+    U64 ui=1-v.u8[0],vt;
 
     U8 p[512];
 
     Bool od=(c->data[idx][TOK_ATYPE]==ONLY_DIRS),
-	 of=(c->data[idx][TOK_ATYPE]==ONLY_FILES),fpd=FALSE;
+	 of=(c->data[idx][TOK_ATYPE]==ONLY_FILES);
 
 pickit:
     vt=ui*3;
 
     if (ui==1) p3=p2;
-    else p3=p1; p3--;//Cause we don't want zeroes.  See the list.
+
+    p3--;//Cause we don't want zeroes.  See the list.
 
     //Just one silent error prevention method.  I'll look at making
     //error handling, for source and destination arguments. But,
@@ -192,12 +193,6 @@ pickit:
         {
           buff_add(p,StrNew(PopUpPickDirStrict));
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
-
-          if (ui==0&&v.u8[vt+DIR]) {
-            if (p3==3&&StrLen(p))
-              buff_add(p,MStrPrint("%s/*.*",p));
-            fpd=TRUE;
-          }
         }
         if (p3==0||p3==2)
         {
@@ -213,10 +208,10 @@ pickit:
     }
 
     if (ui==0&&v.u8[1]) {
-      ui++; goto pickit;
+      ui++; goto pickit;
     }
 
-    if (fpd&&ui==1) {
+    if (v.u8[DIR]&&ui==1) {
       if (!IsDir(bufb)) {
         e_print(ERR_DIRSRCDST); goto error;
       }
@@ -526,9 +521,8 @@ pickit_end:
         //CopyTree(); does support them.
         CopyTree(bufa,bufb);
       }
-      else {
+      else
         Copy(bufa,bufb);
-      }
 
       break;
     case 212: //fm
