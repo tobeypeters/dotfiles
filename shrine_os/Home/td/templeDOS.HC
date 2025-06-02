@@ -185,7 +185,6 @@ pickit:
       case  30: //rmdir
       case  43: //cdd
       case 199: //cd
-      case 211: //cp
       case 214: //rd
         p3=1;
       default:
@@ -193,7 +192,9 @@ pickit:
         {
           buff_add(p,StrNew(PopUpPickDirStrict));
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
-        }
+
+          if (p3==3&&StrLen(p)>0) CatPrint(p,"/*.*");
+        }
         if (p3==0||p3==2)
         {
           buff_add(p,StrNew(PopUpPickFileStrict));

@@ -1149,7 +1149,13 @@ test(mode);
 test2(FM_PICK_DIRFILE);
 */
 
-
+U8 p[512];
+
+StrCpy(p,"C:/Home");
+"%s\n",p;
+CatPrint(p,"/*.*");
+"%s\n",p;
+
 
 //KeyAndCont;
 
