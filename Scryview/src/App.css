@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
+
+body {
+  font-family: 'Almendra SC', serif;
+  background-color: #0c1315;
+  /* background: linear-gradient(160deg, #1b1a1e, #2a2028, #1b1a1e);
+  background-size: 400% 400%; */
+  animation: bgShift 60s ease infinite;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+h1 {
+  text-align: center;
+  color: #ffd700;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.app {
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.corner-image {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 64px;
+  height: 64px;
+  /* opacity: 0.5; */
+  z-index: 10;
+  pointer-events: none;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.card {
+  width: 150px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.card img {
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 5px #000000aa;
+
+  width: 100%;
+  border-radius: 8px;
+}
+
+.card img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #ffd700;
+}
+
+.controls button,
+.load-more,
+.modal-content button {
+  transition: background-color 0.2s ease, transform 0.2s;
+}
+
+.controls button:hover,
+.load-more:hover,
+.modal-content button:hover {
+  transform: translateY(-2px);
+}
+
+.load-more {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.pagination button {
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #333;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button:hover {
+  background-color: #333;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #222;
+  padding: 20px;
+  display: flex;
+  max-width: 800px;
+  gap: 20px;
+  border-radius: 8px;
+}
+
+.modal-left img {
+  max-width: 300px;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.favorites {
+  margin-top: 40px;
+}
