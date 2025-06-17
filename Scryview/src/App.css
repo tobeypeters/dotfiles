@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
 
 body {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
   font-family: 'Almendra SC', serif;
   background-color: #0c1315;
   /* background: linear-gradient(160deg, #1b1a1e, #2a2028, #1b1a1e);
@@ -36,19 +40,75 @@ h1 {
   margin-bottom: 20px;
 }
 
-input, select, button {
+input,
+select {
   padding: 8px;
   font-size: 16px;
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333;
+}
+/* Scrollbar for WebKit-based browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0c1315;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 6px;
+  border: 2px solid #0c1315;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: #333 #0c1315;
+  scrollbar-width: thin;
+}
+
+/* Consistent focus style for inputs, selects, buttons */
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
 }
 
 .corner-image {
-  position: fixed;
+  /* position: fixed; */
   top: 10px;
   left: 10px;
   width: 64px;
   height: 64px;
   /* opacity: 0.5; */
-  z-index: 10;
+  /* z-index: 10; */
   pointer-events: none;
 }
 
@@ -69,7 +129,7 @@ input, select, button {
   box-shadow: 0 0 5px #000000aa;
 
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .card img:hover {
@@ -132,11 +192,12 @@ input, select, button {
   display: flex;
   max-width: 800px;
   gap: 20px;
-  border-radius: 8px;
+  border-radius: 18px;
 }
 
 .modal-left img {
   max-width: 300px;
+  border-radius: 22px;
 }
 
 .modal-buttons {
