@@ -97,7 +97,8 @@ button:hover {
 input:focus,
 select:focus,
 button:focus {
-  outline: 2px solid #ffd700;
+  outline: 1px solid #e3b730;
+  /* outline: 1px solid #ffd700; */
   outline-offset: 2px;
 }
 
@@ -109,6 +110,13 @@ button:focus {
   height: 64px;
   /* opacity: 0.5; */
   /* z-index: 10; */
+  pointer-events: none;
+}
+.title-image {
+  top: 15px;
+  left: 74px;
+  height: 54px;
+  opacity: 0.8;
   pointer-events: none;
 }
 
