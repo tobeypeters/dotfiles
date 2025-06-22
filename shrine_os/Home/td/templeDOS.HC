@@ -84,7 +84,7 @@ U64 execute_cmd(U8 *cmd) {
 hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
-    if (!StrCmp(a->args[0],"##")) { //pid
+    if (!StrCmp(a->args[0],"##")) { //pid
       buff_add(a->args[0],"pid"); goto hashit;
     }
     if (!StrCmp(a->args[0],":>")) { //touch
@@ -194,7 +194,7 @@ pickit:
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
           if (p3==3&&StrLen(p)>0) CatPrint(p,"/*.*");
-        }
+        }
         if (p3==0||p3==2)
         {
           buff_add(p,StrNew(PopUpPickFileStrict));

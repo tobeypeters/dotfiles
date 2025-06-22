@@ -117,6 +117,7 @@ U8 Tuple(U8 *fmt,...)
 {
   if (argc==0) return NULL;
 
+  fmt=MStrPrint("%%s %s",fmt);
   U8 *st=NULL;
 
   U64 i;
