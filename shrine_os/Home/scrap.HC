@@ -1215,6 +1215,8 @@ U64 j=0;
 for (;j<len;j++)
   "%h8csp[%d] : %s\n",32,j,sp[j];
 "\n";
+Free(buff2);
+Free(sp);
 
 U8 *StrIns(U8 *src,U8 *part,U64 idx)
 {//Insert a string into another
