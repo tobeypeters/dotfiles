@@ -1181,176 +1181,40 @@ while (l)
 "%s %d\n",test,l;
 */
 
-//Split a string by delimeter.
-//Build an array of strings or
-//Build an array of points.
-#define ARR_SPLIT	0 //Split parts into an array
-#define ARR_SPLIT_PTR	1 //Create ptrs to each part
-
-U8 *StrSplit(U8 *src,U8 *mode=ARR_SPLIT)
-{
-//  U64 parts=StrOcc(src,',')+1,index=0,*fp=src,
-//         lb=StrLen(src),len=0,i=0;
-  U64 index=0,*fp=src,lb=StrLen(src),
-      len=0,i=0;
-
-  #define parts StrOcc(src,',')+1
-
-  U8 *pa=src,*pe=NULL;
-
-"pa1: %s\n",pa;
-
-//  Bool error=FALSE;
-
-  switch (mode)
-  {
-    case ARR_SPLIT:
-      U8 **st=MAlloc(sizeof(U8 *)*parts);    
-
-      for (;i<parts;i++)
-        st[i]=CAlloc(lb);
-
-      break;
-    case ARR_SPLIT_PTR:
-      U8 *pst[parts];
-
-      break;
-  }
-
-"pa2: %s\n\n",pa;
-"%d %d\n",index,parts;
-  while (index<parts)
-  {
-    pe=StrFirstOcc(pa,",");
-    if (pe) len=pe-pa;
-    else len=StrLen(pa);
-
-    switch (mode)
-    {
-      case ARR_SPLIT:
-        MemCpy(st[index],pa,len);
-        break;
-      case ARR_SPLIT_PTR:
-
-        *(pa+1)='\0';
-        pst[index]=pa;
-        break;
-    }
-
-    pa=pe+1;
-
-    index++;
-  }
-
-  switch (mode)
-  {
-    case ARR_SPLIT:
-      for (i=0;i<parts;i++)
-        "st[%d]: %s\n",i,st[i];
-
-//      MemSet(fp,'\0',sizeof(U8)*lb);
-
-      break;
-    case ARR_SPLIT_PTR:
-"here\n";
-      for (i=0;i<parts;i++)
-        "pst[%d]: %s\n",i,pst[i];
-
-////      MemSet(pst,'\0',sizeof(pst));
-
-      break;
-  }
-
-
-  switch (mode)
-  {
-    case ARR_SPLIT:
-      return st;
-
-      break;
-    case ARR_SPLIT_PTR:
-      return pst;
-
-      break;
-  }
-}
-
 /*
-U8 **ap=StrSplit("Hello,World,Terry,is,king,...");
+//Build an array of strings
+U8 *StrSplit(U8 *src2)
+{//Split a comma csv. into an array
+  U8 *src=StrNew(src2);
 
-U64 i=0;
-for (;i<6;i++)
-  "ap[%d]: %s\n",i,ap[i];
-*/
+  U64 parts=StrOcc(src,',')+1,
+         lb=StrLen(src),i=0;
 
-U8 **ap2=StrSplit("Hello,World,Terry,is,king,...",ARR_SPLIT_PTR);
+  U8 **arr=MAlloc(sizeof(U8 *)*parts);
+  for (i=0;i<parts;i++)
+    arr[i]=CAlloc(lb);
 
-/*U64 i=0;
-for (;i<6;i++)
-  "ap2[%d]: %s\n",i,ap2[i];
-*/
-/*
-U8 *src="Hello,World,Terry,is,king,...";
-
-U64 parts=StrOcc(src,',')+1,index=0,
-       lb=StrLen(src),len=0,i=0;
-
-U64 arr_opt=ARR_SPLIT;
-
-Bool error=FALSE;
-
-switch (arr_opt)
-{
-  case ARR_SPLIT:
-    U8 arr[parts][lb];
-    MemSet(arr,'\0',sizeof(arr));
-
-    break;
-  case ARR_SPLIT_PTR:
-    U8 *parr[parts],*fp=src,
-       *pa=src,*pe=NULL;
-    break;
-}
-
-while (index<parts)
-{
-  pe=StrFirstOcc(pa,",");
-
-  if (pe) len=pe-pa;
-  else len=StrLen(pa);
-
-  switch (arr_opt)
+  i=0;
+  while (StrLen(src))
   {
-    case ARR_SPLIT:
-      MemCpy(arr[index],pa,len);
-      break;
-    case ARR_SPLIT_PTR:
-      *(pa-1)='\0';
-      parr[index]=pa;
-      break;
+    StrFirstRem(src,",",arr[i]);
+    i++;
   }
 
-  pa=pe+1;
-
-  index++;
+  return Tuple("%d",parts,arr);
 }
 
-switch (arr_opt)
-{
-  case ARR_SPLIT:
-    for (;i<parts;i++)
-      "arr[%d]: %s\n",i,arr[i];
+U8 *buff="Hello,World,Terry,is,king,...";
+U8 *buff2=StrSplit(buff);
+U64 len;U8 **sp;
+StrScan(buff2,"%d %d",&len,&sp);
+"StrSplit Example:\n";
+"\n%h9cbuff2: %s\n  Array length: [%d]\n Array Pointer: [%d]\n\n",32,buff,len,sp;
 
-    MemSet(fp,'\0',sizeof(U8)*lb);
-    break;
-  case ARR_SPLIT_PTR:
-    for (i=0;i<parts;i++)
-      "parr[%d]: %s\n",i,parr[i];
-
-    MemSet(arr,'\0',sizeof(arr));
-    break;
-}
-*/
+U64 j=0;
+for (;j<len;j++)
+  "%h8csp[%d] : %s\n",32,j,sp[j];
+"\n";
 
 U8 *StrIns(U8 *src,U8 *part,U64 idx)
 {//Insert a string into another
@@ -1364,8 +1228,14 @@ U8 *StrIns(U8 *src,U8 *part,U64 idx)
 
   return st;
 }
-"StrIns: %s\n",StrIns("Hello WorldTerry is king...","! ",11);
 
+"String Insert Example:\n";
+U8 *buff3="Hello WorldTerry is king...";
+U8 *buff4=StrIns(buff3,"! ",11);
+"Orig String: %s\n",buff3;
+" New String: %s\n",buff4;
+Free(buff4);
+*/
 
 //KeyAndCont;
 

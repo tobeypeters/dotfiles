@@ -113,7 +113,7 @@ I64 *TupleI64(...)
 I64 tup=TupleI64(67,68,69,70,71,72,73,76);
 //"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
 
-U8 Tuple(U8 *fmt,...)
+U8 Tuple(U8 *fmt,...)
 {
   if (argc==0) return NULL;
 
