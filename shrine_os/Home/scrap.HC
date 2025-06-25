@@ -1220,13 +1220,11 @@ Free(sp);
 
 U8 *StrIns(U8 *src,U8 *part,U64 idx)
 {//Insert a string into another
-  U64 sl=StrLen(src),pl=StrLen(part);
+  U64 pl=StrLen(part);
 
-  U8 *st=MStrPrint("%h*c",sl+pl+1,'\n');
-  U8 *pb=st;
+  U8 *st=MStrPrint("%h*c%s",pl,32,src);
 
-  MemCpy(pb+pl,src,sl); MemCpy(pb,src,idx);
-  MemCpy(pb+idx,part,pl);
+  MemCpy(st,src,idx); MemCpy(st+idx,part,pl);
 
   return st;
 }
