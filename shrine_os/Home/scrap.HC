@@ -1252,6 +1252,8 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
   MemCpy(buffer,str,StrLen(str));
 //  "buffer: %s\n",buffer;
 
+//  Modify buffer however you want ...
+
 //  return StrNew(buffer);
 //  return MStrPrint("%s",buffer);
 
@@ -1259,12 +1261,12 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
   U64 ls=StrLen(str);
 
   if (!ls) return NULL;
-
+
   idx=Clamp(idx,0,ls);
 
   //Gonna treat this like an array.
   U8 *st=MStrPrint("%h*c",ls+StrLen(add),32);
-  MemCpy(st,str,StrLen(str));
+  MemCpy(st,str,ls);
 
 
   U64 len_st=StrLen(st),
@@ -1291,5 +1293,4 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 "%s\n",StrIt("HelloWorld","] .. [",-1);
 
 //KeyAndCont;
-
 
