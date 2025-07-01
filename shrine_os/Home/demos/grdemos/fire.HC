@@ -131,3 +131,4 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 #include "grmain"
 
 p_init;
+

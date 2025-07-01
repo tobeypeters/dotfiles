@@ -1217,11 +1217,15 @@ for (;j<len;j++)
 "\n";
 Free(buff2);
 Free(sp);
-
+*/
+/*
 U8 *StrIns(U8 *src,U8 *part,U64 idx)
 {//Insert a string into another
+//  return *st=MStrPrint("%h*c%s",pl,32,src);
+
   U64 pl=StrLen(part);
 
+  U8 *st=MStrPrint("%h*c%s",pl,32,src);
   U8 *st=MStrPrint("%h*c%s",pl,32,src);
 
   MemCpy(st,src,idx); MemCpy(st+idx,part,pl);
@@ -1234,10 +1238,52 @@ U8 *buff3="Hello WorldTerry is king...";
 U8 *buff4=StrIns(buff3,"! ",11);
 "Orig String: %s\n",buff3;
 " New String: %s\n",buff4;
-Free(buff4);
-*/
+Free(buff4);
+*/
+
+U8 *StrIt(U8 *str,U8 *add,I64 idx)
+{
+/*
+  U8 buffer[128];
+
+  //HolyC : Inside a function set the memory
+  MemSet(buffer,'\0',sizeof(buffer));
+
+  MemCpy(buffer,str,StrLen(str));
+//  "buffer: %s\n",buffer;
+
+//  return StrNew(buffer);
+//  return MStrPrint("%s",buffer);
+
+*/
+
+  //Gonna treat this like an array.
+  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
+
+  U64 len_add=StrLen(add),
+       len_st=StrLen(st),
+            i=0,j=0,si=0;
+
+  while (i<len_st)
+  {
+    if (i==idx)
+    {
+      while (j<len_add) {
+        st[i]=add[j];
+        i++;j++;
+      }
+      si--;i--;
+    }
+    else st[i]=str[si];
+
+    i++;si++;
+  }
+
+  return st;
+}
+
+"%s\n",StrIt("HelloWorld","] .. [",5);
 
 //KeyAndCont;
-
 
 
