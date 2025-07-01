@@ -1258,10 +1258,11 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 */
 
   //Gonna treat this like an array.
-  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
+  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
+  MemCpy(st,str,StrLen(str));
 
   U64 len_st=StrLen(st),
-           i=0,j=0,si=0;
+           i=idx,j=0,si=idx;
 
   while (i<len_st)
   {
@@ -1280,9 +1281,36 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 
   return st;
 }
+U8 *StrIt2(U8 *str,U8 *add,I64 idx)
+{
+  //Gonna treat this like an array.
+  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
+  MemCpy(st,str,StrLen(str));
+
+  U64 len_st=StrLen(st),
+           i=idx,si=idx;
+
+  while (i<len_st)
+  {
+    if (i==idx)
+    {
+      while (*add) {
+        st[i]=add[0];
+        i++;add++;
+      }
+
+      i--;si--;
+    }
+    else st[i]=str[si];
+
+    i++;si++;
+  }
+
+  return st;
+}
 
 "%s\n",StrIt("HelloWorld","] .. [",5);
 
 //KeyAndCont;
-
+
 
