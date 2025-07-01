@@ -1238,7 +1238,7 @@ U8 *buff3="Hello WorldTerry is king...";
 U8 *buff4=StrIns(buff3,"! ",11);
 "Orig String: %s\n",buff3;
 " New String: %s\n",buff4;
-Free(buff4);
+Free(buff4);
 */
 
 U8 *StrIt(U8 *str,U8 *add,I64 idx)
@@ -1258,21 +1258,20 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 */
 
   //Gonna treat this like an array.
-  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
+  U8 *st=MStrPrint("%h*c",StrLen(str)+StrLen(add),32);
 
-  U64 len_add=StrLen(add),
-       len_st=StrLen(st),
-            i=0,j=0,si=0;
+  U64 len_st=StrLen(st),
+           i=0,j=0,si=0;
 
   while (i<len_st)
   {
     if (i==idx)
     {
-      while (j<len_add) {
+      while (add[j]!='\0') {
         st[i]=add[j];
         i++;j++;
       }
-      si--;i--;
+      i--;si--;
     }
     else st[i]=str[si];
 
