@@ -1302,12 +1302,17 @@ Bool IsDigit(U8 *chr)
 {
   I64 res=0;
   StrScan(chr,"%d",&res);
-  return ToBool(res*StrCmp(chr,"0"));
+
+  if (res==0)
+    if (!StrCmp(chr,"0")) res=1;
+
+  return ToBool(res);
 }
 
-"IsDigit: %d\n",IsDigit("23");
+"IsDigit: %d\n",IsDigit("23");
 "IsDigit: %d\n",IsDigit("-23");
 "IsDigit: %d\n",IsDigit("Terry");
-
+"IsDigit: %d\n",IsDigit("0");
+
 //KeyAndCont;
 
