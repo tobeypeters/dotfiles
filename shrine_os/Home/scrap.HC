@@ -1240,7 +1240,7 @@ U8 *buff4=StrIns(buff3,"! ",11);
 " New String: %s\n",buff4;
 Free(buff4);
 */
-
+/*
 U8 *StrIt(U8 *str,U8 *add,I64 idx)
 {
 /*
@@ -1266,7 +1266,7 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 
   //Gonna treat this like an array.
   U8 *st=MStrPrint("%h*c",ls+StrLen(add),32);
-  MemCpy(st,str,ls);
+  MemCpy(st,str,ls);
 
 
   U64 len_st=StrLen(st),
@@ -1291,6 +1291,14 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 }
 
 "%s\n",StrIt("HelloWorld","] .. [",-1);
+*/
+
+I64 num=-1;
+
+StrScan("-23","%d",&num);
+"%d\n",num;
+
+
 
 //KeyAndCont;
 
