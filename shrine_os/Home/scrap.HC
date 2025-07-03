@@ -1294,11 +1294,20 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 */
 
 I64 num=-1;
-
+
 StrScan("-23","%d",&num);
 "%d\n",num;
 
+Bool IsDigit(U8 *chr)
+{
+  I64 res=0;
+  StrScan(chr,"%d",&res);
+  return ToBool(res*StrCmp(chr,"0"));
+}
 
-
+"IsDigit: %d\n",IsDigit("23");
+"IsDigit: %d\n",IsDigit("-23");
+"IsDigit: %d\n",IsDigit("Terry");
+
 //KeyAndCont;
 
