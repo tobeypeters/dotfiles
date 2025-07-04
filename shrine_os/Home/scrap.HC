@@ -1293,26 +1293,44 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 "%s\n",StrIt("HelloWorld","] .. [",-1);
 */
 
-I64 num=-1;
-
-StrScan("-23","%d",&num);
-"%d\n",num;
-
-Bool IsDigit(U8 *chr)
+Bool IsNum(U8 *chr)
 {
-  I64 res=0;
-  StrScan(chr,"%d",&res);
+  U8 *p=chr;
+  U64 err_cnt=0;
 
-  if (res==0)
-    if (!StrCmp(chr,"0")) res=1;
+  while (*p!='\0')
+  {
+    if (!Bt(char_bmp_dec_numeric,p[0]))
+    {
+      switch (p[0])
+      {
+        case 45:
+        case 46:
+	  err_cnt++;
+          break;
+        default:
+          return FALSE;
+          break;
+      }
+      if (err_cnt>1) return FALSE;
+    }
+    p++;
+  }
 
-  return ToBool(res);
+  return TRUE;
 }
+U8 *tfa[2]={"FALSE","TRUE"};
 
-"IsDigit: %d\n",IsDigit("23");
-"IsDigit: %d\n",IsDigit("-23");
-"IsDigit: %d\n",IsDigit("Terry");
-"IsDigit: %d\n",IsDigit("0");
+"\n";
+"IsNum: %s\n",tfa[IsNum("35..4")];
+"IsNum: %s\n",tfa[IsNum("..5.4")];
+"IsNum: %s\n",tfa[IsNum("0")];
+"IsNum: %s\n",tfa[IsNum("-23")];
+"IsNum: %s\n",tfa[IsNum("a")];
+"IsNum: %s\n",tfa[IsNum("A")];
+"IsNum: %s\n",tfa[IsNum("A1.2")];
+"IsNum: %s\n",tfa[IsNum("1,2A")];
+"\n";
 
 //KeyAndCont;
 
