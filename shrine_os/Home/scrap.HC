@@ -1298,7 +1298,7 @@ Bool IsNum(U8 *chr)
   U8 *p=chr;
   U64 err_cnt=0;
 
-  while (*p!='\0')
+  while (*p)
   {
     if (!Bt(char_bmp_dec_numeric,p[0]))
     {
@@ -1340,9 +1340,8 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "IsNum: %s\n",tfa[IsNum("1,2A")];  //FALSE
 "IsNum: %s\n",tfa[IsNum("23.")];   //TRUE
 "\n";
-
-//KeyAndCont;
 */
+
 Bool isNum(U8 *c){
     I64 a,l=StrLen(c);
 
@@ -1350,10 +1349,11 @@ Bool isNum(U8 *c){
 	StrOcc(c,'-')>=2||
 	StrOcc(c,'+')>=2) return FALSE;
 
-    for(a=0;a<l;a++){
+    for(a=0;a<l;a++){
+        if ((c[a]=='+' || c[a]=='-')&&a) return FALSE;
 	if(!('0'<=c[a]<='9' ||
              c[a]=='.' || c[a]=='-' || 
-             c[a]=='+')) return FALSE;
+             c[a]=='+')) {return FALSE;}
     }
 
     return TRUE;
@@ -1362,4 +1362,8 @@ Bool isNum(U8 *c){
 "isNum: %d \n\n",isNum("3ds1416");
 "isNum: %d \n\n",isNum("-3.1416");
 "isNum: %d \n\n",isNum("+3.1416");
-"isNum: %d \n\n",isNum("++3.1416");
+"isNum: %d \n\n",isNum("++3.1416");
+"isNum: %d \n\n",isNum("3.1-416");
+
+
+//KeyAndCont;
