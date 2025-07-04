@@ -1348,7 +1348,7 @@ Bool isNum(U8 *c){
     if (StrOcc(c,'.')>1||
 	(a.u8[0]=StrOcc(c,'-'))>1||
 	(a.u8[1]=StrOcc(c,'+'))>1) return FALSE;
-
+
     if (a>256) return FALSE;
  
     //+ & - position check

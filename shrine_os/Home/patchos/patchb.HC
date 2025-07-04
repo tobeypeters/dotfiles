@@ -53,7 +53,7 @@ public F64 ATan2(F64 y,F64 x)
   if (x<0&&y>=0) return angle+ã; //quad 2
   else return angle-ã;           //quad 3
 }
-Bool I64Cmp(I64 num,...)
+public Bool I64Cmp(I64 num,...)
 {//Check to see if an I64 is in a given argv list.
   if (argc==0) return FALSE;
 
@@ -96,7 +96,7 @@ public U32 ToU32(U32 vu)
 */
   return vu;
 }
-I64 *TupleI64(...)
+public I64 *TupleI64(...)
 {//Build a compressed Tuple, out of up to 8 numbers.
   I64 it=-1;
 
@@ -108,12 +108,7 @@ I64 *TupleI64(...)
   return it;
 }
 
-//The return value of TupleI64, should be be checked for -1.
-//Cause, each .u8 will be equal to 255.
-I64 tup=TupleI64(67,68,69,70,71,72,73,76);
-//"tup: [%d] %d %d %d\n\n",tup,tup.u8[0],tup.u8[1],tup.u8[2];
-
-U8 Tuple(U8 *fmt,...)
+public U8 Tuple(U8 *fmt,...)
 {
   if (argc==0) return NULL;
 
@@ -139,7 +134,9 @@ public U8 ToLower(U8 chr)
 #help_index ""
 
 #help_index "Char/Operations"
-I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
+public Bool IsDigit(U8 *chr) return Bt(char_bmp_dec_numeric,chr);
+
+public I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
 {//Compare a string, to a list of strings.
   I64 res=-1;
 
@@ -157,15 +154,15 @@ I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
 
   return res;
 }
-U8 StrUpper(U8 *str)
+public U8 StrUpper(U8 *str)
 {//Convert a string to uppercase.
   return MStrUtil(str,SUF_TO_UPPER);
 }
-U8 StrLower(U8 *str)
+public U8 StrLower(U8 *str)
 {//Convert a string to lowercase. 
   return MStrUtil(str,SUF_TO_LOWER);
 }
-U8 *StrRev(U8 *str)
+public U8 *StrRev(U8 *str)
 {//Reverse a string.
   U64 l=StrLen(str)-1,i=0;
   U8 *st=CAlloc(sizeof(U8)*l);
@@ -187,7 +184,7 @@ U8 *StrRev(U8 *str)
 #help_index ""
 
 #help_index "Memory/Heap"
-U8 *CAllocSized(U64 size=0,...)
+public U8 *CAllocSized(U64 size=0,...)
 {//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
  //CAlloc'd size is calculated, from length of strings in argv or can
  //be simply passed in.
@@ -205,7 +202,7 @@ U8 *CAllocSized(U64 size=0,...)
 #help_index ""
 
 #help_index "Char/Operations;Memory"
-U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
+public U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
 {//Build a str, from strings stored in argv.
  //flush clears the buffer first. This way,
  //keeps you from using a fmt string  & needing to know the 
@@ -233,7 +230,7 @@ public U0 Cdr()
 }
 #help_index ""
 
-Bool I64InLst(I64 inval,...)
+public Bool I64InLst(I64 inval,...)
 {//Check to see if an I64 is in a given argv list.
   U64 i=0;
 
@@ -365,9 +362,9 @@ public U0 Tail(U8 *filename,U64 disp=10)
 #help_index ""
 
 #help_index "Debug"
-U0 DebugSND() Noise(1000,75,1000);
-U0 DebugYN(Bool state) { if (state) "YES"; else "NO"; "\n"; }
-U0 DebugPRN(U8 *dbg_STMNT,Bool preLF=FALSE,Bool postLF=FALSE,Bool adam=FALSE)
+public U0 DebugSND() Noise(1000,75,1000);
+public U0 DebugYN(Bool state) { if (state) "YES"; else "NO"; "\n"; }
+public U0 DebugPRN(U8 *dbg_STMNT,Bool preLF=FALSE,Bool postLF=FALSE,Bool adam=FALSE)
 {
   U8 *buffer=CAlloc(sizeof(U8)*255);
 
@@ -382,9 +379,9 @@ U0 DebugPRN(U8 *dbg_STMNT,Bool preLF=FALSE,Bool postLF=FALSE,Bool adam=FALSE)
 #help_index ""
 
 #help_index "File/Cmd Line (Typically);Cmd Line (Typically)"
-U8 *CurDrv() return Drv2Let(Fs->cur_dv); //Current drive letter.
+public U8 *CurDrv() return Drv2Let(Fs->cur_dv); //Current drive letter.
 
-F64 DrvFree(U8 *drv='',Bool ret_free=FALSE)
+public F64 DrvFree(U8 *drv='',Bool ret_free=FALSE)
 {//Display free space for each mounted drive
  //or a specified mounted drive.
  //Or just return the free space, for a specific mounted drive.
@@ -414,7 +411,7 @@ F64 DrvFree(U8 *drv='',Bool ret_free=FALSE)
   }
   return 0;
 }
-Bool DrvMounted(U8 *drv)
+public Bool DrvMounted(U8 *drv)
 {//Valid mounted drive. Must be passed in
  //Force format "C:"
   if (StrLen(drv)!=2) return FALSE;

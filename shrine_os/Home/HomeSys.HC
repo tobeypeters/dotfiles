@@ -50,6 +50,8 @@ U0 StartUpTasks()
   CTask *user1=User;
 
   ACInit("::/Adam/*;!/*Bible.TXT*");
+  ACInit("::/Home/patchos/*");
+
 
   AutoComplete; //Hide autocomplete window.
 
