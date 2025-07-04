@@ -1343,15 +1343,20 @@ U8 *tfa[2]={"FALSE","TRUE"};
 */
 
 Bool isNum(U8 *c){
-    I64 a,l=StrLen(c);
+    U64 a=0,l=StrLen(c);
 
-    if(StrOcc(c,'.')>=2||
-	StrOcc(c,'-')>=2||
-	StrOcc(c,'+')>=2) return FALSE;
+    if (StrOcc(c,'.')>1||
+	(a.u8[0]=StrOcc(c,'-'))>1||
+	(a.u8[1]=StrOcc(c,'+'))>1) return FALSE;
+
+    if (a>256) return FALSE;
+ 
+    //+ & - position check
+    if (a.u8[0]&&c[0]!='-' ||
+        a.u8[1]&&c[0]!='+') return FALSE;
 
     for(a=0;a<l;a++){
-        if ((c[a]=='+' || c[a]=='-')&&a) return FALSE;
-	if(!('0'<=c[a]<='9' ||
+	if (!('0'<=c[a]<='9' ||
              c[a]=='.' || c[a]=='-' || 
              c[a]=='+')) {return FALSE;}
     }
@@ -1362,8 +1367,8 @@ Bool isNum(U8 *c){
 "isNum: %d \n\n",isNum("3ds1416");
 "isNum: %d \n\n",isNum("-3.1416");
 "isNum: %d \n\n",isNum("+3.1416");
-"isNum: %d \n\n",isNum("++3.1416");
-"isNum: %d \n\n",isNum("3.1-416");
+"isNum: %d \n\n",isNum("++3.1416");
+"isNum: %d \n\n",isNum("3.1-416"); //ADDED
 
 
 //KeyAndCont;
