@@ -1296,7 +1296,7 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 Bool IsNum(U8 *chr)
 {
   U8 *p=chr;
-  U64 c1=0,c2=0;
+  U64 err_cnt=0;
 
   while (*p!='\0')
   {
@@ -1305,16 +1305,17 @@ Bool IsNum(U8 *chr)
       switch (p[0])
       {
         case 45:
-          c1++;
+          err_cnt.u8[0]++;
           break;
         case 46:
-	  c2++;
+	  err_cnt.u8[1]++;
           break;
         default:
           return FALSE;
           break;
       }
-      if (c1>1||c2>1) return FALSE;
+      if (err_cnt.u8[0]>1||
+          err_cnt.u8[1]>1) return FALSE;
     }
     p++;
   }
@@ -1334,8 +1335,8 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "IsNum: %s\n",tfa[IsNum("A")];     //FALSE
 "IsNum: %s\n",tfa[IsNum("A1.2")];  //FALSE
 "IsNum: %s\n",tfa[IsNum("1,2A")];  //FALSE
-"IsNum: %s\n",tfa[IsNum("23.")];   //TRUE
+"IsNum: %s\n",tfa[IsNum("23.")];   //TRUE
 "\n";
-
+
 //KeyAndCont;
 
