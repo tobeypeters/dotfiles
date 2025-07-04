@@ -1292,7 +1292,7 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 
 "%s\n",StrIt("HelloWorld","] .. [",-1);
 */
-
+/*
 Bool IsNum(U8 *chr)
 {
   U8 *p=chr;
@@ -1304,7 +1304,7 @@ Bool IsNum(U8 *chr)
     {
       switch (p[0])
       {
-        case 45:
+        case 45:
           if (*p!=*chr) return FALSE;
 
           err_cnt.u8[0]++;
@@ -1342,4 +1342,24 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "\n";
 
 //KeyAndCont;
+*/
+Bool isNum(U8 *c){
+    I64 a,l=StrLen(c);
 
+    if(StrOcc(c,'.')>=2||
+	StrOcc(c,'-')>=2||
+	StrOcc(c,'+')>=2) return FALSE;
+
+    for(a=0;a<l;a++){
+	if(!('0'<=c[a]<='9' ||
+             c[a]=='.' || c[a]=='-' || 
+             c[a]=='+')) return FALSE;
+    }
+
+    return TRUE;
+}
+
+"isNum: %d \n\n",isNum("3ds1416");
+"isNum: %d \n\n",isNum("-3.1416");
+"isNum: %d \n\n",isNum("+3.1416");
+"isNum: %d \n\n",isNum("++3.1416");
