@@ -1296,7 +1296,7 @@ U8 *StrIt(U8 *str,U8 *add,I64 idx)
 Bool IsNum(U8 *chr)
 {
   U8 *p=chr;
-  U64 err_cnt=0;
+  U64 c1=0,c2=0;
 
   while (*p!='\0')
   {
@@ -1305,14 +1305,16 @@ Bool IsNum(U8 *chr)
       switch (p[0])
       {
         case 45:
+          c1++;
+          break;
         case 46:
-	  err_cnt++;
+	  c2++;
           break;
         default:
           return FALSE;
           break;
       }
-      if (err_cnt>1) return FALSE;
+      if (c1>1||c2>1) return FALSE;
     }
     p++;
   }
@@ -1322,14 +1324,17 @@ Bool IsNum(U8 *chr)
 U8 *tfa[2]={"FALSE","TRUE"};
 
 "\n";
-"IsNum: %s\n",tfa[IsNum("35..4")];
-"IsNum: %s\n",tfa[IsNum("..5.4")];
-"IsNum: %s\n",tfa[IsNum("0")];
-"IsNum: %s\n",tfa[IsNum("-23")];
-"IsNum: %s\n",tfa[IsNum("a")];
-"IsNum: %s\n",tfa[IsNum("A")];
-"IsNum: %s\n",tfa[IsNum("A1.2")];
-"IsNum: %s\n",tfa[IsNum("1,2A")];
+"IsNum: %s\n",tfa[IsNum("35..4")]; //FALSE
+"IsNum: %s\n",tfa[IsNum("..5.4")]; //FALSE
+"IsNum: %s\n",tfa[IsNum("0")];     //TRUE
+"IsNum: %s\n",tfa[IsNum("-23")];   //TRUE
+"IsNum: %s\n",tfa[IsNum("-23.5")]; //TRUE
+"IsNum: %s\n",tfa[IsNum("-23.5a")];//FALSE
+"IsNum: %s\n",tfa[IsNum("a")];     //FALSE
+"IsNum: %s\n",tfa[IsNum("A")];     //FALSE
+"IsNum: %s\n",tfa[IsNum("A1.2")];  //FALSE
+"IsNum: %s\n",tfa[IsNum("1,2A")];  //FALSE
+"IsNum: %s\n",tfa[IsNum("23.")];   //TRUE
 "\n";
 
 //KeyAndCont;
