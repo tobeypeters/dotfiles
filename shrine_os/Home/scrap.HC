@@ -1304,7 +1304,9 @@ Bool IsNum(U8 *chr)
     {
       switch (p[0])
       {
-        case 45:
+        case 45:
+          if (*p!=*chr) return FALSE;
+
           err_cnt.u8[0]++;
           break;
         case 46:
@@ -1329,6 +1331,7 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "IsNum: %s\n",tfa[IsNum("..5.4")]; //FALSE
 "IsNum: %s\n",tfa[IsNum("0")];     //TRUE
 "IsNum: %s\n",tfa[IsNum("-23")];   //TRUE
+"IsNum: %s\n",tfa[IsNum("2-3")];   //FALSE
 "IsNum: %s\n",tfa[IsNum("-23.5")]; //TRUE
 "IsNum: %s\n",tfa[IsNum("-23.5a")];//FALSE
 "IsNum: %s\n",tfa[IsNum("a")];     //FALSE
@@ -1337,6 +1340,6 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "IsNum: %s\n",tfa[IsNum("1,2A")];  //FALSE
 "IsNum: %s\n",tfa[IsNum("23.")];   //TRUE
 "\n";
-
+
 //KeyAndCont;
 
