@@ -65,6 +65,7 @@ public Bool I64Cmp(I64 num,...)
   }
   return FALSE;
 }
+public Bool IsNan(F64 NaN) return ToBool(NaN!=NaN);
 
 public Bool InRangeI64(I64 val,I64 min,I64 max)
 {//Take a I64 number and determine if it's in a given range.
@@ -79,19 +80,16 @@ public I64 MapI64(I64 value,I64 in_min,I64 in_max,I64 out_min,I64 out_max)
   return ((value-in_min)*(out_max-out_min)+(in_max-in_min)/2)/(in_max-in_min)+out_min;
 }
 public U32 ToU32(U32 vu)
-{/* Return a valid U32.  Functions treat everything as 64bit.
-  Bit level is ignored.
-  if it's not inside a function.
+{/* Return a valid U32. Functions treat everything as 64bit.
+  Bit level is ignored, if it's not inside a function.
 
   U0 test()
   {
     U32 a=10*3284157443;
-    //Prints $WW+H,1$a: 32841574430 ValU32(a): 2776803358
-    "a: %d ValU32(a):\n",a,ValU32(a);
+
+    //Prints $WW+H,1$a: 32841574430 ToU32(a): 2776803358
+    "a: %d ToU32(a): %d\n",a,ToU32(a);
   }
-  U32 a=10*3284157443;
-  //Prints $WW+H,1$a: 2776803358 ValU32(a): 2776803358
-  "a: %d ValU32(a):\n",a,ValU32(a);
   test;
 */
   return vu;

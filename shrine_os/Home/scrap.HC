@@ -826,12 +826,13 @@ rain("");*/
 /*
 U0 test()
 {
+  U32 a=10*3284157443;
 
-U32 a=10*3284157443;
-"a: %d ToU32(a):\n",a,ToU32(a);//Prints $WW+H,1$a: 32841574430 ToU32(a): 2776803358
+  //Prints $WW+H,1$a: 32841574430 ToU32(a): 2776803358
+  "a: %d ToU32(a): %d\n",a,ToU32(a);
 }
-test;*/
-
+test;
+*/
 /*CD2 a,c;
 
 a.x=14;a.y=16;
@@ -1342,7 +1343,7 @@ U8 *tfa[2]={"FALSE","TRUE"};
 "\n";
 */
 
-Bool isNum(U8 *c){
+/*Bool isNum(U8 *c){
     U64 a=0,l=StrLen(c);
 
     if (StrOcc(c,'.')>1||
@@ -1369,6 +1370,10 @@ Bool isNum(U8 *c){
 "isNum: %d \n\n",isNum("+3.1416");
 "isNum: %d \n\n",isNum("++3.1416");
 "isNum: %d \n\n",isNum("3.1-416"); //ADDED
+*/
 
+/*U8 buffer[128]="Hello";
+CatPrint(&buffer," World!");
+"%s\n",buffer;*/
 
 //KeyAndCont;
