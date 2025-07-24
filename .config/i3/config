@@ -1,3 +1,4 @@
+
 # The MIT License(MIT)
 # Copyright(c), Tobey Peters, https://github.com/tobeypeters
 # is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -124,7 +125,9 @@ set $fl ~/Pictures/Wallpapers/wallpaper.lock
 set $flp  ~/Pictures/Wallpapers/wallpaper.prev
 
 #$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" &
-$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && feh -d --bg-max "$wal_output" &
+#$exec_always [ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && feh -d --bg-max "$wal_output" &
+#$exec_always sh -c '[ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && nitrogen --set-zoom "$wal_output"' &
+$exec_always sh -c '[ ! -f $fl ] && wal_output=$(./scripts/random_wall.py $fp) && echo "$wal_output" > $flp && wal -i "$wal_output" && nitrogen --force-setter=xwindows --set-zoom "$wal_output" || (wal -i $(cat $flp) && nitrogen --force-setter=xwindows --set-zoom $(cat $flp))'
 $exec_always [ -f $fl ] && wal -i $(cat $flp) &
 $exec_always cat ~/.cache/wal/sequences &
 
