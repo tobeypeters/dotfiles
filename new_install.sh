@@ -122,6 +122,7 @@ sudo apt install -y cava
 sudo apt install -y ckb-next
 sudo apt install -y --no-install-recommends cubic
 sudo apt install -y feh
+sudo apt install -y nitrogen
 sudo apt install -y gimp
 sudo apt install -y gnome-shell-extension-autohidetopbar
 #sudo apt install -y glances
