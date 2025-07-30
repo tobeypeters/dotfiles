@@ -84,7 +84,7 @@ U64 execute_cmd(U8 *cmd) {
 hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
-    if (!StrCmp(a->args[0],"##")) { //pid
+    if (!StrCmp(a->args[0],"##")) { //pid
       buff_add(a->args[0],"pid"); goto hashit;
     }
     if (!StrCmp(a->args[0],":>")) { //touch
