@@ -20,7 +20,7 @@
 */
 #help_index "Windows"
 
-U8 AMPM[2][2]={"PM","AM"};
+U8 *AMPM[2]={"PM","AM"};
 
 /*U8 base_eye[8] = {
     0b00111100,
@@ -55,23 +55,19 @@ U8 terminal[8] = {
     0b00000000
 };
 
+CDateStruct ds;
+
 I64 ita,itb;
-U64 chr2=128,mx,my;
-U64 bitdex(U64 x,U64 y) return y*8+x;
+U64 chr=127,chr2=128,
+    c_percent,pos,mem,
+    bc=LTGRAY<<4+BLACK;
+
+CCPU *c;
+
 U0 EyeWall(CTask *task)
 {
-  sys_winmgr_task->text_attr=LTGRAY<<4+BLACK;
+  sys_winmgr_task->text_attr=bc;
 
-  CDC *dc2=DCAlias(gr.dc2,task);
-
-  CCPU *c;
-
-  U64 px,py,chr=127,c_percent,pos,
-      cb=FONT_WIDTH*2+1,mem,oc;
-
-  F64 angle=0;
-
-  CDateStruct ds;
   Date2Struct(&ds,Now+local_time_offset);
 
   text.font[chr]=base_eye2[0](U64);
@@ -81,46 +77,47 @@ U0 EyeWall(CTask *task)
   angle=ATan2(my/(GR_HEIGHT/8)-4,
                 mx/(GR_WIDTH/8)-4);
 
-  px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
+  /*px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
 
   Bts(&text.font[chr],bitdex(px,py));
   Bts(&text.font[chr],bitdex(px+1,py));
   Bts(&text.font[chr],bitdex(px,py+1));
   Bts(&text.font[chr],bitdex(px+1,py+1));
+  */
+  
+  //This gives the illusion of pointing towards the mouse.
+  Bts(&text.font[chr],((ms.pos.y*8)/GR_HEIGHT)*8+((ms.pos.x*8)/GR_WIDTH));
+
+  pos=0;
+  TextPrint(task,pos,0,bc,"%c",chr);
 
-  if (scrncast.record) {
-    oc=dc2->color; dc2->color=RED;
-  }
-  pos=1;
-  GrPrint(dc2,pos,0,"%c",chr);
-  if (scrncast.record) {
-    dc2->color=oc;
-  }
+  if (scrncast.record)
+    TextPrint(task,1,0,bc,"%c",'þ');
 
   if (WALL_DEBUG)
-    GrPrint(dc2,12,0,"DEBUG: %d",WALL_DEBUG_VAL);
+    TextPrint(task,2,0,LTGRAY<<4+BLACK,"DEBUG: %d",WALL_DEBUG_VAL);
 
-  pos=GR_WIDTH-(FONT_WIDTH*17)-1;
-  GrPrint(dc2,pos,0,"%3tZ%02d/%02d%02d:%02d%s",
-	  ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,
-	  ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);
+  pos=TEXT_COLS-18;
+  TextPrint(task,pos,0,bc,
+            "%3tZ%02d/%02d%02d:%02d%s",
+	    ds.day_of_week,"ST_DAYS_OF_WEEK",ds.mon,ds.day_of_mon,
+	    ds.hour,ds.min,AMPM[ds.hour<12||ds.hour==24]);
 
   if (WALL_CPU)
   {
-    pos-=FONT_WIDTH;
     for (ita=mp_cnt-1;ita>=0;ita--)
     {
       c=&cpu_structs[ita];
 
       c_percent=100.0*(1.0-c->idle_factor);
     
-      pos-=cb; 
+      pos-=3;
 
-      GrPrint(dc2,pos,0,"%2d",c_percent);
+      TextPrint(task,pos,0,bc,"%2d",c_percent);
     }
 
-    pos-=FONT_WIDTH*3;
-    GrPrint(dc2,pos,0,"CPU");
+    pos-=3;
+    TextPrint(task,pos,0,bc,"CPU");
   }
 
   if (WALL_MEM)
@@ -130,11 +127,15 @@ U0 EyeWall(CTask *task)
     if (sys_data_bp)
       mem+=sys_data_bp->alloced_u8s-sys_data_bp->used_u8s;
 
-    pos-=FONT_WIDTH*15;
-    GrPrint(dc2,pos,0,"Mem:%010X",mem);
+    pos-=15;
+    TextPrint(task,pos,0,bc,"Mem:%010X",mem);
   }
 
-  DCDel(dc2);
+  if (WALL_FPS)
+  {
+    pos-=8;
+    TextPrint(task,pos,0,bc,"FPS: %2tf",winmgr.fps);
+  }
 }
 
 U0 DrawTermChar(CDC *dc,CCtrl *c)

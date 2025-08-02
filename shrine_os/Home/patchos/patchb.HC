@@ -20,10 +20,12 @@
 */
 #help_index "Patched"
 
-Bool WALL_DEBUG=FALSE,
-     WALL_DEBUG_VAL=FALSE,
-     WALL_CPU=TRUE,
-     WALL_MEM=TRUE;
+Bool WALL_DEBUG=FALSE,
+     WALL_CPU,WALL_MEM,
+     WALL_FPS;
+I64  WALL_DEBUG_VAL=0;
+
+WALL_FPS=WALL_MEM=WALL_CPU=TRUE;
 
 U8 *tf_arr[2]={"FALSE","TRUE"};
 

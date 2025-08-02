@@ -96,5 +96,4 @@ GrPaletteSet(gr_palette_std);
 
 DCDel(spi_dc);
 
-Exit;
-
+Exit; //Will cause a crash in ExeFile. Terry had a todo in there.
