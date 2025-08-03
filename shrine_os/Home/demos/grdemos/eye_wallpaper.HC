@@ -73,21 +73,21 @@ U0 EyeWall(CTask *task)
   text.font[chr]=base_eye2[0](U64);
   text.font[chr2]=terminal[0](U64);
 
-  MouseXY(task,&mx,&my);
+/*  MouseXY(task,&mx,&my);
   angle=ATan2(my/(GR_HEIGHT/8)-4,
                 mx/(GR_WIDTH/8)-4);
 
-  /*px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
+  px=4+Cos(angle)*2; py=4+Sin(angle)*2;    
 
   Bts(&text.font[chr],bitdex(px,py));
   Bts(&text.font[chr],bitdex(px+1,py));
   Bts(&text.font[chr],bitdex(px,py+1));
   Bts(&text.font[chr],bitdex(px+1,py+1));
-  */
+*/
   
   //This gives the illusion of pointing towards the mouse.
   Bts(&text.font[chr],((ms.pos.y*8)/GR_HEIGHT)*8+((ms.pos.x*8)/GR_WIDTH));
-
+
   pos=0;
   TextPrint(task,pos,0,bc,"%c",chr);
 
