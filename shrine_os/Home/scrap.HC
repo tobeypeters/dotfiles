@@ -1376,7 +1376,7 @@ U8 *tfa[2]={"FALSE","TRUE"};
 CatPrint(buffer," World!");
 "%s\n",buffer;*/
 
-U0 CharCat(U8 *d,U8 *s)
+/*U0 CharCat(U8 *d,U8 *s)
 {
   d[StrLen(d)]=s;
 }
@@ -1393,8 +1393,29 @@ CharCat(buffer,'o');
 CharCat(buffer,'r');
 CharCat(buffer,'l');
 CharCat(buffer,'d');
-
+*/
 
-"%s\n",buffer;
+U8 *CharCat(U8 *d,U8 *s)
+{
+  StrCpy(d+StrLen(d),&s);
+  return d;
+}
+U8 *s="";
+
+CharCat(s,'H');
+CharCat(s,'e');
+CharCat(s,'l');
+CharCat(s,'l');
+CharCat(s,'o');
+CharCat(s,' ');
+CharCat(s,'W');
+CharCat(s,'o');
+CharCat(s,'r');
+CharCat(s,'l');
+CharCat(s,'d');
+
+
+"%s\n",CharCat(s,'!');
 
 //KeyAndCont;
+
