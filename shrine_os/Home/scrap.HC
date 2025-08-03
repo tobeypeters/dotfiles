@@ -1376,5 +1376,25 @@ U8 *tfa[2]={"FALSE","TRUE"};
 CatPrint(buffer," World!");
 "%s\n",buffer;*/
 
+U0 CharCat(U8 *d,U8 *s)
+{
+  d[StrLen(d)]=s;
+}
+U8 *buffer=CAlloc(sizeof(U8)*256);
+
+CharCat(buffer,'H');
+CharCat(buffer,'e');
+CharCat(buffer,'l');
+CharCat(buffer,'l');
+CharCat(buffer,'o');
+CharCat(buffer,' ');
+CharCat(buffer,'W');
+CharCat(buffer,'o');
+CharCat(buffer,'r');
+CharCat(buffer,'l');
+CharCat(buffer,'d');
 
+
+"%s\n",buffer;
+
 //KeyAndCont;
