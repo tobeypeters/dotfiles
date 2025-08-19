@@ -1395,7 +1395,7 @@ CharCat(buffer,'l');
 CharCat(buffer,'d');
 */
 
-U8 *CharCat(U8 *d,U8 *s)
+/*U8 *CharCat(U8 *d,U8 *s)
 {
   StrCpy(d+StrLen(d),&s);
   return d;
@@ -1416,6 +1416,15 @@ CharCat(s,'d');
 
 
 "%s\n",CharCat(s,'!');
+*/
+
+U0 func()
+{
+  "\nHello\n\n";
+}
+
+//U8 *fp=&func;
+U8 *fp=MStrPrint("%x\n",&func);
+"%s\n",fp;
 
 //KeyAndCont;
-

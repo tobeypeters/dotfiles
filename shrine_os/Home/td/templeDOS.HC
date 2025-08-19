@@ -607,7 +607,7 @@ U8 templeDOS() {
 //  AdamLog("\nBoot Time:%7.3fs\n\n",tS);
 
 //  FF("/*BIN*");
-//  AdamLog("\n\n$$LTCYAN$$TODO:el gato:$$FG$$ ...\n\n");
+  AdamLog("\n\n$$LTCYAN$$TODO:  ** - globstar support$$FG$$ ...\n\n");
 //  AdamLog("templeDOS [%d]: started: %D %T\n",termID,Now,Now);
 
   set_windowinfo(MStrPrint("templedos_task%d",termID),"TempleDOS");
