@@ -70,7 +70,7 @@ CBGR48 rr_palette_custom[COLORS_NUM];
      [LTRED] ERRORS
   [LTPURPLE] SELECTIONFG
     [YELLOW] MENUTEXT, SCROLLBAR GRIPPERS
-     [WHITE] BGMAIN
+     [WHITE] BGMAIN
 */
 
 /* This "theme1()" being a function will go away. I'll just have
@@ -187,7 +187,7 @@ theme2;
 //theme1;
 //theme3;
 
-set_theme(gr_palette_custom);
+set_theme(gr_palette_vga);
 
 /*U8 *lst="amicus\0commander\0default1\0sandybeach\0slate\0temple\0tradition\0vapor\0zsnes\0";
 
