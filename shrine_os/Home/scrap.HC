@@ -1424,7 +1424,12 @@ U0 func()
 }
 
 //U8 *fp=&func;
-U8 *fp=MStrPrint("%x\n",&func);
-"%s\n",fp;
+/*U8 *fp=MStrPrint("%x\n",&func);
+"%s\n",fp;*/
+
+CColorROPU32 col = RED;
+"%x\n",col.c0;
+"%x\n",col.c1;
+"%d\n",col;
 
 //KeyAndCont;

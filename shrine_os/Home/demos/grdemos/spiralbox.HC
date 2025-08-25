@@ -88,7 +88,7 @@ U0 Init()
 
 Fs->win_inhibit|=WIG_DBL_CLICK;
 
-#include "grmain"
+#include "grmain"
 
 p_init;
 
