@@ -24,7 +24,6 @@ class BITMAPCOMB {
 } *bc;
 bc=CAlloc(sizeof(BITMAPCOMB));
 
-
 U8 *buffer=FileRead("pa.bmp");
 U64 bp=0;
 
@@ -52,5 +51,5 @@ MemCpy(bc,buffer,sizeof(BITMAPCOMB));
 
 bp+=sizeof(BITMAPCOMB);
 
-Free(bc);
+Free(bc);
 Free(buffer);
