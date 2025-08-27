@@ -88,12 +88,12 @@ U0 Init()
 
 Fs->win_inhibit|=WIG_DBL_CLICK;
 
-#include "grmain"
+#include "grmain"
 
 p_init;
 
 GrPaletteSet(gr_palette_std);
-
+
 DCDel(spi_dc);
 
 Exit; //Will cause a crash in ExeFile. Terry had a todo in there.

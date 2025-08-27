@@ -27,7 +27,7 @@ bc=CAlloc(sizeof(BITMAPCOMB));
 U8 *buffer=FileRead("pa.bmp");
 U64 bp=0;
 
-MemCpy(bc,buffer,sizeof(BITMAPCOMB));
+MemCpy(bc,buffer,sizeof(BITMAPCOMB));
 "\n";
 "---- Bitmap Combined Info ----\n";
 "       File type: %d %c%c : %c%c\n",bc->bfType,buffer[0], buffer[1], bc->bfType.u8[0],bc->bfType.u8[1];
