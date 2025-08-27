@@ -120,7 +120,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     {
       dc->color=pbuff[y*dw+x];
 
-      GrPrint(dc,x*FONT_WIDTH,y*FONT_HEIGHT,"\\");
+      GrPrint(dc,x*FONT_WIDTH,y*FONT_HEIGHT,"Û");
     }
   }
 }
