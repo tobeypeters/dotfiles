@@ -54,7 +54,7 @@ U0 bitmaptest() //Only wrapped this in a function, so I could use goto. :>
   "\n";
 
   //Make sure it's type is BM & it's a 24bit bitmap.
-  if (!bc->bfType==19778||
+  if (!bc->bfType==19778 ||
       !bc->biBitCount==24) goto halt;
 
   U8 *rbuff;

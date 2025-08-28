@@ -20,7 +20,7 @@
   Resources:
       https://en.wikipedia.org/wiki/Boids
 */
-Cd(__DIR__);;
+Cd(__DIR__);;
 
 #define PARTICLE_MAX 1000
 
