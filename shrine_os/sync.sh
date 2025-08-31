@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 usage() {
     echo "Usage: ./sync.sh <host|shrine> <shrineos>"
