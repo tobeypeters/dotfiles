@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+ 
 : <<'LICENSE'
   The MIT License (MIT)
   Copyright (c) Tobey Peters
