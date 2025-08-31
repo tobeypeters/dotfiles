@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo apt-add-repository ppa:cubic-wizard/release
 sudo apt update
