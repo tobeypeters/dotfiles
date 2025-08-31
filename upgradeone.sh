@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo ''<<LICENSE
 	The MIT License(MIT)
