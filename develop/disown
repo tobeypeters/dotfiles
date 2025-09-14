@@ -1,0 +1,14 @@
+ASCIISYNTH IMPORT: 'M1(C*(51)D)vA)/)M),(Xt@()((((((('
+DISPLAY: set environmentvar NO_OPENGL=1 to disable hardware acceleration
+Available Renderers: opengl opengles2 software 
+Vendor     : AMD
+Renderer   : AMD Radeon RX 550 / 550 Series (radeonsi, polaris12, ACO, DRM 3.57, 6.8.0-79-generic)
+Version    : OpenGL ES 3.2 Mesa 25.2.2 (git-22ded5f256)
+SDL: Using accelerated renderer.
+SDL: Renderer supports rendering to texture.
+SDL: Using audio driver: pulseaudio
+SDL: Buffer size = 2048 samples (requested 2048)
+MIDI: scanning input ports:
+MIDI:  0. Midi Through:Midi Through Port-0 14:0
+MIDI: selecting MIDI-in port: 0
+MIDI: run `MIDI_IN=x ./milkytracker` to select different port)
