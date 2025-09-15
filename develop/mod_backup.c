@@ -1,3 +1,15 @@
+// mod_sdl_full.c - MOD player with SDL2 and basic ProTracker-style effects
+// Usage: ./mod_sdl_full file.mod
+//
+// Features:
+//  - Uses the actual SDL audio device sample rate for correct pitch/speed
+//  - Tick timing derived from BPM/speed (ProTracker style)
+//  - Implements common effects: Arpeggio(0), Portamento up(1), Portamento down(2),
+//    Tone portamento(3), Vibrato(4), TonePorta+VolSlide(5), Vibrato+VolSlide(6),
+//    Volume slide(A), Position jump(B), Set volume(C), Pattern break(D),
+//    Set speed/BPM(F), Sample offset(9)
+//  - Simple sine-table vibrato, semitone conversion for arpeggio
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -6,7 +18,6 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
 #define SAMPLE_RATE 44100
 #define AUDIO_CHANNELS 2
@@ -15,7 +26,7 @@
 #define MAX_PATTERNS 128
 #define MAX_ROWS 64
 #define MAX_SAMPLES 31
-#define FFT_SIZE 1024
+#define FFT_SIZE 512
 
 // Amiga clock (PAL) for period->frequency conversion
 #define PAL_CLOCK 7093789.0
@@ -101,23 +112,6 @@ static Uint32 last_tick_time = 0;
 // Simple sine table for vibrato (0..255)
 static float sin_table[256];
 
-// UI state
-static SDL_Window *window = NULL;
-static SDL_Renderer *renderer = NULL;
-static TTF_Font *font = NULL;
-static TTF_Font *small_font = NULL;
-static int window_width = 1024;
-static int window_height = 768;
-static int vu_meters[MAX_CHANNELS] = {0};
-static float spectrum_data[FFT_SIZE/2] = {0};
-static Uint32 last_ui_update = 0;
-static const int UI_UPDATE_INTERVAL = 50; // ms between UI updates
-
-// FFT variables for spectrum analyzer
-static float fft_input[FFT_SIZE];
-static float fft_output[FFT_SIZE];
-static int fft_pos = 0;
-
 // --- Utility functions ---
 static inline int clampi(int v, int lo, int hi) { return v < lo ? lo : (v > hi ? hi : v); }
 static inline float clampf(float v, float lo, float hi) { return v < lo ? lo : (v > hi ? hi : v); }
@@ -138,110 +132,6 @@ static const int amiga_periods[] = {
     214,202,190,180,170,160,151,143,135,127,120,113
 };
 
-// Convert period to note name
-static const char* period_to_note(uint16_t period) {
-    if (period == 0) return "...";
-
-    // Find closest period
-    int closest_note = -1;
-    int min_diff = 1000;
-
-    for (int i = 0; i < 48; i++) {
-        int diff = abs((int)period - amiga_periods[i]);
-        if (diff < min_diff) {
-            min_diff = diff;
-            closest_note = i;
-        }
-    }
-
-    if (closest_note == -1) return "???";
-
-    static const char* note_names[] = {
-        "C-", "C#", "D-", "D#", "E-", "F-", "F#", "G-", "G#", "A-", "A#", "B-"
-    };
-
-    int octave = (closest_note / 12) + 1;
-    int note = closest_note % 12;
-
-    static char note_buf[8];
-    snprintf(note_buf, sizeof(note_buf), "%s%d", note_names[note], octave);
-    return note_buf;
-}
-
-// Convert effect code to string
-static const char* effect_to_str(uint8_t effect, uint8_t param) {
-    static char effect_buf[16];
-
-    if (effect == 0 && param == 0) return "...";
-
-    switch (effect) {
-        case 0x0: return param ? "ARP" : "...";
-        case 0x1: return "PUP";
-        case 0x2: return "PDN";
-        case 0x3: return "TPO";
-        case 0x4: return "VIB";
-        case 0x5: return "TPV";
-        case 0x6: return "VVS";
-        case 0x7: return "TRE";
-        case 0x8: return "---";
-        case 0x9: return "SOS";
-        case 0xA: return "VSL";
-        case 0xB: return "PJP";
-        case 0xC: return "VOL";
-        case 0xD: return "PBR";
-        case 0xE:
-            switch (param >> 4) {
-                case 0x0: return "EFI";
-                case 0x1: return "UPS";
-                case 0x2: return "DNS";
-                case 0x3: return "TOS";
-                case 0x4: return "VBS";
-                case 0x5: return "VBF";
-                case 0x6: return "VBS";
-                case 0x7: return "TOS";
-                case 0x8: return "---";
-                case 0x9: return "RTR";
-                case 0xA: return "VUL";
-                case 0xB: return "PJP";
-                case 0xC: return "CTR";
-                case 0xD: return "DPL";
-                case 0xE: return "DLY";
-                case 0xF: return "INI";
-            }
-            break;
-        case 0xF: return "SPD";
-        default: return "???";
-    }
-
-    snprintf(effect_buf, sizeof(effect_buf), "%X%02X", effect, param);
-    return effect_buf;
-}
-
-// Format effect parameter
-static const char* param_to_str(uint8_t effect, uint8_t param) {
-    static char param_buf[8];
-
-    if (effect == 0 && param == 0) return "..";
-
-    switch (effect) {
-        case 0x0: // Arpeggio
-            if (param == 0) return "..";
-            snprintf(param_buf, sizeof(param_buf), "%X%X", param >> 4, param & 0xF);
-            break;
-        case 0xC: // Volume
-            snprintf(param_buf, sizeof(param_buf), "%02X", param);
-            break;
-        case 0xF: // Speed/BPM
-            snprintf(param_buf, sizeof(param_buf), "%02X", param);
-            break;
-        default:
-            snprintf(param_buf, sizeof(param_buf), "%02X", param);
-            break;
-    }
-
-    return param_buf;
-}
-
 // Convert Amiga/ProTracker period to frequency (Hz). For non-Amiga linear MODs this differs,
 // but we're aiming for classic ProTracker behavior on PAL clock.
 static double period_to_freq(uint16_t period) {
@@ -258,101 +148,6 @@ static double freq_to_step(double freq) {
 // Convert semitone offset to frequency multiplier
 static double semitone_ratio(int semis) {
     return pow(2.0, semis / 12.0);
-}
-
-// Simple FFT implementation for spectrum analyzer
-static void fft(float *x, float *y, int n) {
-    int i, j, k, n1, n2, a;
-    float c, s, e, t1, t2;
-
-    j = 0;
-    n2 = n / 2;
-    for (i = 1; i < n - 1; i++) {
-        n1 = n2;
-        while (j >= n1) {
-            j = j - n1;
-            n1 = n1 / 2;
-        }
-        j = j + n1;
-
-        if (i < j) {
-            t1 = x[i];
-            x[i] = x[j];
-            x[j] = t1;
-            t1 = y[i];
-            y[i] = y[j];
-            y[j] = t1;
-        }
-    }
-
-    n1 = 0;
-    n2 = 1;
-
-    for (i = 0; i < (int)log2(n); i++) {
-        n1 = n2;
-        n2 = n2 + n2;
-        a = 0;
-
-        for (j = 0; j < n1; j++) {
-            c = cos(-2.0 * M_PI * a / n);
-            s = sin(-2.0 * M_PI * a / n);
-            a += 1 << ((int)log2(n) - i - 1);
-
-            for (k = j; k < n; k = k + n2) {
-                t1 = c * x[k + n1] - s * y[k + n1];
-                t2 = s * x[k + n1] + c * y[k + n1];
-                x[k + n1] = x[k] - t1;
-                y[k + n1] = y[k] - t2;
-                x[k] = x[k] + t1;
-                y[k] = y[k] + t2;
-            }
-        }
-    }
-}
-
-// Apply Hanning window to FFT input
-static void apply_window(float *data, int n) {
-    for (int i = 0; i < n; i++) {
-        float window = 0.5f * (1.0f - cosf(2.0f * M_PI * i / (n - 1)));
-        data[i] *= window;
-    }
-}
-
-// Update spectrum analyzer with new audio data
-static void update_spectrum(int16_t *audio, int samples) {
-    // Add new samples to FFT input buffer
-    for (int i = 0; i < samples; i++) {
-        fft_input[fft_pos] = (float)audio[i * 2] / 32768.0f; // Use left channel
-        fft_pos++;
-        if (fft_pos >= FFT_SIZE) {
-            fft_pos = 0;
-
-            // Apply window function
-            apply_window(fft_input, FFT_SIZE);
-
-            // Prepare imaginary part (all zeros)
-            float imag[FFT_SIZE] = {0};
-
-            // Perform FFT
-            memcpy(fft_output, fft_input, FFT_SIZE * sizeof(float));
-            fft(fft_output, imag, FFT_SIZE);
-
-            // Calculate magnitude and update spectrum data
-            for (int j = 0; j < FFT_SIZE/2; j++) {
-                float real = fft_output[j];
-                float img = imag[j];
-                float magnitude = sqrtf(real*real + img*img) / (FFT_SIZE/2);
-
-                // Apply logarithmic scale and smoothing
-                magnitude = 10.0f * log10f(magnitude + 1e-6f);
-                magnitude = (magnitude + 60.0f) / 60.0f; // Normalize to 0-1 range
-                magnitude = clampf(magnitude, 0.0f, 1.0f);
-
-                // Smooth with previous values
-                spectrum_data[j] = 0.8f * spectrum_data[j] + 0.2f * magnitude;
-            }
-        }
-    }
 }
 
 // --- MOD parsing (simple, supports typical 31-sample MODs) ---
@@ -677,9 +472,6 @@ static void mix_buffer(int16_t *out, int nframes, int vu[/*MAX_CHANNELS*/]) {
         out[i * 2 + 1] = v;
     }
 
-    // Update spectrum analyzer
-    update_spectrum(out, nframes);
-
     // average VU samples
     for (int ch = 0; ch < mod.num_channels && ch < MAX_CHANNELS; ch++) {
         if (nframes > 0) vu[ch] /= nframes;
@@ -696,11 +488,6 @@ static void audio_callback(void *userdata, Uint8 *stream, int len) {
     int nframes = total_samples / AUDIO_CHANNELS;
     static int vu_local[MAX_CHANNELS];
     mix_buffer(out, nframes, vu_local);
-
-    // Update VU meters for UI
-    for (int i = 0; i < mod.num_channels; i++) {
-        vu_meters[i] = vu_local[i];
-    }
 }
 
 // --- Sequencer core ---
@@ -781,227 +568,6 @@ static void init_player() {
     }
 }
 
-// --- UI Rendering Functions ---
-static void draw_vu_meter(int channel, int value, int x, int y, int width, int height) {
-    SDL_Rect bg_rect = {x, y, width, height};
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &bg_rect);
-
-    int bar_height = (value * height) / 256;
-    if (bar_height > height) bar_height = height;
-
-    SDL_Rect bar_rect = {x, y + height - bar_height, width, bar_height};
-
-    // Color based on intensity
-    if (value > 200) {
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red for high
-    } else if (value > 100) {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Yellow for medium
-    } else {
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Green for low
-    }
-
-    SDL_RenderFillRect(renderer, &bar_rect);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &bg_rect);
-
-    // Draw channel number
-    char chan_text[8];
-    snprintf(chan_text, sizeof(chan_text), "%d", channel + 1);
-    SDL_Surface* text_surface = TTF_RenderText_Solid(small_font, chan_text, (SDL_Color){255, 255, 255, 255});
-    if (text_surface) {
-        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        if (text_texture) {
-            SDL_Rect text_rect = {x + width/2 - text_surface->w/2, y + height + 5, text_surface->w, text_surface->h};
-            SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
-            SDL_DestroyTexture(text_texture);
-        }
-        SDL_FreeSurface(text_surface);
-    }
-}
-
-static void draw_spectrum_analyzer(int x, int y, int width, int height) {
-    SDL_Rect bg_rect = {x, y, width, height};
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &bg_rect);
-
-    int bar_width = width / (FFT_SIZE/2);
-    if (bar_width < 1) bar_width = 1;
-
-    for (int i = 0; i < FFT_SIZE/2; i++) {
-        int bar_height = (int)(spectrum_data[i] * height);
-        if (bar_height > height) bar_height = height;
-        if (bar_height < 1) bar_height = 1;
-
-        // Color gradient from blue to red based on frequency
-        float ratio = (float)i / (FFT_SIZE/2);
-        Uint8 r = (Uint8)(255 * ratio);
-        Uint8 g = (Uint8)(128 * (1.0 - fabs(ratio - 0.5) * 2));
-        Uint8 b = (Uint8)(255 * (1.0 - ratio));
-
-        SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-
-        SDL_Rect bar_rect = {
-            x + i * bar_width,
-            y + height - bar_height,
-            bar_width,
-            bar_height
-        };
-
-        SDL_RenderFillRect(renderer, &bar_rect);
-    }
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &bg_rect);
-}
-
-static void draw_text(const char *text, int x, int y, SDL_Color color) {
-    if (!font) return;
-
-    SDL_Surface* text_surface = TTF_RenderText_Solid(font, text, color);
-    if (text_surface) {
-        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        if (text_texture) {
-            SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
-            SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
-            SDL_DestroyTexture(text_texture);
-        }
-        SDL_FreeSurface(text_surface);
-    }
-}
-
-static void draw_small_text(const char *text, int x, int y, SDL_Color color) {
-    if (!small_font) return;
-
-    SDL_Surface* text_surface = TTF_RenderText_Solid(small_font, text, color);
-    if (text_surface) {
-        SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-        if (text_texture) {
-            SDL_Rect text_rect = {x, y, text_surface->w, text_surface->h};
-            SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
-            SDL_DestroyTexture(text_texture);
-        }
-        SDL_FreeSurface(text_surface);
-    }
-}
-
-static void render_ui() {
-    // Clear screen
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
-    // Draw song info
-    SDL_Color white = {255, 255, 255, 255};
-    SDL_Color green = {0, 255, 0, 255};
-    SDL_Color yellow = {255, 255, 0, 255};
-    SDL_Color cyan = {0, 255, 255, 255};
-
-    char info_text[256];
-    snprintf(info_text, sizeof(info_text), "Song: %s", mod.name);
-    draw_text(info_text, 10, 10, white);
-
-    snprintf(info_text, sizeof(info_text), "Pattern: %d/%d", mod.order[song_pos], mod.num_patterns);
-    draw_text(info_text, 10, 40, white);
-
-    snprintf(info_text, sizeof(info_text), "Row: %d/%d", row, 64);
-    draw_text(info_text, 10, 70, white);
-
-    snprintf(info_text, sizeof(info_text), "Speed: %d BPM: %d", speed, bpm);
-    draw_text(info_text, 10, 100, white);
-
-    // Calculate and display time
-    double total_time = (mod.song_length * 64 * 2.5) / (bpm / 60.0);
-    double current_time = (song_pos * 64 + row) * 2.5 / (bpm / 60.0);
-
-    int total_min = (int)total_time / 60;
-    int total_sec = (int)total_time % 60;
-    int total_ms = (int)((total_time - (int)total_time) * 100);
-
-    int current_min = (int)current_time / 60;
-    int current_sec = (int)current_time % 60;
-    int current_ms = (int)((current_time - (int)current_time) * 100);
-
-    snprintf(info_text, sizeof(info_text), "Time: %d:%02d.%02d / %d:%02d.%02d",
-             current_min, current_sec, current_ms, total_min, total_sec, total_ms);
-    draw_text(info_text, 10, 130, white);
-
-    // Draw VU meters
-    int meter_width = 30;
-    int meter_height = 100;
-    int meter_spacing = 10;
-    int start_x = 10;
-    int start_y = 180;
-
-    for (int i = 0; i < mod.num_channels; i++) {
-        draw_vu_meter(i, vu_meters[i], start_x + i * (meter_width + meter_spacing), start_y, meter_width, meter_height);
-    }
-
-    // Draw spectrum analyzer
-    draw_spectrum_analyzer(200, 180, 600, 100);
-
-    // Draw sample list
-    int sample_y = 300;
-    draw_text("Samples:", 10, sample_y, white);
-    sample_y += 30;
-
-    for (int i = 0; i < 8 && i < MAX_SAMPLES; i++) {
-        if (mod.samples[i].length > 0) {
-            snprintf(info_text, sizeof(info_text), "%02d: %s", i+1, mod.samples[i].name);
-            draw_small_text(info_text, 10, sample_y, white);
-            sample_y += 20;
-        }
-    }
-
-    // Draw pattern info
-    int pattern_y = 300;
-    draw_text("Pattern:", 200, pattern_y, white);
-    pattern_y += 30;
-
-    Pattern *current_pattern = &mod.patterns[mod.order[song_pos]];
-    for (int r = 0; r < 16; r++) {
-        int actual_row = (row / 8) * 8 + r;
-        if (actual_row >= 64) break;
-
-        // Row number
-        snprintf(info_text, sizeof(info_text), "%02d:", actual_row);
-        draw_small_text(info_text, 200, pattern_y, actual_row == row ? cyan : white);
-
-        // Channel data
-        for (int ch = 0; ch < mod.num_channels; ch++) {
-            Note n = current_pattern->notes[actual_row][ch];
-            int channel_x = 250 + ch * 120;
-
-            // Note
-            const char* note_str = period_to_note(n.period);
-            draw_small_text(note_str, channel_x, pattern_y,
-                           actual_row == row ? yellow : white);
-
-            // Sample
-            if (n.sample > 0) {
-                snprintf(info_text, sizeof(info_text), "%02X", n.sample);
-            } else {
-                strcpy(info_text, "..");
-            }
-            draw_small_text(info_text, channel_x + 40, pattern_y,
-                           actual_row == row ? yellow : white);
-
-            // Effect
-            const char* effect_str = effect_to_str(n.effect, n.param);
-            draw_small_text(effect_str, channel_x + 60, pattern_y,
-                           actual_row == row ? yellow : white);
-
-            // Parameter
-            const char* param_str = param_to_str(n.effect, n.param);
-            draw_small_text(param_str, channel_x + 90, pattern_y,
-                           actual_row == row ? yellow : white);
-        }
-        pattern_y += 15;
-    }
-
-    // Update screen
-    SDL_RenderPresent(renderer);
-}
-
 // --- Main ---
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -1013,54 +579,8 @@ int main(int argc, char **argv) {
     parse_mod(argv[1]);
     init_player();
 
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
         fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
-        return 1;
-    }
-
-    // Initialize SDL_ttf
-    if (TTF_Init() == -1) {
-        fprintf(stderr, "TTF_Init failed: %s\n", TTF_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
-    // Load fonts
-    font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 12);
-    if (!font) { // Try fallback font(s)
-      font = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 12);
-      if (!font) {
-          fprintf(stderr, "Failed to load font: %s\n", TTF_GetError());
-          TTF_Quit();
-          SDL_Quit();
-          return 1;
-      }
-    }
-    small_font = font;
-
-    // Create window
-    window = SDL_CreateWindow("Protracker-like Player",
-                             SDL_WINDOWPOS_CENTERED,
-                             SDL_WINDOWPOS_CENTERED,
-                             window_width, window_height,
-                             SDL_WINDOW_SHOWN);
-    if (!window) {
-        fprintf(stderr, "SDL_CreateWindow failed: %s\n", SDL_GetError());
-        TTF_CloseFont(font);
-        TTF_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
-    // Create renderer
-    renderer = SDL_CreateRenderer(window, -1,
-                                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!renderer) {
-        fprintf(stderr, "SDL_CreateRenderer failed: %s\n", SDL_GetError());
-        TTF_CloseFont(font);
-        TTF_Quit();
-        SDL_DestroyWindow(window);
-        SDL_Quit();
         return 1;
     }
 
@@ -1076,10 +596,6 @@ int main(int argc, char **argv) {
     audio_dev = SDL_OpenAudioDevice(NULL, 0, &desired, &obtained, 0);
     if (audio_dev == 0) {
         fprintf(stderr, "SDL_OpenAudioDevice: %s\n", SDL_GetError());
-        TTF_CloseFont(font);
-        TTF_Quit();
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
     }
@@ -1090,7 +606,6 @@ int main(int argc, char **argv) {
     SDL_PauseAudioDevice(audio_dev, 0); // start
 
     last_tick_time = SDL_GetTicks();
-    last_ui_update = SDL_GetTicks();
 
     // Start playing: immediately process first row (tick 0) so notes start
     tick = 0;
@@ -1123,12 +638,6 @@ int main(int argc, char **argv) {
             }
         }
 
-        // Update UI at regular intervals
-        if (now - last_ui_update >= UI_UPDATE_INTERVAL) {
-            render_ui();
-            last_ui_update = now;
-        }
-
         // Simple event handling: quit on SDL_QUIT or Ctrl-C
         SDL_Event ev;
         while (SDL_PollEvent(&ev)) {
@@ -1157,10 +666,6 @@ int main(int argc, char **argv) {
         if (mod.samples[i].data) free(mod.samples[i].data);
     }
     if (mod.patterns) free(mod.patterns);
-    TTF_CloseFont(font);
-    TTF_Quit();
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
 }
