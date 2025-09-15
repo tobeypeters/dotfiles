@@ -1,5 +1,6 @@
-// mod_sdl_full.c - Complete MOD player with Amiga-style tracker interface
-// Usage: ./mod_sdl_full file.mod
+//Amiga-style tracker interface
+//https://moddingwiki.shikadi.net/wiki/MOD_Format
+//https://en.wikipedia.org/wiki/MOD_(file_format)
 
 #include <stdio.h>
 #include <stdlib.h>
