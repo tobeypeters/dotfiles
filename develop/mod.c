@@ -640,7 +640,7 @@ static void draw_amiga_interface(int16_t *buf, int n, int vu[NUM_CHANNELS]) {
 
     // Draw spectrum background
     SDL_SetRenderDrawColor(ren, 30, 30, 30, 255);
-    SDL_Rect spec_bg = {200, 600, 800, 80};
+    SDL_Rect spec_bg = {230, 600, 780, 80};
     SDL_RenderFillRect(ren, &spec_bg);
 
     // Draw spectrum bars (logarithmic frequency scale)
@@ -664,17 +664,17 @@ static void draw_amiga_interface(int16_t *buf, int n, int vu[NUM_CHANNELS]) {
 
         int bar_height = clampi((int)(magnitude * 80), 1, 80);
         int bar_width = 800 / (FFT_SIZE/8);
-        int x = 200 + i * bar_width;
+        int x = 230 + i * bar_width;
 
         SDL_Rect bar = {x, 680 - bar_height, bar_width, bar_height};
         SDL_RenderFillRect(ren, &bar);
     }
 
     // Spectrum analyzer label
-    render_text(200, 580, "Spectrum", magenta);
+    render_text(230, 580, "Spectrum:", magenta);
 
     // Footer
-    render_text(10, 690, "SPACE: Pause/Resume  ESC: Quit  LEFT/RIGHT: Navigate patterns", white);
+    render_text(10, 710, "SPACE: Pause/Resume  ESC: Quit  LEFT/RIGHT: Navigate patterns", white);
 
     SDL_RenderPresent(ren);
 }
