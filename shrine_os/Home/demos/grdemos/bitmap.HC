@@ -17,7 +17,7 @@
 /*bitmap.HC
   Description:
       Displays a bitmap. Very basic implementaion. Possible future
-      version, will support OS/2 bitmaps and stuff.
+      version, will support OS/2 bitmaps and stuff.
   Resources:
       https://en.wikipedia.org/wiki/BMP_file_format
 */

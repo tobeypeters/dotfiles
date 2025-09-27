@@ -1,4 +1,4 @@
-//#include "./td/strings"
+$WW,1$//#include "./td/strings"
 //#include "./shared"
 
 //"\n";
@@ -1418,18 +1418,24 @@ CharCat(s,'d');
 "%s\n",CharCat(s,'!');
 */
 
-U0 func()
+/*U0 func()
 {
   "\nHello\n\n";
-}
+}*/
 
 //U8 *fp=&func;
 /*U8 *fp=MStrPrint("%x\n",&func);
 "%s\n",fp;*/
 
-CColorROPU32 col = RED;
+/*CColorROPU32 col = RED;
 "%x\n",col.c0;
 "%x\n",col.c1;
-"%d\n",col;
+"%d\n",col;*/
+
+I64 sc=Char2ScanCode('a');
+
+if (Bt(kbd.down_bitmap,sc)) {
+}
+
 
 //KeyAndCont;

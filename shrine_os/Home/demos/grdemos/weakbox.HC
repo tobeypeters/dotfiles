@@ -36,7 +36,7 @@ Cd(__DIR__);;
 
 #define FOV_ANGLE 90.0
 
-I64 CUBE_DISTANCE=8;
+I64 CUBE_DISTANCE=8;
 
 //These are defined in each "model" file :start
 /*#define MODEL_NAME "basic_shape"
