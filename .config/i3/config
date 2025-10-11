@@ -106,6 +106,7 @@ for_window [class="x-terminal-emulator"] resize set 900 500
 for_window [class="XTerm"] resize set 900 500
 # Move:
 for_window [class="ChromePrivate"] move container to workspace 8
+for_window [class="Code"] move container to workspace 1
 for_window [class="krunner"] move position 1450 20
 for_window [class="Netflix"] move container to workspace 9
 for_window [class="system_updater"] move position 1020 40
@@ -241,7 +242,7 @@ $exec indicator-sensors # CPU & GPU temps
 $exec mpd
 #$exec cava -p ~/.config/cava/polybar.conf
 
-$exec picom &
+$exec picom  --backend glx --vsync &
 
 $exec_always ~/.config/polybar/launch.sh
 
