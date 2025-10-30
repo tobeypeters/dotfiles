@@ -1432,10 +1432,10 @@ CharCat(s,'d');
 "%x\n",col.c1;
 "%d\n",col;*/
 
-I64 sc=Char2ScanCode('a');
+/*I64 sc=Char2ScanCode('a');
 
 if (Bt(kbd.down_bitmap,sc)) {
-}
+}*/
 
-
+
 //KeyAndCont;

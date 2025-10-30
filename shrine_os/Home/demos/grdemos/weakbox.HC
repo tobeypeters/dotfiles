@@ -25,8 +25,8 @@ Cd(__DIR__);;
 #include "grdefs"
 
 //#include "models/cube"
-//#include "models/pyramid"
-#include "models/crobot"
+#include "models/pyramid"
+//#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
 //#include "models/zoid"
@@ -46,7 +46,10 @@ CD3 *p_obj=&cube_points;
 CD2 *v_obj=&cube_edges;*/
 //:end
 
-Bool draw_lines=FALSE; //Maybe a define and stick in each model
+Bool draw_lines=FALSE,
+     show_grid=FALSE;
+
+
 draw_lines=TRUE;
 F64 p2DTop3D(F64 xy,F64 z)
 {
@@ -141,7 +144,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     }
   }
 
-  DrawFloor(dc);
+  if (show_grid) DrawFloor(dc);
 }
 
 U0 AnimateTask(I64)
@@ -182,6 +185,9 @@ U0 key_down(){
   {
     case '\n':
       Init;
+      break;
+    case 'g':
+      show_grid=!show_grid;
       break;
     case 'l':
       draw_lines=!draw_lines;

@@ -1,4 +1,4 @@
-#define MODEL_NAME __FILE__
+#define MODEL_NAME "pyramid.HC"
 
 #define OBJ_POINTS 5
 #define OBJ_EDGES 8

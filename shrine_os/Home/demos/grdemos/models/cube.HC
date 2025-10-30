@@ -1,4 +1,4 @@
-#define MODEL_NAME __FILE__
+#define MODEL_NAME "cube.HC"
 
 #define OBJ_POINTS 8
 #define OBJ_EDGES 12
