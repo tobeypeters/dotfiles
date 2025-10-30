@@ -1,0 +1,233 @@
+$FG,2$$TX+CX,"templeDOS Command Manual"$$FG,15$
+
+command -h:
+	Displays this help file and the syntax, for
+	the desired command.
+
+Parameter Picker:
+	For commands that accept directory or filename arguments,
+	you can invoke an interactive picker by using `??` in place
+	of the DIRECTORY/FILENAME.  You can invoke specific
+        interactive pickers:
+
+	options:
+	 	 `?D`  - DIRECTORY
+		 `?DM` - DIRECTORY - Appends the mask `/*.*` to it
+		 '?F'  - FILE
+	usage:
+		 command [$FG,2$??$FG,15$]
+		 command [$FG,2$??$FG,15$] [$FG,2$??$FG,15$]
+		 command [$FG,2$FILENAME$FG,15$] [$FG,2$??$FG,15$]
+		 command [$FG,2$??$FG,15$] [$FG,2$DIRECTORY$FG,15$]
+
+Command	Description
+---------------------------
+
+$IV,1$_ans:$IV,0$
+	Determines if answers are displayed,
+	when a command is executed.
+
+	usage:
+		 ans
+		 ans [$FG,2$OPTION$FG,15$] {$FG,11$ON/OFF$FG,15$}
+
+	options:
+	   $FG,11$ON$FG,15$	 Display the results of commands.
+	   $FG,11$OFF$FG,15$	 Don't display the results of commands.
+
+$IV,1$_!!:$IV,0$
+	Executes the previous terminal command,
+	similar to the Linux implementation.
+
+$IV,1$_##: _pid:$IV,0$
+	Displays the current process/task ID.
+
+$IV,1$_cat: _type: _view:$IV,0$
+	Display a FILE to standard output *STDOUT*.
+	usage:	cat [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_cd: _cdd:$IV,0$
+	Change the current working directory to
+	your HOME directory, a specified directory,
+	or to a different mounted drive.
+
+	Issuing cdd, instead of cd, will also display
+	the contents of the current directory.
+
+	usage:
+		cd / cdd
+		cd / cdd [$FG,2$DIR$FG,15$]...
+		cd / cdd [$FG,2$DRIVE LETTER$FG,15$]:
+		cd / cdd [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$, $FG,11$~$FG,15$, $FG,11$::$FG,15$}
+
+	symbols:
+	   $FG,11$~$FG,15$	Causes the same effects as
+		   providing no options. It will
+		   change the working directory,
+		   to your HOME directory.
+	   $FG,11$-$FG,15$	Changes the working directory,
+		   to the PREVIOUS directory, you were in.
+	   $FG,11$::$FG,15$	Changes the working directory,
+		   To the ROOT, of the boot drive.
+
+$IV,1$_clear _cls:$IV,0$
+	Clear the terminal screen.
+	usage:	clear / cls
+
+$IV,1$_cp:$IV,0$
+	Copy files and directories,
+	from a SOURCE to a DESTINATION
+	usage:	cp [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [$FG,2$SOURCE$FG,15$] [$FG,2$DESTINATION$FG,15$]
+
+	options:
+	   $FG,11$-d$FG,15$	Directory copy
+
+$IV,1$_cpu:$IV,0$
+	Display CPU info.
+	usage:	cpu [$FG,2$OPTION$FG,15$] {$FG,11$-f$FG,15$}
+
+	Options:
+	   $FG,11$-f$FG,15$	Detailed CPU info.
+
+$IV,1$_date:$IV,0$
+	Display the current date.
+	usage:	date
+
+$IV,1$_df:$IV,0$
+	Display currently mounted drives.
+	usage:	df
+
+$IV,1$_dump:$IV,0$
+	Display the disassembly "hex dump" of a file.
+	usage:	dump [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_ed:$IV,0$
+	Edit / Create text files.
+	usage:	ed [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_exit: _quit:$IV,0$
+	Cause normal process termination of templeDOS.
+	usage:	exit / quit
+
+$IV,1$_fm:$IV,0$
+	Opens the templeOS FileManager.
+	usage:	fm
+
+$IV,1$_tree:$IV,0$
+	Displays an expanded `ls`-style tree view, of the
+	current or specified directory.
+	usage:	tree [$FG,2$DIR$FG,15$]...
+
+	$FG,11$DEFAULT$FG,15$: Current directory
+
+$IV,1$_grep:$IV,0$
+	Recursively search files and print any lines
+	which contain the specified string.
+	usage:	grep [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$}
+
+	Options:
+	   $FG,11$-d$FG,15$	Search just the current directory.
+
+$IV,1$_head:$IV,0$
+	Display the first 10 lines of a specified file.
+	usage:	head [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_help:$IV,0$
+	Displays this list of TempleDOS commands.
+	usage:	help
+
+$IV,1$_ls: _dir:$IV,0$
+	List directory contents.
+	usage:	ls / dir [$FG,2$OPTION$FG,15$] {$FG,11$-t$FG,15$} [$FG,2$DIR$FG,15$]...
+		ls / dir [$FG,2$SYMBOL$FG,15$] {$FG,11$-$FG,15$}
+
+	options:
+	   $FG,11$-t$FG,15$	Displays an expanded ls-style tree view, of
+		the current or specified directory
+
+	symbols:
+	   $FG,11$-$FG,15$	Displays the contents of the previous directory
+		you were in.
+
+	default: Current directory
+
+$IV,1$_man:$IV,0$
+	Display the source code for a specified
+	command/symbol. [Dir;, DrvRep;, etc...]
+	usage:	man [$FG,2$COMMAND$FG,15$]...
+
+$IV,1$_mem:$IV,0$
+	Display a "detailed" memory representation.
+	usage:	mem
+
+$IV,1$_mkdir:$IV,0$
+	Create a directory, if it doesn't already exist.
+	usage:	mkdir [$FG,2$DIR$FG,15$]
+
+$IV,1$_more:$IV,0$
+	Display a file to standard ouput *STDOUT*, one screen at a time.
+	usage:	more [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_mv:$IV,0$
+	Rename SOURCE to DESTINATION, or move SOURCE to DESTINATION.
+	usage:	mv [$FG,2$SOURCE$FG,15$]... [$FG,2$DESTINATION$FG,15$]...
+		mv [$FG,2$OPTION$FG,15$] {$FG,11$-d$FG,15$} [DIR]
+
+	options:
+	   $FG,11$-d$FG,15$	Directory remove
+
+$IV,1$_pal:$IV,0$
+	Display the current system color palette.
+	usage: pal [$FG,2$OPTION$FG,15$] {$FG,11$-p,-d$FG,15$}
+
+	Options:
+	   $FG,11$-p$FG,15$	Display the palette, in a popup window.
+	   $FG,11$-d$FG,15$	Display the dither palette, in a popup window.
+
+$IV,1$_pwd:$IV,0$
+	Print the name of the current working directory.
+	usage:	pwd
+
+$IV,1$_rm _rd _rmdir:$IV,0$
+	Remove files or directories.
+	usage:	rm [$FG,2$OPTION$FG,15$]... {$FG,11$-d,-t$FG,15$} [$FG,2$FILENAME/DIRECTORY$FG,15$]...
+	usage:	rd / rmdir [$FG,2$OPTION$FG,15$]... {$FG,11$-t$FG,15$} [$FG,2$DIRECTORY$FG,15$]...
+
+	Options:
+	   $FG,11$-d$FG,15$	Delete a directory, instead of a file.
+	   $FG,11$-t$FG,15$	Move files and directories to the [$FG,2$TRASHBIN$FG,15$].
+		$FG,11$LOCATION$FG,15$: [/Trash]
+
+$IV,1$_rnd:$IV,0$
+	Generate a random number.
+	usage:	rnd
+
+$IV,1$_run:$IV,0$
+	Execute source code files.
+	usage:	run [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_tail:$IV,0$
+	Display the last 10 lines of a specified file.
+	usage:	tail [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_tasks:$IV,0$
+	Report current tasks on all cores.
+	usage:	tasks
+
+$IV,1$_time:$IV,0$
+	Display the current time.
+	usage:	time
+
+$IV,1$_tosz:$IV,0$
+	Toggle the compression status of a file.
+	usage:	tosz [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_touch:$IV,0$
+	Update the access and modification times of the FILENAME to the current time.
+	A FILENAME argument that does not exist is created.
+	usage:	touch [$FG,2$FILENAME$FG,15$]...
+			:> [$FG,2$FILENAME$FG,15$]...
+
+$IV,1$_vol:$IV,0$
+	Displays volume information of the current drive.
+	usage:	vol
