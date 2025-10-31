@@ -190,16 +190,15 @@ pickit:
       default:
         if (p3==1||p3==3)
         {
-//TinkerOS remove
-//          buff_add(p,StrNew(PopUpPickDirStrict));
-//          v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
+          buff_add(p,StrNew(PopUpPickDirStrict));
+          v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
-//          if (p3==3&&StrLen(p)>0) CatPrint(p,"/*.*");
+          if (p3==3&&StrLen(p)>0) CatPrint(p,"/*.*");
         }
         if (p3==0||p3==2)
         {
-//          buff_add(p,StrNew(PopUpPickFileStrict));
-//          v.$WW+H,1$u8[vt+FILE]=1*(StrLen(p)>0);
+          buff_add(p,StrNew(PopUpPickFileStrict));
+          v.$WW+H,1$u8[vt+FILE]=1*(StrLen(p)>0);
         }
     end:
 
@@ -207,7 +206,7 @@ pickit:
       else buff_add(bufb,p);
 
       break;
-    }
+    }
 
     if (ui==0&&v.u8[1]) {
       ui++; goto pickit;

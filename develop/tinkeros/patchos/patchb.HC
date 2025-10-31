@@ -20,7 +20,7 @@
 */
 #help_index "Patched"
 
-Bool WALL_DEBUG=FALSE,
+Bool WALL_DEBUG=FALSE,
      WALL_CPU,WALL_MEM,
      WALL_FPS;
 I64  WALL_DEBUG_VAL=0;
@@ -211,7 +211,7 @@ public U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
 
   if (flush) *dst = '\0';
 
-  for (;i<argc;i++) {
+  for (;i<argc;i++) {
     CatPrint(dst,argv[i]);
   }
 

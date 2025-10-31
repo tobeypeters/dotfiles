@@ -309,10 +309,10 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   bdoc->flags|=DOCF_BORDER_DOC;
   DocPrint(bdoc,"$$CM+TY+LX+NC,0,-1$$");
 
-  DocPrint(bdoc,"$$TX+RX+BD,\"Í-Í\"$$");
-  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"Í-Í\"$$$$BK,0$$");
-//  DocPrint(bdoc,"$$TX+RX+BD,\"ÍßÍ\"$$");
-//  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"ÍßÍ\"$$$$BK,0$$");
+  DocPrint(bdoc,"$$TX+RX+BD,\"\CD-\CD\"$$");
+  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"\CD-\CD\"$$$$BK,0$$");
+//  DocPrint(bdoc,"$$TX+RX+BD,\"\CD\DF\CD\"$$");
+//  DocPrint(bdoc,"$$BK,1$$$$TX+LX+BD,\"\CD\DF\CD\"$$$$BK,0$$");
 
   old_task_title=StrNew(Fs->task_title);
   if (Fs->title_src!=TTS_LOCKED_CONST) {
@@ -323,7 +323,7 @@ public Bool doced(CDoc *doc,I64 dof_flags=0)
   doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX+IV,LEN=STR_LEN-1,"
 	"A=\" %%s \"$$");
 //  doc_e=DocPrint(bdoc,"$$DA-TRM-P+BD+RD+CX,LEN=STR_LEN-1,"
-//	"A=\"¸ %%s Õ\"$$");
+//	"A=\"\B8 %%s \D5\"$$");
 
   doc_e->data=&Fs->task_title;
   DocDataFmt(bdoc,doc_e);
@@ -1368,10 +1368,290 @@ public U0 ctrlaltt(I64)
 }
 
 #help_index "File/Cmd Line (Typically);Cmd Line (Typically)"
+#define FM_PICK_DIRFILE	   3
+#define FM_PICK_DIRSTRICT  4
+#define FM_PICK_FILESTRICT 5
+
+/*public U8 *filemgr(I64 mode=FM_NORMAL,CTask *mem_task=NULL)
+{//File manager. Also, used to choose files and dirs.
+  CDirEntry *head=NULL,*tmpde,*tmpde1,*tmpde2;
+  I64 sc,ch,arg1,arg2,msg_code;
+  CDoc *doc=NULL,*old_put_doc=DocPut,*old_display_doc=DocDisplay;
+  U8 *res=NULL,*st,*st2,*old_cur_dir=DirCur;
+  CDocEntry *doc_ce=NULL,*doc_e;
+  Bool okay;
+
+  SettingsPush; //See $LK,"SettingsPush",A="MN:SettingsPush"$
+  fp_old_final_scrn_update=gr.fp_final_scrn_update;
+  MenuFilePush("::/Doc/FileMgrPullDown.DD");
+  FMRebuildDoc(&doc,&head,mode);
+  if (tmpde1=Cd2DirEntry(head,old_cur_dir))
+    doc->cur_entry=tmpde1->user_data;
+  while (tmpde1) {
+    if (tmpde1->attr&RS_ATTR_DIR)
+      tmpde1->user_data(CDocEntry *)->de_flags&=~DOCEF_CHECKED_COLLAPSED;
+    tmpde1=tmpde1->parent;
+  }
+  do {
+    DocUnlock(doc);
+    do msg_code=GetMsg(&arg1,&arg2,
+	    1<<MSG_KEY_DOWN|1<<MSG_MS_L_DOWN|1<<MSG_MS_L_UP|1<<MSG_MS_R_UP);
+    while (Fs!=sys_focus_task);
+    DocLock(doc);
+    switch (msg_code) {
+      case MSG_MS_R_UP:
+	DocUnlock(doc);
+	FMRightClick;
+	DocLock(doc);
+	break;
+      case MSG_MS_L_DOWN:
+	doc_ce=doc->cur_entry;
+	fm_ms_str=doc_ce->tag;
+	gr.fp_final_scrn_update=&FMFinalScrnUpdate;
+	break;
+      case MSG_MS_L_UP:
+	if (doc_ce) {
+	  gr.fp_final_scrn_update=fp_old_final_scrn_update;
+	  if (WinCursorPosSet(Fs,arg1+Fs->pix_left+Fs->scroll_x,
+		arg2+Fs->pix_top+Fs->scroll_y,TRUE)) {
+	    doc_e=doc->cur_entry;
+	    if (doc_e!=doc_ce) {
+	      st2=NULL;
+	      if (doc_e->type_u8==DOCT_MENU_VAL) {
+		tmpde1=doc_e->user_data;
+		if (tmpde1=tmpde1->parent)
+		  st2=StrNew(tmpde1->full_name);
+	      } else if (doc_e->type_u8==DOCT_TREE) {
+		tmpde1=doc_e->user_data;
+		st2=StrNew(tmpde1->full_name);
+	      }
+	      if (st2 && doc_ce->type_u8==DOCT_MENU_VAL) {
+		tmpde=doc_ce->user_data;
+		Silent;
+		Move(tmpde->full_name,st2);
+		Silent(OFF);
+		FMRebuildDoc(&doc,&head,mode);
+	      } else if (st2 && doc_ce->type_u8==DOCT_TREE) {
+		tmpde=doc_ce->user_data;
+		okay=TRUE;
+		tmpde2=tmpde1;
+		while (tmpde2) {
+		  if (tmpde2!=tmpde)
+		    tmpde2=tmpde2->parent;
+		  else {
+		    okay=FALSE;
+		    break;
+		  }
+		}
+		if (okay) {
+		  if (*tmpde1->name)
+		    st=MStrPrint("%s/%s",tmpde1->full_name,tmpde->name);
+		  else
+		    st=MStrPrint("%s%s",tmpde1->full_name,tmpde->name);
+		  if (StrCmp(tmpde->full_name,st)) {
+		    Silent;
+		    CopyTree(tmpde->full_name,st);
+		    DelTree(tmpde->full_name);
+		    Silent(OFF);
+		    FMRebuildDoc(&doc,&head,mode);
+		  }
+		  Free(st);
+		}
+	      }
+	      Free(st2);
+	      FlushMsgs;
+	    } else
+	      if (doc_e->type_u8==DOCT_MENU_VAL) {
+		DocUnlock(doc);
+		Ed(doc_e->user_data(CDirEntry *)->full_name);
+		DocLock(doc);
+	      }
+	    doc_ce=NULL;
+	  }
+	}
+	break;
+      case MSG_KEY_DOWN:
+	doc_ce=NULL;
+	ch=arg1; sc=arg2;
+	if (sc.u8[0]==SC_DELETE && !(sc&(SCF_SHIFT|SCF_CTRL)))
+	  ch=CH_CTRLY;
+	if (ch && sc&SCF_ALT) goto fm_regular_key;
+	switch (ch) {
+	  case '\n':
+	    DocUnlock(doc);
+	    FMRightClick;
+	    DocLock(doc);
+	    break;
+	  start:
+	    DocUnlock(doc);
+	    case CH_CTRLV:
+	      FMCopy(doc);
+	      break;
+	    case 'r':
+	      FMRename(doc);
+	      break;
+	    case 'd':
+	      FMMkDir(doc);
+	      break;
+	    case CH_CTRLY:
+	      FMDelete(doc);
+	      break;
+	    case 'c':
+	      FMChgDsk(doc);
+	      break;
+	    case 'i':
+	      FMMountISO(doc);
+	      break;
+	    case 'u':
+	      FMUnmount(doc);
+	      break;
+	    case 'm':
+	      FMMakeISO(doc);
+	      break;
+	    case 'B':
+	      FMBurnISO(doc);
+	      break;
+	    case 'f':
+	      FMFmtDrv(doc);
+	      break;
+	  end:
+	    FMRebuildDoc(&doc,&head,mode);
+	    break;
+	  case CH_SHIFT_ESC:
+	    break;
+	  case CH_SPACE:
+	    if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
+	      DocUnlock(doc);
+	      Ed(doc->cur_entry->user_data(CDirEntry *)->full_name);
+	      DocLock(doc);
+	    } else
+	      goto fm_regular_key;
+	    break;
+	  case CH_SHIFT_SPACE:
+	    if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
+	      DocUnlock(doc);
+	      Plain(doc->cur_entry->user_data(CDirEntry *)->full_name);
+	      DocLock(doc);
+	    } else
+	      goto fm_regular_key;
+	    break;
+	  case CH_ESC:
+	    doc_ce=doc->cur_entry;
+	    tmpde=doc_ce->user_data;
+
+	    //ADD start
+	    if (mode==FM_PICK_DIRFILE)
+	    {
+	      res=StrNew(tmpde->full_name,mem_task);
+
+	      break;
+	    }
+	    if (mode==FM_PICK_FILESTRICT)
+	    {
+	      if (doc_ce->type_u8==DOCT_MENU_VAL)
+		res=StrNew(tmpde->full_name,mem_task);
+	      else
+		res=StrNew("",mem_task);
+
+	      break;
+	    }
+	    //ADD end
+	    if (mode==FM_PICK_FILE && doc_ce->type_u8==DOCT_MENU_VAL)
+	      res=StrNew(tmpde->full_name,mem_task);
+	    else if (mode==FM_PICK_DIR||
+                     mode==FM_PICK_DIRSTRICT) {
+
+//DIR start
+	      if (doc_ce->type_u8==DOCT_TREE)
+		res=StrNew(tmpde->full_name,mem_task);
+	      else if (doc_ce->type_u8==DOCT_MENU_VAL &&
+		    (tmpde=tmpde->parent))
+              {
+                if (mode==FM_PICK_DIRSTRICT)
+		  res=StrNew("",mem_task);
+                else
+		  res=StrNew(tmpde->full_name,mem_task);
+              }
+//DIR end
+
+	    }
+	    break;
+
+	  default:
+	    if (sc.u8[0]==SC_INS && sc&SCF_SHIFT && !(sc&SCF_CTRL)) {
+	      FMCopy(doc);
+	      FMRebuildDoc(&doc,&head,mode);
+	    } else if (sc.u8[0]==SC_F5) {
+	      if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
+		tmpde=doc->cur_entry->user_data;
+		DocUnlock(doc);
+		if (sc&SCF_SHIFT)
+		  AdamFile(tmpde->full_name);
+		else
+		  PopUpFile(tmpde->full_name);
+		DocLock(doc);
+	      }
+	    } else {
+fm_regular_key:
+	      DocUnlock(doc);
+	      PutKey(ch,sc);
+	      DocLock(doc);
+	    }
+	}
+	break;
+    }
+  } while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
+
+  gr.fp_final_scrn_update=fp_old_final_scrn_update;
+  Fs->put_doc	 =old_put_doc;
+  Fs->display_doc=old_display_doc;
+  SettingsPop;
+  DocDel(doc);
+  DirTreeDel(head);
+  Cd(old_cur_dir);
+  Free(old_cur_dir);
+  if (mode!=FM_NORMAL && !res)
+    res=StrNew("",mem_task);
+  MenuPop;
+  return res;
+}
+*/
+#help_index ""
+
 #help_index "DolDoc/Input;File/FileNames;StdIn/DolDoc"
 //ALL these PopUpPickers will be replaced, with a 
 //generic function that excepts mode type.
 
+public U8 *PopUpPickerGen(U8 *dir=NULL,I64 mode=FM_NORMAL)
+{
+  U8 *res,*st,*st2;
+  if (dir)
+    st=MStrPrint("Cd(\"%Q\");FileMgr(%d,Fs->parent_task);",dir,mode);
+  else {
+    st2=DirCur;
+    st=MStrPrint("Cd(\"%Q\");FileMgr(%d,Fs->parent_task);",st2,mode);
+    Free(st2);
+  }
+  res=PopUp(st,Fs);
+  Free(st);
+  return res;
+}
+public U8 *PopUpPickDirFile(U8 *dir=NULL)
+{//Directory or Filename chooser.  Uses $LK,"FileMgr",A="MN:FileMgr"$().
+  return PopUpPickerGen(dir,FM_PICK_DIRFILE);
+}
+public U8 *PopUpPickDirStrict(U8 *dir=NULL)
+{//Directory chooser. Uses $LK,"FileMgr",A="MN:FileMgr"$().
+ //Strict requires you to select a folder. Hitting ESC on a file,
+ //won't extract return the containing folder, as the non-strict does.
+  return PopUpPickerGen(dir,FM_PICK_DIRSTRICT);
+}
+public U8 *PopUpPickFileStrict(U8 *dir=NULL)
+{//Directory chooser. Uses $LK,"FileMgr",A="MN:FileMgr"$().
+ //Strict requires you to select a folder. Hitting ESC on a file,
+ //won't extract return the containing folder, as the non-strict does.
+  return PopUpPickerGen(dir,FM_PICK_FILESTRICT);
+}
 #help_index ""
 
 public U0 HijackFunc(U8 *orig, U8 *new)
@@ -1395,4 +1675,9 @@ HijackFunc(&DocEntryRun,&docentryrun);
 HijackFunc(&DocPutKey,&docputkey);
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&Ed,&ed);
-
+//HijackFunc(&FileMgr,&filemgr);
+
+public U0 tdit()
+{
+  Copy("C:/Home/td/*.*","C:/Apps/templeDOS");
+}
