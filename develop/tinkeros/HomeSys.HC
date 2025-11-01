@@ -4,6 +4,8 @@
 #include "~/patchos/patcha"
 #include "~/td/templeDOS"
 
+#include "~/eye_wallpaper"
+
 Bool started=FALSE;
 
 public U0 ApplyColor()
