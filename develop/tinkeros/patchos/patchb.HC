@@ -211,7 +211,7 @@ public U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
 
   if (flush) *dst = '\0';
 
-  for (;i<argc;i++) {
+  for (;i<argc;i++) {
     CatPrint(dst,argv[i]);
   }
 
@@ -265,7 +265,7 @@ public U8 *ExtFilename(U8 *str)
 
 #help_index "AutoComplete/Dictionary"
 public U0 acdwordsload() {}
-public U0 ACDirList()
+public U0 ACDirList()
 {//Adds current directory filenames to the autocomplete
   CDirEntry *tmpde,*tmpde1;
 
