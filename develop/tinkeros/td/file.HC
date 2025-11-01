@@ -192,7 +192,7 @@ U0 ls_dir_sub(CDirEntry *entry)
   return;
 }
 U0 ls(U8 *files_find_mask='./*',Bool tree_mode=FALSE)
-{//Linux'ish style directory listing.
+{//Linux'ish style directory listing.
   U8 *st;
 
   if (!(st=DirCur))
@@ -211,7 +211,7 @@ U0 ls(U8 *files_find_mask='./*',Bool tree_mode=FALSE)
 
     if (!st[2]) StrCpy(st+2,"/");
 
-    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\"$$: %s\n",st;
+    "$$MA,T=\"Listing\",LM=\"PopUpCd;ls;\n\"$$: %s\n",st;
 
     I64 fc=0,
         dc=0,
