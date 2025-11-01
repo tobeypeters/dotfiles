@@ -1371,8 +1371,8 @@ public U0 ctrlaltt(I64)
 #define FM_PICK_DIRFILE	   3
 #define FM_PICK_DIRSTRICT  4
 #define FM_PICK_FILESTRICT 5
-
-/*public U8 *filemgr(I64 mode=FM_NORMAL,CTask *mem_task=NULL)
+
+public U8 *filemgr(I64 mode=FM_NORMAL,CTask *mem_task=NULL)
 {//File manager. Also, used to choose files and dirs.
   CDirEntry *head=NULL,*tmpde,*tmpde1,*tmpde2;
   I64 sc,ch,arg1,arg2,msg_code;
@@ -1380,164 +1380,189 @@ public U0 ctrlaltt(I64)
   U8 *res=NULL,*st,*st2,*old_cur_dir=DirCur;
   CDocEntry *doc_ce=NULL,*doc_e;
   Bool okay;
-
-  SettingsPush; //See $LK,"SettingsPush",A="MN:SettingsPush"$
+  SettingsPush; //See $$LK,"SettingsPush",A="MN:SettingsPush"$$
   fp_old_final_scrn_update=gr.fp_final_scrn_update;
   MenuFilePush("::/Doc/FileMgrPullDown.DD");
   FMRebuildDoc(&doc,&head,mode);
   if (tmpde1=Cd2DirEntry(head,old_cur_dir))
     doc->cur_entry=tmpde1->user_data;
-  while (tmpde1) {
+  while (tmpde1)
+  {
     if (tmpde1->attr&RS_ATTR_DIR)
       tmpde1->user_data(CDocEntry *)->de_flags&=~DOCEF_CHECKED_COLLAPSED;
     tmpde1=tmpde1->parent;
   }
-  do {
+  do
+  {
     DocUnlock(doc);
     do msg_code=GetMsg(&arg1,&arg2,
-	    1<<MSG_KEY_DOWN|1<<MSG_MS_L_DOWN|1<<MSG_MS_L_UP|1<<MSG_MS_R_UP);
+                         1<<MSG_KEY_DOWN|1<<MSG_MS_L_DOWN|1<<MSG_MS_L_UP|1<<MSG_MS_R_UP);
     while (Fs!=sys_focus_task);
     DocLock(doc);
-    switch (msg_code) {
-      case MSG_MS_R_UP:
-	DocUnlock(doc);
-	FMRightClick;
-	DocLock(doc);
-	break;
-      case MSG_MS_L_DOWN:
-	doc_ce=doc->cur_entry;
-	fm_ms_str=doc_ce->tag;
-	gr.fp_final_scrn_update=&FMFinalScrnUpdate;
-	break;
-      case MSG_MS_L_UP:
-	if (doc_ce) {
-	  gr.fp_final_scrn_update=fp_old_final_scrn_update;
-	  if (WinCursorPosSet(Fs,arg1+Fs->pix_left+Fs->scroll_x,
-		arg2+Fs->pix_top+Fs->scroll_y,TRUE)) {
-	    doc_e=doc->cur_entry;
-	    if (doc_e!=doc_ce) {
-	      st2=NULL;
-	      if (doc_e->type_u8==DOCT_MENU_VAL) {
-		tmpde1=doc_e->user_data;
-		if (tmpde1=tmpde1->parent)
-		  st2=StrNew(tmpde1->full_name);
-	      } else if (doc_e->type_u8==DOCT_TREE) {
-		tmpde1=doc_e->user_data;
-		st2=StrNew(tmpde1->full_name);
-	      }
-	      if (st2 && doc_ce->type_u8==DOCT_MENU_VAL) {
-		tmpde=doc_ce->user_data;
-		Silent;
-		Move(tmpde->full_name,st2);
-		Silent(OFF);
-		FMRebuildDoc(&doc,&head,mode);
-	      } else if (st2 && doc_ce->type_u8==DOCT_TREE) {
-		tmpde=doc_ce->user_data;
-		okay=TRUE;
-		tmpde2=tmpde1;
-		while (tmpde2) {
-		  if (tmpde2!=tmpde)
-		    tmpde2=tmpde2->parent;
-		  else {
-		    okay=FALSE;
-		    break;
-		  }
-		}
-		if (okay) {
-		  if (*tmpde1->name)
-		    st=MStrPrint("%s/%s",tmpde1->full_name,tmpde->name);
-		  else
-		    st=MStrPrint("%s%s",tmpde1->full_name,tmpde->name);
-		  if (StrCmp(tmpde->full_name,st)) {
-		    Silent;
-		    CopyTree(tmpde->full_name,st);
-		    DelTree(tmpde->full_name);
-		    Silent(OFF);
-		    FMRebuildDoc(&doc,&head,mode);
-		  }
-		  Free(st);
-		}
-	      }
-	      Free(st2);
-	      FlushMsgs;
-	    } else
-	      if (doc_e->type_u8==DOCT_MENU_VAL) {
-		DocUnlock(doc);
-		Ed(doc_e->user_data(CDirEntry *)->full_name);
-		DocLock(doc);
-	      }
-	    doc_ce=NULL;
-	  }
-	}
-	break;
-      case MSG_KEY_DOWN:
-	doc_ce=NULL;
-	ch=arg1; sc=arg2;
-	if (sc.u8[0]==SC_DELETE && !(sc&(SCF_SHIFT|SCF_CTRL)))
-	  ch=CH_CTRLY;
-	if (ch && sc&SCF_ALT) goto fm_regular_key;
-	switch (ch) {
-	  case '\n':
-	    DocUnlock(doc);
-	    FMRightClick;
-	    DocLock(doc);
-	    break;
-	  start:
-	    DocUnlock(doc);
-	    case CH_CTRLV:
-	      FMCopy(doc);
-	      break;
-	    case 'r':
-	      FMRename(doc);
-	      break;
-	    case 'd':
-	      FMMkDir(doc);
-	      break;
-	    case CH_CTRLY:
-	      FMDelete(doc);
-	      break;
-	    case 'c':
-	      FMChgDsk(doc);
-	      break;
-	    case 'i':
-	      FMMountISO(doc);
-	      break;
-	    case 'u':
-	      FMUnmount(doc);
-	      break;
-	    case 'm':
-	      FMMakeISO(doc);
-	      break;
-	    case 'B':
-	      FMBurnISO(doc);
-	      break;
-	    case 'f':
-	      FMFmtDrv(doc);
-	      break;
-	  end:
-	    FMRebuildDoc(&doc,&head,mode);
-	    break;
-	  case CH_SHIFT_ESC:
-	    break;
-	  case CH_SPACE:
-	    if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
-	      DocUnlock(doc);
-	      Ed(doc->cur_entry->user_data(CDirEntry *)->full_name);
-	      DocLock(doc);
-	    } else
-	      goto fm_regular_key;
-	    break;
-	  case CH_SHIFT_SPACE:
-	    if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
-	      DocUnlock(doc);
-	      Plain(doc->cur_entry->user_data(CDirEntry *)->full_name);
-	      DocLock(doc);
-	    } else
-	      goto fm_regular_key;
-	    break;
-	  case CH_ESC:
-	    doc_ce=doc->cur_entry;
-	    tmpde=doc_ce->user_data;
+    switch (msg_code)
+    {
+    case MSG_MS_R_UP:
+      DocUnlock(doc);
+      FMRightClick;
+      DocLock(doc);
+      break;
+    case MSG_MS_L_DOWN:
+      doc_ce=doc->cur_entry;
+      fm_ms_str=doc_ce->tag;
+      gr.fp_final_scrn_update=&FMFinalScrnUpdate;
+      break;
+    case MSG_MS_L_UP:
+      if (doc_ce)
+      {
+        gr.fp_final_scrn_update=fp_old_final_scrn_update;
+        if (WinCursorPosSet(Fs,arg1+Fs->pix_left+Fs->scroll_x,
+                            arg2+Fs->pix_top+Fs->scroll_y,TRUE))
+        {
+          doc_e=doc->cur_entry;
+          if (doc_e!=doc_ce)
+          {
+            st2=NULL;
+            if (doc_e->type_u8==DOCT_MENU_VAL)
+            {
+              tmpde1=doc_e->user_data;
+              if (tmpde1=tmpde1->parent)
+                st2=StrNew(tmpde1->full_name);
+            }
+            else if (doc_e->type_u8==DOCT_TREE)
+            {
+              tmpde1=doc_e->user_data;
+              st2=StrNew(tmpde1->full_name);
+            }
+            if (st2 && doc_ce->type_u8==DOCT_MENU_VAL)
+            {
+              tmpde=doc_ce->user_data;
+              Silent;
+              Move(tmpde->full_name,st2);
+              Silent(OFF);
+              FMRebuildDoc(&doc,&head,mode);
+            }
+            else if (st2 && doc_ce->type_u8==DOCT_TREE)
+            {
+              tmpde=doc_ce->user_data;
+              okay=TRUE;
+              tmpde2=tmpde1;
+              while (tmpde2)
+              {
+                if (tmpde2!=tmpde)
+                  tmpde2=tmpde2->parent;
+                else
+                {
+                  okay=FALSE;
+                  break;
+                }
+              }
+              if (okay)
+              {
+                if (*tmpde1->name)
+                  st=MStrPrint("%s/%s",tmpde1->full_name,tmpde->name);
+                else
+                  st=MStrPrint("%s%s",tmpde1->full_name,tmpde->name);
+                if (StrCmp(tmpde->full_name,st))
+                {
+                  Silent;
+                  CopyTree(tmpde->full_name,st);
+                  DelTree(tmpde->full_name);
+                  Silent(OFF);
+                  FMRebuildDoc(&doc,&head,mode);
+                }
+                Free(st);
+              }
+            }
+            Free(st2);
+            FlushMsgs;
+          }
+          else if (doc_e->type_u8==DOCT_MENU_VAL)
+          {
+            DocUnlock(doc);
+            Ed(doc_e->user_data(CDirEntry *)->full_name);
+            DocLock(doc);
+          }
+          doc_ce=NULL;
+        }
+      }
+      break;
+    case MSG_KEY_DOWN:
+      doc_ce=NULL;
+      ch=arg1;
+      sc=arg2;
+      if (sc.u8[0]==SC_DELETE && !(sc&(SCF_SHIFT|SCF_CTRL)))
+        ch=CH_CTRLY;
+      if (ch && sc&SCF_ALT) goto fm_regular_key;
+      switch (ch)
+      {
+      case '\n':
+        DocUnlock(doc);
+        FMRightClick;
+        DocLock(doc);
+        break;
+start:
+        DocUnlock(doc);
+      case CH_CTRLV:
+        FMCopy(doc);
+        break;
+      case 'r':
+        FMRename(doc);
+        break;
+      case 'd':
+        FMMkDir(doc);
+        break;
+      case CH_CTRLY:
+        FMDelete(doc);
+        break;
+      case 'c':
+        FMChgDsk(doc);
+        break;
+      case 'i':
+        FMMountISO(doc);
+        break;
+      case 'u':
+        FMUnmount(doc);
+        break;
+      case 'M':
+        FMMakeISO(doc,FSt_ISO9660);
+        break;
+      case 'm':
+        FMMakeISO(doc,FSt_REDSEA);
+        break;
+      case 'B':
+        FMBurnISO(doc);
+        break;
+      case 'f':
+        FMFmtDrv(doc);
+        break;
+end:
+        FMRebuildDoc(&doc,&head,mode);
+        break;
+      case CH_SHIFT_ESC:
+        break;
+      case CH_SPACE:
+        if (doc->cur_entry->type_u8==DOCT_MENU_VAL)
+        {
+          DocUnlock(doc);
+          Ed(doc->cur_entry->user_data(CDirEntry *)->full_name);
+          DocLock(doc);
+        }
+        else
+          goto fm_regular_key;
+        break;
+      case CH_SHIFT_SPACE:
+        if (doc->cur_entry->type_u8==DOCT_MENU_VAL)
+        {
+          DocUnlock(doc);
+          Plain(doc->cur_entry->user_data(CDirEntry *)->full_name);
+          DocLock(doc);
+        }
+        else
+          goto fm_regular_key;
+        break;
+      case CH_ESC:
+        doc_ce=doc->cur_entry;
+        tmpde=doc_ce->user_data;
 
 	    //ADD start
 	    if (mode==FM_PICK_DIRFILE)
@@ -1555,9 +1580,10 @@ public U0 ctrlaltt(I64)
 
 	      break;
 	    }
-	    //ADD end
-	    if (mode==FM_PICK_FILE && doc_ce->type_u8==DOCT_MENU_VAL)
-	      res=StrNew(tmpde->full_name,mem_task);
+            //ADD end
+
+        if (mode==FM_PICK_FILE && doc_ce->type_u8==DOCT_MENU_VAL)
+          res=StrNew(tmpde->full_name,mem_task);
 	    else if (mode==FM_PICK_DIR||
                      mode==FM_PICK_DIRSTRICT) {
 
@@ -1573,35 +1599,44 @@ public U0 ctrlaltt(I64)
 		  res=StrNew(tmpde->full_name,mem_task);
               }
 //DIR end
-
-	    }
-	    break;
-
-	  default:
-	    if (sc.u8[0]==SC_INS && sc&SCF_SHIFT && !(sc&SCF_CTRL)) {
-	      FMCopy(doc);
-	      FMRebuildDoc(&doc,&head,mode);
-	    } else if (sc.u8[0]==SC_F5) {
-	      if (doc->cur_entry->type_u8==DOCT_MENU_VAL) {
-		tmpde=doc->cur_entry->user_data;
-		DocUnlock(doc);
-		if (sc&SCF_SHIFT)
-		  AdamFile(tmpde->full_name);
-		else
-		  PopUpFile(tmpde->full_name);
-		DocLock(doc);
-	      }
-	    } else {
+          if (doc_ce->type_u8==DOCT_TREE)
+            res=StrNew(tmpde->full_name,mem_task);
+          else if (doc_ce->type_u8==DOCT_MENU_VAL &&
+                   (tmpde=tmpde->parent))
+            res=StrNew(tmpde->full_name,mem_task);
+        }
+        break;
+      default:
+        if (sc.u8[0]==SC_INS && sc&SCF_SHIFT && !(sc&SCF_CTRL))
+        {
+          FMCopy(doc);
+          FMRebuildDoc(&doc,&head,mode);
+        }
+        else if (sc.u8[0]==SC_F5)
+        {
+          if (doc->cur_entry->type_u8==DOCT_MENU_VAL)
+          {
+            tmpde=doc->cur_entry->user_data;
+            DocUnlock(doc);
+            if (sc&SCF_SHIFT)
+              AdamFile(tmpde->full_name);
+            else
+              PopUpFile(tmpde->full_name);
+            DocLock(doc);
+          }
+        }
+        else
+        {
 fm_regular_key:
-	      DocUnlock(doc);
-	      PutKey(ch,sc);
-	      DocLock(doc);
-	    }
-	}
-	break;
+          DocUnlock(doc);
+          PutKey(ch,sc);
+          DocLock(doc);
+        }
+      }
+      break;
     }
-  } while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
-
+  }
+  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
   gr.fp_final_scrn_update=fp_old_final_scrn_update;
   Fs->put_doc	 =old_put_doc;
   Fs->display_doc=old_display_doc;
@@ -1615,7 +1650,8 @@ fm_regular_key:
   MenuPop;
   return res;
 }
-*/
+
+
 #help_index ""
 
 #help_index "DolDoc/Input;File/FileNames;StdIn/DolDoc"
@@ -1630,7 +1666,7 @@ public U8 *PopUpPickerGen(U8 *dir=NULL,I64 mode=FM_NORMAL)
   else {
     st2=DirCur;
     st=MStrPrint("Cd(\"%Q\");FileMgr(%d,Fs->parent_task);",st2,mode);
-    Free(st2);
+    Free(st2);
   }
   res=PopUp(st,Fs);
   Free(st);
@@ -1675,7 +1711,7 @@ HijackFunc(&DocEntryRun,&docentryrun);
 HijackFunc(&DocPutKey,&docputkey);
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&Ed,&ed);
-//HijackFunc(&FileMgr,&filemgr);
+HijackFunc(&FileMgr,&filemgr);
 
 public U0 tdit()
 {

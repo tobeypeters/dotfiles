@@ -23,7 +23,7 @@
 Bool WALL_DEBUG=FALSE,
      WALL_CPU,WALL_MEM,
      WALL_FPS;
-I64  WALL_DEBUG_VAL=0;
+I64  WALL_DEBUG_VAL=0;
 
 WALL_FPS=WALL_MEM=WALL_CPU=TRUE;
 
@@ -265,7 +265,7 @@ public U8 *ExtFilename(U8 *str)
 
 #help_index "AutoComplete/Dictionary"
 public U0 acdwordsload() {}
-public U0 ACDirList()
+public U0 ACDirList()
 {//Adds current directory filenames to the autocomplete
   CDirEntry *tmpde,*tmpde1;
 
