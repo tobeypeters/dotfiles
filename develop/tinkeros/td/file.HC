@@ -125,7 +125,7 @@ U0 ls_dir_link(U8 *dirname,U8 *full_name=NULL)
       full_name=st=DirNameAbs(dirname);
     else
       st=NULL;
-    "$$MA,T=\"%s\",LM=\"Cd(\\\"%s\\\");ls;\n\"$$",dirname,full_name;
+    "$$MA,T=\"%s\",LM=\"Cd(\\\"%s\\\");ls;\n\"$$",dirname,full_name;
     Free(st);
   }
 }
@@ -191,8 +191,8 @@ U0 ls_dir_sub(CDirEntry *entry)
 
   return;
 }
-U0 ls(U8 *files_find_mask='/*',Bool tree_mode=FALSE)
-{//Linux'ish style directory listing.
+U0 ls(U8 *files_find_mask='./*',Bool tree_mode=FALSE)
+{//Linux'ish style directory listing.
   U8 *st;
 
   if (!(st=DirCur))
