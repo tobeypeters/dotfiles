@@ -1,12 +1,15 @@
-	//Place this file in /Home and change
-//anything you want.
-
 #include "~/patchos/patcha"
 #include "~/td/templeDOS"
 
 #include "~/eye_wallpaper"
 
 Bool started=FALSE;
+
+// Sysmenu display values
+WALL_DEBUG=FALSE;
+WALL_CPU=FALSE;
+WALL_MEM=FALSE;
+WALL_FPS=FALSE;
 
 public U0 ApplyColor()
 {
