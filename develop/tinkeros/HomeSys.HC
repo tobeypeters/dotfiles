@@ -1,4 +1,4 @@
-//Place this file in /Home and change
+	//Place this file in /Home and change
 //anything you want.
 
 #include "~/patchos/patcha"
@@ -6,6 +6,12 @@
 
 Bool started=FALSE;
 
+public U0 ApplyColor()
+{
+  Fs->border_src=BDS_CONST;
+  Fs->border_attr=BLACK<<4+WHITE;
+  Fs->text_attr=BLACK<<4+WHITE;
+}
 public U0 DrawStdMs(CDC *dc,I64 x,I64 y) 
 {// Override the mouse cursor.
   dc->color=LTRED;
@@ -22,21 +28,20 @@ U0 spawned() {
   WinZBufUpdate;
   DocMax; //"Unlimited" line buffer.
 
-  Fs->text_attr=BLACK<<4+WHITE;
+  ApplyColor;
 }
 
 U0 UserStartUp()
 {
   spawned; //Ran when a user is spawned.
 
-  if (started)
-  {
-    if (!DocEntryRan) templeDOS;
+
+  if (started) {
+    if (!DocEntryRan) templeDOS;
   }
 }
 
-U0 SrvStartUp()
-{
+U0 SrvStartUp() {
   spawned; //Run when a srv task is spawned.
 }
 
@@ -49,20 +54,18 @@ U0 StartUpTasks()
 
   Silent; //Turn off output, to the screen.
 
-  CTask *user1=User;
-
   ACInit("::/Adam/*;!/*Bible.TXT*");
   ACInit("::/Home/patchos/*");
 
-
-//  AutoComplete; //Hide autocomplete window.
-
+  CTask *user1=User;
   XTalk(user1,"templeDOS;\n");
+
+  ApplyColor;
+
+  AutoComplete; //Hide autocomplete window.
 
   Silent(OFF); //Turn on output, to the screen.
 }
-
-Fs->text_attr=BLACK<<4+WHITE;
 
 StartUpTasks;
 
