@@ -4,7 +4,7 @@
 #include "~/theme" // This also loads tp_Compositor.HC
 #include "~/patchos/patcha"
 
-WALL_DEBUG=WALL_FPS=WALL_MEM=WALL_CPU=FALSE;
+WALL_DEBUG=WALL_FPS=WALL_MEM=WALL_CPU=FALSE;
 
 #include "~/demos/grdemos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
@@ -63,3 +63,4 @@ U0 StartUpTasks()
 StartUpTasks;
 
 started = TRUE;
+
