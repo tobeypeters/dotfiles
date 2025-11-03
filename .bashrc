@@ -10,7 +10,7 @@ LICENSE
 alias ..="cd .."
 alias ll="command ls -lA --color=auto"
 alias cls="clear"
-alias edit="code"
+#alias edit="code"
 alias myip="curl -s ifconfig.me"
 alias ip="ip --color=auto"
 alias ports="sudo lsof -i -P | grep LISTEN"
