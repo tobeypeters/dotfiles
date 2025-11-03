@@ -242,3 +242,6 @@ sudo cargo install procs
 # npm install -g vsce
 
 #https://sdlmame.wallyweek.org/
+
+#Microsoft dos like text editor
+#https://github.com/microsoft/edit/releases/tag/v1.2.1
