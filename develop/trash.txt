@@ -1,27 +1,114 @@
-# ~/nixos/overlays/my-dmenu.nix
-self: super:
-
-{
-  dmenu = self.runCommand "my-dmenu" {
-    nativeBuildInputs = [ self.makeWrapper ];
-  } ''
-    mkdir -p $out/bin
-    cp /path/to/your/custom/dmenu $out/bin/
-    
-    wrapProgram $out/bin/dmenu \
-      --set LD_LIBRARY_PATH "${self.lib.makeLibraryPath [ self.xorg.libX11 self.xorg.libXinerama self.xorg.libXft ]}"
-    
-    # Create dmenu_run
-    ln -s ${self.dmenu}/bin/dmenu_run $out/bin/dmenu_run
-  '';
-}
-
 { config, pkgs, ... }:
 
+let
+  # Define an overlay to replace the default dmenu with your custom version
+  myDmenuPackage = pkgs.callPackage ./pkgs/my-dmenu.nix {};
+  
+  customDmenuOverlay = (final: prev: {
+    dmenu = myDmenuPackage;
+  });
+
+in
 {
-  nixpkgs.overlays = [
-    (import ./overlays/my-dmenu.nix)
+  imports = [
+    ./hardware-configuration.nix
   ];
 
-  environment.systemPackages = with pkgs; [ dmenu ];
+  # Add the overlay to your system's nixpkgs configuration
+  nixpkgs.overlays = [ customDmenuOverlay ];
+
+  # Bootloader
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "nixos";
+  networking.networkmanager.enable = true;
+
+  time.timeZone = "America/Indiana/Indianapolis";
+
+  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
+
+  # Enable both SDDM/Plasma and i3
+  services.xserver.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+
+  services.xserver.windowManager.i3 = {
+    enable = true;
+    extraPackages = with pkgs; [
+      dmenu  # This will now use your custom dmenu
+      polybar
+      i3status
+      i3lock
+    ];
+  };
+
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  services.printing.enable = true;
+
+  # Sound
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  users.users.tibegato = {
+    isNormalUser = true;
+    description = "Tobey Peters";
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [
+      kdePackages.kate
+    ];
+  };
+
+  programs.firefox.enable = true;
+
+  nixpkgs.config.allowUnfree = true;
+
+  environment.systemPackages = with pkgs; [
+    dmenu  # This will use your custom version due to the overlay
+    alacritty
+    git
+    google-chrome
+    htop
+    vim
+    gedit
+    xwallpaper
+    pavucontrol
+    polybar
+    pywal
+    picom
+    nemo
+    wget
+    mpd
+    audacity
+    vscode
+  ];
+  
+  fonts.packages = with pkgs; [
+    font-awesome
+    nerd-fonts.zed-mono
+    jetbrains-mono
+  ];
+
+  system.stateVersion = "24.11";
 }
