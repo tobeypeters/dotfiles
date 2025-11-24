@@ -1,13 +1,27 @@
+# ~/nixos/overlays/my-dmenu.nix
+self: super:
+
+{
+  dmenu = self.runCommand "my-dmenu" {
+    nativeBuildInputs = [ self.makeWrapper ];
+  } ''
+    mkdir -p $out/bin
+    cp /path/to/your/custom/dmenu $out/bin/
+    
+    wrapProgram $out/bin/dmenu \
+      --set LD_LIBRARY_PATH "${self.lib.makeLibraryPath [ self.xorg.libX11 self.xorg.libXinerama self.xorg.libXft ]}"
+    
+    # Create dmenu_run
+    ln -s ${self.dmenu}/bin/dmenu_run $out/bin/dmenu_run
+  '';
+}
+
 { config, pkgs, ... }:
 
-let
-  patchedDmenu = pkgs.dmenu.overrideAttrs (oldAttrs: {
-    patches = (oldAttrs.patches or []) ++ [
-      /path/to/your/dmenu-patch.patch
-    ];
-  });
-in {
-  environment.systemPackages = with pkgs; [
-    patchedDmenu
+{
+  nixpkgs.overlays = [
+    (import ./overlays/my-dmenu.nix)
   ];
+
+  environment.systemPackages = with pkgs; [ dmenu ];
 }
