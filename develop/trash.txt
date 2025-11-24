@@ -1,0 +1,13 @@
+{ config, pkgs, ... }:
+
+let
+  patchedDmenu = pkgs.dmenu.overrideAttrs (oldAttrs: {
+    patches = (oldAttrs.patches or []) ++ [
+      /path/to/your/dmenu-patch.patch
+    ];
+  });
+in {
+  environment.systemPackages = with pkgs; [
+    patchedDmenu
+  ];
+}
