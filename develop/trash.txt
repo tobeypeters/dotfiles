@@ -1,21 +1,19 @@
+sudo nix-channel --update
+sudo nixos-rebuild switch --upgrade
+
+sudo nix-channel --add https://nixos.org/channels/nixos-25.05 nixos
+sudo nix-channel --remove nixos-24.11
+sudo nix-channel --update
+
+sudo nixos-rebuild switch --upgrade
+
 { config, pkgs, ... }:
 
-let
-  # Define an overlay to replace the default dmenu with your custom version
-  myDmenuPackage = pkgs.callPackage ./pkgs/my-dmenu.nix {};
-  
-  customDmenuOverlay = (final: prev: {
-    dmenu = myDmenuPackage;
-  });
 
-in
 {
   imports = [
     ./hardware-configuration.nix
   ];
-
-  # Add the overlay to your system's nixpkgs configuration
-  nixpkgs.overlays = [ customDmenuOverlay ];
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
@@ -47,7 +45,7 @@ in
   services.xserver.windowManager.i3 = {
     enable = true;
     extraPackages = with pkgs; [
-      dmenu  # This will now use your custom dmenu
+      dmenu
       polybar
       i3status
       i3lock
@@ -85,7 +83,6 @@ in
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    dmenu  # This will use your custom version due to the overlay
     alacritty
     git
     google-chrome
@@ -110,5 +107,5 @@ in
     jetbrains-mono
   ];
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
