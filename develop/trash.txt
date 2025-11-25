@@ -1,3 +1,15 @@
+  fileSystems."/mnt/ramdrive" = {
+    device = "none";
+    fsType = "tmpfs";
+    options = [
+      "defaults"
+      "size=1G"           # Adjust size as needed (1GB in this example)
+      "mode=1777"         # Permissions: drwxrwxrwt
+      "nosuid"            # Security: ignore suid bits
+      "nodev"             # Security: don't interpret device files
+    ];
+  };
+
 sudo nix-channel --update
 sudo nixos-rebuild switch --upgrade
 
