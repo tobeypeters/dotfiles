@@ -1442,6 +1442,26 @@ if (Bt(kbd.down_bitmap,sc)) {
 
 OutU16(0x4004,0x3400);
 OutU16(0x0604,0x2000);
-//OutU16(0xB004,0x2000);
+//OutU16(0xB004,0x2000);
+
+I64 (*test)(...);
+
+
+I64 test2(...)
+{
+  "%d\n",argc;
+  U64 i,j=0;
+  for (i=0;i<argc;i++)
+  {
+    j+=argv[i];
+  }
+  "j %d\n",j;
+  return j;
+}
+
+
+"%d\n",test2(1,2,3,4,5);
+
+
 
 //KeyAndCont;
