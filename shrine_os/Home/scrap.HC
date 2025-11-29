@@ -1437,5 +1437,11 @@ CharCat(s,'d');
 if (Bt(kbd.down_bitmap,sc)) {
 }*/
 
-
+//U8 *iso=FileNameAbs("~/erythros");
+//RedSeaISO(iso,"~/erythros","~/erythros"BOOT_DIR_KERNEL_BIN_C);
+
+OutU16(0x4004,0x3400);
+OutU16(0x0604,0x2000);
+//OutU16(0xB004,0x2000);
+
 //KeyAndCont;

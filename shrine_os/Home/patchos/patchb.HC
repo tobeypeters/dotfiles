@@ -20,7 +20,7 @@
 */
 #help_index "Patched"
 
-Bool WALL_DEBUG=FALSE,
+Bool WALL_DEBUG=FALSE,
      WALL_CPU,WALL_MEM,
      WALL_FPS;
 I64  WALL_DEBUG_VAL=0;
