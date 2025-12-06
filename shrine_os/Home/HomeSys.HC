@@ -63,4 +63,3 @@ U0 StartUpTasks()
 StartUpTasks;
 
 started = TRUE;
-

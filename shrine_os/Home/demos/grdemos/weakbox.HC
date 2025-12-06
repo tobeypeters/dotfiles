@@ -25,7 +25,7 @@ Cd(__DIR__);;
 #include "grdefs"
 
 //#include "models/cube"
-#include "models/pyramid"
+#include "models/pyramid"
 //#include "models/crobot"
 //#include "models/wolf_plane"
 //#include "models/tie_fighter"
@@ -78,7 +78,7 @@ I64 lines=20;
 U64 x1,y1,x2,y2;
 U0 DrawFloor(CDC *dc)
 {
-//  dc->color=ROPF_DITHER+WHITE<<16+RED;
+//  dc->color=ROPF_DITHER+WHITE<<16+RED;
   dc->color=LTRED;
   for (ida=-lines;ida<=lines; ida++)
   {

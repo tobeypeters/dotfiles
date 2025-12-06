@@ -1444,7 +1444,7 @@ if (Bt(kbd.down_bitmap,sc)) {
 //OutU16(0x0604,0x2000);
 //OutU16(0xB004,0x2000);
 
-I64 (*test)(...);
+/*I64 (*test)(...);
 
 
 I64 test2(...)
@@ -1461,9 +1461,17 @@ I64 test2(...)
 
 
 test=&test2;
-
+
 "%d\n",test(1,2,3,4,5);
+*/
 
+StrCpy(Fs->task_name, StrNew("Hello"));
+"name: %s\n",Fs->task_name;
 
+Fs->title_src=TTS_CONST;
+
+StrCpy(Fs->task_title, StrNew("Hello2"));
+"title: %s\n",Fs->task_title;
 
 //KeyAndCont;
+
