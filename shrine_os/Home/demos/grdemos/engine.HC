@@ -38,7 +38,7 @@ Cd(__DIR__);;
 
 */
 
-U8 *b1="Message To the templeOS Community";
+U8 *b1="Message to the templeOS Community";
 U64 pw=(10*2)+2, //Button width
     ph=(10*2)+2, //Button height
     bl=180,
@@ -107,7 +107,7 @@ U0 DrawButton(CDC *dc,CCtrl *c)
 U0 b1LeftClick(CCtrl *c,I64,I64,Bool down)
 {
   c->down=down;
-}
+}
 
 CCtrl *button=SpawnCtrl(,b1,Fs,&DrawButton,,&b1LeftClick,,,
                         bl,bt,bt+bh,bl+bw);
