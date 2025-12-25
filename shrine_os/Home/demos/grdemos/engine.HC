@@ -186,7 +186,6 @@ MOUSE_TRAP=FALSE;
 MOUSE_NODOWN=FALSE;
 Fs->win_inhibit|=WIG_DBL_CLICK;
 
-
 #include "grmain"
 
 QueRem(button);
