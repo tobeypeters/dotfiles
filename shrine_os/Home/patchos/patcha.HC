@@ -46,6 +46,34 @@ WipeFunc("IsDir");
 WipeFunc("Move");
 WipeFunc("Copy");
 
+public class CCtrl
+{//Extended Control class.
+  CCtrl *next,*last;
+  CTask *win_task;
+  I64	type,flags;
+
+  //win pix coordinates
+  I64	left,right,top,bottom;
+
+  //scrn pix coordinates (derived)
+  I64	scrn_left,scrn_right,scrn_top,scrn_bottom;
+
+  U8	*state;
+
+  //called on resize
+  U0	(*update_derived_vals)(CCtrl *c);
+  U0	(*draw_it)(CDC *dc,CCtrl *c);
+
+  Bool	(*inside_ctrl)(CCtrl *c,I64 x,I64 y); //For nonbox shapes
+  U0	(*left_click)(CCtrl *c,I64 x,I64 y,Bool down);
+  U0	(*right_click)(CCtrl *c,I64 x,I64 y,Bool down);
+  U0	(*wheel_chg)(CCtrl *c,I64 delta);
+  U8	*name;
+  U8	*label;
+  U64	light_border,dark_border,bg,fg;
+};
+
+
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,
 		     Bool del_dir,Bool print_msg)
 

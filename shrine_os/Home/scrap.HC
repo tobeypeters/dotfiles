@@ -1465,13 +1465,28 @@ test=&test2;
 "%d\n",test(1,2,3,4,5);
 */
 
-StrCpy(Fs->task_name, StrNew("Hello"));
+/*StrCpy(Fs->task_name, StrNew("Hello"));
 "name: %s\n",Fs->task_name;
 
-Fs->title_src=TTS_CONST;
+Fs->title_src=TTS_CONST;
 
 StrCpy(Fs->task_title, StrNew("Hello2"));
 "title: %s\n",Fs->task_title;
+*/
+
+U8 *b1="Merry";
+U64 pw=(10*2)+2, //Button width
+    ph=(10*2)+2, //Button height
+    bl=40,
+    bt=40;
+
+U64 bw=pw+(StrLen(b1)*FONT_WIDTH),
+    bh=ph+FONT_WIDTH;
+
+
+"%d %d\n",pw,ph;
+"%d %d\n",bl,bt;
+"%d %d\n",bw,bh;
 
 //KeyAndCont;
 

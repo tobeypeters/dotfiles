@@ -36,7 +36,7 @@ DocCursor;DocClear;
 
 Init;
 
-if (ANIMATE_TASK)
+if (ANIMATE_TASK)
   Fs->animate_task=Spawn(&AnimateTask,NULL,"Animate",,Fs);
 Fs->draw_it=&DrawIt;
 

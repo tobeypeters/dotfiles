@@ -14,39 +14,125 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*enginee.HC
+/*engine.HC
   Description:
       Super generic & simple 3D engine.
 */
 Cd(__DIR__);;
 
-#define PARTICLE_MAX 1000
+#define PARTICLE_MAX 0
 
-#define APP_NAME "Engine"
+#define APP_NAME "3D Engine"
 #define APP_VERS "1.0"
+#define APP_FMT "%s v%s..."
+#define APP_STR MStrPrint(APP_FMT,APP_NAME,APP_VERS)
 
 #include "grdefs"
+#include "grutils"
+#include "grcontrols"
+
+/*
+
+   ALL THIS IS TEST CODE. IT'S JANKY, MESSY, ETC ....
+   STUFF WILL GET MOVED AND MADE CLEANER.
+
+*/
+
+U8 *b1="Message To the templeOS Community";
+U64 pw=(10*2)+2, //Button width
+    ph=(10*2)+2, //Button height
+    bl=180,
+    bt=380;
+
+U64 bw=pw+(StrLen(b1)*FONT_WIDTH),
+    bh=ph+FONT_WIDTH;
+
+Bool b1d=FALSE;
+ADocClear;
+CD2 p1,p2;
+U0 DrawButton(CDC *dc,CCtrl *c)
+{
+  p1.x=c->left+1;p1.y=c->top+1;
+  p2.x=c->right-1;p2.y=c->bottom-1;
+
+  dc->color=CYAN;
+  GrRect(dc,c->left,c->top,c->right-c->left,c->bottom-c->top);
+
+  dc->color=c->bg;
+//  GrRect(dc,p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+
+  if (b1d)
+    dc->color=c->light_border;
+  else
+    dc->color=c->dark_border;
+
+  GrLine(dc,p1.x,p1.y,p2.x-1,p1.y);
+  GrLine(dc,p1.x,p1.y+1,p1.x,p2.y-1);
+
+  if (b1d)
+    dc->color=c->dark_border;
+  else
+    dc->color=c->light_border;
+
+  GrLine(dc,p1.x+1,p2.y-1,p2.x-1,p2.y-1);
+  GrLine(dc,p2.x-1,p2.y-2,p2.x-1,p1.y+1);
+
+  if (b1d)
+    dc->color=c->fg;
+  else
+    dc->color=c->bg;
+  GrPrint(dc,p1.x+pw/2,p1.y+ph/2,"%s",b1);
+
+
+  if (b1d)
+  {
+    dc->color=BLACK;
+    GrRect(dc,150,60,340,200);
+    dc->color=WHITE;
+    GrPrint(dc,150,60,"\n\n\n  Merry Christmas and Happy Holidays ...\n\n
+
+
+\t\t    *\n
+\t\t   ***\n
+\t\t  *****\n
+\t\t *******\n
+\t\t*********\n
+\t\t    Û
+\t\t----------
+
+
+");
+  }
+}
+
+U0 b1LeftClick(CCtrl *,I64,I64,Bool down)
+{
+  b1d=down;
+}
+
+CCtrl *button=SpawnCtrl(,"Merry",Fs,&DrawButton,,&b1LeftClick,,,
+                        bl,bt,bt+bh,bl+bw);
+//button->light_border=WHITE;
+//button->dark_border=LTBLUE;
+
+class disp_box
+{
+  U64 left,
+      right,
+      width,
+      height;
+} db;
 
 U0 DrawIt(CTask *task=NULL,CDC *dc)
 {
   DCFill(dc,WHITE);
 
+  BoxLineFill(dc);
 
-  for (ida=0;ida<WIDTH;ida++)
-  {
-    if (ida%2)
-      dc->color=LTRED;
-    else
-      dc->color=RED;
+  ShadowText(dc,APP_STR,FONT_WIDTH,FONT_HEIGHT);
 
-    GrLine(dc,ida,0,ida,HEIGHT);
-  }
-
-
-  dc->color=BLACK;
-  GrPrint(dc,(FONT_WIDTH+2),FONT_HEIGHT*2-(FONT_HEIGHT*.75),"%s %s...",APP_NAME,APP_VERS);
-  dc->color=WHITE;
-  GrPrint(dc,(FONT_WIDTH),FONT_HEIGHT,"%s %s...",APP_NAME,APP_VERS);
+  dc->color=RED;
+  GrLine(dc,1,0,db.width-2,0);
 
   //MouseXY(task,&mx,&my);
   //p_plot(dc);
@@ -65,6 +151,11 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
+  db.left=0;
+  db.right=0;
+  db.width=WIDTH;
+  db.height=HEIGHT;
+
   //p_deinit(&p_arr,PARTICLE_MAX);
   //p_init;
   /*for (ita=0;ita<PARTICLE_MAX;ita++)
@@ -98,6 +189,9 @@ Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"
 
-p_init;
+QueRem(button);
+Free(button);
+
+//p_init;
 
 Exit;

@@ -83,7 +83,7 @@ U0 EyeWall(CTask *task)
   Bts(&text.font[chr],bitdex(px+1,py));
   Bts(&text.font[chr],bitdex(px,py+1));
   Bts(&text.font[chr],bitdex(px+1,py+1));
-*/
+*/
   
   //This gives the illusion of pointing towards the mouse.
   Bts(&text.font[chr],((ms.pos.y*8)/GR_HEIGHT)*8+((ms.pos.x*8)/GR_WIDTH));
