@@ -81,7 +81,7 @@ U0 DrawButton(CDC *dc,CCtrl *c)
     dc->color=c->fg;
   else
     dc->color=c->bg;
-  GrPrint(dc,p1.x+pw/2,p1.y+ph/2,"%s",b1);
+  GrPrint(dc,p1.x+pw/2,p1.y+ph/2,"%s",c->label);
 
 
   if (b1d)
@@ -110,7 +110,7 @@ U0 b1LeftClick(CCtrl *,I64,I64,Bool down)
   b1d=down;
 }
 
-CCtrl *button=SpawnCtrl(,"Merry",Fs,&DrawButton,,&b1LeftClick,,,
+CCtrl *button=SpawnCtrl(,b1,Fs,&DrawButton,,&b1LeftClick,,,
                         bl,bt,bt+bh,bl+bw);
 //button->light_border=WHITE;
 //button->dark_border=LTBLUE;
