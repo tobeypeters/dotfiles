@@ -47,7 +47,6 @@ U64 pw=(10*2)+2, //Button width
 U64 bw=pw+(StrLen(b1)*FONT_WIDTH),
     bh=ph+FONT_WIDTH;
 
-Bool b1d=FALSE;
 ADocClear;
 CD2 p1,p2;
 U0 DrawButton(CDC *dc,CCtrl *c)
@@ -61,7 +60,7 @@ U0 DrawButton(CDC *dc,CCtrl *c)
   dc->color=c->bg;
 //  GrRect(dc,p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
 
-  if (b1d)
+  if (c->down)
     dc->color=c->light_border;
   else
     dc->color=c->dark_border;
@@ -69,7 +68,7 @@ U0 DrawButton(CDC *dc,CCtrl *c)
   GrLine(dc,p1.x,p1.y,p2.x-1,p1.y);
   GrLine(dc,p1.x,p1.y+1,p1.x,p2.y-1);
 
-  if (b1d)
+  if (c->down)
     dc->color=c->dark_border;
   else
     dc->color=c->light_border;
@@ -77,14 +76,14 @@ U0 DrawButton(CDC *dc,CCtrl *c)
   GrLine(dc,p1.x+1,p2.y-1,p2.x-1,p2.y-1);
   GrLine(dc,p2.x-1,p2.y-2,p2.x-1,p1.y+1);
 
-  if (b1d)
+  if (c->down)
     dc->color=c->fg;
   else
     dc->color=c->bg;
   GrPrint(dc,p1.x+pw/2,p1.y+ph/2,"%s",c->label);
 
 
-  if (b1d)
+  if (c->down)
   {
     dc->color=BLACK;
     GrRect(dc,150,60,340,200);
@@ -105,10 +104,10 @@ U0 DrawButton(CDC *dc,CCtrl *c)
   }
 }
 
-U0 b1LeftClick(CCtrl *,I64,I64,Bool down)
+U0 b1LeftClick(CCtrl *c,I64,I64,Bool down)
 {
-  b1d=down;
-}
+  c->down=down;
+}
 
 CCtrl *button=SpawnCtrl(,b1,Fs,&DrawButton,,&b1LeftClick,,,
                         bl,bt,bt+bh,bl+bw);

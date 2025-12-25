@@ -71,6 +71,7 @@ public class CCtrl
   U8	*name;
   U8	*label;
   U64	light_border,dark_border,bg,fg;
+  Bool	down;
 };
 
 

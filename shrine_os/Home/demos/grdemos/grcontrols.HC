@@ -4,7 +4,7 @@ CCtrl *SpawnCtrl(U8 *name=NULL,U8 *label=NULL,CTask *task=sys_winmgr_task,
 { 
   CCtrl *res;
 
-  res=ACAlloc(sizeof(CCtrl));
+  res=CAlloc(sizeof(CCtrl));
 
   res->name=StrNew(name);
   res->label=StrNew(label);
@@ -28,7 +28,7 @@ CCtrl *SpawnCtrl(U8 *name=NULL,U8 *label=NULL,CTask *task=sys_winmgr_task,
   res->top=top; res->bottom=bottom;
 
   res->light_border=DKGRAY;
-  res->dark_border=LTGRAY;
+  res->dark_border=LTGRAY;
 //  res->light_border=LTGRAY;
 //  res->dark_border=DKGRAY;
   res->bg=WHITE;
