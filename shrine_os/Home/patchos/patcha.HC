@@ -72,7 +72,7 @@ public class CCtrl
   U8	*label;
   U64	light_border,dark_border,bg,fg;
   Bool	down;
-};
+};
 
 
 public extern I64 FAT32FilesDel(CDrv *dv,U8 *cur_dir,U8 *files_find_mask,I64 fuf_flags,

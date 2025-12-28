@@ -1474,19 +1474,38 @@ StrCpy(Fs->task_title, StrNew("Hello2"));
 "title: %s\n",Fs->task_title;
 */
 
-U8 *b1="Merry";
-U64 pw=(10*2)+2, //Button width
-    ph=(10*2)+2, //Button height
-    bl=40,
-    bt=40;
+/*
+//WIDTH & HEIGHT is defined in grdefs.HC
+#define WIDTH ToF64(GR_WIDTH)
+#define HEIGHT ToF64(GR_HEIGHT-9)
 
-U64 bw=pw+(StrLen(b1)*FONT_WIDTH),
-    bh=ph+FONT_WIDTH;
+CD2 screen(CD2 p)
+{
+  CD2 res;
 
+  res.x=(p.x+1)/2*WIDTH;
+  res.y=(1-(p.y+1))/2*HEIGHT;
 
-"%d %d\n",pw,ph;
-"%d %d\n",bl,bt;
-"%d %d\n",bw,bh;
+  return res;
+}
+
+CD2 project(CD3 p)
+{
+  CD2 res;
+
+  res.x=p.x; res.y=p.y;
+
+  if (p.z) {
+    res.x=p.x/p.z;
+    res.y=p.y/p.z;
+  }
+
+  return res;
+}
+
+//screen(project(cd3point))
+*/
 
 //KeyAndCont;
 
+

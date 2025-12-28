@@ -47,7 +47,7 @@ public _extern _D3_ZERO CD3 *D3Zero(CD3 *dst); //To zero
 #include "grglobs"
 
 //You really need to do WinBorder;WinMax; first and
-//Get Fs->pix_width & Fs->pix_heigh. That'll give you 640 x 472
+//Get Fs->pix_width & Fs->pix_height. That'll give you 640 x 472
 #define WIDTH ToF64(GR_WIDTH)
 #define HEIGHT ToF64(GR_HEIGHT-9)
 #define WIDTH_CENTER ToF64(WIDTH/2)

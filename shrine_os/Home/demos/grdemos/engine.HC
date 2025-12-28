@@ -38,6 +38,60 @@ Cd(__DIR__);;
 
 */
 
+ADocClear;
+$LK,"",A="FI:"$
+/*
+Based on video, by Tsoding ...
+
+ Take: -1..1
+Add 1: gives :  0..2
+For y, Sub from 1: get correct orientation
+Div 2: gives :  0..1
+Mul by w/h
+
+x=(p.x+1)/2*w 
+y=(1-(p.y+1))/2*h 
+*/
+//WIDTH & HEIGHT is defined in grdefs.HC
+#define WIDTH ToF64(GR_WIDTH)
+#define HEIGHT ToF64(GR_HEIGHT-9)
+
+CD2 *project(CD3 *p,CD2 *r=NULL,Bool Alloc=FALSE)
+{
+  AdamLog("p: %f %f %f\n",p->x,p->y,p->z);
+
+  CD2 *res=r;
+
+  if (Alloc)
+    res=CAlloc(sizeof(CD2));
+  else
+    if (!r) return r;
+
+  if (p->z) {
+    res->x=p->x/p->z;
+    res->y=p->y/p->z;
+  }
+
+  //Screen points
+  res->x=(p->x+1)/2*WIDTH;
+  res->y=(1-(p->y+1))/2*HEIGHT;
+
+  AdamLog("res: %f %f\n",res->x,res->y);
+
+  return res;
+}
+
+CD3 *testp0=CAlloc(sizeof(CD3));
+CD2 *testp00=CAlloc(sizeof(CD2));
+
+//project(testp0,testp00,TRUE);
+project(testp0,testp00);
+
+AdamLog("testp00: %f %f\n",testp00->x,testp00->y);
+
+Free(testp00);
+Free(testp0);
+
 U8 *b1="Message to the templeOS Community";
 U64 pw=(10*2)+2, //Button width
     ph=(10*2)+2, //Button height
@@ -47,7 +101,6 @@ U64 pw=(10*2)+2, //Button width
 U64 bw=pw+(StrLen(b1)*FONT_WIDTH),
     bh=ph+FONT_WIDTH;
 
-ADocClear;
 CD2 p1,p2;
 U0 DrawButton(CDC *dc,CCtrl *c)
 {
