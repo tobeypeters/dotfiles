@@ -75,7 +75,7 @@ U0 WildWestGame()
 //CDoc *WinCursorPosSet(CTask *task,I64 msx,I64 msy,Bool set_cursor=TRUE)
 
 WinCursorPosSet(Fs,ms.pos.x,ms.pos.y);
-PressAKey;
+PressAKey;
 }
 
 SettingsPush;
