@@ -77,7 +77,9 @@ class PARTICLE:PARTICLE_BASE
       distance, //Distance
       angle,    //Angle
       scale,    //Scale factor
-      speed;    //Acceleration all directions
+      speed,    //Acceleration all directions
+      data;
+  I64 dataI64;
 };
 
 PARTICLE p_arr[PARTICLE_MAX];

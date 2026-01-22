@@ -53,7 +53,7 @@ try {
 if (MOUSE_TRAP)
 {
   cur_mouse_x=ms.pos.x;cur_mouse_y=ms.pos.y-8;
-  while (run) {
+  while (run&&!APP_QUIT) {
     sc=GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN+1<<MSG_MS_L_DOWN+
              1<<MSG_MS_L_UP+1<<MSG_MS_R_DOWN+1<<MSG_MS_R_UP+1<<MSG_MS_MOVE);
     cur_mouse_x=arg1;cur_mouse_y=arg2;
@@ -112,7 +112,7 @@ else
         KEY_DOWN();
         break;
     }
-  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC);
+  while (ch!=CH_ESC && ch!=CH_SHIFT_ESC && !APP_QUIT);
 }
 
 }

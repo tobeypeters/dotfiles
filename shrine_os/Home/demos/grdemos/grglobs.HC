@@ -35,11 +35,11 @@ prev_mouse_x=prev_mouse_y=
 rotation_x=rotation_y=
 ita=itb=itc=mx=my=0;
 
-Bool ANIMATE_TASK,MOUSE_TRAP,
+Bool ANIMATE_TASK,APP_QUIT, MOUSE_TRAP,
      MOUSE_NODOWN; //Update mouse postion values
                    //even when mouse button not pressed.
 
-ANIMATE_TASK=MOUSE_TRAP=MOUSE_NODOWN=FALSE;
+ANIMATE_TASK=APP_QUIT=MOUSE_TRAP=MOUSE_NODOWN=FALSE;
 
 U0 ms_l_down(){}
 U0 ms_l_up(){}
