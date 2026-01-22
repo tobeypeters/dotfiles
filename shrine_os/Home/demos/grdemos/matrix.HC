@@ -44,7 +44,7 @@ U0 DrawIt(CTask *task,CDC *dc)
     GrPrint(dc,pp->x,pp->y-OFF2,chars[2]);
     GrPrint(dc,pp->x,pp->y-OFF1,chars[1]);
     GrPrint(dc,pp->x,pp->y,chars[0]);
-  }
+  }
 
 }
 

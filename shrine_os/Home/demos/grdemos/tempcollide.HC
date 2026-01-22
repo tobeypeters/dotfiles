@@ -39,7 +39,7 @@ U0 DrawIt(CTask *task,CDC *dc)
   dc->color=YELLOW;
 
   GrPrint(dc,10,10,"mbox: %d %d",mbox->x,mbox->y);
-  GrPrint(dc,10,20,"cbox: %d %d",cbox->x,cbox->y);
+  GrPrint(dc,10,20,"cbox: %d %d",cbox->x,cbox->y);
 
   GrRect(dc,mx,my,mbox->width,mbox->height);
 

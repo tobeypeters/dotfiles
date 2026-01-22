@@ -647,6 +647,8 @@ U8 templeDOS() {
 
   DocBottom; "\n$$FG$$";
 
+  SndRst;
+
   MenuPop;
 
   SettingsPop;
