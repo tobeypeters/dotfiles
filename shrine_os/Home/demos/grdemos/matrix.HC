@@ -23,7 +23,7 @@ Cd(__DIR__);;
 #define PARTICLE_MAX TEXT_COLS
 #define PARTICLE_SPEEDS TEXT_COLS
 
-#define OFF1 FONT_HEIGHT
+#define OFF1 FONT_HEIGHT
 #define OFF2 OFF1*2
 #define OFF3 OFF1*3
 
@@ -80,7 +80,7 @@ U0 Init()
 
 U0 key_down(){ APP_QUIT=TRUE; }
 KEY_DOWN=&key_down;
-MS_MOVE=&key_down; //Screensaver mode
+MS_MOVE=&key_down; //Screensaver mode, if implemented
 
 ANIMATE_TASK=TRUE;
 MOUSE_TRAP=TRUE;
