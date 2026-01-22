@@ -57,7 +57,7 @@ U0 AnimateTask(I64)
 
       ppp->y+=ppp->speed;
 
-      if (ppp->y>(TEXT_ROWS*FONT_HEIGHT)) {
+      if (ppp->y>HEIGHT) {
         ppp->y=-(RandU16%20)*FONT_HEIGHT;
         ppp->speed=(1+RandU16%3)*FONT_HEIGHT;
       }
