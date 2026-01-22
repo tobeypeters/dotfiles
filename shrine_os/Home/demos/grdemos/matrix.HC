@@ -23,7 +23,7 @@ Cd(__DIR__);;
 #define PARTICLE_MAX TEXT_COLS
 #define PARTICLE_SPEEDS TEXT_COLS
 
-#define OFF1 FONT_HEIGHT
+#define OFF1 FONT_HEIGHT
 #define OFF2 OFF1*2
 #define OFF3 OFF1*3
 
@@ -50,8 +50,8 @@ U0 DrawIt(CTask *task,CDC *dc)
 
 U0 AnimateTask(I64)
 {
-  while (TRUE) {
-
+  while (TRUE)
+  {
     for (itb=0;itb<TEXT_COLS;itb++)
     {
       ppp=&p_arr[itb];
@@ -80,28 +80,11 @@ U0 Init()
 
 U0 key_down(){ APP_QUIT=TRUE; }
 KEY_DOWN=&key_down;
+MS_MOVE=&key_down; //Screensaver mode
 
-/*U0 ms_l_down(){}
-U0 ms_l_up(){}
-U0 ms_move(){}
-U0 ms_move_ldown(){}
-U0 ms_move_rdown(){}
-U0 ms_r_down(){}
-U0 ms_r_up(){}
-U0 key_down(){}
-
-MS_L_DOWN=&ms_l_down;
-MS_L_UP=&ms_l_up;
-MS_MOVE=&ms_move;
-MS_MOVE_LDOWN=&ms_move_ldown;
-MS_MOVE_RDOWN=&ms_move_rdown;
-MS_R_DOWN=&ms_r_down;
-MS_R_UP=&ms_r_up;
-KEY_DOWN=&key_down;
-*/
 ANIMATE_TASK=TRUE;
-//MOUSE_TRAP=TRUE;
-//MOUSE_NODOWN=FALSE;
+MOUSE_TRAP=TRUE;
+MOUSE_NODOWN=TRUE;
 Fs->win_inhibit|=WIG_DBL_CLICK;
 
 #include "grmain"

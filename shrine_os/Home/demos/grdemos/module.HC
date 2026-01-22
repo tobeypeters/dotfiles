@@ -46,7 +46,7 @@ U0 Init()
 {
   //p_deinit(&p_arr,PARTICLE_MAX);
   //p_init;
-  /*for (ita=0;ita<PARTICLE_MAX;ita++)
+  /*for (ita=0;ita<PARTICLE_MAX;ita++)
   {
   }*/
 }
