@@ -31,7 +31,6 @@ Cd(__DIR__);;
 
 U8 *chars[4]={"Û","²","±","°"};
 
-
 U0 DrawIt(CTask *task,CDC *dc)
 {
   DCFill(dc,BLACK);
