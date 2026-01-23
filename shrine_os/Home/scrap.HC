@@ -1351,14 +1351,14 @@ U8 *tfa[2]={"FALSE","TRUE"};
 	(a.u8[1]=StrOcc(c,'+'))>1) return FALSE;
 
     if (a>256) return FALSE;
- 
+
     //+ & - position check
     if (a.u8[0]&&c[0]!='-' ||
         a.u8[1]&&c[0]!='+') return FALSE;
 
     for(a=0;a<l;a++){
 	if (!('0'<=c[a]<='9' ||
-             c[a]=='.' || c[a]=='-' || 
+             c[a]=='.' || c[a]=='-' ||
              c[a]=='+')) {return FALSE;}
     }
 
@@ -1506,6 +1506,21 @@ CD2 project(CD3 p)
 //screen(project(cd3point))
 */
 
-//KeyAndCont;
+/*
+U32 Range(U32 min=0,U32 max)
+{//Return a number, in a given range.
+  U64 base=RandU64;
+  U32 range_size=max-min+1;
+  U32 limit=U32_MAX-(U32_MAX%range_size);
+  U32 result;
 
-
+  do {
+    result=base(U32);
+    base>>=32;
+  } while (result>=limit);
+
+  return min+(result%range_size);
+}
+*/
+
+//KeyAndCont;

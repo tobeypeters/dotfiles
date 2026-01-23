@@ -122,6 +122,20 @@ public U8 Tuple(U8 *fmt,...)
 
   return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
 }
+U32 Range(U32 min=0,U32 max)
+{//Return a number, in a given range.
+  U64 base=RandU64;
+  U32 range_size=max-min+1;
+  U32 limit=U32_MAX-(U32_MAX%range_size);
+  U32 result;
+
+  do {
+    result=base(U32);
+    base>>=32;
+  } while (result>=limit);
+
+  return min+(result%range_size);
+}
 #help_index ""
 
 #help_index "Char/Conversion"
