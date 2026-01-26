@@ -1,1 +1,0 @@
-#define powerof2(n) !(((n)-1) & (n))
