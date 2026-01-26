@@ -122,7 +122,7 @@ public U8 Tuple(U8 *fmt,...)
 
   return StrUtil(st,SUF_REM_LEADING|SUF_REM_TRAILING|SUF_TO_UPPER);
 }
-U32 Range(U32 min=0,U32 max)
+public U32 Range(U32 min=0,U32 max)
 {//Return a number, in a given range.
   U64 base=RandU64;
   U32 range_size=max-min+1;
@@ -136,6 +136,12 @@ U32 Range(U32 min=0,U32 max)
 
   return min+(result%range_size);
 }
+public U64 gcd(U64 num1,U64 num2)
+{//Get the greatest common denominator of two numbers.
+  if (num2==0) return num1;
+  return gcd(num2,num1%num2);
+}
+public U64 PowerOf2(U64 num) return ToBool(num>0&&!(num&(num-1)));
 #help_index ""
 
 #help_index "Char/Conversion"
@@ -448,3 +454,7 @@ public U0 dump_exists()
   if (!IsDir(TRASH_DIR)) DirMk(TRASH_DIR);
 }
 #help_index ""
+
+//If you want you code to be ran
+public Bool AdamIncluding(CTask *task) return task!=adam_task;
+

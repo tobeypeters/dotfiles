@@ -3,7 +3,7 @@
   Copyright(c), Tobey Peters, https://github.com/tobeypeters
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software
   and associated documentation files (the "Software"), to deal in the Software without restriction,
-  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
   and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
   subject to the following conditions:
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -51,9 +51,9 @@ U0 AnimateTask(I64)
 {
   while (TRUE)
   {
-    for (itb=0;itb<TEXT_COLS;itb++)
+    for (iaa=0;iaa<TEXT_COLS;iaa++)
     {
-      ppp=&p_arr[itb];
+      ppp=&p_arr[iaa];
 
       ppp->y+=ppp->speed;
 
@@ -70,10 +70,10 @@ U0 AnimateTask(I64)
 
 U0 Init()
 {
-  for (ita=0;ita<PARTICLE_MAX;ita++)
+  for (iia=0;iia<PARTICLE_MAX;iia++)
   {
-    pp=&p_arr[ita];
-    pp->x=ita*FONT_WIDTH;
+    pp=&p_arr[iia];
+    pp->x=iia*FONT_WIDTH;
     pp->y=-(RandU16%TEXT_ROWS)*FONT_HEIGHT;
     pp->speed=(1+RandU16%3)*FONT_HEIGHT;
 //    pp->y=-(Range(,TEXT_ROWS))*FONT_HEIGHT;

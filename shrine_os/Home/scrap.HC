@@ -1521,6 +1521,21 @@ U32 Range(U32 min=0,U32 max)
 
   return min+(result%range_size);
 }
-*/
+*/
 
+/*U64 gcd(U64 num1,U64 num2)
+{
+  if (num2==0) return num1;
+  return gcd(num2,num1%num2);
+}
+
+"gcd [484, 781]: %d\n\n", gcd(484,781);
+*/
+
+//U64 n=8;
+//"PowerOf2(%d): %d\n",n,n>0&&!(n&(n-1));
+
+//"PowerOf2(7): %d\n",PowerOf2(7);
+//"PowerOf2(8): %d\n",PowerOf2(8);
+
 //KeyAndCont;
