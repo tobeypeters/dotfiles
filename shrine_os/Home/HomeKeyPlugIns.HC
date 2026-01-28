@@ -1,11 +1,33 @@
-//Place this file in /Home and change
-//anything you want.
-
 U0 TimeIns()
 {
   CDate cdt;
   cdt=Now;
   "$$IV,1$$----%D %T----$$IV,0$$\n",cdt,cdt;
+}
+
+U0 FileLinkIns()
+{
+  U8 *st=PopUpPickFile;
+  st[0]=':';  //This is my personal code, not production. LOL
+  "$$LK,\"%s\",A=\"FI:%s\"$$",st+2,st;
+  Free(st);
+}
+
+U0 DirLinksIns()
+{
+  CDirEntry *tmpde,*tmpde1;
+  U8 *st=PopUpPickDir,*st2;
+  st[0]=':';  //This is my personal code, not production. LOL
+  st2=MStrPrint("%s/*",st);
+  tmpde=tmpde1=FilesFind(st2,FUF_JUST_FILES);
+  while (tmpde) {
+    tmpde->full_name[0]=':';
+    "$$LK,\"%s\",A=\"FI:%s\"$$\n",tmpde->full_name+2,tmpde->full_name;
+    tmpde=tmpde->next;
+  }
+  DirTreeDel(tmpde1);
+  Free(st);
+  Free(st2);
 }
 
 Bool MyPutKey(I64 ch,I64 sc)
@@ -103,6 +125,19 @@ Bool MyPutKey(I64 ch,I64 sc)
 		KeyDescSet("Cmd/TimeIns");
 	      else
 		TimeIns;
+	    }
+	    return TRUE;
+	  case SC_F8:
+	    if (sc&SCF_SHIFT) {
+	      if (sc&SCF_KEY_DESC)
+		KeyDescSet("Cmd/DirLinksIns");
+	      else
+		DirLinksIns;
+	    } else {
+	      if (sc&SCF_KEY_DESC)
+		KeyDescSet("Cmd/FileLinkIns");
+	      else
+		FileLinkIns;
 	    }
 	    return TRUE;
 	}
