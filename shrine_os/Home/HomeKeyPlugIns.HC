@@ -50,12 +50,21 @@ Bool MyPutKey(I64 ch,I64 sc)
   U8 *st1,*st2;
 
 
+  #ifdef TEST_DEF
+    AdamLog("Doesn't work.\n");
+  #endif
+
 //[$LK,"tpc",A="FF://Home/patchos/guthub.HC,http"$ start]
 //[+s] <shift>+<esc>
 //  if ((sc&SCF_SHIFT && sc.u8[0]==SC_ESC) &&
 //    !(StrCmp(Fs->task_name,"templedos_task"))) Play("5eC");
 //[+e] <shift>+<esc>
 //[$LK,"tpc",A="FF://Home/patchos/github.HC,http"$ start]
+
+  #ifdef SCREENSAVER_MODE
+    AdamLog("Doesn't work.\n");
+  #endif
+
   if (sc&SCF_CTRL && sc&SCF_DELETE) {
     BootRAM;
 //    CopyTree("~/td","/Apps/templeDOS");

@@ -1,24 +1,9 @@
-/*
-
-ABOUT 10% of a screensaver implementation.
-
-*/
 Cd(__DIR__);;
 
-I64 begin=KbdMsEvtTime;
+/*I64 begin=KbdMsEvtTime;
 I64 elapsed=0;
-/*
-U8 reg_saver[255];
-*/
-U0 (*draw_saver)();
 
-//U8 reg_key[255]="TempleOS/screensaver";
-//U8 reg_val[255]="F64 best_score=9999;\n";
-//U8 reg_val_up[255];
-//MemCpy(reg_val_up,reg_val,
-//       sizeof(reg_val));
-//RegDft(reg_key,reg_val);
-//RegExe(reg_key);
+U0 (*draw_saver)();
 
 U64 GetElapsedEvtTime() return (GetTSC-begin)/cnts.time_stamp_freq;
 
@@ -46,8 +31,32 @@ U0 AnimateTask(I64)
 }
 
 Fs->animate_task=Spawn(&AnimateTask,NULL,"saver_animate",,);
+*/
+Bool SaverPutKey(I64 ch,I64 sc)
+{
+  AdamLog('%c',ch);
 
-I64 arg1,arg2;
+//  begin=KbdMsEvtTime;
+//  DCFill;
+
+//  APP_QUIT=TRUE;
+
+  return FALSE;
+}
+
+Bool SaverPutS(U8 *)
+{
+  return FALSE;
+}
+
+KeyDevAdd(&SaverPutKey,&SaverPutS,0x20000000,TRUE);
+
+while (!APP_QUIT)
+{
+  Sleep(.1);
+}
+
+/*I64 arg1,arg2;
 try {
   while (!APP_QUIT) {
     switch (GetMsg(&arg1,&arg2,1<<MSG_KEY_DOWN+1<<MSG_KEY_UP)) {
@@ -80,3 +89,4 @@ try {
 //}
 
 Exit;
+*/

@@ -6,7 +6,12 @@ WALL_DEBUG=WALL_FPS=WALL_MEM=WALL_CPU=FALSE;
 #include "~/demos/grdemos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
 
+#define SCREENSAVER_MODE TRUE
+Bool SCREENSAVER_ENABLED=FALSE;
+
 Bool started=FALSE;
+
+#define TEST_DEF TRUE
 
 U0 spawned() {
   DocTermNew;
@@ -48,7 +53,6 @@ U0 StartUpTasks()
 
   ACInit("::/Adam/*;!/*Bible.TXT*");
   ACInit("::/Home/patchos/*");
-
 
   AutoComplete; //Hide autocomplete window.
 

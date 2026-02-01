@@ -1538,7 +1538,7 @@ U32 Range(U32 min=0,U32 max)
 //"PowerOf2(7): %d\n",PowerOf2(7);
 //"PowerOf2(8): %d\n",PowerOf2(8);
 
-U0 MsgLoop()
+/*U0 MsgLoop()
 {
   I64 arg1,arg2,msg_code;
   "Use $LK,"msg_code",A="MN:MSG_CMD"$ defines in your programs instead of hardcoded nums.\n"
@@ -1549,7 +1549,7 @@ U0 MsgLoop()
 
   Fs->win_inhibit=WIF_SELF_MS_L|WIF_SELF_MS_R;
   Fs->display_flags=0;
-
+
   do
   {
     msg_code=GetMsg(&arg1,&arg2,~(1<<MSG_NULL));
@@ -1562,6 +1562,11 @@ U0 MsgLoop()
 }
 
 MsgLoop;
+*/
 
+/*  #ifdef TEST_DEF
+    AdamLog("Doesn't work.\n");
+  #endif
+*/
 
 //KeyAndCont;
