@@ -2780,3 +2780,33 @@ public U0 tdit()
 {
   Copy("C:/Home/td/*.*","C:/Apps/templeDOS");
 }
+
+//Screensaver start: Temporarily inside here
+Bool SCREENSAVER_ENABLED=FALSE;
+
+U8 *DEFAULT_SAVER="default";
+
+U0 (*draw_saver)();
+
+I64 BeginElapsedEvtTime=0;
+U64 GetElapsedEvtTime() return (GetTSC-BeginElapsedEvtTime)/cnts.time_stamp_freq;
+
+Bool SAVER_QUIT=FALSE;
+
+Bool SaverPutKey(I64 ch,I64 sc)
+{
+  SCREENSAVER_ENABLED=FALSE;
+  WALL_DEBUG_VAL=ch;
+
+  BeginElapsedEvtTime=KbdMsEvtTime;
+
+  return FALSE;
+}
+
+Bool SaverPutS(U8 *) return FALSE;
+
+KeyDevAdd(&SaverPutKey,&SaverPutS,0xA0000000,TRUE);
+
+
+
+//Screensaver end: Temporarily inside here

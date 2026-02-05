@@ -3,15 +3,12 @@
 
 WALL_DEBUG=WALL_FPS=WALL_MEM=WALL_CPU=FALSE;
 
+WALL_DEBUG=TRUE;
+
 #include "~/demos/grdemos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
 
-#define SCREENSAVER_MODE TRUE
-Bool SCREENSAVER_ENABLED=FALSE;
-
 Bool started=FALSE;
-
-#define TEST_DEF TRUE
 
 U0 spawned() {
   DocTermNew;
@@ -49,9 +46,13 @@ U0 StartUpTasks()
 
   Silent; //Turn off output, to the screen.
 
-  CTask *user1=User;
+//  CTask *user1=User;
+  CTask *user1=User,
+        *user2=User;
 
-  ACInit("::/Adam/*;!/*Bible.TXT*");
+  XTalk(user2,"#include \"~/patchos/screensaver\"");
+
+  ACInit("::/Adam/*;!/*Bible.TXT*");
   ACInit("::/Home/patchos/*");
 
   AutoComplete; //Hide autocomplete window.

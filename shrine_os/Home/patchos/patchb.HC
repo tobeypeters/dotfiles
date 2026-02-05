@@ -457,4 +457,3 @@ public U0 dump_exists()
 
 //If you want you code to be ran
 public Bool AdamIncluding(CTask *task) return task!=adam_task;
-
