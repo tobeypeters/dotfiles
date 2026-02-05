@@ -58,7 +58,7 @@ try {
             APP_QUIT=TRUE;
           default:
             begin=KbdMsEvtTime;
-            DCFill;
+//            DCFill;
             
             break;
         }

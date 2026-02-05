@@ -46,13 +46,9 @@ U0 StartUpTasks()
 
   Silent; //Turn off output, to the screen.
 
-//  CTask *user1=User;
-  CTask *user1=User,
-        *user2=User;
+  CTask *user1=User;
 
-  XTalk(user2,"#include \"~/patchos/screensaver\"");
-
-  ACInit("::/Adam/*;!/*Bible.TXT*");
+  ACInit("::/Adam/*;!/*Bible.TXT*");
   ACInit("::/Home/patchos/*");
 
   AutoComplete; //Hide autocomplete window.
