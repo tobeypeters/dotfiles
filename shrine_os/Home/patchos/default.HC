@@ -1,4 +1,5 @@
-/* This is all crap code
+// This is all crap code
+/* Default - screensaver example:
 
   U8 defBuf[255]="TempleOS";
   U64 defLen=StrLen(defBuf),
@@ -25,12 +26,12 @@
     }
     else dont=TRUE;
 
-    DCFill(gr.dc,BLACK);
-    gr.dc->color=WHITE;
+    DCFill(,BLACK);
+//    dc->color=WHITE;
 
-    GrPrint(,x,y,"TempleOS %d",cpu_structs[0].total_jiffies-winmgr.t->last_total_jiffies);
+//    GrPrint(,x,y,"TempleOS %d",cpu_structs[0].total_jiffies-winmgr.t->last_total_jiffies);
+//    GrPrint(,x,y,"TempleOS %d",WALL_DEBUG_VAL);
   }
 
   draw_saver=&default_saver;
-
 */

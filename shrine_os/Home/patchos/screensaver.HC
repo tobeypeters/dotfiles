@@ -1,6 +1,5 @@
-/* This is all crap code
-
-::: Patch starts here
+/*
+::: Patch starts here - bottom of patcha.HC
 
   U8 *SAVER_PATH="::/Home/patchos";
 
@@ -22,10 +21,6 @@
     {
       SCREENSAVER_ENABLED=FALSE;
       BeginElapsedEvtTime=KbdMsEvtTime;
-
-      Del("::/Home/del.HC");
-
-      DCFill;
     }
 
     WALL_DEBUG_VAL=ch;
