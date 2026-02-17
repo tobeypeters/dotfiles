@@ -2775,8 +2775,3 @@ HijackFunc(&DocRecalc,&docrecalc);
 HijackFunc(&DrvTextAttrGet,&drvtextattrget);
 HijackFunc(&Ed,&ed);
 HijackFunc(&FileMgr,&filemgr);
-
-public U0 tdit()
-{
-  Copy("C:/Home/td/*.*","C:/Apps/templeDOS");
-}

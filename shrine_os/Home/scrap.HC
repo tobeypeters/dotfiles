@@ -1542,7 +1542,5 @@ U32 Range(U32 min=0,U32 max)
     AdamLog("Doesn't work.\n");
   #endif
 */
-
 
-
 //KeyAndCont;

@@ -51,7 +51,7 @@ U0 AnimateTask(I64)
 {
   while (TRUE)
   {
-    for (iaa=0;iaa<TEXT_COLS;iaa++)
+    for (iaa=0;iaa<TEXT_COLS;iaa++)
     {
       ppp=&p_arr[iaa];
 

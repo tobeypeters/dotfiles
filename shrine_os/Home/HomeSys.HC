@@ -5,7 +5,7 @@ WALL_DEBUG=WALL_FPS=WALL_MEM=WALL_CPU=FALSE;
 
 //WALL_DEBUG=TRUE;
 
-#include "~/demos/grdemos/eye_wallpaper"
+#include "~/demos/eye_wallpaper"
 #include "/Apps/templeDOS/templeDOS"
 
 Bool started=FALSE;

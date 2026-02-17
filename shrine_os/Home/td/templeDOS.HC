@@ -475,9 +475,9 @@ pickit_end:
       if (fc) {
 
         if (f_err(FLG_D)) goto answer;
-        Fs->answer=FD(str_NQ(bufa));
+        Fs->answer=FD(StrNQ(bufa));
       }
-      else Fs->answer=F(str_NQ(bufa));
+      else Fs->answer=F(StrNQ(bufa));
 
       break;
     case 177: //time

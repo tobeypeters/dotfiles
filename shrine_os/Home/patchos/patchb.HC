@@ -174,6 +174,19 @@ public I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
 
   return res;
 }
+public U8 *StrNQ(U8 *str)
+{//De-Quotify$CM-LE-RE$$SY,3$tm$SY,0$ a string.
+  U8 *p=str;
+  while (*str)
+  {
+    if (*str==34) *str=' ';
+    str++;
+  }
+  str=p;
+
+  return MStrUtil(str,SUF_REM_LEADING|SUF_REM_TRAILING);
+}
+
 public U8 StrUpper(U8 *str)
 {//Convert a string to uppercase.
   return MStrUtil(str,SUF_TO_UPPER);
@@ -236,6 +249,26 @@ public U8 *StrCat(U8 *dst,Bool flush=TRUE,...)
   }
 
   return dst;
+}
+public U0 pmemsave(U8* file)
+{//QEMU Monitor <ctrl><shift><2> utility to transfer a file with pmemsave.
+ //Author: Alec8023 on TempleOS Discord server.
+    CDirEntry* dt = FilesFind(file);
+    if (!dt) {
+        return;
+    }
+    CDirEntry* de = dt;
+    CBlkDev* bd;
+    I64 let;
+    while (de) {
+        let = *de->full_name;
+        if (Let2BlkDevType(let) == BDT_RAM) {
+            bd = Let2BlkDev(let);
+            "pmemsave 0x%08x 0x%08x %s\n", bd->RAM_dsk(U64) + (de->clus * BLK_SIZE), de->size, de->name;
+        }
+        de = de->next;
+    }
+    DirTreeDel(dt);
 }
 #help_index ""
 
