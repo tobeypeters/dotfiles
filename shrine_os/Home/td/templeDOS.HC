@@ -309,8 +309,9 @@ pickit_end:
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      Bool trash=!f_err(FLG_T,FALSE);
-      if (trash) {
+      "%s\n" bufa;
+/*      Bool trash=!f_err(FLG_T,FALSE);
+      if (trash) {
         dump_exists;
         Silent(ON);
       }
@@ -337,7 +338,7 @@ pickit_end:
       }
 
       if (trash) trash_msg(bufa);
-
+*/
       break;
     case  35: //touch
       if (bav) Touch(bufa,""); //Update time & date

@@ -35,7 +35,7 @@ U64 GetColor()
   pick:
   res=RandU16%COLORS_NUM;
 
-  if (I64InLst(res,0,8,15)) goto pick;
+  if (I64Cmp(res,0,8,15)) goto pick;
   return res;
 }
 
