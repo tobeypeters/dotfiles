@@ -31,21 +31,14 @@ Bool inLst(U8 *opt)
 Bool TF(I64 val) return val>0;
 
 Bool WildCard(U8 *str)
-{//Real crude way to do this.
- //I wanna know, if we have a wild card, in any position.
+{//Checking for any form, of wild card.
+ //Real crude way to do this.
   if (!StrLen(str)) return FALSE;
 //  if (!StrCmpEX(str,,"*",".")) return TRUE;
-//  if (*str=='*') return TRUE;
   if (*str=='.') return TRUE;
-  if (StrOcc(str,'*')) return TRUE;
-
+  if (StrOcc(str,'*')) return TRUE; // Works for: * or even ~/*HC
   return FALSE;
 }
-
-/*AdamLog("empty: %d\n",WildCard(""));    //FALSE
-AdamLog("*      %d\n",WildCard("*"));   //TRUE
-AdamLog(".      %d\n",WildCard("."));   //TRUE
-AdamLog("*HC    %d\n",WildCard("*HC")); //TRUE*/
 
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
@@ -243,19 +236,17 @@ pickit_end:
 //Pick file support end
 
   //In case, you don't feel like providing a file extension ".HC".
-  //This list can be expanded to many other commands. But,
-  //since you can have two source files, with the same name,
-  //like utils.HC & utils.HC.Z, I haven't expanded it ... yet.
   if (I64Cmp(idx,86)) { 
     buff_add(bufa,ExtDft(bufa,"HC"));
   }
 
 //validation:
   //Wild card support-ls,grep, etc
-  Bool wild=WildCard(bufa));
+  Bool wild=WildCard(bufa);
   if (wild) {
     if (I64Cmp(idx,64,174,211,223,224)) {
-      bav=wild=TRUE; goto dont_validate;
+      if (*bufa=='.') *bufa='*';
+      bav=TRUE; goto dont_validate;
     }
   }
 
@@ -346,10 +337,8 @@ dont_validate:
       }
 
       if (idx==224) {
-        if (!wild) {
+        if (!wild)
           if (!type_got(v,FILE)) goto answer;
-        }
-        else if (*bufa=='.') *bufa='*';
 
         if (trash) Move(bufa,TRASH_DIR);
         else Del(bufa);
@@ -547,13 +536,10 @@ dont_validate:
       if (fc) {
         //I restrict * and . to file copying.
         //CopyTree(); does support them.
-        //Need to test this more, to make sure
         CopyTree(bufa,bufb);
       }
-      else {
-"here\n";
+      else
         Copy(bufa,bufb);
-}
 
       break;
     case 212: //fm
