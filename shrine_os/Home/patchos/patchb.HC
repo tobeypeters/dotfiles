@@ -214,6 +214,23 @@ public U8 *StrRev(U8 *str)
 
   return st;
 }
+public U64 StrOccEx(U8 *str,...)
+{//Count occurrences of a char or set of chars.
+ //You can count up to 8 diffent chars. Providing more
+ //will just return 0. The counts are all stored
+ //in the sub-ints of a U64 n.u8[0]-n.u8[7]
+  U64 res=0,
+        i=0;
+
+  if (!str||!(1<=argc<9)) return res;
+
+  while (argc-->0)
+  {
+    res.u8[i]=StrOcc(str,argv[i]); i++;
+  }
+
+  return res;
+}
 #help_index ""
 
 #help_index "Memory/Heap"

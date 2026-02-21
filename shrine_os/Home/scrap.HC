@@ -1543,4 +1543,27 @@ U32 Range(U32 min=0,U32 max)
   #endif
 */
 
-//KeyAndCont;
+/*U64 StrOccEx(U8 *str,...)
+{//Count occurrences of a char or set of chars.
+ //You can count up to 8 diffent chars. Providing more
+ //will just return 0. The counts are all stored
+ //in the sub-ints of a U64 n.u8[0]-n.u8[7]
+  U64 res=0,
+        i=0;
+
+  if (!str||!(1<=argc<9)) return res;
+
+  while (argc-->0)
+  {
+    res.u8[i]=StrOcc(str,argv[i]); i++;
+  }
+
+  return res;
+}
+U8 *st="helloworld";
+U64 res=StrOccEx(st,'l','r','h');
+"\nl[%d] r[%d] h[%d]\n\n",res.u8[0],res.u8[1],res.u8[2];
+*/
+
+
+//KeyAndCont;
