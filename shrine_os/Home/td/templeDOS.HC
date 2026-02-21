@@ -51,17 +51,11 @@ EdLineDel(doc);
 U8 *help_file=MStrPrint("%s/help.DD",__DIR__);
 U8 *menu_file=MStrPrint("%s/menu.DD",__DIR__);
 
-U0 buff_add(U8 *buf, U8 *str)
-{//Assign a string to buffer.
-  MemSet(buf,'\0',sizeof(buf));
-  StrCpy(buf,str);
-}
-
 U8 prev_cmd[512];
-U0 set_prevcmd(U8 *new_cmd) buff_add(prev_cmd,new_cmd);
+U0 set_prevcmd(U8 *new_cmd) BuffStuff(prev_cmd,new_cmd);
 
 U8 prev_dir[512];
-U0 set_prevdir() buff_add(prev_dir,DirNameAbs(Fs->cur_dir));
+U0 set_prevdir() BuffStuff(prev_dir,DirNameAbs(Fs->cur_dir));
 
 U8 *f_str(U8 *cmd,U8 *arg) return MStrPrint("%s(\"%s\");",cmd,arg);
 
@@ -95,10 +89,10 @@ hashit:
   if ((idx=c->hashdx(c,a->args[0]))==-1)
   {
     if (!StrCmp(a->args[0],"##")) { //pid
-      buff_add(a->args[0],"pid"); goto hashit;
+      BuffStuff(a->args[0],"pid"); goto hashit;
     }
     if (!StrCmp(a->args[0],":>")) { //touch
-      buff_add(a->args[0],"touch"); goto hashit;
+      BuffStuff(a->args[0],"touch"); goto hashit;
     }
 
 //drvchange:
@@ -200,20 +194,20 @@ pickit:
       default:
         if (p3==1||p3==3)
         {
-          buff_add(p,StrNew(PopUpPickDirStrict));
+          BuffStuff(p,StrNew(PopUpPickDirStrict));
           v.$WW+H,1$u8[vt+DIR]=1*(StrLen(p)>0);
 
           if (p3==3&&StrLen(p)>0) CatPrint(p,"/*.*");
         }
         if (p3==0||p3==2)
         {
-          buff_add(p,StrNew(PopUpPickFileStrict));
+          BuffStuff(p,StrNew(PopUpPickFileStrict));
           v.$WW+H,1$u8[vt+FILE]=1*(StrLen(p)>0);
         }
     end:
 
-      if (ui==0) buff_add(bufa,p);
-      else buff_add(bufb,p);
+      if (ui==0) BuffStuff(bufa,p);
+      else BuffStuff(bufb,p);
 
       break;
     }
@@ -237,14 +231,14 @@ pickit_end:
 
   //In case, you don't feel like providing a file extension ".HC".
   if (I64Cmp(idx,86)) { 
-    buff_add(bufa,ExtDft(bufa,"HC"));
+    BuffStuff(bufa,ExtDft(bufa,"HC"));
   }
 
 //validation:
   //Wild card support-ls,grep, etc
   Bool wild=WildCard(bufa);
   if (wild) {
-    if (I64Cmp(idx,64,174,211,223,224)) {
+    if (I64Cmp(idx,64,174,176,211,223,224)) {
       if (*bufa=='.') *bufa='*';
       bav=TRUE; goto dont_validate;
     }
@@ -256,7 +250,7 @@ pickit_end:
 dont_validate:
 //validation_end:
 
-  U8 *bufe=NULL; //scratch buffer
+  U8 bufe[255]=NULL;
 
 //filesexist:
   //CMD: File(s) need to exist
@@ -268,7 +262,7 @@ dont_validate:
   }
   if (I64Cmp(idx,30,56,86,146,153,170,179,
       182,187,194,208,211,214,224,227)) {
-    if (!bav) { bufe=bufa; goto nferror; }
+    if (!bav) { BuffStuff(bufe,bufa); goto nferror; }
 
     switch(idx)
     {
@@ -277,7 +271,7 @@ dont_validate:
         goto switchit;
         break;
       case 153: //diff
-        if (!bbv) { bufe=bufb; goto nferror; }
+        if (!bbv) { BuffStuff(bufe,bufb); goto nferror; }
         if (!type_got(v,FILE,1)) goto answer;
         break;
       case 211: //cp
@@ -369,12 +363,14 @@ dont_validate:
       break;
     case  43: //cdd
     case 199: //cd
-      if (a->count==1) { bufe=StrNew("~"); goto prevdir; } //~
-      if (a->count==2&&fc==0)
-        if (StrLen(bufa)==0) { bufe=StrNew(prev_dir); goto prevdir; } //-
-      if (!StrCmp(bufa,"::")) { bufe=bufa; goto prevdir; } //::
+      if (a->count==1) { BuffStuff(bufe,"~"); goto prevdir; } //~
 
-      bufe=StrNew(bufa);
+      if (a->count==2&&fc==0)
+        if (StrLen(bufa)==0) { BuffStuff(bufe,prev_dir); goto prevdir; } //-
+
+      if (!StrCmp(bufa,"::")) { BuffStuff(bufe,bufa); goto prevdir; } //::
+
+      BuffStuff(bufe,bufa);
 
       if (!bav) goto nferror;
       if (!type_got(v,DIR,,FALSE)) {
@@ -552,12 +548,10 @@ dont_validate:
       if (fc)
         if (f_err(FLG_T)) goto answer;
 
-      bufe=StrNew(bufa);
+      BuffStuff(bufe,bufa);
 
-      if (a->count==1) bufe=StrNew(".");
+      if (a->count==1) BuffStuff(bufe,".");
 
-      if (a->count==2)
-        if (!StrCmp(bufa,"-")) bufe=StrNew(prev_dir);
       
       ls(bufe,(fc||idx==176));"\n";
 
@@ -590,7 +584,6 @@ unknown:
 
 nferror:
   err_print(ERR_NF,bufe);
-  bufe=NULL;
 
 answer: //Possibly rename
   Fs->answer=0;
@@ -602,9 +595,6 @@ error:
   }
 
   Silent(OFF);
-//  bufa=bufb;
-
-//  zFree(bufe);
 
   return res;
 }
@@ -648,12 +638,12 @@ U8 templeDOS() {
   {
     DocBottom;
     "\n%c:%s: ",CurDrv,Fs->cur_dir; // Display prompt
-    buff_add(input,MyGetStr(GSF_SHIFT_ESC_EXIT));
+    BuffStuff(input,MyGetStr(GSF_SHIFT_ESC_EXIT));
 
     if (input[0]=='é') break;
 
     if (!StrCmp(input,"!!")) {
-      buff_add(input,prev_cmd);
+      BuffStuff(input,prev_cmd);
     }
 
     if (res=execute_cmd(input)) break;

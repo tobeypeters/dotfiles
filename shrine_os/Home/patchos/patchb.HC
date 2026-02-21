@@ -249,6 +249,11 @@ public U8 *CAllocSized(U64 size=0,...)
 
   return CAlloc(sizeof(U8)*len+1);
 }
+public U0 BuffStuff(U8 *dst, U8 *src)
+{//Assign a string to buffer.
+  MemSet(dst,'\0',sizeof(dst));
+  StrCpy(dst,src);
+}
 #help_index ""
 
 #help_index "Char/Operations;Memory"
