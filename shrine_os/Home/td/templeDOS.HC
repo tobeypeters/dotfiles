@@ -30,6 +30,23 @@ Bool inLst(U8 *opt)
 
 Bool TF(I64 val) return val>0;
 
+Bool WildCard(U8 *str)
+{//Real crude way to do this.
+ //I wanna know, if we have a wild card, in any position.
+  if (!StrLen(str)) return FALSE;
+//  if (!StrCmpEX(str,,"*",".")) return TRUE;
+//  if (*str=='*') return TRUE;
+  if (*str=='.') return TRUE;
+  if (StrOcc(str,'*')) return TRUE;
+
+  return FALSE;
+}
+
+/*AdamLog("empty: %d\n",WildCard(""));    //FALSE
+AdamLog("*      %d\n",WildCard("*"));   //TRUE
+AdamLog(".      %d\n",WildCard("."));   //TRUE
+AdamLog("*HC    %d\n",WildCard("*HC")); //TRUE*/
+
 Bool SHOW_ANSWERS=TRUE;
 Bool TIP_OF_DAY=TRUE;
 
@@ -234,11 +251,18 @@ pickit_end:
   }
 
 //validation:
-  //Wild card support-ls,grep
-  if (!(*bufa=='*')&&!(idx==174)) {
-    v=files_valid(bufa,bufb);
-    bav=v.u8[0]; bbv=v.u8[1];
+  //Wild card support-ls,grep, etc
+  Bool wild=WildCard(bufa));
+  if (wild) {
+    if (I64Cmp(idx,64,174,211,223,224)) {
+      bav=wild=TRUE; goto dont_validate;
+    }
   }
+
+  v=files_valid(bufa,bufb);
+  bav=v.u8[0]; bbv=v.u8[1];
+
+dont_validate:
 //validation_end:
 
   U8 *bufe=NULL; //scratch buffer
@@ -309,9 +333,8 @@ pickit_end:
     case  30: //rmdir
     case 214: //rd
     case 224: //rm
-      "%s\n" bufa;
-/*      Bool trash=!f_err(FLG_T,FALSE);
-      if (trash) {
+      Bool trash=!f_err(FLG_T,FALSE);
+      if (trash) {
         dump_exists;
         Silent(ON);
       }
@@ -323,7 +346,10 @@ pickit_end:
       }
 
       if (idx==224) {
-        if (!type_got(v,FILE)) goto answer;
+        if (!wild) {
+          if (!type_got(v,FILE)) goto answer;
+        }
+        else if (*bufa=='.') *bufa='*';
 
         if (trash) Move(bufa,TRASH_DIR);
         else Del(bufa);
@@ -338,7 +364,7 @@ pickit_end:
       }
 
       if (trash) trash_msg(bufa);
-*/
+
       break;
     case  35: //touch
       if (bav) Touch(bufa,""); //Update time & date
@@ -521,10 +547,13 @@ pickit_end:
       if (fc) {
         //I restrict * and . to file copying.
         //CopyTree(); does support them.
+        //Need to test this more, to make sure
         CopyTree(bufa,bufb);
       }
-      else
+      else {
+"here\n";
         Copy(bufa,bufb);
+}
 
       break;
     case 212: //fm
