@@ -1565,6 +1565,24 @@ U64 res=StrOccEx(st,'l','r','h');
 "\nl[%d] r[%d] h[%d]\n\n",res.u8[0],res.u8[1],res.u8[2];
 */
 
+/*public I64 ArgScan(U8 *needle,...)
+{//Iterate of argv, scanning for the needle
+ //and return its position.
+  I64 res=-1;
+
+  if (argc==0) return res;
+
+  U64 i=0;
+  while (argc-->0)
+  {
+    if (!StrCmp(needle,argv[i])) res=i;
+    i++;
+  }
+
+  return res; 
+}
+
+"%d\n",ArgScan("","world","hello");*/
 
 
 //KeyAndCont;

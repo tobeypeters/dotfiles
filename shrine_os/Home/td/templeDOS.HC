@@ -244,6 +244,8 @@ pickit_end:
     }
   }
 
+  if (idx==174) goto dont_validate;
+
   v=files_valid(bufa,bufb);
   bav=v.u8[0]; bbv=v.u8[1];
 
@@ -260,7 +262,8 @@ dont_validate:
     if (I64Cmp(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
       bav=TRUE; goto switchit; }
   }
-  if (I64Cmp(idx,30,56,86,146,153,170,179,
+//  if (I64Cmp(idx,30,56,86,146,153,170,179,
+  if (I64Cmp(idx,30,56,86,146,170,179,
       182,187,194,208,211,214,224,227)) {
     if (!bav) { BuffStuff(bufe,bufa); goto nferror; }
 

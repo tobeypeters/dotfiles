@@ -231,6 +231,22 @@ public U64 StrOccEx(U8 *str,...)
 
   return res;
 }
+public I64 ArgScan(U8 *needle,...)
+{//Iterate of argv, scanning for the needle
+ //and return its position.
+  I64 res=-1;
+
+  if (argc==0) return res;
+
+  U64 i=0;
+  while (argc-->0)
+  {
+    if (!StrCmp(needle,argv[i])) res=i;
+    i++;
+  }
+
+  return res; 
+}
 #help_index ""
 
 #help_index "Memory/Heap"
