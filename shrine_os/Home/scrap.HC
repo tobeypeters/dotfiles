@@ -1583,6 +1583,39 @@ U64 res=StrOccEx(st,'l','r','h');
 }
 
 "%d\n",ArgScan("","world","hello");*/
-
 
+/*public I64 StrArrayScan(U8 **arr,U64 arr_size,...)
+{//Search a "pointer" string array for values and return their positions.
+ //You can search for up to 8 diffent values. Providing more
+ //will just return -1. The positions are all stored
+ //in the sub-ints of a U64 n.u8[0]-n.u8[7]
+  U64 cnt=arr_size/sizeof(U8 *),
+        i=0,j=0;
+
+  I64 res=-1;
+
+  if (!arr||!(1<=argc<9)) return res;
+
+  for (;i<argc;i++)
+  {
+    for (j=0;j<cnt;j++)
+    {
+      if (!StrCmp(arr[j],argv[i]))
+      {
+        if (res==-1) res=0;
+        res.u8[i]=j;
+      }
+    }
+
+  }
+
+  return res;
+}
+
+U8 *test[3]={"Terry","is","King" };
+U64 works=ArrScan(&test,sizeof(test),"King");
+
+"%d\n",works;
+*/
+
 //KeyAndCont;
