@@ -25,6 +25,9 @@
 
 Bool inPickerLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"τυ\0??\0?D\0?F\0?DM\0",LMF_EXACT);
+
+U8 *pickerlst[5]={ "τυ","??","?D","?F","?DM" };
+
 Bool inLst(U8 *opt)
   return LstMatch(MStrUtil(opt,SUF_TO_UPPER),"ON\0OFF\0",LMF_EXACT)>-1;
 
@@ -116,12 +119,19 @@ hashit:
   } 
 hashit_end:
 
-  I64 v=0,fc;
-
-  fc=flag_cnt(a->flags);
+  I64 v=0,fc=flag_cnt(a->flags);
 
 //error_handler:
   eptr=c->data[idx][TOK_CMD];
+
+
+//help start
+  if (a->count==2&&fc) {
+    if (!f_err(FLG_H,FALSE)) {
+      Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto answer;
+    }
+  }
+//help end
 
   //Valid argument and flag count start
   if (!c->tk_minmax(c,idx,a->count-(fc>0))) {
@@ -132,14 +142,6 @@ hashit_end:
 
 //error_handler_end:
 
-//help start
-  if (a->count==2&&fc) {
-    if (!f_err(FLG_H,FALSE)) {
-      Ed(MStrPrint("FF:%s,_%s",help_file,eptr)); goto answer;
-    }
-  }
-//help end
-
   //CMD: No args or flags
   if (c->data[idx][TOK_MAX]==1) goto switchit;
 
@@ -147,44 +149,44 @@ hashit_end:
 
   a->next(a);bufa=a->get_current(a);
   a->next(a);bufb=a->get_current(a);
-
+ 
   U64 bav,bbv; bav=bbv=0;
 
-//Pick file support start
+  //Pick file support start
+  //Got a command that does something with a file/folder
+  if (!I64InLst(idx,30,35,43,56,86,146,153,
+               170,179,182,187,194,199,201,208,
+               211,214,224,227)) goto pickit_end;
+
+  if (a->count==2) bufb=NULL;
+  res=StrArrayScan(&pickerlst,sizeof(pickerlst),bufa,bufb);
+  if (res==-1) { res=0; goto pickit_end; }
+
   I64 p1,p2,p3; p1=p2=p3=0;
 
-  if (a->count==2) bufb=StrNew("");
-
-  p1=p3=inPickerLst(bufa); p2=inPickerLst(bufb);
-
-  if ((p1==-1)&&(p2==-1)) goto pickit_end;
-
-  if (a->count==2) p2=0;
+  p1=p3=res.i8[0]; p2=res.i8[1]; res=0;
 
   v.u8[0]=TF(p1);v.u8[1]=TF(p2);
 
-  if (v.u8[0]||v.u8[1]) {
-    U64 ui=1-v.u8[0],vt;
+  U64 ui=1-v.u8[0],vt;
 
-    U8 p[512];
+  U8 p[512];
 
-    Bool od=(c->data[idx][TOK_ATYPE]==ONLY_DIRS),
-	 of=(c->data[idx][TOK_ATYPE]==ONLY_FILES);
+  Bool od=(c->data[idx][TOK_ATYPE]==ONLY_DIRS),
+       of=(c->data[idx][TOK_ATYPE]==ONLY_FILES);
 
 pickit:
-    vt=ui*3;
+  vt=ui*3;
 
-    if (ui==1) p3=p2;
+  if (ui==1) p3=p2;
 
-    p3--;//Cause we don't want zeroes.  See the list.
+  p3--;//Cause we don't want zeroes.  See the list.
 
-    //Just one silent error prevention method.  I'll look at making
-    //error handling, for source and destination arguments. But,
-    //this will stop: `cat ?D` giving you `cat C:/Home`
-    if (od) p3=1;
-    if (of) p3=2;
+  //Just one silent error prevention method.
+  //EDIT: Might not be needed anymore.
+  if (od) p3=1; if (of) p3=2;
 
-    switch (idx) {
+  switch (idx) {
     start:
       case  30: //rmdir
       case  43: //cdd
@@ -206,25 +208,25 @@ pickit:
         }
     end:
 
-      if (ui==0) BuffStuff(bufa,p);
-      else BuffStuff(bufb,p);
+      if (ui==0) bufa=StrNew(p);
+      else bufb=StrNew(p);
+
+      bav=bbv=TRUE;
 
       break;
-    }
+  }
 
-    if (ui==0&&v.u8[1]) {
-      ui++; goto pickit;
-    }
+  if (ui==0&&v.u8[1]) {
+    ui++; goto pickit;
+  }
 
-    if (v.u8[DIR]&&ui==1) {
-      if (!IsDir(bufb)) {
-        e_print(ERR_DIRSRCDST); goto error;
-      }
-      else {
-	bav=bbv=TRUE; goto switchit;
-      }
+  if (v.u8[DIR]&&ui==1) {
+    if (!IsDir(bufb)) {
+      e_print(ERR_DIRSRCDST); goto error;
     }
   }
+
+  goto switchit;
 
 pickit_end:
 //Pick file support end
@@ -245,14 +247,14 @@ pickit_end:
   }
 
   if (idx==174) goto dont_validate;
-
+
   v=files_valid(bufa,bufb);
   bav=v.u8[0]; bbv=v.u8[1];
 
 dont_validate:
 //validation_end:
 
-  U8 bufe[255]=NULL;
+  U8 bufe[256]=NULL;
 
 //filesexist:
   //CMD: File(s) need to exist
@@ -262,8 +264,7 @@ dont_validate:
     if (I64Cmp(fci=MaxI64(0,file_char2(*bufa)),2,5)) {
       bav=TRUE; goto switchit; }
   }
-//  if (I64Cmp(idx,30,56,86,146,153,170,179,
-  if (I64Cmp(idx,30,56,86,146,170,179,
+  if (I64Cmp(idx,30,56,86,146,153,170,179,
       182,187,194,208,211,214,224,227)) {
     if (!bav) { BuffStuff(bufe,bufa); goto nferror; }
 
@@ -292,12 +293,6 @@ dont_validate:
 //filesexist_end:
 
   U64 be=FALSE;
-
-  switch(idx)
-  {
-    case 201:
-    bufa=MStrPrint("%s",FileNameAbs(bufa));
-  }  
 
   switchit:  
     set_prevcmd(cmd);
@@ -517,6 +512,8 @@ dont_validate:
 
       break;
     case 201: //ed
+      bufa=MStrPrint("%s",FileNameAbs(bufa));
+
       if (filenameOK(bufa)) PopUpEd(bufa);
       else { e_print(ERR_FILEI,bufa); goto answer; }
 

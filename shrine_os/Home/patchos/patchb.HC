@@ -312,7 +312,7 @@ public I64 StrArrayScan(U8 **arr,U64 arr_size,...)
 {//Search a "pointer" string array for values and return their positions.
  //You can search for up to 8 diffent values. Providing more
  //will just return -1. The positions are all stored
- //in the sub-ints of a U64 n.u8[0]-n.u8[7]
+ //in the sub-ints of a I64 n.i8[0]-n.i8[7]
   U64 cnt=arr_size/sizeof(U8 *),
         i=0,j=0;
 
@@ -324,13 +324,8 @@ public I64 StrArrayScan(U8 **arr,U64 arr_size,...)
   {
     for (j=0;j<cnt;j++)
     {
-      if (!StrCmp(arr[j],argv[i]))
-      {
-        if (res==-1) res=0;
-        res.u8[i]=j;
-      }
+      if (!StrCmp(arr[j],argv[i])) res.i8[i]=j;
     }
-
   }
 
   return res;
