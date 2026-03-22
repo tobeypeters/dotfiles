@@ -1,6 +1,7 @@
 // This is all crap code
 /* Default - screensaver example:
 
+AdamLog("loaded\n");
   U8 defBuf[255]="TempleOS";
   U64 defLen=StrLen(defBuf),
        xunit=FONT_WIDTH,
@@ -26,10 +27,10 @@
     }
     else dont=TRUE;
 
-    DCFill(,BLACK);
-//    dc->color=WHITE;
+    DCFill(,LTRED);
+    dc->color=WHITE;
 
-//    GrPrint(,x,y,"TempleOS %d",cpu_structs[0].total_jiffies-winmgr.t->last_total_jiffies);
+    GrPrint(,x,y,"TempleOS %d",cpu_structs[0].total_jiffies-winmgr.t->last_total_jiffies);
 //    GrPrint(,x,y,"TempleOS %d",WALL_DEBUG_VAL);
   }
 

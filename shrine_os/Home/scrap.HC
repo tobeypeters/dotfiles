@@ -1609,10 +1609,127 @@ U64 res=StrOccEx(st,'l','r','h');
 U8 *test[3]={"Terry","is","King" };
 //I64 works=StrArrayScan(&test,sizeof(test),"King");
 I64 works=StrArrayScan(&test,sizeof(test),'');
-
 "%d\n",works.i8[0];
 */
 
-
+//U8 *mtest="mtest string\n"; //MSize gives error
+//"%d\n",MSize(mtest);
+//U8 *mtest=CAlloc(256);
+//"%d %d %d\n",MSize(mtest),MSize2(mtest),sizeof(mtest);
+
+/*
+public U8 *strdup(U8 *str,CTask *task=NULL)
+{//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
+  return StrNew(str,task);
+}
+
+public Bool isalpha(U64 ch)
+{//Tests if ch is alphabetic.
+  return Bt(char_bmp_alpha_numeric_no_at,ch);
+}
+"isalpha [%d]: %d\n",'a',isalpha('a'-1);
+public Bool isdisplay(U64 ch)
+{//Tests if ch is displayable.
+  return Bt(char_bmp_displayable,ch);
+}
+"isdisplay [%d]: %d\n",' ',isdisplay(' ');
+public Bool isprint(U64 ch)
+{//Tests if ch is printable.
+  return Bt(char_bmp_printable,ch);
+}
+"isprint [%d]: %d\n",' ',isprint(' ');
+public Bool isalnum(U64 ch)
+{//Tests if ch is alphanumeric.
+ return isalpha(ch) || isdigit(ch);
+}
+"isalnum [%d]: %d\n",'a',isalnum('a');
+public Bool islower(U64 ch)
+{//Tests if ch is a lowercase letter.
+  return 'a'<=ch<'z'+1;
+}
+"islower [%d]: %d\n",'z',islower('z');
+public Bool isspace(U64 ch)
+{//Tests if ch is a whitespace character.
+  return ch==' ';
+}
+"isspace [%d]: %d\n",' ',isspace(' ');
+public Bool isupper(U64 ch)
+{//Checks for any uppercase character.
+  return 'A'<=ch<'Z'+1;
+}
+"isupper [%d]: %d\n",'Z',isupper('Z');
+
+public F64 fabs(F64 x)
+{//Calculates the absolute value of a floating-point argument x.
+  return Abs(x);
+}
+
+/*
+  Bessel functions -j0(),j1(),jn_forward()
+  https://en.wikipedia.org/wiki/Bessel_function
+*/
+public F64 j0(F64 x,I64 terms)
+{//Calculates the Bessel function value of the first kind of order 0.
+  F64 sum=1.0,
+     term=1.0,
+       ie=Pow(10,-15); //1e-15
+
+  U64 k;
+
+  for (k=1;k<terms;k++)
+  {
+    term*=-x*x/(4.0*k*k);
+    sum+=term;
+
+    if (fabs(term)<ie) break;
+  }
+  return sum;
+}
+public F64 jn_forward(I64 n, F64 x)
+{//Calculates the Bessel function value of the first kind of order n.
+  if (n==0) return j0(x,30);
+  if (n==1)
+  {
+    F64 sum=0.0,
+       term=x/2.0;
+
+    U64 k;
+
+    for (k=0;k<30;k++)
+    {
+      if (k>0) term*=-x*x/(4.0*k*(k+1));
+      sum += term;
+      if (fabs(term) < 1e-15) break;
+    }
+    return sum;
+  }
+    
+  F64 jj0=j0(x, 30),
+      jj1=jn_forward(1, x),
+  j_prev=jj0,
+  j_curr=jj1,
+     j_next;
+  
+  U64 m;  
+  for (m=1;m<n;m++)
+  {
+    j_next=(2.0*m/x)*j_curr-j_prev;
+    j_prev=j_curr;
+    j_curr=j_next;
+  }
+    
+  return j_curr;
+}
+public F64 j1(F64 x,I64 terms)
+{//Calculates the Bessel function value of the first kind of order 1.
+ return jn_forward(x,terms);
+}
+
+F64 x=2.5;
+"| %12.10f |\n| %12.10f |\n| %12.10f|\n",
+ j0(x, 30),j1(1, x), jn_forward(3, x);
+*/
+
+    
 
 //KeyAndCont;

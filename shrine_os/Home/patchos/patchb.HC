@@ -38,6 +38,10 @@ public U0 MouseXY(CTask *task,U64 *x,U64 *y)
 #help_index ""
 
 #help_index "Math"
+public F64 fabs(F64 x)
+{//Calculates the absolute value of a floating-point argument x.
+  return Abs(x);
+}
 public F64 ATan2(F64 y,F64 x)
 {//Two number Arc Tangent (Inverse Tan) or four quads.
   F64 angle=0;
@@ -142,6 +146,68 @@ public U64 gcd(U64 num1,U64 num2)
   return gcd(num2,num1%num2);
 }
 public U64 PowerOf2(U64 num) return ToBool(num>0&&!(num&(num-1)));
+
+/*
+  Bessel functions -j0(),j1(),jn_forward()
+  https://en.wikipedia.org/wiki/Bessel_function
+*/
+public F64 j0(F64 x,I64 terms)
+{//Calculates the Bessel function value of the first kind of order 0.
+  F64 sum=1.0,
+     term=1.0,
+       ie=Pow(10,-15); //1e-15
+
+  U64 k;
+
+  for (k=1;k<terms;k++)
+  {
+    term*=-x*x/(4.0*k*k);
+    sum+=term;
+
+    if (fabs(term)<ie) break;
+  }
+  return sum;
+}
+public F64 jn_forward(I64 n, F64 x)
+{//Calculates the Bessel function value of the first kind of order n.
+  if (n==0) return j0(x,30);
+  if (n==1)
+  {
+    F64 sum=0.0,
+       term=x/2.0;
+
+    U64 k;
+
+    for (k=0;k<30;k++)
+    {
+      if (k>0) term*=-x*x/(4.0*k*(k+1));
+      sum += term;
+      if (fabs(term) < 1e-15) break;
+    }
+    return sum;
+  }
+    
+  F64 jj0=j0(x, 30),
+      jj1=jn_forward(1, x),
+  j_prev=jj0,
+  j_curr=jj1,
+     j_next;
+  
+  U64 m;  
+  for (m=1;m<n;m++)
+  {
+    j_next=(2.0*m/x)*j_curr-j_prev;
+    j_prev=j_curr;
+    j_curr=j_next;
+  }
+    
+  return j_curr;
+}
+public F64 j1(F64 x,I64 terms)
+{//Calculates the Bessel function value of the first kind of order 1.
+ return jn_forward(x,terms);
+}
+
 #help_index ""
 
 #help_index "Char/Conversion"
@@ -154,7 +220,41 @@ public U8 ToLower(U8 chr)
 #help_index ""
 
 #help_index "Char/Operations"
-public Bool IsDigit(U8 *chr) return Bt(char_bmp_dec_numeric,chr);
+public U8 *strdup(U8 *str,CTask *task=NULL)
+{//Accepts a $LK,"CTask",A="MN:CTask"$ or $LK,"CHeapCtrl",A="MN:CHeapCtrl"$.NULL allocs off current task's heap.
+  return StrNew(str,task);
+}
+
+//(13<=age<20)
+public Bool isalpha(U64 ch)
+{//Tests if ch is alphabetic.
+  return Bt(char_bmp_alpha_numeric_no_at,ch);
+}
+public Bool isdigit(U8 *chr) return Bt(char_bmp_dec_numeric,chr);
+public Bool isdisplay(U64 ch)
+{//Tests if ch is displayable.
+  return Bt(char_bmp_displayable,ch);
+}
+public Bool isprint(U64 ch)
+{//Tests if ch is printable.
+  return Bt(char_bmp_printable,ch);
+}
+public Bool isalnum(U64 ch)
+{//Tests if ch is alphanumeric.
+ return isalpha(ch) || isdigit(ch);
+}
+public Bool islower(U64 ch)
+{//Tests if ch is a lowercase letter.
+  return 'a'<=ch<'z'+1;
+}
+public Bool isspace(U64 ch)
+{//Tests if ch is a whitespace character.
+  return ch==' ';
+}
+public Bool isupper(U64 ch)
+{//Checks for any uppercase character.
+  return 'A'<=ch<'Z'+1;
+}
 
 public I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
 {//Compare a string, to a list of strings.

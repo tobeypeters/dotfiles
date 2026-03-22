@@ -38,11 +38,10 @@
 
 */
 
-/*
-U0 ScrSaver(U8 *saver=DEFAULT_SAVER)
+
+/*U0 ScrSaver(U8 *saver=DEFAULT_SAVER)
 {
   Fs->display_flags=0;
-//  Cd(__DIR__);;
   Cd(SAVER_PATH);
 
   I64 elapsed=0;
