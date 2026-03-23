@@ -1732,10 +1732,8 @@ F64 x=2.5;
 
   for (i=32;i<256;i++)
   {
-    if (i==36)
-      "%c%c",i,i;
-    else
-      "%c",i;
+    "%c",i;
+    if (i==36) GetOutOfDollar;
 
     if (((i-31)+1)%16==0) "\n";
   }
@@ -1743,8 +1741,8 @@ F64 x=2.5;
   "\n\n";
 }
 Main;
-*/
+*/
 
-
+
 
 //KeyAndCont;
