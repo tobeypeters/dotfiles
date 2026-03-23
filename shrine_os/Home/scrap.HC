@@ -1625,39 +1625,33 @@ public U8 *strdup(U8 *str,CTask *task=NULL)
 
 public Bool isalpha(U64 ch)
 {//Tests if ch is alphabetic.
-  return Bt(char_bmp_alpha_numeric_no_at,ch);
+  return 'a'<=ToLower(ch)<='z';
 }
-"isalpha [%d]: %d\n",'a',isalpha('a'-1);
+public Bool isdigit(U8 *chr) return Bt(char_bmp_dec_numeric,chr);
 public Bool isdisplay(U64 ch)
 {//Tests if ch is displayable.
   return Bt(char_bmp_displayable,ch);
 }
-"isdisplay [%d]: %d\n",' ',isdisplay(' ');
 public Bool isprint(U64 ch)
 {//Tests if ch is printable.
   return Bt(char_bmp_printable,ch);
 }
-"isprint [%d]: %d\n",' ',isprint(' ');
 public Bool isalnum(U64 ch)
 {//Tests if ch is alphanumeric.
- return isalpha(ch) || isdigit(ch);
+  return Bt(char_bmp_alpha_numeric_no_at,ch);
 }
-"isalnum [%d]: %d\n",'a',isalnum('a');
 public Bool islower(U64 ch)
 {//Tests if ch is a lowercase letter.
-  return 'a'<=ch<'z'+1;
+  return 'a'<=ch<='z';
 }
-"islower [%d]: %d\n",'z',islower('z');
 public Bool isspace(U64 ch)
 {//Tests if ch is a whitespace character.
   return ch==' ';
 }
-"isspace [%d]: %d\n",' ',isspace(' ');
 public Bool isupper(U64 ch)
 {//Checks for any uppercase character.
-  return 'A'<=ch<'Z'+1;
+  return 'A'<=ch<='Z';
 }
-"isupper [%d]: %d\n",'Z',isupper('Z');
 
 public F64 fabs(F64 x)
 {//Calculates the absolute value of a floating-point argument x.
@@ -1730,6 +1724,10 @@ F64 x=2.5;
  j0(x, 30),j1(1, x), jn_forward(3, x);
 */
 
-    
+//"%d\n",PopUpNoYes("Quick distro");
+
+
+
+
 
 //KeyAndCont;

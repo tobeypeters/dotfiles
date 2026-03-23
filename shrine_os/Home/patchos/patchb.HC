@@ -225,10 +225,9 @@ public U8 *strdup(U8 *str,CTask *task=NULL)
   return StrNew(str,task);
 }
 
-//(13<=age<20)
 public Bool isalpha(U64 ch)
 {//Tests if ch is alphabetic.
-  return Bt(char_bmp_alpha_numeric_no_at,ch);
+  return 'a'<=ToLower(ch)<='z';
 }
 public Bool isdigit(U8 *chr) return Bt(char_bmp_dec_numeric,chr);
 public Bool isdisplay(U64 ch)
@@ -241,11 +240,11 @@ public Bool isprint(U64 ch)
 }
 public Bool isalnum(U64 ch)
 {//Tests if ch is alphanumeric.
- return isalpha(ch) || isdigit(ch);
+  return Bt(char_bmp_alpha_numeric_no_at,ch);
 }
 public Bool islower(U64 ch)
 {//Tests if ch is a lowercase letter.
-  return 'a'<=ch<'z'+1;
+  return 'a'<=ch<='z';
 }
 public Bool isspace(U64 ch)
 {//Tests if ch is a whitespace character.
@@ -253,7 +252,7 @@ public Bool isspace(U64 ch)
 }
 public Bool isupper(U64 ch)
 {//Checks for any uppercase character.
-  return 'A'<=ch<'Z'+1;
+  return 'A'<=ch<='Z';
 }
 
 public I64 StrCmpEX(U8 *str,Bool ignore_case=FALSE,...)
