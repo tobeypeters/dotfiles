@@ -1726,8 +1726,22 @@ F64 x=2.5;
 
 //"%d\n",PopUpNoYes("Quick distro");
 
+/*U0 Main()
+{
+  U64 i;
+  for (i=0;i<256;i++)
+  {
+    if (i<32||i==127)
+    {
+      "%c",'.';
+    }
+    else "%c",i;
+
+    if (i % 16 == 0) "\n";
+  }
+}
+Main;*/
 
 
-
 
 //KeyAndCont;
