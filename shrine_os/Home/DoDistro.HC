@@ -28,7 +28,6 @@ U0 MakeMyISO(U8 *_out_iso_filename)
     Del("/Distro/" KERNEL_BIN_C);
 
     CopyTree(BOOT_DIR,	"/Distro" BOOT_DIR);
-    CopyTree("/Home",	"/Distro/Home");
 
     CopyTree("/Adam",     "/Distro/Adam");
     CopyTree("/Apps",     "/Distro/Apps");
@@ -38,6 +37,7 @@ U0 MakeMyISO(U8 *_out_iso_filename)
     CopyTree("/Kernel",   "/Distro/Kernel");
     CopyTree("/Misc",     "/Distro/Misc");
   }
+  CopyTree("/Home", "/Distro/Home");
 
   //To save space, optionally delete dictionary.
   //Del("/Distro/Adam/AutoComplete/ACDefs.DATA");

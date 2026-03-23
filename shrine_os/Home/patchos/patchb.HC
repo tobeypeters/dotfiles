@@ -155,7 +155,7 @@ public F64 j0(F64 x,I64 terms)
 {//Calculates the Bessel function value of the first kind of order 0.
   F64 sum=1.0,
      term=1.0,
-       ie=Pow(10,-15); //1e-15
+       ie=1e-15;
 
   U64 k;
 
