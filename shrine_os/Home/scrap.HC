@@ -1746,6 +1746,26 @@ Main;
 //F64 fl=1e-15;
 //"%12.15f\n",fl;
 
-
+ADocClear;
+#define RAS 1
+//I64 ras=1;
+
+U0 I64test(I64 size=1)
+{
+//  #define RAS 1
+//  #define RAS size
+
+//  ras=size;
+
+//  I64 *res[1]     //yes - obviously
+//  I64 *res[size]; //Nope - But, in C int *res[size] yes
+//  I64 *res[ras];   //global variable
+
+//  I64 *res[ras];  //yes
+
+//  I64 *res[RAS];  //yes - Global #define
+//  I64 *res[RAS];   //yes - inside #define ras 1
+//  I64 *res[RAS];   //no  - inside #define ras size
+}
 
 //KeyAndCont;
