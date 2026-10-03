@@ -1,3 +1,9 @@
+/* gcc -std=c11 -O2 -Wall -Wextra \
+    m4vplay.c \
+    $(pkg-config --cflags --libs sdl2 mpv) \
+    -o m4vplay
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 

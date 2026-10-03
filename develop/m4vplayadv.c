@@ -1,3 +1,6 @@
+/*
+ * gcc m4vplayadv.c -o m4vplayadv -g     $(pkg-config --cflags --libs sdl2 mpv gl) -lGL
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
