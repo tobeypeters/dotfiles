@@ -126,10 +126,7 @@ static const unsigned char FONT8[96][8] = {
     /*127 pad */ {0,0,0,0,0,0,0,0}
 };
 
-/* =====================================================================
- * Overlay state
- * ===================================================================== */
-
+// Overlay state
 #define MAX_LINES   40
 #define MAX_LINE    256
 
@@ -160,10 +157,7 @@ static void overlay_clear(void)
     g_overlay.count = 0;
 }
 
-/* =====================================================================
- * Text renderer
- * ===================================================================== */
-
+// Text renderer
 #define ATLAS_GLYPHS   96
 #define ATLAS_W        (ATLAS_GLYPHS * 8)   /* 768 */
 #define ATLAS_H        8
@@ -360,10 +354,7 @@ static void text_renderer_draw(
     glUseProgram(0);
 }
 
-/* =====================================================================
- * mpv property observation
- * ===================================================================== */
-
+// mpv property observation
 #define MAX_PROPS 64
 typedef struct {
     char name[64];
@@ -495,10 +486,6 @@ static void format_node(const mpv_event_property *prop,
     }
 }
 
-/* =====================================================================
- * Helpers
- * ===================================================================== */
-
 static void die(const char *msg)
 {
     fprintf(stderr, "Error: %s\n", msg);
@@ -511,10 +498,6 @@ static void *get_proc_address(void *ctx, const char *name)
     return SDL_GL_GetProcAddress(name);
 }
 
-/* =====================================================================
- * main
- * ===================================================================== */
-
 int main(int argc, char **argv)
 {
     if (argc != 2) {
@@ -522,7 +505,6 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* ---- SDL ---- */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         die(SDL_GetError());
 
@@ -557,7 +539,6 @@ int main(int argc, char **argv)
     if (mpv_initialize(mpv) < 0)
         die("mpv_initialize() failed");
 
-    /* ---- Observe properties as strings ---- */
     for (int i = 0; OBSERVED_PROPS[i]; i++) {
         int r = mpv_observe_property(
             mpv,
@@ -572,7 +553,6 @@ int main(int argc, char **argv)
         }
     }
 
-    /* ---- libmpv OpenGL renderer ---- */
     mpv_opengl_init_params gl_init_params = {
         .get_proc_address = get_proc_address,
         .get_proc_address_ctx = NULL
@@ -593,11 +573,9 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* ---- Text renderer ---- */
     TextRenderer tr;
     text_renderer_init(&tr);
 
-    /* ---- Load video ---- */
     const char *cmd[] = { "loadfile", argv[1], NULL };
     rc = mpv_command(mpv, cmd);
     if (rc < 0) {
@@ -606,7 +584,6 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    /* ---- Main loop ---- */
     int running = 1;
     Uint32 last_overlay_update = 0;
 
@@ -632,7 +609,6 @@ int main(int argc, char **argv)
             }
         }
 
-        /* ---- Drain mpv events (including property changes) ---- */
         while (1) {
             mpv_event *ev = mpv_wait_event(mpv, 0);
             if (ev->event_id == MPV_EVENT_NONE)
@@ -653,7 +629,6 @@ int main(int argc, char **argv)
             }
         }
 
-        /* ---- Rebuild overlay text ~4x per second ---- */
         Uint32 now = SDL_GetTicks();
         if (g_overlay.visible &&
             now - last_overlay_update > 250) {
@@ -667,7 +642,6 @@ int main(int argc, char **argv)
             }
         }
 
-        /* ---- Render ---- */
         int width, height;
         SDL_GetWindowSize(window, &width, &height);
 
@@ -691,7 +665,6 @@ int main(int argc, char **argv)
                     mpv_error_string(rc));
         }
 
-        /* ---- Draw overlay text on top ---- */
         if (g_overlay.visible && g_overlay.count > 0) {
             glViewport(0, 0, width, height);
 
@@ -717,11 +690,11 @@ int main(int argc, char **argv)
         SDL_Delay(10);
     }
 
-    /* ---- Cleanup ---- */
     mpv_render_context_free(mpv_gl);
     mpv_destroy(mpv);
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
     return EXIT_SUCCESS;
 }
