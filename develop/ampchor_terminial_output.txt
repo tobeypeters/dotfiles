@@ -1,0 +1,323 @@
+  tibegatotibegato-desktop: ~  $ ampchor
+[scrylight] === Scrylight starting === {
+  isDev: false,
+  version: '1.0.40',
+  packaged: true,
+  build: '2026-05-18-games-scan-debug',
+  whenReadyMs: 1120,
+  evalToReadyMs: 838
+}
+[scrylight] [ENC-7] probing secure storage backend (a silent stop after this line = keychain prompt pending on the GUI session)
+[scrylight] [ENC-7] WEAK SECURE STORAGE: Secure storage is NOT hardware/keystore-backed (basic_text backend (hardcoded key — not real encryption)). Secrets on disk (server private key, license, TMDB key) are weakly protected — install/run a keyring (gnome-keyring or kwallet) before storing secrets on this machine. {
+  available: true,
+  strong: false,
+  backend: 'basic_text',
+  reason: 'basic_text backend (hardcoded key — not real encryption)'
+}
+[scrylight] [nextServer] starting {
+  serverJs: '/opt/Ampchor/resources/standalone/server.js',
+  host: '127.0.0.1',
+  port: 41797
+}
+[2934665:1004/230402.672818:ERROR:media/gpu/vaapi/vaapi_wrapper.cc:1680] Installed VAAPI version is too old. min supported version: 1.17 installed version: 1.14
+[scrylight] [nextServer] ready http://127.0.0.1:41797 {
+  portMs: 12,
+  spawnMs: 34,
+  firstOutputMs: 476,
+  readyMs: 638,
+  probes: 5,
+  totalMs: 684
+}
+[scrylight] [update] unattended installs are off for this package deb-needs-elevation
+Checking for update
+[scrylight] [live-tv] hydrate: no list (null)
+[scrylight] [lan] lifecycle handlers registered (scrylight:lan-start ready)
+[scrylight] [disc] watch started
+[scrylight] [lan] keep-alive → (re)starting server { reason: 'startup' }
+[scrylight] [lan] startLanServer requested { port: 7174 }
+[scrylight] [relay] disabled (default) — rung 4 off, remote is direct-only
+[scrylight] [lan] LISTENING {
+  boundPort: 7174,
+  ip: '192.168.1.158',
+  route: null,
+  candidates: [ 'enp2s0=192.168.1.158', 'wlxe8de270c705a=192.168.1.57' ]
+}
+[scrylight] [lan] default-route address { from: null, to: '192.168.1.158', reason: 'startup' }
+[scrylight] [live-tv] worker up in 171ms
+[scrylight] [portmap] gateway 192.168.1.1
+[scrylight] [portmap] router WAN is private (CGNAT/double NAT) 10.0.0.10
+[scrylight] [transcode] encoder present in the binary but could not initialize {
+  name: 'nvenc',
+  vcodec: 'h264_nvenc',
+  platform: 'linux',
+  probeMs: 43,
+  ffmpeg: '[out#0/null @ 0x559660821040] Nothing was written into output file, because at least one of its streams received no packets.'
+}
+[scrylight] [transcode] encoder present in the binary but could not initialize {
+  name: 'qsv',
+  vcodec: 'h264_qsv',
+  platform: 'linux',
+  probeMs: 55,
+  ffmpeg: '[out#0/null @ 0x5d30af8cbfc0] Nothing was written into output file, because at least one of its streams received no packets.'
+}
+[scrylight] [rzv] connected
+[scrylight] [rzv] host registered 6868edae3519
+Update for version 1.0.40 is not available (latest version: 1.0.40, downgrade is disallowed).
+[scrylight] [update] up to date
+[scrylight] [nextServer:out] ▲ Next.js 14.2.35
+- Local:        http://127.0.0.1:41797
+- Network:      http://127.0.0.1:41797
+✓ Starting...
+✓ Ready in 91ms
+[scrylight] [lan] startLanServer requested { port: 7174 }
+[scrylight] [lan] startLanServer: already running { port: 7174 }
+[lan] lan-start result: {"ok":true,"port":7174,"ip":"192.168.1.158"}
+[scrylight] [telemetry] consent { enabled: true }
+(electron) 'console-message' arguments are deprecated and will be removed. Please use Event<WebContentsConsoleMessageEventParams> object instead.
+[scrylight] [renderer][event] LISTS_SNAPSHOT { lists: 0, items: 0, coverMaxKb: 0, bigCovers: 0 }
+[scrylight] [renderer][event] renderer-first-paint { fcpMs: 1160 }
+[scrylight] [transcode] encoder present in the binary but could not initialize {
+  name: 'vaapi',
+  vcodec: 'h264_vaapi',
+  platform: 'linux',
+  probeMs: 1268,
+  ffmpeg: 'ffmpeg: libva.so.2.init.c:290: _libva_so_2_tramp_resolve: Assertion `0 && "Assertion in generated code"\' failed.'
+}
+[scrylight] [transcode] no hardware encoder available; software encode {
+  vcodec: 'libopenh264',
+  platform: 'linux',
+  cores: 4,
+  verified: true,
+  listing: 'ok'
+}
+[scrylight] [mytv] lineup pushed fallback on, 21 channels rev 99765400
+[scrylight] [mytv] lineup pushed for profile a250b738 on, 21 channels rev 99765400
+[scrylight] [mytv] lineup pushed for profile 023a497f on, 20 channels rev 4177427072
+[scrylight] [renderer] [allow-list-push] {"pushed":4,"computed":4,"folderRoots":4,"items":2239}
+[scrylight] [allow-list] set-allowed-paths → 4 roots (window 1, 1 windows, 1ms off-main)
+[scrylight] [renderer][event] MYTV {
+  kind: 'build',
+  reason: 'first',
+  dials: 2,
+  walks: 2,
+  ms: 134,
+  worstMs: 80
+}
+[lanLibrary] tally: { ebook: 1, movie: 1324, music: 730, photo: 184 }
+[scrylight] [hitch] hashItems(renderer library, 2239 items) now chunked: 140ms elapsed across slices
+[scrylight] [lan] suspension blocker on
+(node:2934619) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `ampchor --trace-deprecation ...` to show where the warning was created)
+[lanLibrary] tally: { ebook: 1, movie: 1324, music: 730, photo: 184 }
+[scrylight] [hitch] hashItems(renderer library, 2239 items) now chunked: 137ms elapsed across slices
+[scrylight] [net] outside view { mapping: 'open', answered: 2, asked: 2, ms: 152, reason: 'boot' }
+[scrylight] [renderer][event] match-recovery-start { libs: 1 }
+[scrylight] [renderer][event] match-recovery-begin { kinds: 'movie', unmatched: 31, work: 6 }
+[scrylight] [renderer][event] match-recovery-end {
+  kinds: 'movie',
+  before: 31,
+  after: 31,
+  total: 6,
+  matched: 0,
+  ms: 629,
+  completed: true
+}
+[scrylight] [nextServer:out] [INFO][matchRoute] alias rescue reject -> reject "Fang Shi Yu" [ordinal-presence,year] score=0.6184 margin=0 rescued=3
+[INFO][matchRoute] reject "Fang Shi Yu" [ordinal-presence,year] score=0.6184 margin=0 top=The New Fong Sai-yuk: The Beginning(2020)=0.6184 | Secret of the Shaolin Poles(1977)=0.5641 | The Invincible Kung Fu Trio(1977)=0.4265 | Matchless Hero Fang Shiyu(2019)=0.387 | Young Hero of Shaolin(1976)=0.3778
+[scrylight] [renderer][event] library.file_unreadable {
+  kind: 'photo',
+  ext: '.bmp',
+  reason: 'does not match its file type',
+  detail: 'header mismatch: expected bmp',
+  v: 5
+}
+[scrylight] [storage] volume {"vol":"vol#7df684ac","online":true,"capacity":2000396742656,"free":562964963328,"kind":"mount"}
+[scrylight] [storage] volume {"vol":"vol#c10e00d9","online":true,"capacity":244466741248,"free":83542855680,"kind":"mount"}
+[scrylight] [health] storage kind {
+  kinds: [ 'local' ],
+  summary: 'local',
+  counts: { local: 2 },
+  probed: 2,
+  reasons: {},
+  source: 'libraries',
+  roots: 4
+}
+[scrylight] [renderer] scanElectronPaths called, roots: [ '/home/tibegato/Epubs' ] hint: [ 'ebook' ]
+[scrylight] scan-path called: /home/tibegato/Epubs opts: { stream: 'walk-muuo2fa4-1-aqzt9u' }
+[scrylight] scan-path walk start: vol#c10e00d9 local
+[scrylight] [content-hash] cache loaded: 2248 entries
+[scrylight] scan-path fs census: {"files":1,"readdirs":1,"readdirMeanMs":1.324,"stats":1,"statMeanMs":0.613,"headReads":0,"headReadMeanMs":0,"hashed":0,"hashCached":1,"hashSkipped":0,"hashFailed":0,"hashOff":false,"hashOpens":0,"hashFsOps":0,"hashMeanMs":0,"hashWaitMeanMs":0,"hashSlots":1,"fsOpsPerFile":1}
+[scrylight] scan-path folder result: /home/tibegato/Epubs count: 1 dirs: 1 failedDirs: 0 biosAutoInstalled: 0 hashed: 0 hashCached: 1 hashSkipped: 0 hashFailed: 0 hashOff: false
+[scrylight] [renderer] scanElectronPaths called, roots: [ '/media/tibegato/StorageDaemon/Theater' ] hint: [ 'movie' ]
+[scrylight] scan-path called: /media/tibegato/StorageDaemon/Theater opts: { stream: 'walk-muuo2fbc-2-2qz0wa' }
+[scrylight] scan-path walk start: vol#7df684ac local
+[scrylight] scan-path fs census: {"files":1324,"readdirs":1,"readdirMeanMs":3.65,"stats":1324,"statMeanMs":1.649,"headReads":0,"headReadMeanMs":0,"hashed":0,"hashCached":1324,"hashSkipped":0,"hashFailed":0,"hashOff":false,"hashOpens":0,"hashFsOps":0,"hashMeanMs":0,"hashWaitMeanMs":0,"hashSlots":1,"fsOpsPerFile":1}
+[scrylight] scan-path folder result: /media/tibegato/StorageDaemon/Theater count: 1324 dirs: 1 failedDirs: 0 biosAutoInstalled: 0 hashed: 0 hashCached: 1324 hashSkipped: 0 hashFailed: 0 hashOff: false
+[scrylight] [renderer] scanElectronPaths called, roots: [ '/media/tibegato/StorageDaemon/Music' ] hint: [ 'music' ]
+[scrylight] scan-path called: /media/tibegato/StorageDaemon/Music opts: { stream: 'walk-muuo2fj6-3-whks10' }
+[scrylight] scan-path walk start: vol#7df684ac local
+[scrylight] scan-path fs census: {"files":1221,"readdirs":1,"readdirMeanMs":2.989,"stats":1221,"statMeanMs":1.203,"headReads":0,"headReadMeanMs":0,"hashed":0,"hashCached":730,"hashSkipped":491,"hashFailed":0,"hashOff":false,"hashOpens":0,"hashFsOps":0,"hashMeanMs":0,"hashWaitMeanMs":0,"hashSlots":1,"fsOpsPerFile":1}
+[scrylight] scan-path folder result: /media/tibegato/StorageDaemon/Music count: 1221 dirs: 1 failedDirs: 0 biosAutoInstalled: 0 hashed: 0 hashCached: 730 hashSkipped: 491 hashFailed: 0 hashOff: false
+[scrylight] [renderer] scanElectronPaths called, roots: [ '/home/tibegato/Pictures' ] hint: [ 'photo' ]
+[scrylight] scan-path called: /home/tibegato/Pictures opts: { stream: 'walk-muuo2fpc-4-o3x9u4' }
+[scrylight] scan-path walk start: vol#c10e00d9 local
+[scrylight] scan-path fs census: {"files":185,"readdirs":2,"readdirMeanMs":1.46,"stats":185,"statMeanMs":1.79,"headReads":0,"headReadMeanMs":0,"hashed":0,"hashCached":163,"hashSkipped":22,"hashFailed":0,"hashOff":false,"hashOpens":0,"hashFsOps":0,"hashMeanMs":0,"hashWaitMeanMs":0,"hashSlots":1,"fsOpsPerFile":1}
+[scrylight] scan-path folder result: /home/tibegato/Pictures count: 185 dirs: 2 failedDirs: 0 biosAutoInstalled: 0 hashed: 0 hashCached: 163 hashSkipped: 22 hashFailed: 0 hashOff: false
+[scrylight] [renderer][event] scan-summary {
+  outcome: 'ok',
+  totalMs: 8742,
+  wallClockAt: 1791169498105,
+  trigger: 'boot',
+  added: 0,
+  scanned: 2239,
+  removed: 0,
+  libraries: 5
+}
+[scrylight] [background] posture {
+  from: 'full',
+  to: 'trickle',
+  reason: 'renderer-playback-start',
+  troubleMs: 0,
+  gate: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 1,
+    waiting: 0,
+    posture: 'trickle',
+    threadsOut: 0,
+    threadBudget: 1
+  }
+}
+[lanLibrary] tally: { ebook: 1, movie: 1324, music: 730, photo: 184 }
+[scrylight] [background] posture {
+  from: 'trickle',
+  to: 'full',
+  reason: 'renderer-playback-end',
+  troubleMs: 0,
+  gate: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 4,
+    waiting: 0,
+    posture: 'full',
+    threadsOut: 0,
+    threadBudget: 2
+  }
+}
+[scrylight] [renderer][event] PLAYBACK_RENDER_PATH { path: 'worker', reason: 'ok' }
+[scrylight] [background] posture {
+  from: 'full',
+  to: 'trickle',
+  reason: 'renderer-playback-start',
+  troubleMs: 0,
+  gate: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 1,
+    waiting: 0,
+    posture: 'trickle',
+    threadsOut: 0,
+    threadBudget: 1
+  }
+}
+[scrylight] [display] keeping the screen on while a picture plays
+[scrylight] [hitch] hashItems(renderer library, 2239 items) now chunked: 757ms elapsed across slices
+[scrylight] [report-threads] poll: ok, 3 open, nothing new
+[scrylight] [playback] sw-render {
+  fps: 28.7,
+  renderAvg: 14.9,
+  renderP95: 15.438081000000238,
+  renderMax: 40.96264700000029,
+  gapMax: 338.18874300000607,
+  stalls: 1,
+  mbps: 46.4,
+  srcFps: 23.976404,
+  vfFps: 22.478458,
+  drops: 3,
+  decDrops: 0,
+  cacheSec: 783.232333,
+  hwdec: 'no',
+  pump: 'video',
+  ffmpeg: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 1,
+    waiting: 0,
+    posture: 'trickle',
+    threadsOut: 0,
+    threadBudget: 1
+  }
+}
+[scrylight] [background] posture {
+  from: 'trickle',
+  to: 'full',
+  reason: 'playback-end',
+  troubleMs: 0,
+  gate: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 4,
+    waiting: 0,
+    posture: 'full',
+    threadsOut: 0,
+    threadBudget: 2
+  }
+}
+[scrylight] [phone-copies] swept {
+  reason: 'boot',
+  files: 0,
+  folderMb: 0,
+  removed: 0,
+  freedMb: 0,
+  freeGb: 77.8,
+  floorGb: 10,
+  budgetGb: 10
+}
+[scrylight] [background] posture {
+  from: 'full',
+  to: 'trickle',
+  reason: 'playback-start',
+  troubleMs: 0,
+  gate: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 1,
+    waiting: 0,
+    posture: 'trickle',
+    threadsOut: 0,
+    threadBudget: 1
+  }
+}
+[scrylight] [playback] sw-render {
+  fps: 23.6,
+  renderAvg: 15.5,
+  renderP95: 18.659808000011253,
+  renderMax: 23.55242000000726,
+  gapMax: 1575.6381309999997,
+  stalls: 1,
+  mbps: 36.7,
+  srcFps: 23.976404,
+  vfFps: 23.974427,
+  drops: 2,
+  decDrops: 0,
+  cacheSec: 806.362933,
+  hwdec: 'no',
+  pump: 'video',
+  ffmpeg: {
+    active: 0,
+    bg: 0,
+    max: 4,
+    bgMax: 1,
+    waiting: 0,
+    posture: 'trickle',
+    threadsOut: 0,
+    threadBudget: 1
+  }
+}
+[sc
