@@ -1,0 +1,14 @@
+---
+title: Book
+author:
+  - Tobey Peters
+  - Darnell Stevenson
+date: "2026-01-01"
+subject:
+  - Fantasy
+  - Dragons
+publisher: Independent
+description: Book about our Dragon warriors
+rights: All rights reserved
+lang: en-US
+---
