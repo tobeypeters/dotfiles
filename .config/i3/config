@@ -112,6 +112,7 @@ for_window [class="Netflix"] move container to workspace 9
 for_window [class="system_updater"] move position 1020 40
 for_window [title="shrineOS"] move container to workspace 3
 # Sticky:
+for_window [class="ampchor"] sticky enable
 for_window [class="Audacious"] sticky enable
 for_window [class="mpv"] sticky enable
 for_window [class="Netflix"] sticky enable
