@@ -22,6 +22,9 @@ alias cdi="cd ~/.config/i3"
 alias cdp="cd ~/.config/polybar"
 alias cds="cd ~/.config/polybar/scripts"
 
+#Misc
+alias clip='xclip -selection clipboard'
+
 :<<'NVIM'
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -95,3 +98,7 @@ git_branch() {
 }
 
 PROMPT_COMMAND='PS1="\n  \u\h: \W $(git_branch) $ "'
+
+#PROMPT_COMMAND='PS1_CMD1=$(git branch --show-current 2>/dev/null)'; PS1='\n 󱄅 \u-\h: \W ${PS1_CMD1} \\$ '
+#PROMPT_COMMAND='PS1_CMD1=$(git branch --show-current 2>/dev/null)'; PS1='\n 󱄅 \u-\h: \W ${PS1_CMD1} \\$ '
+
