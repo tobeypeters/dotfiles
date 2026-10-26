@@ -78,12 +78,14 @@ source ~/.bash_completion/alacritty
 [ -f "${HOME}/.cache/wal/colors.sh" ] && . "${HOME}/.cache/wal/colors.sh"
 (cat ~/.cache/wal/sequences &)
 
+export ANDROID_HOME=~/android-sdk
+
 # Add executables to path
 paths=(
     "$HOME/.local/bin"
     "/usr/local/go/bin"
-    "$HOME/WorkSpace/Tool/android-studio/bin"
-    "$HOME/Android/Sdk/platform-tools"
+    "$ANDROID_HOME/cmdline-tools/latest/bin:"
+    "$ANDROID_HOME/platform-tools"
 )
 for p in "${paths[@]}"; do
     [[ ":$PATH:" != *":$p:"* ]] && PATH="$p:$PATH"
