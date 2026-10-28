@@ -3,6 +3,8 @@ package com.example.island
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.WallpaperManager
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
@@ -24,7 +26,6 @@ import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
-import android.accessibilityservice.AccessibilityServiceInfo
 
 class MainActivity : Activity() {
     private val BG = 0xFF0E0E10.toInt()
@@ -43,6 +44,11 @@ class MainActivity : Activity() {
     private lateinit var iconsVal: TextView
     private lateinit var usageVal: TextView
     private lateinit var hideCountTv: TextView
+
+    private lateinit var presetRow: LinearLayout
+    private lateinit var presetBaseRow: LinearLayout
+    private lateinit var wpRow: LinearLayout
+    private lateinit var currentRow: LinearLayout
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
     private fun lp(w: Int, h: Int, wt: Float = 0f) = LinearLayout.LayoutParams(w, h, wt)
@@ -154,6 +160,72 @@ class MainActivity : Activity() {
         return sb
     }
 
+    private fun swatchRow(parent: LinearLayout, key: String): LinearLayout {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        parent.addView(row, lp(-1, dp(52)).apply { topMargin = dp(6) })
+        row.tag = key
+        return row
+    }
+
+    private fun addSwatch(row: LinearLayout, argb: Int, label: String, icolorValue: Int) {
+        val sw = TextView(this).apply {
+            background = GradientDrawable().apply {
+                setColor(argb)
+                cornerRadius = dp(10).toFloat()
+                setStroke(dp(2), 0x33FFFFFF)
+            }
+            contentDescription = label
+            layoutParams = lp(0, -1, 1f).apply { marginEnd = dp(8) }
+            setOnClickListener {
+                Prefs.setInt(this@MainActivity, "icolor", icolorValue)
+                if (icolorValue == -1) Prefs.setCustomColor(this@MainActivity, argb)
+                push()
+                refresh()
+            }
+        }
+        row.addView(sw)
+    }
+
+    private fun buildSwatches(row: LinearLayout, mode: String) {
+        row.removeAllViews()
+        when (mode) {
+            "preset" -> {
+                val palette = Prefs.PALETTE
+                for (i in palette.indices) {
+                    addSwatch(row, palette[i].second, palette[i].first, 100 + i)
+                }
+            }
+            "base" -> {
+                addSwatch(row, Color.BLACK, "Black", 0)
+                addSwatch(row, Color.WHITE, "White", 1)
+                addSwatch(row, 0xFF8E8E93.toInt(), "Grey", 2)
+            }
+            "wallpaper" -> {
+                val p = Prefs.wpP(this)
+                val s = Prefs.wpS(this)
+                val t = Prefs.wpT(this)
+                addSwatch(row, if (p != 0) p else Color.BLACK, "Primary", -1)
+                addSwatch(row, if (s != 0) s else Color.DKGRAY, "Secondary", -1)
+                addSwatch(row, if (t != 0) t else Color.GRAY, "Tertiary", -1)
+            }
+            "current" -> {
+                val c = currentArgb()
+                addSwatch(row, c, "Current", Prefs.islandColor(this).let { if (it >= 0) it else -1 })
+            }
+        }
+    }
+
+    private fun currentArgb(): Int = when (val ic = Prefs.islandColor(this)) {
+        0 -> Color.BLACK
+        1 -> Color.WHITE
+        2 -> 0xFF8E8E93.toInt()
+        -1 -> Prefs.customColor(this)
+        else -> {
+            val i = ic - 100
+            Prefs.PALETTE.getOrNull(i)?.second ?: Color.BLACK
+        }
+    }
+
     private fun startIsland() {
         if (Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -246,9 +318,30 @@ class MainActivity : Activity() {
 
         // ----- appearance -----
         val look = card("Appearance", col)
-        segmented(look, "Island color", listOf("Black", "White", "Grey"), Prefs.islandColor(this)) {
-            Prefs.setIslandColor(this, it); push()
-        }
+
+        // Preset palette (shades)
+        look.addView(tx("Preset colors", 14f).apply { setPadding(0, dp(10), 0, dp(4)) })
+        presetRow = swatchRow(look, "preset")
+        buildSwatches(presetRow, "preset")
+
+        // Second row: black, white, grey
+        look.addView(tx("Basics", 14f).apply { setPadding(0, dp(10), 0, dp(4)) })
+        presetBaseRow = swatchRow(look, "base")
+        buildSwatches(presetBaseRow, "base")
+
+        // Wallpaper primary colors
+        look.addView(tx("Wallpaper Primary Colors", 14f).apply { setPadding(0, dp(14), 0, dp(4)) })
+        note(look, "Pulled from the current wallpaper. Recalculated on startup and when the wallpaper changes.")
+        wpRow = swatchRow(look, "wallpaper")
+        buildSwatches(wpRow, "wallpaper")
+
+        // Current color
+        look.addView(tx("Current", 14f).apply { setPadding(0, dp(14), 0, dp(4)) })
+        note(look, "The color currently applied to the island.")
+        currentRow = swatchRow(look, "current")
+        buildSwatches(currentRow, "current")
+
+        // Glass / font / roundness still apply
         flagToggle(look, "glass", "Glass", "See-through island that blends with the color above")
         slider(look, "Glass transparency", 80, Prefs.glassT(this), "%") { Prefs.setGlassT(this, it); push() }
         slider(look, "Text size", 18, Prefs.int(this, "font"), "sp", 9) { Prefs.setInt(this, "font", it); push() }
@@ -284,7 +377,7 @@ class MainActivity : Activity() {
 
         // ----- features -----
         val beh = card("Features", col)
-        flagToggle(beh, "media", "Media controls", "Music page and ♪ indicator in the island")
+        flagToggle(beh, "media", "Media controls", "Music page with title, artist and transport")
         flagToggle(beh, "timer", "Stopwatch timer", "Timer page and ⏱ indicator in the island")
         flagToggle(beh, "quick", "Quick tools page", "Flashlight, Internet, Bluetooth and Settings shortcuts")
         flagToggle(beh, "popups", "Notification pop-ups", "Expand the island when a notification arrives")
@@ -390,6 +483,18 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         if (!IslandBus.running) SystemIcons.restore(this)
+        try {
+            val wm = WallpaperManager.getInstance(this)
+            if (Build.VERSION.SDK_INT >= 27) {
+                val c = wm.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+                if (c != null) {
+                    val p = c.primaryColor.toArgb()
+                    val s = c.secondaryColor?.toArgb() ?: p
+                    val t = c.tertiaryColor?.toArgb() ?: s
+                    Prefs.setWallpaperColors(this, p, s, t)
+                }
+            }
+        } catch (_: Throwable) {}
         refresh()
     }
 
@@ -413,6 +518,11 @@ class MainActivity : Activity() {
         hideCountTv.text = if (hn == 0) "No apps selected" else "$hn app${if (hn == 1) "" else "s"} selected"
         runVal.text = if (IslandBus.running) "● Island is running" else "○ Island is stopped"
         runVal.setTextColor(if (IslandBus.running) GOOD else DIM)
+
+        if (::presetRow.isInitialized) buildSwatches(presetRow, "preset")
+        if (::presetBaseRow.isInitialized) buildSwatches(presetBaseRow, "base")
+        if (::wpRow.isInitialized) buildSwatches(wpRow, "wallpaper")
+        if (::currentRow.isInitialized) buildSwatches(currentRow, "current")
     }
 
     private fun launcherApps(): List<Pair<String, String>> {

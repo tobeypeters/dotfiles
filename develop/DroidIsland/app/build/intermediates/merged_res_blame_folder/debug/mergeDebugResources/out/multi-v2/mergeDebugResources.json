@@ -4,7 +4,7 @@
             "outputFile": "com.example.island.app-debug-4:/values_values.arsc.flat",
             "map": [
                 {
-                    "source": "/home/tibegato/Downloads/DroidIsland/app/src/main/res/values/strings.xml",
+                    "source": "/home/tibegato/develop/DroidIsland/app/src/main/res/values/strings.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

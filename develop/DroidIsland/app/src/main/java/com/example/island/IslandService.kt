@@ -7,6 +7,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.WallpaperManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.BroadcastReceiver
@@ -15,12 +16,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ColorFilter
 import android.graphics.Outline
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.hardware.display.DisplayManager
@@ -70,7 +76,6 @@ class IslandService : Service() {
         const val ACTION_A11Y_CONNECTED = "com.example.island.A11Y_CONNECTED"
 
         @Volatile private var runningInstance: IslandService? = null
-        /** True when the island is running and its window is an accessibility overlay. */
         fun isUsingTrustedOverlay(): Boolean = runningInstance?.trustedOverlay == true
     }
 
@@ -194,6 +199,9 @@ class IslandService : Service() {
     private var torchOn = false
     private var torchInit = false
 
+    private var wallpaperManager: WallpaperManager? = null
+    private var wallpaperListener: WallpaperManager.OnColorsChangedListener? = null
+
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
     private val screenW get() = resources.displayMetrics.widthPixels
     private fun idleMs() = Prefs.int(this, "idlems") * 1000L
@@ -235,7 +243,6 @@ class IslandService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_A11Y_CONNECTED) {
             log("ACTION_A11Y_CONNECTED received")
-            // Accessibility service bound after we started: swap the window handle and type.
             if (!trustedOverlay) {
                 if (tryUpgradeToTrustedOverlay()) {
                     Toast.makeText(this, "Island updated to trusted window", Toast.LENGTH_SHORT).show()
@@ -257,18 +264,19 @@ class IslandService : Service() {
 
         safe("startForeground") { startForeground(1, buildNotif()) }
         IslandBus.running = true
-        // Prefer the accessibility overlay; fall back to application overlay until the user
-        // enables the service.
-	val a11yWm = IslandAccessibilityService.overlayWindowManager()
-	if (a11yWm != null) {
-	    wm = a11yWm
-	    trustedOverlay = true
-	    log("onCreate: using accessibility overlay")
-	} else {
-	    wm = getSystemService(WINDOW_SERVICE) as WindowManager
-	    trustedOverlay = false
-	    log("onCreate: accessibility service not enabled; using APPLICATION_OVERLAY")
-	}
+        val a11yWm = IslandAccessibilityService.overlayWindowManager()
+        if (a11yWm != null) {
+            wm = a11yWm
+            trustedOverlay = true
+            log("onCreate: using accessibility overlay")
+        } else {
+            wm = getSystemService(WINDOW_SERVICE) as WindowManager
+            trustedOverlay = false
+            log("onCreate: accessibility service not enabled; using APPLICATION_OVERLAY")
+        }
+
+        safe("readWallpaperColors") { readWallpaperColors() }
+        installWallpaperListener()
 
         screenOn = try {
             getSystemService(PowerManager::class.java).isInteractive
@@ -436,14 +444,11 @@ class IslandService : Service() {
         safe("applyMetrics") { applyMetrics() }
         log("onCreate: after applyMetrics collapsedW=$collapsedW collapsedH=$collapsedH collapsedX=$collapsedX")
         safe("snapLayout") { snapLayout() }
-
-	if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
-	safe("addView") {
-	    wm.addView(root, lp)
-	    rootOn = true
-	    log("onCreate: addView OK  w=${lp.width} h=${lp.height} x=${lp.x} type=${lp.type}")
-	}
-
+        safe("addView") {
+            wm.addView(root, lp)
+            rootOn = true
+            log("onCreate: addView OK  w=${lp.width} h=${lp.height} x=${lp.x} type=${lp.type}")
+        }
         if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
         safe("updateVisibility") { updateVisibility() }
         safe("schedulePolls") { schedulePolls() }
@@ -451,15 +456,63 @@ class IslandService : Service() {
         log("onCreate: done")
     }
 
-    /**
-     * Called when the accessibility service connects after the island is already running.
-     * Removes the untrusted window, switches the window handle and type, and adds it back.
-     * Returns true on success.
-     */
+    // ---------- wallpaper colors ----------
+    private fun readWallpaperColors() {
+        try {
+            val wm = WallpaperManager.getInstance(this)
+            wallpaperManager = wm
+            if (Build.VERSION.SDK_INT >= 27) {
+                val colors = wm.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
+                if (colors != null) {
+                    val p = colors.primaryColor.toArgb()
+                    val s = colors.secondaryColor?.toArgb() ?: darken(p)
+                    val t = colors.tertiaryColor?.toArgb() ?: darken(s)
+                    Prefs.setWallpaperColors(this, p, s, t)
+                    log("readWallpaperColors: p=0x${Integer.toHexString(p)} s=0x${Integer.toHexString(s)} t=0x${Integer.toHexString(t)}")
+                }
+            }
+        } catch (t: Throwable) {
+            Log.e(TAG, "readWallpaperColors", t)
+        }
+    }
+
+    private fun installWallpaperListener() {
+        if (Build.VERSION.SDK_INT < 27) return
+        try {
+            if (wallpaperListener != null) return
+            val wm = wallpaperManager ?: WallpaperManager.getInstance(this).also { wallpaperManager = it }
+            val l = WallpaperManager.OnColorsChangedListener { _, _ ->
+                handler.post {
+                    safe("readWallpaperColors") { readWallpaperColors() }
+                    if (Prefs.islandColor(this) == -1) safe("applyTheme") { applyTheme() }
+                }
+            }
+            wm.addOnColorsChangedListener(l, handler)
+            wallpaperListener = l
+            log("installWallpaperListener: registered")
+        } catch (t: Throwable) {
+            Log.e(TAG, "installWallpaperListener", t)
+        }
+    }
+
+    private fun removeWallpaperListener() {
+        try {
+            wallpaperListener?.let { wallpaperManager?.removeOnColorsChangedListener(it) }
+        } catch (_: Throwable) {}
+        wallpaperListener = null
+    }
+
+    private fun darken(argb: Int): Int {
+        val r = (Color.red(argb) * 0.75f).toInt().coerceIn(0, 255)
+        val g = (Color.green(argb) * 0.75f).toInt().coerceIn(0, 255)
+        val b = (Color.blue(argb) * 0.75f).toInt().coerceIn(0, 255)
+        return Color.argb(255, r, g, b)
+    }
+
     private fun tryUpgradeToTrustedOverlay(): Boolean {
         val a11yWm = IslandAccessibilityService.overlayWindowManager() ?: return false
         return try {
-            if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {} ; rootOn = false }
+            if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
             removeBarCover()
             wm = a11yWm
             trustedOverlay = true
@@ -498,13 +551,21 @@ class IslandService : Service() {
             alpha = 1f
             allowCutout()
         }
-        try { wm.addView(v, p); barCover = v; log("installBarCover: added w=$w h=$h") }
-        catch (t: Throwable) { Log.e(TAG, "installBarCover failed", t); barCover = null }
+        try {
+            wm.addView(v, p)
+            barCover = v
+            log("installBarCover: added w=$w h=$h")
+            applyPillBackground(!expanded && barCover == null)
+        } catch (t: Throwable) {
+            Log.e(TAG, "installBarCover failed", t)
+            barCover = null
+        }
     }
 
     private fun removeBarCover() {
         barCover?.let { try { wm.removeView(it) } catch (_: Throwable) {} }
         barCover = null
+        applyPillBackground(!expanded && barCover == null)
     }
 
     private fun readCutout() {
@@ -556,56 +617,50 @@ class IslandService : Service() {
     }
 
     private fun applyMetrics() {
-        collapsedH = max(statusBarH, dp(24))
+        collapsedH = max(cutBottom + dp(4), dp(28))
         pages.setPadding(dp(18), dp(12) + extraTop(), dp(18), dp(12))
         rebuildRow()
         computeCollapsed()
         if (collapsedW <= 0) collapsedW = dp(120)
     }
 
-override fun onConfigurationChanged(newConfig: Configuration) {
-    super.onConfigurationChanged(newConfig)
-    readCutout()
-    rebuildFormats()
-    hiddenByLand = landscape() && Prefs.flag(this, "hideLand")
-    updateVisibility()
-    applyMetrics()
-    // Re-acquire the window handle in case the accessibility service reconnected or the
-    // display changed. Then rebuild both windows from scratch so neither goes stale on
-    // rotation.
-    val a11yWm = IslandAccessibilityService.overlayWindowManager()
-    if (a11yWm != null) {
-	wm = a11yWm
-	trustedOverlay = true
-    } else if (trustedOverlay) {
-	// Lost accessibility; fall back to application overlay.
-	wm = getSystemService(WINDOW_SERVICE) as WindowManager
-	trustedOverlay = false
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        readCutout()
+        rebuildFormats()
+        hiddenByLand = landscape() && Prefs.flag(this, "hideLand")
+        updateVisibility()
+        applyMetrics()
+        val a11yWm = IslandAccessibilityService.overlayWindowManager()
+        if (a11yWm != null) {
+            wm = a11yWm
+            trustedOverlay = true
+        } else if (trustedOverlay) {
+            wm = getSystemService(WINDOW_SERVICE) as WindowManager
+            trustedOverlay = false
+        }
+        if (barCover != null) removeBarCover()
+        if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
+        lp.type = overlayType()
+        snapLayout()
+        try {
+            wm.addView(root, lp)
+            rootOn = true
+            log("onConfigurationChanged: re-added root w=${lp.width} h=${lp.height}")
+        } catch (t: Throwable) {
+            Log.e(TAG, "onConfigurationChanged re-addView failed", t)
+        }
+        if (Prefs.flag(this, "barCover") && !hiddenNow) {
+            if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
+            installBarCover()
+            try {
+                wm.addView(root, lp)
+                rootOn = true
+            } catch (t: Throwable) {
+                Log.e(TAG, "onConfigurationChanged pill re-addView failed", t)
+            }
+        }
     }
-    // Tear both windows down and rebuild in order.
-    if (barCover != null) removeBarCover()
-    if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-    lp.type = overlayType()
-    snapLayout()
-    try {
-	wm.addView(root, lp)
-	rootOn = true
-	log("onConfigurationChanged: re-added root w=${lp.width} h=${lp.height}")
-    } catch (t: Throwable) {
-	Log.e(TAG, "onConfigurationChanged re-addView failed", t)
-    }
-    if (Prefs.flag(this, "barCover") && !hiddenNow) {
-	// Reorder: bar cover first, then pill on top (matches the order from onCreate).
-	if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-	installBarCover()
-	try {
-	    wm.addView(root, lp)
-	    rootOn = true
-	} catch (t: Throwable) {
-	    Log.e(TAG, "onConfigurationChanged pill re-addView failed", t)
-	}
-    }
-}
 
     private fun updateVisibility() {
         val hide = hiddenByApp || hiddenByLand
@@ -616,15 +671,10 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         if (hide) {
             removeBarCover()
             SystemIcons.restore(this)
-	} else {
-	    // Remove the pill first so the bar cover can be added below it, then re-add the pill.
-	    if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-	    if (Prefs.flag(this, "barCover")) installBarCover()
-	    if (!rootOn) {
-		try { wm.addView(root, lp); rootOn = true } catch (t: Throwable) { Log.e(TAG, "re-addView", t) }
-	    }
-	    SystemIcons.apply(this)
-	}
+        } else {
+            if (Prefs.flag(this, "barCover")) installBarCover()
+            SystemIcons.apply(this)
+        }
     }
 
     private val fgPoll = object : Runnable {
@@ -844,6 +894,7 @@ override fun onConfigurationChanged(newConfig: Configuration) {
             pillLp.height = collapsedH
             pill.layoutParams = pillLp
         } catch (t: Throwable) { Log.e(TAG, "pill lp crash", t) }
+        applyPillBackground(!expanded && barCover == null)
         if (rootOn) try { wm.updateViewLayout(root, lp) } catch (t: Throwable) { Log.e(TAG, "updateViewLayout", t) }
     }
 
@@ -1016,8 +1067,10 @@ override fun onConfigurationChanged(newConfig: Configuration) {
                     lowAlerted = true; openPage(Page.BATTERY, popMs())
                 }
                 if (now || pct > 20) lowAlerted = false
+                // Battery-full popup removed: the island stays put when the battery hits 100%.
+                // fullAlerted still gets set so we don't retry, but no page is opened.
                 if (now && pct >= 100 && !fullAlerted && Prefs.flag(this@IslandService, "fullBatt")) {
-                    fullAlerted = true; openPage(Page.BATTERY, popMs())
+                    fullAlerted = true
                 }
                 if (!now || pct < 100) fullAlerted = false
             } catch (t: Throwable) { Log.e(TAG, "batRx", t) }
@@ -1092,7 +1145,10 @@ override fun onConfigurationChanged(newConfig: Configuration) {
 
     private fun rebuildRow() {
         buildRow(true)
-        if (insetFor(alignX(rowWidth())) + rowWidth() + dp(Prefs.padR(this)) > capW()) buildRow(false)
+        val rw = rowWidth()
+        val pr = dp(Prefs.padR(this))
+        val needed = insetFor(alignX(dp(10) + rw + pr)) + rw + pr
+        if (needed > capW()) buildRow(false)
     }
 
     private fun setNotifIcons(list: List<Drawable>) {
@@ -1107,41 +1163,71 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         updateStatus()
     }
 
-	private fun updateStatus() {
-	    safe("updateStatus") {
-		val now = Date()
-		clockTv.setIfChanged(clockFormat.format(now))
-		dateTv.setIfChanged(dateFormat.format(now))
-		batPill.setIfChanged("${if (charging) "⚡" else ""}$pct%")
-		liveTv.setIfChanged(when {
-		    swRunning && Prefs.flag(this, "timer") -> "⏱ " + fmt(swElapsed())
-		    playing && Prefs.flag(this, "media") -> "♪ " + mTitle.text
-		    else -> ""
-		})
-		val sig = signature()
-		if (sig != rowSig) { rowSig = sig; rebuildRow() }
-		val ow = collapsedW; val ox = collapsedX
-		computeCollapsed()
-		if (!expanded && (abs(collapsedW - ow) > dp(3) || collapsedX != ox)) {
-		    // Update the pill's inner width too — otherwise the row gets clipped by the
-		    // pill view even though the window grew.
-		    try {
-		        val pillLp = pill.layoutParams as FrameLayout.LayoutParams
-		        pillLp.width = collapsedW
-		        pillLp.leftMargin = (collapsedX - lp.x).coerceAtLeast(0)
-		        pill.layoutParams = pillLp
-		    } catch (_: Throwable) {}
-		    relayout()
-		}
-	    }
-	}
+    private fun updateStatus() {
+        safe("updateStatus") {
+            val now = Date()
+            clockTv.setIfChanged(clockFormat.format(now))
+            dateTv.setIfChanged(dateFormat.format(now))
+            batPill.setIfChanged("${if (charging) "⚡" else ""}$pct%")
+            liveTv.setIfChanged(when {
+                swRunning && Prefs.flag(this, "timer") -> "⏱ " + fmt(swElapsed())
+                else -> ""
+            })
+            val sig = signature()
+            if (sig != rowSig) { rowSig = sig; rebuildRow() }
+            val ow = collapsedW; val ox = collapsedX
+            computeCollapsed()
+            if (!expanded && (abs(collapsedW - ow) > dp(3) || collapsedX != ox)) {
+                try {
+                    val pillLp = pill.layoutParams as FrameLayout.LayoutParams
+                    pillLp.width = collapsedW
+                    pillLp.leftMargin = (collapsedX - lp.x).coerceAtLeast(0)
+                    pill.layoutParams = pillLp
+                } catch (_: Throwable) {}
+                relayout()
+            }
+        }
+    }
 
-    private fun baseColor() = when (Prefs.islandColor(this)) { 1 -> Color.WHITE; 2 -> 0xFF8E8E93.toInt(); else -> Color.BLACK }
+    // ---------- color selection ----------
+    private fun baseColor(): Int {
+        val icolor = Prefs.islandColor(this)
+        return when {
+            icolor == 0 -> Color.BLACK
+            icolor == 1 -> Color.WHITE
+            icolor == 2 -> 0xFF8E8E93.toInt()
+            icolor == -1 -> Prefs.customColor(this)
+            icolor >= 100 -> {
+                val i = icolor - 100
+                Prefs.PALETTE.getOrNull(i)?.second ?: Color.BLACK
+            }
+            else -> Color.BLACK
+        }
+    }
 
     private fun fg(): Int {
         val b = baseColor()
         val lum = (0.299 * Color.red(b) + 0.587 * Color.green(b) + 0.114 * Color.blue(b)) / 255.0
         return if (lum > 0.55) Color.BLACK else Color.WHITE
+    }
+
+    private fun applyPillBackground(showBevel: Boolean) {
+        try {
+            val b = baseColor()
+            val a = if (Prefs.flag(this, "glass")) (100 - Prefs.glassT(this)) * 255 / 100 else 255
+            bg.setColor(Color.argb(a, Color.red(b), Color.green(b), Color.blue(b)))
+            bg.cornerRadius = collapsedR()
+            if (showBevel) {
+                val bevel = BevelDrawable(
+                    baseColor = Color.argb(a, Color.red(b), Color.green(b), Color.blue(b)),
+                    radius = collapsedR(),
+                    thickness = dp(1).toFloat()
+                )
+                pill.background = LayerDrawable(arrayOf(bg, bevel))
+            } else {
+                pill.background = bg
+            }
+        } catch (t: Throwable) { Log.e(TAG, "applyPillBackground", t) }
     }
 
     private fun applyTheme() {
@@ -1156,6 +1242,7 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         val fs = Prefs.int(this, "font").toFloat()
         for (t in listOf(liveTv, speedTv, batPill, dateTv, clockTv)) t.textSize = fs
         setNotifIcons(lastIcons)
+        applyPillBackground(!expanded && barCover == null)
     }
 
     private fun onSettingsChanged() {
@@ -1164,18 +1251,11 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         if (hideSet.isEmpty() && hiddenByApp) { hiddenByApp = false }
         hiddenByLand = landscape() && Prefs.flag(this, "hideLand")
         updateVisibility()
-
-	if (Prefs.flag(this, "barCover")) {
-	    if (!hiddenNow && barCover == null) {
-		// Rebuild in order: bar cover first, pill second.
-		if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-		installBarCover()
-		try { wm.addView(root, lp); rootOn = true } catch (t: Throwable) { Log.e(TAG, "re-addView", t) }
-	    }
-	} else {
-	    removeBarCover()
-	}
-
+        if (Prefs.flag(this, "barCover")) {
+            if (!hiddenNow) installBarCover()
+        } else {
+            removeBarCover()
+        }
         if (current !in available()) current = defaultPage()
         showPage()
         applyTheme()
@@ -1201,6 +1281,7 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         IslandBus.reposition = null
         IslandBus.refreshBar = null
         IslandBus.icons = null
+        removeWallpaperListener()
         safe("SystemIcons.restore") { SystemIcons.restore(this) }
         if (::monitor.isInitialized) safe("monitor.stop") { monitor.stop() }
         handler.removeCallbacksAndMessages(null)
@@ -1215,4 +1296,87 @@ override fun onConfigurationChanged(newConfig: Configuration) {
         if (rootOn) try { wm.removeView(root) } catch (_: Exception) {}
         super.onDestroy()
     }
+}
+
+/**
+ * Draws a raised-button bevel: light band on top/left, dark band on bottom/right.
+ * Bounds are converted to Float locals at the top of draw() so the rest of the
+ * method never mixes Int and Float arithmetic.
+ */
+private class BevelDrawable(
+    private val baseColor: Int,
+    private val radius: Float,
+    private val thickness: Float
+) : Drawable() {
+
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val path = Path()
+
+    override fun draw(canvas: Canvas) {
+        val b = bounds
+        if (b.isEmpty) return
+
+        val l = b.left.toFloat()
+        val t = b.top.toFloat()
+        val r = b.right.toFloat()
+        val bt = b.bottom.toFloat()
+        val rad = radius.coerceAtMost(b.width() / 2f).coerceAtMost(b.height() / 2f)
+        val th = thickness
+
+        val lum = (0.299 * Color.red(baseColor) + 0.587 * Color.green(baseColor) + 0.114 * Color.blue(baseColor)) / 255.0
+        val lightFactor = when {
+            lum < 0.15 -> 1.35
+            lum < 0.35 -> 1.30
+            lum > 0.85 -> 1.10
+            else -> 1.25
+        }
+        val darkFactor = when {
+            lum < 0.15 -> 0.55
+            lum < 0.35 -> 0.65
+            lum > 0.85 -> 0.70
+            else -> 0.75
+        }
+        val light = scale(baseColor, lightFactor)
+        val dark = scale(baseColor, darkFactor)
+
+        // Top-left light band
+        path.reset()
+        path.moveTo(l + rad, t)
+        path.lineTo(r - rad, t)
+        path.quadTo(r, t, r, t + rad)
+        path.lineTo(r - th, t + th + rad * 0.3f)
+        path.lineTo(l + th + rad * 0.3f, t + th + rad * 0.3f)
+        path.quadTo(l + th, t + rad * 0.3f, l + th, t + rad)
+        path.lineTo(l, t + rad)
+        path.quadTo(l, t, l + rad, t)
+        path.close()
+        paint.color = light
+        canvas.drawPath(path, paint)
+
+        // Bottom-right dark band
+        path.reset()
+        path.moveTo(l, bt - rad)
+        path.lineTo(l, bt - rad * 0.3f)
+        path.lineTo(l + th + rad * 0.3f, bt - th - rad * 0.3f)
+        path.lineTo(r - th - rad * 0.3f, bt - th - rad * 0.3f)
+        path.quadTo(r - th, bt - rad * 0.3f, r - th, bt - rad)
+        path.lineTo(r - rad, bt)
+        path.lineTo(l + rad, bt)
+        path.quadTo(l, bt, l, bt - rad)
+        path.close()
+        paint.color = dark
+        canvas.drawPath(path, paint)
+    }
+
+    private fun scale(argb: Int, factor: Double): Int {
+        val r = (Color.red(argb) * factor).toInt().coerceIn(0, 255)
+        val g = (Color.green(argb) * factor).toInt().coerceIn(0, 255)
+        val b = (Color.blue(argb) * factor).toInt().coerceIn(0, 255)
+        return Color.argb(255, r, g, b)
+    }
+
+    override fun setAlpha(alpha: Int) { /* unused */ }
+    override fun setColorFilter(colorFilter: ColorFilter?) { paint.colorFilter = colorFilter }
+    @Deprecated("Deprecated in Java")
+    override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 }
