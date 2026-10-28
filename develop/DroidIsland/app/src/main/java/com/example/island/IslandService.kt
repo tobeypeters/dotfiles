@@ -259,6 +259,30 @@ class IslandService : Service() {
 
     private fun barCoverActive(): Boolean = barCover != null
 
+    /**
+     * Tears both windows down and re-adds them in the canonical order:
+     * bar cover first, pill last. This guarantees the pill is on top.
+     * Called from onCreate, onConfigurationChanged, tryUpgradeToTrustedOverlay,
+     * and onSettingsChanged whenever the bar-cover toggle changes state.
+     */
+    private fun rebuildWindowOrder() {
+        if (hiddenNow) return
+        if (barCover != null) removeBarCover()
+        if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
+        lp.type = overlayType()
+        snapLayout()
+        if (Prefs.flag(this, "barCover")) {
+            installBarCover()
+        }
+        try {
+            wm.addView(root, lp)
+            rootOn = true
+            log("rebuildWindowOrder: barCover=${barCover != null} type=${lp.type}")
+        } catch (t: Throwable) {
+            Log.e(TAG, "rebuildWindowOrder addView failed", t)
+        }
+    }
+
     override fun onBind(i: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -313,7 +337,6 @@ class IslandService : Service() {
         safe("rebuildFormats") { rebuildFormats() }
 
         safe("buildViews") {
-            // ---- Notification page ----
             nApp = tv(12f, Color.LTGRAY)
             nTitle = tv(16f, Color.WHITE).bold()
             nBody = tv(14f, Color.WHITE).apply { maxLines = 2; ellipsize = TextUtils.TruncateAt.END }
@@ -343,7 +366,6 @@ class IslandService : Service() {
                 addView(nBtnRow)
             }
 
-            // ---- Media page ----
             artIv = ImageView(this).apply {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 setBackgroundColor(0xFF333333.toInt())
@@ -377,7 +399,6 @@ class IslandService : Service() {
                     .apply { leftMargin = dp(14) })
             }
 
-            // ---- Timer page ----
             timeTv = tv(34f, Color.WHITE).bold().apply { text = "00:00" }
             swBtn = ctl("▶ Start", 18f) {
                 if (swRunning) { swAccum = swElapsed(); swRunning = false }
@@ -395,7 +416,6 @@ class IslandService : Service() {
             }
             vTimer = vbox().apply { gravity = Gravity.CENTER_HORIZONTAL; addView(timeTv); addView(swRow) }
 
-            // ---- Quick page ----
             torchBtn = ctl("Light", 14f) { toggleTorch() }
             vQuick = LinearLayout(this).apply {
                 gravity = Gravity.CENTER
@@ -408,7 +428,6 @@ class IslandService : Service() {
                 addView(ctl("Settings", 14f) { launch(Intent(this@IslandService, MainActivity::class.java)) })
             }
 
-            // ---- Battery page ----
             batTv = tv(30f, Color.WHITE).bold()
             batSub = tv(14f, Color.LTGRAY)
             vBattery = vbox().apply { gravity = Gravity.CENTER_HORIZONTAL; addView(batTv); addView(batSub) }
@@ -423,7 +442,6 @@ class IslandService : Service() {
                 }
             }
 
-            // ---- Pill row ----
             notifRow = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
             liveTv = tv(12f, Color.WHITE).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END; maxWidth = dp(110) }
             speedTv = tv(12f, Color.WHITE).apply { maxLines = 1; minWidth = dp(40); text = "↓0B" }
@@ -506,9 +524,9 @@ class IslandService : Service() {
         safe("applyMetrics") { applyMetrics() }
         log("onCreate: after applyMetrics collapsedW=$collapsedW collapsedH=$collapsedH collapsedX=$collapsedX")
         safe("snapLayout") { snapLayout() }
-
-        if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
         safe("addView") {
+            // Same order used by rebuildWindowOrder: cover first, pill last.
+            if (Prefs.flag(this, "barCover")) installBarCover()
             wm.addView(root, lp)
             rootOn = true
             log("onCreate: addView OK  w=${lp.width} h=${lp.height} x=${lp.x} type=${lp.type} barCover=${barCover != null}")
@@ -774,17 +792,7 @@ class IslandService : Service() {
             wm = getSystemService(WINDOW_SERVICE) as WindowManager
             trustedOverlay = false
         }
-        if (barCover != null) removeBarCover()
-        if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-        lp.type = overlayType()
-        snapLayout()
-        if (Prefs.flag(this, "barCover") && !hiddenNow) installBarCover()
-        try {
-            wm.addView(root, lp)
-            rootOn = true
-        } catch (t: Throwable) {
-            Log.e(TAG, "onConfigurationChanged re-addView failed", t)
-        }
+        rebuildWindowOrder()
     }
 
     private fun updateVisibility() {
@@ -930,7 +938,7 @@ class IslandService : Service() {
     private fun defaultPage() = available().first()
 
     private fun pageH() = dp(when (current) {
-        Page.NOTIF -> 140   // taller than before to fit the buttons
+        Page.NOTIF -> 140
         Page.MEDIA -> 118; Page.TIMER -> 124; Page.QUICK -> 90; Page.BATTERY -> 84
     }) + extraTop()
 
@@ -1392,22 +1400,33 @@ class IslandService : Service() {
     }
 
     private fun onSettingsChanged() {
+        // Capture whether the bar cover was on before this change. We'll detect the
+        // transition and rebuild the window order when it flips so the pill stays on top.
+        val wantCover = Prefs.flag(this, "barCover")
+        val hadCover = barCover != null
+
         rebuildFormats()
         hideSet = Prefs.hideApps(this)
         if (hideSet.isEmpty() && hiddenByApp) { hiddenByApp = false }
         hiddenByLand = landscape() && Prefs.flag(this, "hideLand")
         updateVisibility()
-        if (Prefs.flag(this, "barCover")) {
-            if (!hiddenNow) installBarCover()
-        } else {
-            removeBarCover()
-        }
         if (current !in available()) current = defaultPage()
         showPage()
         applyTheme()
         applyMetrics()
         if (expanded) relayout() else snapLayout()
         schedulePolls()
+
+        if (wantCover != hadCover) {
+            // The order of the two overlay windows changed. Rebuild both in the
+            // canonical order (cover first, pill last) so the pill is on top.
+            safe("rebuildWindowOrder") { rebuildWindowOrder() }
+        } else if (wantCover && !hiddenNow) {
+            // Cover was already on, just make sure it exists (idempotent).
+            installBarCover()
+        } else if (!wantCover && hadCover) {
+            removeBarCover()
+        }
     }
 
     private fun buildNotif(): Notification {
