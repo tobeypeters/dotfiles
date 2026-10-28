@@ -488,55 +488,94 @@ class IslandService : Service() {
     }
 
     // ---------- connectivity ----------
-    private fun registerConnectivityCallback() {
-        val m = cm ?: return
-        if (netCb != null) return
-        val cb = object : ConnectivityManager.NetworkCallback() {
-            override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
-                val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                val sig = if (w) caps.signalStrength else -1
-                if (w != wifi || c2 != cell || sig != wifiSignal) {
-                    wifi = w; cell = c2; wifiSignal = sig
-                    handler.post { updateStatus() }
-                }
-            }
-            override fun onLost(network: Network) {
-                if (wifi || cell) {
-                    wifi = false; cell = false; wifiSignal = -1
-                    handler.post { updateStatus() }
-                }
-            }
-        }
-        try {
-            m.registerDefaultNetworkCallback(cb)
-            netCb = cb
-            log("registerConnectivityCallback: registered")
-        } catch (t: Throwable) {
-            Log.e(TAG, "registerConnectivityCallback", t)
-        }
-    }
+	private fun registerConnectivityCallback() {
+	    val m = cm ?: return
+	    if (netCb != null) return
+	    val cb = object : ConnectivityManager.NetworkCallback() {
+		override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
+		    val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+		    val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+		    val sig = if (w) caps.signalStrength else -1
+		    // Do not require sig to be valid; still update wifi/cell flags.
+		    if (w != wifi || c2 != cell || sig != wifiSignal) {
+		        wifi = w; cell = c2; wifiSignal = sig
+		        if (w) safe("readWifiLevel") { readWifiLevel() }
+		        handler.post { updateStatus() }
+		    }
+		}
+		override fun onLost(network: Network) {
+		    if (wifi || cell) {
+		        wifi = false; cell = false; wifiSignal = -1
+		        handler.post { updateStatus() }
+		    }
+		}
+	    }
+	    try {
+		m.registerDefaultNetworkCallback(cb)
+		netCb = cb
+		log("registerConnectivityCallback: registered")
+	    } catch (t: Throwable) {
+		Log.e(TAG, "registerConnectivityCallback", t)
+	    }
+	}
 
-    private fun readWifiLevel() {
-        if (wifiSignal < 0) return
-        val level = when (wifiSignal) {
-            0 -> 0
-            1 -> 1
-            2 -> 2
-            else -> 3
-        }
-        if (level != wifiLevel) {
-            wifiLevel = level
-            log("readWifiLevel: signal=$wifiSignal level=$level")
-        }
-    }
+	private fun readWifiLevel() {
+	    var level = -1
 
-    private fun currentWifiIcon(): Int = when (wifiLevel) {
-        0 -> R.drawable.ic_wifi_0
-        1 -> R.drawable.ic_wifi_1
-        2 -> R.drawable.ic_wifi_2
-        else -> R.drawable.ic_wifi_3
-    }
+	    // Try NetworkCapabilities.signalStrength first (0..4 on API 29+).
+	    if (wifiSignal >= 0) {
+		level = when (wifiSignal) {
+		    0 -> 0
+		    1 -> 1
+		    2 -> 2
+		    else -> 3
+		}
+	    }
+
+	    // Fall back to WifiManager RSSI. Requires ACCESS_FINE_LOCATION on Android 10+;
+	    // without it, connectionInfo throws SecurityException.
+	    if (level < 0) {
+		try {
+		    val wmgr = getSystemService(WifiManager::class.java)
+		    @Suppress("DEPRECATION")
+		    val info = wmgr?.connectionInfo
+		    if (info != null && info.rssi in -99..-1) {
+		        val rssi = info.rssi
+		        level = when {
+		            rssi >= -55 -> 3
+		            rssi >= -67 -> 2
+		            rssi >= -78 -> 1
+		            else -> 0
+		        }
+		        Log.d(TAG, "readWifiLevel: rssi=$rssi -> $level")
+		    } else {
+		        Log.d(TAG, "readWifiLevel: rssi=${info?.rssi} unusable (missing location permission?)")
+		    }
+		} catch (t: Throwable) {
+		    Log.e(TAG, "readWifiLevel fallback failed", t)
+		}
+	    }
+
+	    if (level >= 0) {
+		if (level != wifiLevel) {
+		    wifiLevel = level
+		    log("readWifiLevel: wifiSignal=$wifiSignal final level=$wifiLevel")
+		}
+	    } else {
+		// No usable signal source. Do not leave the icon at 0 (dot); fall back to mid.
+		if (wifiLevel == 0) {
+		    wifiLevel = 2
+		    log("readWifiLevel: no usable signal, defaulting to 2")
+		}
+	    }
+	}
+
+	private fun currentWifiIcon(): Int = when (wifiLevel) {
+	    0 -> R.drawable.ic_wifi_0
+	    1 -> R.drawable.ic_wifi_1
+	    2 -> R.drawable.ic_wifi_2
+	    else -> R.drawable.ic_wifi_3
+	}
 
     // ---------- wallpaper colors ----------
     private fun readWallpaperColors() {

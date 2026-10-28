@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-58:12
-INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-58:12
-INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-58:12
-INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-58:12
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-60:12
+INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-60:12
+INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-60:12
+INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:2:1-60:12
 	package
 		INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml
 	android:versionName
@@ -48,101 +48,105 @@ uses-permission#android.permission.READ_PHONE_STATE
 ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:11:5-75
 	android:name
 		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:11:22-72
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:12:5-79
+	android:name
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:12:22-76
 queries
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:13:5-18:15
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:5-20:15
 intent#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:9-17:18
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:9-19:18
 action#android.intent.action.MAIN
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:13-65
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:17:13-65
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:21-62
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:17:21-62
 category#android.intent.category.LAUNCHER
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:13-73
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:18:13-73
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:23-70
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:18:23-70
 application
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:5-57:19
-INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:5-57:19
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:5-59:19
+INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:5-59:19
 	android:extractNativeLibs
 		INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml
 	android:label
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:18-45
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:18-45
 	android:icon
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:46-93
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:46-93
 	android:theme
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:21:9-66
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:23:9-66
 activity#com.example.island.MainActivity
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:9-27:20
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:24:9-29:20
 	android:exported
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:48-71
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:24:48-71
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:19-47
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:24:19-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:23:13-26:29
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:25:13-28:29
 receiver#com.example.island.BootReceiver
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:9-34:20
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:9-36:20
 	android:exported
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:48-71
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:48-71
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:19-47
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:19-47
 intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.MY_PACKAGE_REPLACED+action:name:android.intent.action.QUICKBOOT_POWERON
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:29:13-33:29
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:13-35:29
 action#android.intent.action.BOOT_COMPLETED
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:17-79
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:17-79
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:25-76
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:25-76
 action#android.intent.action.QUICKBOOT_POWERON
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:17-82
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:33:17-82
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:25-79
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:33:25-79
 action#android.intent.action.MY_PACKAGE_REPLACED
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:17-84
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:34:17-84
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:25-81
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:34:25-81
 service#com.example.island.IslandService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:9-75
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:9-75
 	android:exported
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:48-72
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:48-72
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:18-47
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:18-47
 service#com.example.island.NotifService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:9-42:19
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:9-44:19
 	android:label
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:13-40
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:39:13-40
 	android:exported
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:47-70
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:47-70
 	android:permission
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:13-87
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:40:13-87
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:18-46
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:18-46
 intent-filter#action:name:android.service.notification.NotificationListenerService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:39:13-41:29
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:41:13-43:29
 action#android.service.notification.NotificationListenerService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:40:17-99
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:42:17-99
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:40:25-96
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:42:25-96
 service#com.example.island.IslandAccessibilityService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:45:9-56:19
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:47:9-58:19
 	android:label
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:48:13-40
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:50:13-40
 	android:exported
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:47:13-36
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:49:13-36
 	android:permission
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:49:13-79
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:51:13-79
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:46:13-55
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:48:13-55
 intent-filter#action:name:android.accessibilityservice.AccessibilityService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:50:13-52:29
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:52:13-54:29
 action#android.accessibilityservice.AccessibilityService
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:51:17-92
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:53:17-92
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:51:25-89
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:53:25-89
 meta-data#android.accessibilityservice
-ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:53:13-55:72
+ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:55:13-57:72
 	android:resource
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:55:17-69
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:57:17-69
 	android:name
-		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:54:17-60
+		ADDED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:56:17-60
 uses-sdk
 INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml

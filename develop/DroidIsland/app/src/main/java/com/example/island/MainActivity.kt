@@ -227,20 +227,23 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun startIsland() {
-        val perms = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT >= 33 &&
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            perms.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            perms.add(Manifest.permission.READ_PHONE_STATE)
-        }
-        if (perms.isNotEmpty()) requestPermissions(perms.toTypedArray(), 1)
-        if (Settings.canDrawOverlays(this)) startForegroundService(Intent(this, IslandService::class.java))
-        else Toast.makeText(this, "Grant 'Draw over apps' first", Toast.LENGTH_SHORT).show()
-        window.decorView.postDelayed({ refresh() }, 600)
-    }
+	private fun startIsland() {
+	    val perms = mutableListOf<String>()
+	    if (Build.VERSION.SDK_INT >= 33 &&
+		checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+		perms.add(Manifest.permission.POST_NOTIFICATIONS)
+	    }
+	    if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+		perms.add(Manifest.permission.READ_PHONE_STATE)
+	    }
+	    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+		perms.add(Manifest.permission.ACCESS_FINE_LOCATION)
+	    }
+	    if (perms.isNotEmpty()) requestPermissions(perms.toTypedArray(), 1)
+	    if (Settings.canDrawOverlays(this)) startForegroundService(Intent(this, IslandService::class.java))
+	    else Toast.makeText(this, "Grant 'Draw over apps' first", Toast.LENGTH_SHORT).show()
+	    window.decorView.postDelayed({ refresh() }, 600)
+	}
 
     private fun stopIsland() {
         stopService(Intent(this, IslandService::class.java))
