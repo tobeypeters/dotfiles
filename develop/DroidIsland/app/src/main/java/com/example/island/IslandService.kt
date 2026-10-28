@@ -170,6 +170,9 @@ class IslandService : Service() {
     private lateinit var nApp: TextView
     private lateinit var nTitle: TextView
     private lateinit var nBody: TextView
+    private lateinit var nBtnRow: LinearLayout
+    private lateinit var nMuteBtn: TextView
+    private lateinit var nDismissBtn: TextView
     private lateinit var artIv: ImageView
     private lateinit var mTitle: TextView
     private lateinit var mArtist: TextView
@@ -210,7 +213,6 @@ class IslandService : Service() {
     private var wallpaperManager: WallpaperManager? = null
     private var wallpaperListener: WallpaperManager.OnColorsChangedListener? = null
 
-    // Connectivity state
     private var wifi = false
     private var cell = false
     private var wifiLevel = 0
@@ -311,11 +313,37 @@ class IslandService : Service() {
         safe("rebuildFormats") { rebuildFormats() }
 
         safe("buildViews") {
+            // ---- Notification page ----
             nApp = tv(12f, Color.LTGRAY)
             nTitle = tv(16f, Color.WHITE).bold()
             nBody = tv(14f, Color.WHITE).apply { maxLines = 2; ellipsize = TextUtils.TruncateAt.END }
-            vNotif = vbox().apply { addView(nApp); addView(nTitle); addView(nBody) }
 
+            nMuteBtn = ctl("Mute", 13f) {
+                val n = notif
+                if (n != null) {
+                    Prefs.block(this, n.pkg)
+                    Toast.makeText(this, "Muted ${n.app}", Toast.LENGTH_SHORT).show()
+                    IslandBus.refreshIcons?.invoke()
+                }
+                dismissNotif(cancelOriginal = true)
+            }
+            nDismissBtn = ctl("Dismiss", 13f) {
+                dismissNotif(cancelOriginal = true)
+            }
+            nBtnRow = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.END
+                addView(nMuteBtn)
+                addView(nDismissBtn)
+            }
+            vNotif = vbox().apply {
+                addView(nApp)
+                addView(nTitle)
+                addView(nBody)
+                addView(nBtnRow)
+            }
+
+            // ---- Media page ----
             artIv = ImageView(this).apply {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 setBackgroundColor(0xFF333333.toInt())
@@ -349,6 +377,7 @@ class IslandService : Service() {
                     .apply { leftMargin = dp(14) })
             }
 
+            // ---- Timer page ----
             timeTv = tv(34f, Color.WHITE).bold().apply { text = "00:00" }
             swBtn = ctl("▶ Start", 18f) {
                 if (swRunning) { swAccum = swElapsed(); swRunning = false }
@@ -366,6 +395,7 @@ class IslandService : Service() {
             }
             vTimer = vbox().apply { gravity = Gravity.CENTER_HORIZONTAL; addView(timeTv); addView(swRow) }
 
+            // ---- Quick page ----
             torchBtn = ctl("Light", 14f) { toggleTorch() }
             vQuick = LinearLayout(this).apply {
                 gravity = Gravity.CENTER
@@ -378,6 +408,7 @@ class IslandService : Service() {
                 addView(ctl("Settings", 14f) { launch(Intent(this@IslandService, MainActivity::class.java)) })
             }
 
+            // ---- Battery page ----
             batTv = tv(30f, Color.WHITE).bold()
             batSub = tv(14f, Color.LTGRAY)
             vBattery = vbox().apply { gravity = Gravity.CENTER_HORIZONTAL; addView(batTv); addView(batSub) }
@@ -392,6 +423,7 @@ class IslandService : Service() {
                 }
             }
 
+            // ---- Pill row ----
             notifRow = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
             liveTv = tv(12f, Color.WHITE).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END; maxWidth = dp(110) }
             speedTv = tv(12f, Color.WHITE).apply { maxLines = 1; minWidth = dp(40); text = "↓0B" }
@@ -488,96 +520,86 @@ class IslandService : Service() {
     }
 
     // ---------- connectivity ----------
-	private fun registerConnectivityCallback() {
-	    val m = cm ?: return
-	    if (netCb != null) return
-	    val cb = object : ConnectivityManager.NetworkCallback() {
-		override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
-		    val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-		    val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-		    val sig = if (w) caps.signalStrength else -1
-		    // Do not require sig to be valid; still update wifi/cell flags.
-		    if (w != wifi || c2 != cell || sig != wifiSignal) {
-		        wifi = w; cell = c2; wifiSignal = sig
-		        if (w) safe("readWifiLevel") { readWifiLevel() }
-		        handler.post { updateStatus() }
-		    }
-		}
-		override fun onLost(network: Network) {
-		    if (wifi || cell) {
-		        wifi = false; cell = false; wifiSignal = -1
-		        handler.post { updateStatus() }
-		    }
-		}
-	    }
-	    try {
-		m.registerDefaultNetworkCallback(cb)
-		netCb = cb
-		log("registerConnectivityCallback: registered")
-	    } catch (t: Throwable) {
-		Log.e(TAG, "registerConnectivityCallback", t)
-	    }
-	}
+    private fun registerConnectivityCallback() {
+        val m = cm ?: return
+        if (netCb != null) return
+        val cb = object : ConnectivityManager.NetworkCallback() {
+            override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
+                val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                val sig = if (w) caps.signalStrength else -1
+                if (w != wifi || c2 != cell || sig != wifiSignal) {
+                    wifi = w; cell = c2; wifiSignal = sig
+                    if (w) safe("readWifiLevel") { readWifiLevel() }
+                    handler.post { updateStatus() }
+                }
+            }
+            override fun onLost(network: Network) {
+                if (wifi || cell) {
+                    wifi = false; cell = false; wifiSignal = -1
+                    handler.post { updateStatus() }
+                }
+            }
+        }
+        try {
+            m.registerDefaultNetworkCallback(cb)
+            netCb = cb
+            log("registerConnectivityCallback: registered")
+        } catch (t: Throwable) {
+            Log.e(TAG, "registerConnectivityCallback", t)
+        }
+    }
 
-	private fun readWifiLevel() {
-	    var level = -1
+    private fun readWifiLevel() {
+        var level = -1
+        if (wifiSignal >= 0) {
+            level = when (wifiSignal) {
+                0 -> 0
+                1 -> 1
+                2 -> 2
+                else -> 3
+            }
+        }
+        if (level < 0) {
+            try {
+                val wmgr = getSystemService(WifiManager::class.java)
+                @Suppress("DEPRECATION")
+                val info = wmgr?.connectionInfo
+                if (info != null && info.rssi in -99..-1) {
+                    val rssi = info.rssi
+                    level = when {
+                        rssi >= -55 -> 3
+                        rssi >= -67 -> 2
+                        rssi >= -78 -> 1
+                        else -> 0
+                    }
+                    Log.d(TAG, "readWifiLevel: rssi=$rssi -> $level")
+                }
+            } catch (t: Throwable) {
+                Log.e(TAG, "readWifiLevel fallback failed", t)
+            }
+        }
+        if (level >= 0) {
+            if (level != wifiLevel) {
+                wifiLevel = level
+                log("readWifiLevel: wifiSignal=$wifiSignal final level=$wifiLevel")
+            }
+        } else {
+            if (wifiLevel == 0) {
+                wifiLevel = 2
+                log("readWifiLevel: no usable signal, defaulting to 2")
+            }
+        }
+    }
 
-	    // Try NetworkCapabilities.signalStrength first (0..4 on API 29+).
-	    if (wifiSignal >= 0) {
-		level = when (wifiSignal) {
-		    0 -> 0
-		    1 -> 1
-		    2 -> 2
-		    else -> 3
-		}
-	    }
+    private fun currentWifiIcon(): Int = when (wifiLevel) {
+        0 -> R.drawable.ic_wifi_0
+        1 -> R.drawable.ic_wifi_1
+        2 -> R.drawable.ic_wifi_2
+        else -> R.drawable.ic_wifi_3
+    }
 
-	    // Fall back to WifiManager RSSI. Requires ACCESS_FINE_LOCATION on Android 10+;
-	    // without it, connectionInfo throws SecurityException.
-	    if (level < 0) {
-		try {
-		    val wmgr = getSystemService(WifiManager::class.java)
-		    @Suppress("DEPRECATION")
-		    val info = wmgr?.connectionInfo
-		    if (info != null && info.rssi in -99..-1) {
-		        val rssi = info.rssi
-		        level = when {
-		            rssi >= -55 -> 3
-		            rssi >= -67 -> 2
-		            rssi >= -78 -> 1
-		            else -> 0
-		        }
-		        Log.d(TAG, "readWifiLevel: rssi=$rssi -> $level")
-		    } else {
-		        Log.d(TAG, "readWifiLevel: rssi=${info?.rssi} unusable (missing location permission?)")
-		    }
-		} catch (t: Throwable) {
-		    Log.e(TAG, "readWifiLevel fallback failed", t)
-		}
-	    }
-
-	    if (level >= 0) {
-		if (level != wifiLevel) {
-		    wifiLevel = level
-		    log("readWifiLevel: wifiSignal=$wifiSignal final level=$wifiLevel")
-		}
-	    } else {
-		// No usable signal source. Do not leave the icon at 0 (dot); fall back to mid.
-		if (wifiLevel == 0) {
-		    wifiLevel = 2
-		    log("readWifiLevel: no usable signal, defaulting to 2")
-		}
-	    }
-	}
-
-	private fun currentWifiIcon(): Int = when (wifiLevel) {
-	    0 -> R.drawable.ic_wifi_0
-	    1 -> R.drawable.ic_wifi_1
-	    2 -> R.drawable.ic_wifi_2
-	    else -> R.drawable.ic_wifi_3
-	}
-
-    // ---------- wallpaper colors ----------
+    // ---------- wallpaper ----------
     private fun readWallpaperColors() {
         try {
             val wm = WallpaperManager.getInstance(this)
@@ -589,12 +611,9 @@ class IslandService : Service() {
                     val s = colors.secondaryColor?.toArgb() ?: darken(p)
                     val t = colors.tertiaryColor?.toArgb() ?: darken(s)
                     Prefs.setWallpaperColors(this, p, s, t)
-                    log("readWallpaperColors: p=0x${Integer.toHexString(p)} s=0x${Integer.toHexString(s)} t=0x${Integer.toHexString(t)}")
                 }
             }
-        } catch (t: Throwable) {
-            Log.e(TAG, "readWallpaperColors", t)
-        }
+        } catch (t: Throwable) { Log.e(TAG, "readWallpaperColors", t) }
     }
 
     private fun installWallpaperListener() {
@@ -610,10 +629,7 @@ class IslandService : Service() {
             }
             wm.addOnColorsChangedListener(l, handler)
             wallpaperListener = l
-            log("installWallpaperListener: registered")
-        } catch (t: Throwable) {
-            Log.e(TAG, "installWallpaperListener", t)
-        }
+        } catch (t: Throwable) { Log.e(TAG, "installWallpaperListener", t) }
     }
 
     private fun removeWallpaperListener() {
@@ -642,7 +658,6 @@ class IslandService : Service() {
             if (Prefs.flag(this, "barCover")) installBarCover()
             wm.addView(root, lp)
             rootOn = true
-            log("upgraded to TYPE_ACCESSIBILITY_OVERLAY")
             true
         } catch (t: Throwable) {
             Log.e(TAG, "upgrade failed", t)
@@ -675,7 +690,6 @@ class IslandService : Service() {
         try {
             wm.addView(v, p)
             barCover = v
-            log("installBarCover: added w=$w h=$h")
             applyPillBackground(false)
         } catch (t: Throwable) {
             Log.e(TAG, "installBarCover failed", t)
@@ -764,13 +778,10 @@ class IslandService : Service() {
         if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
         lp.type = overlayType()
         snapLayout()
-        if (Prefs.flag(this, "barCover") && !hiddenNow) {
-            installBarCover()
-        }
+        if (Prefs.flag(this, "barCover") && !hiddenNow) installBarCover()
         try {
             wm.addView(root, lp)
             rootOn = true
-            log("onConfigurationChanged: re-added root w=${lp.width} h=${lp.height} barCover=${barCover != null}")
         } catch (t: Throwable) {
             Log.e(TAG, "onConfigurationChanged re-addView failed", t)
         }
@@ -893,9 +904,7 @@ class IslandService : Service() {
                     }
                 }
                 gd.onTouchEvent(e)
-            } catch (t: Throwable) {
-                Log.e(TAG, "touch handler crash", t)
-            }
+            } catch (t: Throwable) { Log.e(TAG, "touch handler crash", t) }
             true
         }
     }
@@ -921,7 +930,8 @@ class IslandService : Service() {
     private fun defaultPage() = available().first()
 
     private fun pageH() = dp(when (current) {
-        Page.NOTIF -> 112; Page.MEDIA -> 118; Page.TIMER -> 124; Page.QUICK -> 90; Page.BATTERY -> 84
+        Page.NOTIF -> 140   // taller than before to fit the buttons
+        Page.MEDIA -> 118; Page.TIMER -> 124; Page.QUICK -> 90; Page.BATTERY -> 84
     }) + extraTop()
 
     private fun showPage() {
@@ -973,9 +983,7 @@ class IslandService : Service() {
                 val x = (collapsedX - m).coerceAtLeast(0)
                 animateTo(w, h, collapsedR(), x, 0)
             }
-        } catch (t: Throwable) {
-            Log.e(TAG, "relayout crash", t)
-        }
+        } catch (t: Throwable) { Log.e(TAG, "relayout crash", t) }
     }
 
     private fun snapLayout() {
@@ -1035,9 +1043,7 @@ class IslandService : Service() {
                     val ca = if (expanded) c else min(1f, c * 2f)
                     pages.alpha = fP + (tP - fP) * ca
                     if (rootOn) wm.updateViewLayout(root, lp)
-                } catch (t: Throwable) {
-                    Log.e(TAG, "anim update crash", t)
-                }
+                } catch (t: Throwable) { Log.e(TAG, "anim update crash", t) }
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(a: Animator) {
@@ -1330,7 +1336,6 @@ class IslandService : Service() {
         }
     }
 
-    // ---------- color selection ----------
     private fun baseColor(): Int {
         val icolor = Prefs.islandColor(this)
         return when {
@@ -1441,9 +1446,6 @@ class IslandService : Service() {
     }
 }
 
-/**
- * Battery icon with proportional fill and an optional charging bolt.
- */
 private class BatteryFillDrawable(
     private val percent: Int,
     private val charging: Boolean,
