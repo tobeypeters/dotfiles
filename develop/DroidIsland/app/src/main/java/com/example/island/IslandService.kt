@@ -238,6 +238,8 @@ class IslandService : Service() {
         if (trustedOverlay) WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
         else WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 
+    private fun barCoverActive(): Boolean = barCover != null
+
     override fun onBind(i: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -444,12 +446,17 @@ class IslandService : Service() {
         safe("applyMetrics") { applyMetrics() }
         log("onCreate: after applyMetrics collapsedW=$collapsedW collapsedH=$collapsedH collapsedX=$collapsedX")
         safe("snapLayout") { snapLayout() }
+
+        // FIX: install the bar cover BEFORE adding the pill, so the pill is always
+        // added last and therefore sits on top. The previous ordering (pill first, cover
+        // second) put the cover over the pill on the very first launch, and only a
+        // rotation fixed it because onConfigurationChanged already used this order.
+        if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
         safe("addView") {
             wm.addView(root, lp)
             rootOn = true
-            log("onCreate: addView OK  w=${lp.width} h=${lp.height} x=${lp.x} type=${lp.type}")
+            log("onCreate: addView OK  w=${lp.width} h=${lp.height} x=${lp.x} type=${lp.type} barCover=${barCover != null}")
         }
-        if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
         safe("updateVisibility") { updateVisibility() }
         safe("schedulePolls") { schedulePolls() }
         safe("SystemIcons.apply") { SystemIcons.apply(this) }
@@ -518,9 +525,9 @@ class IslandService : Service() {
             trustedOverlay = true
             lp.type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
             snapLayout()
+            if (Prefs.flag(this, "barCover")) installBarCover()
             wm.addView(root, lp)
             rootOn = true
-            if (Prefs.flag(this, "barCover")) installBarCover()
             log("upgraded to TYPE_ACCESSIBILITY_OVERLAY")
             true
         } catch (t: Throwable) {
@@ -555,7 +562,7 @@ class IslandService : Service() {
             wm.addView(v, p)
             barCover = v
             log("installBarCover: added w=$w h=$h")
-            applyPillBackground(!expanded && barCover == null)
+            applyPillBackground(false)
         } catch (t: Throwable) {
             Log.e(TAG, "installBarCover failed", t)
             barCover = null
@@ -565,7 +572,7 @@ class IslandService : Service() {
     private fun removeBarCover() {
         barCover?.let { try { wm.removeView(it) } catch (_: Throwable) {} }
         barCover = null
-        applyPillBackground(!expanded && barCover == null)
+        applyPillBackground(!expanded && !barCoverActive())
     }
 
     private fun readCutout() {
@@ -617,7 +624,7 @@ class IslandService : Service() {
     }
 
     private fun applyMetrics() {
-        collapsedH = max(cutBottom + dp(4), dp(28))
+        collapsedH = max(statusBarH, dp(24))
         pages.setPadding(dp(18), dp(12) + extraTop(), dp(18), dp(12))
         rebuildRow()
         computeCollapsed()
@@ -643,22 +650,15 @@ class IslandService : Service() {
         if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
         lp.type = overlayType()
         snapLayout()
+        if (Prefs.flag(this, "barCover") && !hiddenNow) {
+            installBarCover()
+        }
         try {
             wm.addView(root, lp)
             rootOn = true
-            log("onConfigurationChanged: re-added root w=${lp.width} h=${lp.height}")
+            log("onConfigurationChanged: re-added root w=${lp.width} h=${lp.height} barCover=${barCover != null}")
         } catch (t: Throwable) {
             Log.e(TAG, "onConfigurationChanged re-addView failed", t)
-        }
-        if (Prefs.flag(this, "barCover") && !hiddenNow) {
-            if (rootOn) { try { wm.removeView(root) } catch (_: Throwable) {}; rootOn = false }
-            installBarCover()
-            try {
-                wm.addView(root, lp)
-                rootOn = true
-            } catch (t: Throwable) {
-                Log.e(TAG, "onConfigurationChanged pill re-addView failed", t)
-            }
         }
     }
 
@@ -894,7 +894,7 @@ class IslandService : Service() {
             pillLp.height = collapsedH
             pill.layoutParams = pillLp
         } catch (t: Throwable) { Log.e(TAG, "pill lp crash", t) }
-        applyPillBackground(!expanded && barCover == null)
+        applyPillBackground(!expanded && !barCoverActive())
         if (rootOn) try { wm.updateViewLayout(root, lp) } catch (t: Throwable) { Log.e(TAG, "updateViewLayout", t) }
     }
 
@@ -1207,11 +1207,6 @@ class IslandService : Service() {
         return if (lum > 0.55) Color.BLACK else Color.WHITE
     }
 
-    /**
-     * Sets pill.background. When `showBevel` is true, draws bg + BevelDrawable.
-     * Callers pass `!expanded && barCover == null` so the bevel is only drawn when
-     * the pill is collapsed and the bar cover is off.
-     */
     private fun applyPillBackground(showBevel: Boolean) {
         try {
             val b = baseColor()
@@ -1243,7 +1238,7 @@ class IslandService : Service() {
         val fs = Prefs.int(this, "font").toFloat()
         for (t in listOf(liveTv, speedTv, batPill, dateTv, clockTv)) t.textSize = fs
         setNotifIcons(lastIcons)
-        applyPillBackground(!expanded && barCover == null)
+        applyPillBackground(!expanded && !barCoverActive())
     }
 
     private fun onSettingsChanged() {
@@ -1299,16 +1294,6 @@ class IslandService : Service() {
     }
 }
 
-/**
- * Draws a raised-button bevel: light band on top/left, dark band on bottom/right.
- *
- * Construction: build the outer rounded-rect and the inner rounded-rect (offset by
- * `thickness`), combine with EVEN_ODD fill type to get a `thickness`-wide ring, clip
- * the canvas to that ring, paint the whole ring with the light color, then clip to
- * the bottom-right quadrant and overdraw with the dark color. The diagonal seam is
- * at (cornerRadius, cornerRadius), which for a pill equals the pill's horizontal
- * midline — exactly where a raised button's light/dark boundary belongs.
- */
 private class BevelDrawable(
     private val baseColor: Int,
     private val cornerRadius: Float,
@@ -1352,17 +1337,11 @@ private class BevelDrawable(
 
         canvas.save()
         canvas.clipPath(ring)
-
-        // Whole ring first with the light color.
         paint.color = light
         canvas.drawRect(l, t, r, bt, paint)
-
-        // Overdraw the bottom-right quadrant with the dark color. The clip keeps this
-        // inside the ring, so only the bottom/right band changes.
         canvas.clipRect(l + radius, t + radius, r, bt)
         paint.color = dark
         canvas.drawRect(l, t, r, bt, paint)
-
         canvas.restore()
     }
 
