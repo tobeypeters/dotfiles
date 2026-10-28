@@ -2,8 +2,11 @@ R_DEF: Internal format may change without notice
 local
 drawable ic_airplane
 drawable ic_alarm
+drawable ic_battery
+drawable ic_battery_fill
 drawable ic_bt
 drawable ic_cell
+drawable ic_charging
 drawable ic_dnd
 drawable ic_location
 drawable ic_saver
@@ -11,5 +14,10 @@ drawable ic_silent
 drawable ic_vibrate
 drawable ic_vpn
 drawable ic_wifi
+drawable ic_wifi_0
+drawable ic_wifi_1
+drawable ic_wifi_2
+drawable ic_wifi_4
+drawable ic_wifi_level
 string a11y_description
 xml accessibility_service_config

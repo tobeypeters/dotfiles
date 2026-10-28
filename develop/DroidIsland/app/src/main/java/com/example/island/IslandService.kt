@@ -23,6 +23,7 @@ import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -35,7 +36,11 @@ import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.TrafficStats
+import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Handler
@@ -141,8 +146,11 @@ class IslandService : Service() {
     private lateinit var liveTv: TextView
     private lateinit var speedTv: TextView
     private lateinit var batPill: TextView
+    private lateinit var batIcon: ImageView
     private lateinit var dateTv: TextView
     private lateinit var clockTv: TextView
+    private lateinit var wifiIcon: ImageView
+    private lateinit var netTypeTv: TextView
     private lateinit var monitor: StatusMonitor
     private var lastIcons: List<Drawable> = emptyList()
     private var rowSig = ""
@@ -201,6 +209,13 @@ class IslandService : Service() {
 
     private var wallpaperManager: WallpaperManager? = null
     private var wallpaperListener: WallpaperManager.OnColorsChangedListener? = null
+
+    // Connectivity state
+    private var wifi = false
+    private var cell = false
+    private var wifiLevel = 0
+    private var mobileLabel = ""
+    private var cm: ConnectivityManager? = null
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
     private val screenW get() = resources.displayMetrics.widthPixels
@@ -266,6 +281,7 @@ class IslandService : Service() {
 
         safe("startForeground") { startForeground(1, buildNotif()) }
         IslandBus.running = true
+        cm = getSystemService(ConnectivityManager::class.java)
         val a11yWm = IslandAccessibilityService.overlayWindowManager()
         if (a11yWm != null) {
             wm = a11yWm
@@ -279,6 +295,7 @@ class IslandService : Service() {
 
         safe("readWallpaperColors") { readWallpaperColors() }
         installWallpaperListener()
+        safe("registerConnectivity") { registerConnectivityCallback() }
 
         screenOn = try {
             getSystemService(PowerManager::class.java).isInteractive
@@ -377,8 +394,17 @@ class IslandService : Service() {
             liveTv = tv(12f, Color.WHITE).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END; maxWidth = dp(110) }
             speedTv = tv(12f, Color.WHITE).apply { maxLines = 1; minWidth = dp(40); text = "↓0B" }
             batPill = tv(12f, Color.WHITE).apply { maxLines = 1 }
+            batIcon = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(16), dp(16))
+                setColorFilter(fg())
+            }
             dateTv = tv(12f, Color.WHITE).apply { maxLines = 1 }
             clockTv = tv(12f, Color.WHITE).bold().apply { maxLines = 1 }
+            wifiIcon = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(16), dp(16))
+                setColorFilter(fg())
+            }
+            netTypeTv = tv(10f, Color.WHITE).apply { maxLines = 1 }
             statusRow = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
 
             pill = FrameLayout(this).apply {
@@ -447,10 +473,6 @@ class IslandService : Service() {
         log("onCreate: after applyMetrics collapsedW=$collapsedW collapsedH=$collapsedH collapsedX=$collapsedX")
         safe("snapLayout") { snapLayout() }
 
-        // FIX: install the bar cover BEFORE adding the pill, so the pill is always
-        // added last and therefore sits on top. The previous ordering (pill first, cover
-        // second) put the cover over the pill on the very first launch, and only a
-        // rotation fixed it because onConfigurationChanged already used this order.
         if (Prefs.flag(this, "barCover")) safe("installBarCover") { installBarCover() }
         safe("addView") {
             wm.addView(root, lp)
@@ -461,6 +483,65 @@ class IslandService : Service() {
         safe("schedulePolls") { schedulePolls() }
         safe("SystemIcons.apply") { SystemIcons.apply(this) }
         log("onCreate: done")
+    }
+
+    // ---------- connectivity ----------
+    private var netCb: ConnectivityManager.NetworkCallback? = null
+
+    private fun registerConnectivityCallback() {
+        val m = cm ?: return
+        if (netCb != null) return
+        val cb = object : ConnectivityManager.NetworkCallback() {
+            override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
+                val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                if (w != wifi || c2 != cell) {
+                    wifi = w; cell = c2
+                    handler.post {
+                        if (w) readWifiLevel()
+                        updateStatus()
+                    }
+                } else if (w) {
+                    handler.post { readWifiLevel(); updateStatus() }
+                }
+            }
+            override fun onLost(network: Network) {
+                if (wifi || cell) {
+                    wifi = false; cell = false
+                    handler.post { updateStatus() }
+                }
+            }
+        }
+        try {
+            m.registerDefaultNetworkCallback(cb)
+            netCb = cb
+            log("registerConnectivityCallback: registered")
+        } catch (t: Throwable) {
+            Log.e(TAG, "registerConnectivityCallback", t)
+        }
+    }
+
+    private fun readWifiLevel() {
+        try {
+            val wm = getSystemService(WifiManager::class.java) ?: return
+            @Suppress("DEPRECATION")
+            val info = wm.connectionInfo ?: return
+            val rssi = info.rssi
+            val level = WifiManager.calculateSignalLevel(rssi, 4)
+            if (level != wifiLevel) {
+                wifiLevel = level
+                log("readWifiLevel: rssi=$rssi level=$level")
+            }
+        } catch (t: Throwable) {
+            Log.e(TAG, "readWifiLevel", t)
+        }
+    }
+
+    private fun currentWifiIcon(): Int = when (wifiLevel) {
+        0 -> R.drawable.ic_wifi_0
+        1 -> R.drawable.ic_wifi_1
+        2 -> R.drawable.ic_wifi_2
+        else -> R.drawable.ic_wifi_4
     }
 
     // ---------- wallpaper colors ----------
@@ -1110,14 +1191,13 @@ class IslandService : Service() {
         add(m.vpn, "vpn", R.drawable.ic_vpn)
         add(m.bt, "bt", R.drawable.ic_bt)
         add(m.saver, "saver", R.drawable.ic_saver)
-        add(m.cell, "cell", R.drawable.ic_cell)
-        add(m.wifi, "wifi", R.drawable.ic_wifi)
         return out
     }
 
     private fun signature() = listOf(
         liveTv.text.isNotEmpty(), Prefs.flag(this, "battery"), Prefs.flag(this, "date"), Prefs.flag(this, "clock"),
         Prefs.flag(this, "notifIcons"), Prefs.flag(this, "netspeed"), notifRow.childCount,
+        wifi, cell, wifiLevel, mobileLabel, pct, charging,
         activeIcons().joinToString(",") { it.second.toString() }
     ).joinToString("|")
 
@@ -1128,13 +1208,26 @@ class IslandService : Service() {
         if (liveTv.text.isNotEmpty()) views.add(liveTv)
         if (Prefs.flag(this, "netspeed")) views.add(speedTv)
         for ((_, res) in activeIcons()) iconView(res)?.let { views.add(it) }
-        if (Prefs.flag(this, "battery")) views.add(batPill)
+
+        // Network section: Wi-Fi icon when on Wi-Fi; otherwise mobile label text.
+        if (wifi) {
+            views.add(wifiIcon)
+        } else if (cell && mobileLabel.isNotEmpty()) {
+            views.add(netTypeTv)
+        }
+
+        // Battery: icon then percentage text.
+        if (Prefs.flag(this, "battery")) {
+            views.add(batIcon)
+            views.add(batPill)
+        }
         if (Prefs.flag(this, "date")) views.add(dateTv)
         if (Prefs.flag(this, "clock")) views.add(clockTv)
+
         val ip = iconPx()
         views.forEachIndexed { i, v ->
             val size = if (v is ImageView) ip else -2
-            statusRow.addView(v, LinearLayout.LayoutParams(size, size).apply { if (i > 0) marginStart = dp(8) })
+            statusRow.addView(v, LinearLayout.LayoutParams(size, size).apply { if (i > 0) marginStart = dp(6) })
         }
         neutralizeTouchTargets(statusRow)
     }
@@ -1164,11 +1257,37 @@ class IslandService : Service() {
             val now = Date()
             clockTv.setIfChanged(clockFormat.format(now))
             dateTv.setIfChanged(dateFormat.format(now))
-            batPill.setIfChanged("${if (charging) "⚡" else ""}$pct%")
+            batPill.setIfChanged("$pct%")
             liveTv.setIfChanged(when {
                 swRunning && Prefs.flag(this, "timer") -> "⏱ " + fmt(swElapsed())
                 else -> ""
             })
+
+            // Battery icon
+            try {
+                batIcon.setImageDrawable(BatteryFillDrawable(pct, charging, fg()))
+            } catch (_: Throwable) {}
+
+            // Network section
+            try {
+                if (wifi) {
+                    readWifiLevel()
+                    wifiIcon.setImageResource(currentWifiIcon())
+                    wifiIcon.setColorFilter(fg())
+                    netTypeTv.visibility = View.GONE
+                } else {
+                    wifiIcon.visibility = View.GONE
+                    if (cell) {
+                        mobileLabel = NetworkTypeHelper.mobileLabel(this)
+                        netTypeTv.text = mobileLabel
+                        netTypeTv.setTextColor(fg())
+                        netTypeTv.visibility = if (mobileLabel.isNotEmpty()) View.VISIBLE else View.GONE
+                    } else {
+                        netTypeTv.visibility = View.GONE
+                    }
+                }
+            } catch (_: Throwable) {}
+
             val sig = signature()
             if (sig != rowSig) { rowSig = sig; rebuildRow() }
             val ow = collapsedW; val ox = collapsedX
@@ -1278,6 +1397,8 @@ class IslandService : Service() {
         IslandBus.refreshBar = null
         IslandBus.icons = null
         removeWallpaperListener()
+        netCb?.let { try { cm?.unregisterNetworkCallback(it) } catch (_: Throwable) {} }
+        netCb = null
         safe("SystemIcons.restore") { SystemIcons.restore(this) }
         if (::monitor.isInitialized) safe("monitor.stop") { monitor.stop() }
         handler.removeCallbacksAndMessages(null)
@@ -1292,6 +1413,76 @@ class IslandService : Service() {
         if (rootOn) try { wm.removeView(root) } catch (_: Exception) {}
         super.onDestroy()
     }
+}
+
+/**
+ * Draws a battery icon with a fill level and an optional charging bolt.
+ * Uses the same size as the surrounding 16dp icons.
+ */
+private class BatteryFillDrawable(
+    private val percent: Int,
+    private val charging: Boolean,
+    private val tint: Int
+) : Drawable() {
+
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 1.5f
+    }
+
+    override fun draw(canvas: Canvas) {
+        val b = bounds
+        if (b.isEmpty) return
+        val l = b.left.toFloat() + 2f
+        val t = b.top.toFloat() + 2f
+        val r = b.right.toFloat() - 4f
+        val bt = b.bottom.toFloat() - 2f
+
+        // Body outline
+        stroke.color = tint
+        val body = RectF(l, t, r, bt)
+        canvas.drawRoundRect(body, 3f, 3f, stroke)
+
+        // Nub
+        paint.color = tint
+        canvas.drawRoundRect(RectF(r, t + (bt - t) * 0.3f, r + 3f, bt - (bt - t) * 0.3f), 1f, 1f, paint)
+
+        // Fill
+        val p = percent.coerceIn(0, 100) / 100f
+        if (p > 0f) {
+            paint.color = tint
+            val fl = l + 2f
+            val ft = t + 2f + (bt - t - 4f) * (1f - p)
+            val fr = r - 2f
+            val fb = bt - 2f
+            if (fr > fl && fb > ft) {
+                canvas.drawRoundRect(RectF(fl, ft, fr, fb), 2f, 2f, paint)
+            }
+        }
+
+        // Charging bolt
+        if (charging) {
+            val cx = (l + r) / 2f
+            val cy = (t + bt) / 2f
+            paint.color = if (tint == Color.BLACK) Color.WHITE else Color.BLACK
+            val bolt = Path().apply {
+                moveTo(cx + 1f, cy - 5f)
+                lineTo(cx - 3f, cy + 1f)
+                lineTo(cx - 0.5f, cy + 1f)
+                lineTo(cx - 1f, cy + 5f)
+                lineTo(cx + 3f, cy - 1f)
+                lineTo(cx + 0.5f, cy - 1f)
+                close()
+            }
+            canvas.drawPath(bolt, paint)
+        }
+    }
+
+    override fun setAlpha(alpha: Int) { paint.alpha = alpha; stroke.alpha = alpha }
+    override fun setColorFilter(colorFilter: ColorFilter?) { paint.colorFilter = colorFilter; stroke.colorFilter = colorFilter }
+    @Deprecated("Deprecated in Java")
+    override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 }
 
 private class BevelDrawable(

@@ -32,118 +32,121 @@
 18    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 18-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:10:5-95
 18-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:10:22-92
-19
-20    <queries>
-20-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:12:5-17:15
-21        <intent>
-21-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:13:9-16:18
-22            <action android:name="android.intent.action.MAIN" />
-22-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:13-65
-22-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:21-62
-23
-24            <category android:name="android.intent.category.LAUNCHER" />
-24-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:13-73
-24-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:23-70
-25        </intent>
-26    </queries>
-27
-28    <application
-28-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:19:5-56:19
-29        android:debuggable="true"
-30        android:extractNativeLibs="false"
-31        android:icon="@android:drawable/ic_dialog_info"
-31-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:19:46-93
-32        android:label="DroidIsland"
-32-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:19:18-45
-33        android:theme="@android:style/Theme.Material.NoActionBar" >
-33-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:9-66
-34        <activity
-34-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:21:9-26:20
-35            android:name="com.example.island.MainActivity"
-35-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:21:19-47
-36            android:exported="true" >
-36-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:21:48-71
-37            <intent-filter>
-37-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:13-25:29
-38                <action android:name="android.intent.action.MAIN" />
-38-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:13-65
-38-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:21-62
-39
-40                <category android:name="android.intent.category.LAUNCHER" />
-40-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:13-73
-40-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:23-70
-41            </intent-filter>
-42        </activity>
-43
-44        <receiver
-44-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:27:9-33:20
-45            android:name="com.example.island.BootReceiver"
-45-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:27:19-47
-46            android:exported="true" >
-46-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:27:48-71
-47            <intent-filter>
-47-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:13-32:29
-48                <action android:name="android.intent.action.BOOT_COMPLETED" />
-48-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:29:17-79
-48-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:29:25-76
-49                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-49-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:17-82
-49-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:25-79
-50                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-50-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:17-84
-50-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:25-81
-51            </intent-filter>
-52        </receiver>
-53
-54        <service
-54-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:34:9-75
-55            android:name="com.example.island.IslandService"
-55-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:34:18-47
-56            android:exported="false" />
-56-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:34:48-72
-57        <service
-57-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:9-41:19
-58            android:name="com.example.island.NotifService"
-58-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:18-46
-59            android:exported="true"
-59-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:47-70
-60            android:label="DroidIsland"
-60-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:13-40
-61            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
-61-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:13-87
-62            <intent-filter>
-62-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:13-40:29
-63                <action android:name="android.service.notification.NotificationListenerService" />
-63-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:39:17-99
-63-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:39:25-96
-64            </intent-filter>
-65        </service>
-66
-67        <!-- NEW: accessibility service that hosts the trusted overlay window -->
-68        <service
-68-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:44:9-55:19
-69            android:name="com.example.island.IslandAccessibilityService"
-69-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:45:13-55
-70            android:exported="true"
-70-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:46:13-36
-71            android:label="DroidIsland"
-71-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:47:13-40
-72            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
-72-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:48:13-79
-73            <intent-filter>
-73-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:49:13-51:29
-74                <action android:name="android.accessibilityservice.AccessibilityService" />
-74-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:50:17-92
-74-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:50:25-89
-75            </intent-filter>
-76
-77            <meta-data
-77-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:52:13-54:72
-78                android:name="android.accessibilityservice"
-78-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:53:17-60
-79                android:resource="@xml/accessibility_service_config" />
-79-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:54:17-69
-80        </service>
-81    </application>
-82
-83</manifest>
+19    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+19-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:11:5-75
+19-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:11:22-72
+20
+21    <queries>
+21-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:13:5-18:15
+22        <intent>
+22-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:14:9-17:18
+23            <action android:name="android.intent.action.MAIN" />
+23-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:13-65
+23-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:21-62
+24
+25            <category android:name="android.intent.category.LAUNCHER" />
+25-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:13-73
+25-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:23-70
+26        </intent>
+27    </queries>
+28
+29    <application
+29-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:5-57:19
+30        android:debuggable="true"
+31        android:extractNativeLibs="false"
+32        android:icon="@android:drawable/ic_dialog_info"
+32-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:46-93
+33        android:label="DroidIsland"
+33-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:20:18-45
+34        android:theme="@android:style/Theme.Material.NoActionBar" >
+34-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:21:9-66
+35        <activity
+35-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:9-27:20
+36            android:name="com.example.island.MainActivity"
+36-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:19-47
+37            android:exported="true" >
+37-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:22:48-71
+38            <intent-filter>
+38-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:23:13-26:29
+39                <action android:name="android.intent.action.MAIN" />
+39-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:13-65
+39-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:15:21-62
+40
+41                <category android:name="android.intent.category.LAUNCHER" />
+41-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:13-73
+41-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:16:23-70
+42            </intent-filter>
+43        </activity>
+44
+45        <receiver
+45-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:9-34:20
+46            android:name="com.example.island.BootReceiver"
+46-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:19-47
+47            android:exported="true" >
+47-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:28:48-71
+48            <intent-filter>
+48-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:29:13-33:29
+49                <action android:name="android.intent.action.BOOT_COMPLETED" />
+49-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:17-79
+49-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:30:25-76
+50                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+50-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:17-82
+50-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:31:25-79
+51                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+51-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:17-84
+51-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:32:25-81
+52            </intent-filter>
+53        </receiver>
+54
+55        <service
+55-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:9-75
+56            android:name="com.example.island.IslandService"
+56-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:18-47
+57            android:exported="false" />
+57-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:35:48-72
+58        <service
+58-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:9-42:19
+59            android:name="com.example.island.NotifService"
+59-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:18-46
+60            android:exported="true"
+60-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:36:47-70
+61            android:label="DroidIsland"
+61-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:37:13-40
+62            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
+62-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:38:13-87
+63            <intent-filter>
+63-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:39:13-41:29
+64                <action android:name="android.service.notification.NotificationListenerService" />
+64-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:40:17-99
+64-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:40:25-96
+65            </intent-filter>
+66        </service>
+67
+68        <!-- NEW: accessibility service that hosts the trusted overlay window -->
+69        <service
+69-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:45:9-56:19
+70            android:name="com.example.island.IslandAccessibilityService"
+70-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:46:13-55
+71            android:exported="true"
+71-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:47:13-36
+72            android:label="DroidIsland"
+72-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:48:13-40
+73            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+73-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:49:13-79
+74            <intent-filter>
+74-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:50:13-52:29
+75                <action android:name="android.accessibilityservice.AccessibilityService" />
+75-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:51:17-92
+75-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:51:25-89
+76            </intent-filter>
+77
+78            <meta-data
+78-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:53:13-55:72
+79                android:name="android.accessibilityservice"
+79-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:54:17-60
+80                android:resource="@xml/accessibility_service_config" />
+80-->/home/tibegato/develop/DroidIsland/app/src/main/AndroidManifest.xml:55:17-69
+81        </service>
+82    </application>
+83
+84</manifest>
