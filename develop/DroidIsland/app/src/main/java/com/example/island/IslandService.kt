@@ -1061,13 +1061,10 @@ class IslandService : Service() {
                 batSub.setIfChanged(if (now) "⚡ Charging" else "On battery")
                 updateStatus()
                 if (!wasInit) return
-                // Low-battery alert (20%). The full-charge popup is intentionally gone:
-                // plugging in used to trigger a popup at any percentage, which read as random.
                 if (!now && pct <= 20 && !lowAlerted && Prefs.flag(this@IslandService, "lowBatt")) {
                     lowAlerted = true; openPage(Page.BATTERY, popMs())
                 }
                 if (now || pct > 20) lowAlerted = false
-                // Track full-charge state so it doesn't retry on every tick, but don't open a page.
                 if (now && pct >= 100 && !fullAlerted && Prefs.flag(this@IslandService, "fullBatt")) {
                     fullAlerted = true
                 }
@@ -1210,6 +1207,11 @@ class IslandService : Service() {
         return if (lum > 0.55) Color.BLACK else Color.WHITE
     }
 
+    /**
+     * Sets pill.background. When `showBevel` is true, draws bg + BevelDrawable.
+     * Callers pass `!expanded && barCover == null` so the bevel is only drawn when
+     * the pill is collapsed and the bar cover is off.
+     */
     private fun applyPillBackground(showBevel: Boolean) {
         try {
             val b = baseColor()
@@ -1301,13 +1303,11 @@ class IslandService : Service() {
  * Draws a raised-button bevel: light band on top/left, dark band on bottom/right.
  *
  * Construction: build the outer rounded-rect and the inner rounded-rect (offset by
- * `thickness`), combine with EVEN_ODD fill type to get a 1-thickness ring, clip the
- * canvas to that ring, then paint the whole ring with the light color and overdraw
- * the bottom-right rectangle with the dark color. The diagonal seam happens at
- * (cornerRadius, cornerRadius), which for a pill equals the center of the pill.
- *
- * The ring is exactly `thickness` px wide everywhere, so `thickness = dp(1)` produces
- * a 1dp (1-3 physical px depending on density) border.
+ * `thickness`), combine with EVEN_ODD fill type to get a `thickness`-wide ring, clip
+ * the canvas to that ring, paint the whole ring with the light color, then clip to
+ * the bottom-right quadrant and overdraw with the dark color. The diagonal seam is
+ * at (cornerRadius, cornerRadius), which for a pill equals the pill's horizontal
+ * midline — exactly where a raised button's light/dark boundary belongs.
  */
 private class BevelDrawable(
     private val baseColor: Int,
@@ -1316,7 +1316,7 @@ private class BevelDrawable(
 ) : Drawable() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
-    private val outerPath = Path()
+    private val ring = Path()
 
     override fun draw(canvas: Canvas) {
         val b = bounds
@@ -1328,11 +1328,11 @@ private class BevelDrawable(
         val radius = cornerRadius.coerceAtMost(b.width() / 2f).coerceAtMost(b.height() / 2f)
         val th = thickness.coerceAtMost(radius * 0.9f).coerceAtLeast(0.5f)
 
-        outerPath.reset()
-        outerPath.fillType = Path.FillType.EVEN_ODD
-        outerPath.addRoundRect(l, t, r, bt, radius, radius, Path.Direction.CW)
+        ring.reset()
+        ring.fillType = Path.FillType.EVEN_ODD
+        ring.addRoundRect(l, t, r, bt, radius, radius, Path.Direction.CW)
         val ir = (radius - th).coerceAtLeast(0f)
-        outerPath.addRoundRect(l + th, t + th, r - th, bt - th, ir, ir, Path.Direction.CCW)
+        ring.addRoundRect(l + th, t + th, r - th, bt - th, ir, ir, Path.Direction.CCW)
 
         val lum = (0.299 * Color.red(baseColor) + 0.587 * Color.green(baseColor) + 0.114 * Color.blue(baseColor)) / 255.0
         val lightFactor = when {
@@ -1351,14 +1351,14 @@ private class BevelDrawable(
         val dark = scale(baseColor, darkFactor)
 
         canvas.save()
-        canvas.clipPath(outerPath)
+        canvas.clipPath(ring)
 
-        // Whole ring gets the light color first.
+        // Whole ring first with the light color.
         paint.color = light
         canvas.drawRect(l, t, r, bt, paint)
 
         // Overdraw the bottom-right quadrant with the dark color. The clip keeps this
-        // inside the ring so it only replaces the light band on the bottom/right.
+        // inside the ring, so only the bottom/right band changes.
         canvas.clipRect(l + radius, t + radius, r, bt)
         paint.color = dark
         canvas.drawRect(l, t, r, bt, paint)
