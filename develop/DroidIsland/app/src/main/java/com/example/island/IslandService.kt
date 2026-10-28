@@ -214,8 +214,10 @@ class IslandService : Service() {
     private var wifi = false
     private var cell = false
     private var wifiLevel = 0
+    private var wifiSignal = -1
     private var mobileLabel = ""
     private var cm: ConnectivityManager? = null
+    private var netCb: ConnectivityManager.NetworkCallback? = null
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
     private val screenW get() = resources.displayMetrics.widthPixels
@@ -486,8 +488,6 @@ class IslandService : Service() {
     }
 
     // ---------- connectivity ----------
-    private var netCb: ConnectivityManager.NetworkCallback? = null
-
     private fun registerConnectivityCallback() {
         val m = cm ?: return
         if (netCb != null) return
@@ -495,19 +495,15 @@ class IslandService : Service() {
             override fun onCapabilitiesChanged(network: Network, caps: NetworkCapabilities) {
                 val w = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
                 val c2 = caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                if (w != wifi || c2 != cell) {
-                    wifi = w; cell = c2
-                    handler.post {
-                        if (w) readWifiLevel()
-                        updateStatus()
-                    }
-                } else if (w) {
-                    handler.post { readWifiLevel(); updateStatus() }
+                val sig = if (w) caps.signalStrength else -1
+                if (w != wifi || c2 != cell || sig != wifiSignal) {
+                    wifi = w; cell = c2; wifiSignal = sig
+                    handler.post { updateStatus() }
                 }
             }
             override fun onLost(network: Network) {
                 if (wifi || cell) {
-                    wifi = false; cell = false
+                    wifi = false; cell = false; wifiSignal = -1
                     handler.post { updateStatus() }
                 }
             }
@@ -522,18 +518,16 @@ class IslandService : Service() {
     }
 
     private fun readWifiLevel() {
-        try {
-            val wm = getSystemService(WifiManager::class.java) ?: return
-            @Suppress("DEPRECATION")
-            val info = wm.connectionInfo ?: return
-            val rssi = info.rssi
-            val level = WifiManager.calculateSignalLevel(rssi, 4)
-            if (level != wifiLevel) {
-                wifiLevel = level
-                log("readWifiLevel: rssi=$rssi level=$level")
-            }
-        } catch (t: Throwable) {
-            Log.e(TAG, "readWifiLevel", t)
+        if (wifiSignal < 0) return
+        val level = when (wifiSignal) {
+            0 -> 0
+            1 -> 1
+            2 -> 2
+            else -> 3
+        }
+        if (level != wifiLevel) {
+            wifiLevel = level
+            log("readWifiLevel: signal=$wifiSignal level=$level")
         }
     }
 
@@ -541,7 +535,7 @@ class IslandService : Service() {
         0 -> R.drawable.ic_wifi_0
         1 -> R.drawable.ic_wifi_1
         2 -> R.drawable.ic_wifi_2
-        else -> R.drawable.ic_wifi_4
+        else -> R.drawable.ic_wifi_3
     }
 
     // ---------- wallpaper colors ----------
@@ -1209,14 +1203,12 @@ class IslandService : Service() {
         if (Prefs.flag(this, "netspeed")) views.add(speedTv)
         for ((_, res) in activeIcons()) iconView(res)?.let { views.add(it) }
 
-        // Network section: Wi-Fi icon when on Wi-Fi; otherwise mobile label text.
         if (wifi) {
             views.add(wifiIcon)
         } else if (cell && mobileLabel.isNotEmpty()) {
             views.add(netTypeTv)
         }
 
-        // Battery: icon then percentage text.
         if (Prefs.flag(this, "battery")) {
             views.add(batIcon)
             views.add(batPill)
@@ -1263,28 +1255,23 @@ class IslandService : Service() {
                 else -> ""
             })
 
-            // Battery icon
-            try {
-                batIcon.setImageDrawable(BatteryFillDrawable(pct, charging, fg()))
-            } catch (_: Throwable) {}
+            try { batIcon.setImageDrawable(BatteryFillDrawable(pct, charging, fg())) } catch (_: Throwable) {}
 
-            // Network section
             try {
                 if (wifi) {
                     readWifiLevel()
                     wifiIcon.setImageResource(currentWifiIcon())
                     wifiIcon.setColorFilter(fg())
-                    netTypeTv.visibility = View.GONE
                 } else {
-                    wifiIcon.visibility = View.GONE
-                    if (cell) {
-                        mobileLabel = NetworkTypeHelper.mobileLabel(this)
-                        netTypeTv.text = mobileLabel
-                        netTypeTv.setTextColor(fg())
-                        netTypeTv.visibility = if (mobileLabel.isNotEmpty()) View.VISIBLE else View.GONE
-                    } else {
-                        netTypeTv.visibility = View.GONE
-                    }
+                    wifiIcon.setImageDrawable(null)
+                }
+                if (!wifi && cell) {
+                    mobileLabel = NetworkTypeHelper.mobileLabel(this)
+                    netTypeTv.text = mobileLabel
+                    netTypeTv.setTextColor(fg())
+                } else {
+                    mobileLabel = ""
+                    netTypeTv.text = ""
                 }
             } catch (_: Throwable) {}
 
@@ -1416,15 +1403,13 @@ class IslandService : Service() {
 }
 
 /**
- * Draws a battery icon with a fill level and an optional charging bolt.
- * Uses the same size as the surrounding 16dp icons.
+ * Battery icon with proportional fill and an optional charging bolt.
  */
 private class BatteryFillDrawable(
     private val percent: Int,
     private val charging: Boolean,
     private val tint: Int
 ) : Drawable() {
-
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -1439,16 +1424,12 @@ private class BatteryFillDrawable(
         val r = b.right.toFloat() - 4f
         val bt = b.bottom.toFloat() - 2f
 
-        // Body outline
         stroke.color = tint
-        val body = RectF(l, t, r, bt)
-        canvas.drawRoundRect(body, 3f, 3f, stroke)
+        canvas.drawRoundRect(RectF(l, t, r, bt), 3f, 3f, stroke)
 
-        // Nub
         paint.color = tint
         canvas.drawRoundRect(RectF(r, t + (bt - t) * 0.3f, r + 3f, bt - (bt - t) * 0.3f), 1f, 1f, paint)
 
-        // Fill
         val p = percent.coerceIn(0, 100) / 100f
         if (p > 0f) {
             paint.color = tint
@@ -1461,7 +1442,6 @@ private class BatteryFillDrawable(
             }
         }
 
-        // Charging bolt
         if (charging) {
             val cx = (l + r) / 2f
             val cy = (t + bt) / 2f
@@ -1490,7 +1470,6 @@ private class BevelDrawable(
     private val cornerRadius: Float,
     private val thickness: Float
 ) : Drawable() {
-
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val ring = Path()
 

@@ -8,10 +8,6 @@ import android.util.Log
 object NetworkTypeHelper {
     private const val TAG = "NetworkType"
 
-    /**
-     * Returns a short label like "5G", "LTE", "3G", "2G", or "" if unknown.
-     * Requires READ_PHONE_STATE on most devices to read dataNetworkType.
-     */
     fun mobileLabel(c: Context): String {
         return try {
             val tm = c.getSystemService(TelephonyManager::class.java) ?: return ""
@@ -37,7 +33,7 @@ object NetworkTypeHelper {
                 TelephonyManager.NETWORK_TYPE_CDMA,
                 TelephonyManager.NETWORK_TYPE_1xRTT,
                 TelephonyManager.NETWORK_TYPE_IDEN -> "2G"
-                else -> ""
+                else -> "Cell"
             }
         } catch (t: Throwable) {
             Log.e(TAG, "mobileLabel failed", t)

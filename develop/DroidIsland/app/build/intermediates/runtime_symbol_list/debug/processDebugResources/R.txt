@@ -15,7 +15,8 @@ int drawable ic_wifi 0x7f01000d
 int drawable ic_wifi_0 0x7f01000e
 int drawable ic_wifi_1 0x7f01000f
 int drawable ic_wifi_2 0x7f010010
-int drawable ic_wifi_4 0x7f010011
-int drawable ic_wifi_level 0x7f010012
+int drawable ic_wifi_3 0x7f010011
+int drawable ic_wifi_4 0x7f010012
+int drawable ic_wifi_level 0x7f010013
 int string a11y_description 0x7f020000
 int xml accessibility_service_config 0x7f030000

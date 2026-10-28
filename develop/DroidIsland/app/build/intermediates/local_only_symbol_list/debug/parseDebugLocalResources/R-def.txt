@@ -17,6 +17,7 @@ drawable ic_wifi
 drawable ic_wifi_0
 drawable ic_wifi_1
 drawable ic_wifi_2
+drawable ic_wifi_3
 drawable ic_wifi_4
 drawable ic_wifi_level
 string a11y_description

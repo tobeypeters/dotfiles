@@ -39,6 +39,7 @@ class MainActivity : Activity() {
     private lateinit var overlayVal: TextView
     private lateinit var notifVal: TextView
     private lateinit var a11yVal: TextView
+    private lateinit var phoneVal: TextView
     private lateinit var runVal: TextView
     private lateinit var battVal: TextView
     private lateinit var iconsVal: TextView
@@ -227,10 +228,15 @@ class MainActivity : Activity() {
     }
 
     private fun startIsland() {
+        val perms = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+            perms.add(Manifest.permission.POST_NOTIFICATIONS)
         }
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            perms.add(Manifest.permission.READ_PHONE_STATE)
+        }
+        if (perms.isNotEmpty()) requestPermissions(perms.toTypedArray(), 1)
         if (Settings.canDrawOverlays(this)) startForegroundService(Intent(this, IslandService::class.java))
         else Toast.makeText(this, "Grant 'Draw over apps' first", Toast.LENGTH_SHORT).show()
         window.decorView.postDelayed({ refresh() }, 600)
@@ -270,6 +276,12 @@ class MainActivity : Activity() {
         a11yVal = permRow(setup, "Accessibility service",
             "Required for reliable touches on Android 12+. Enable DroidIsland in the list.", "Grant") {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+        phoneVal = permRow(setup, "Phone state",
+            "Reads the mobile network type (5G / LTE / 3G / 2G)", "Grant") {
+            if (Build.VERSION.SDK_INT >= 23) {
+                requestPermissions(arrayOf(Manifest.permission.READ_PHONE_STATE), 2)
+            }
         }
         note(setup, "If touches on the island feel flaky or only work in some spots, " +
             "the accessibility service fixes that. It is only used to host the island window — " +
@@ -319,29 +331,24 @@ class MainActivity : Activity() {
         // ----- appearance -----
         val look = card("Appearance", col)
 
-        // Preset palette (shades)
         look.addView(tx("Preset colors", 14f).apply { setPadding(0, dp(10), 0, dp(4)) })
         presetRow = swatchRow(look, "preset")
         buildSwatches(presetRow, "preset")
 
-        // Second row: black, white, grey
         look.addView(tx("Basics", 14f).apply { setPadding(0, dp(10), 0, dp(4)) })
         presetBaseRow = swatchRow(look, "base")
         buildSwatches(presetBaseRow, "base")
 
-        // Wallpaper primary colors
         look.addView(tx("Wallpaper Primary Colors", 14f).apply { setPadding(0, dp(14), 0, dp(4)) })
         note(look, "Pulled from the current wallpaper. Recalculated on startup and when the wallpaper changes.")
         wpRow = swatchRow(look, "wallpaper")
         buildSwatches(wpRow, "wallpaper")
 
-        // Current color
         look.addView(tx("Current", 14f).apply { setPadding(0, dp(14), 0, dp(4)) })
         note(look, "The color currently applied to the island.")
         currentRow = swatchRow(look, "current")
         buildSwatches(currentRow, "current")
 
-        // Glass / font / roundness still apply
         flagToggle(look, "glass", "Glass", "See-through island that blends with the color above")
         slider(look, "Glass transparency", 80, Prefs.glassT(this), "%") { Prefs.setGlassT(this, it); push() }
         slider(look, "Text size", 18, Prefs.int(this, "font"), "sp", 9) { Prefs.setInt(this, "font", it); push() }
@@ -353,12 +360,12 @@ class MainActivity : Activity() {
             "network speed, and notification icons.")
         listOf(
             Triple("clock", "Clock", "Time in the island"),
-            Triple("battery", "Battery", "Percent and charging bolt in the island"),
+            Triple("battery", "Battery", "Percent, icon and charging bolt"),
             Triple("date", "Date", "Weekday and date"),
             Triple("notifIcons", "Notification icons", "Icons of pending notifications"),
             Triple("netspeed", "Network speed", "Live download speed"),
-            Triple("wifi", "Wi-Fi", "When Wi-Fi is the active connection"),
-            Triple("cell", "Mobile data", "When mobile data is the active connection"),
+            Triple("wifi", "Wi-Fi", "Signal-level icon when Wi-Fi is the active connection"),
+            Triple("cell", "Mobile data", "5G / LTE / 3G / 2G label when mobile data is the active connection"),
             Triple("bt", "Bluetooth", "When Bluetooth is on"),
             Triple("airplane", "Airplane mode", "When airplane mode is on"),
             Triple("dnd", "Do Not Disturb", "When a Do Not Disturb mode is active"),
@@ -385,7 +392,7 @@ class MainActivity : Activity() {
         flagToggle(beh, "hideText", "Hide notification text", "Show only the app name in pop-ups")
         flagToggle(beh, "haptic", "Haptic feedback", "Tiny vibration when the island opens")
         flagToggle(beh, "lowBatt", "Low battery alert", "Open the battery page at 20%")
-        flagToggle(beh, "fullBatt", "Full charge alert", "Open the battery page at 100% while charging")
+        flagToggle(beh, "fullBatt", "Full charge alert", "Track state at 100% (no popup)")
         flagToggle(beh, "hideLand", "Hide in landscape", "Hide the island when the screen is rotated")
         slider(beh, "Pop-up time", 15, Prefs.int(this, "popms"), "s", 2) { Prefs.setInt(this, "popms", it) }
         slider(beh, "Auto-close time", 20, Prefs.int(this, "idlems"), "s", 3) { Prefs.setInt(this, "idlems", it) }
@@ -509,6 +516,9 @@ class MainActivity : Activity() {
         status(a11yVal, isAccessibilityServiceEnabled(),
             "✓ Enabled — touches work everywhere",
             "✗ Not enabled — touches may be filtered by the system")
+        status(phoneVal,
+            checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED,
+            "✓ Granted", "✗ Not granted")
         status(battVal, getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(packageName),
             "✓ Unrestricted", "✗ Restricted (may stop after idle or restart)")
         status(usageVal, UsageAccess.granted(this), "✓ Usage access granted", "✗ Usage access not granted")

@@ -1,27 +1,23 @@
 [
     {
-        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_silent.xml.flat",
-        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_silent.xml"
-    },
-    {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_airplane.xml.flat",
         "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_airplane.xml"
+    },
+    {
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_silent.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_silent.xml"
     },
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_vpn.xml.flat",
         "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_vpn.xml"
     },
     {
-        "merged": "com.example.island.app-debug-4:/drawable_ic_wifi_1.xml.flat",
-        "source": "com.example.island.app-main-6:/drawable/ic_wifi_1.xml"
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_wifi_0.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_wifi_0.xml"
     },
     {
-        "merged": "com.example.island.app-debug-4:/drawable_ic_wifi_2.xml.flat",
-        "source": "com.example.island.app-main-6:/drawable/ic_wifi_2.xml"
-    },
-    {
-        "merged": "com.example.island.app-debug-4:/drawable_ic_wifi_0.xml.flat",
-        "source": "com.example.island.app-main-6:/drawable/ic_wifi_0.xml"
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_wifi_4.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_wifi_4.xml"
     },
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_dnd.xml.flat",
@@ -44,12 +40,12 @@
         "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_bt.xml"
     },
     {
-        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/xml_accessibility_service_config.xml.flat",
-        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/xml/accessibility_service_config.xml"
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_wifi_1.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_wifi_1.xml"
     },
     {
-        "merged": "com.example.island.app-debug-4:/drawable_ic_wifi_4.xml.flat",
-        "source": "com.example.island.app-main-6:/drawable/ic_wifi_4.xml"
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/xml_accessibility_service_config.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/xml/accessibility_service_config.xml"
     },
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_wifi_level.xml.flat",
@@ -58,6 +54,10 @@
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_location.xml.flat",
         "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_location.xml"
+    },
+    {
+        "merged": "com.example.island.app-debug-4:/drawable_ic_wifi_3.xml.flat",
+        "source": "com.example.island.app-main-6:/drawable/ic_wifi_3.xml"
     },
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_battery_fill.xml.flat",
@@ -70,6 +70,10 @@
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_vibrate.xml.flat",
         "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_vibrate.xml"
+    },
+    {
+        "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_wifi_2.xml.flat",
+        "source": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-main-6:/drawable/ic_wifi_2.xml"
     },
     {
         "merged": "/home/tibegato/.gradle/daemon/8.7/com.example.island.app-debug-4:/drawable_ic_alarm.xml.flat",

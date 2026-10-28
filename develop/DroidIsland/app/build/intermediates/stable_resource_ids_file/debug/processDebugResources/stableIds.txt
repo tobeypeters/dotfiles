@@ -1,5 +1,6 @@
 com.example.island:string/a11y_description = 0x7f020000
-com.example.island:drawable/ic_wifi_level = 0x7f010012
+com.example.island:drawable/ic_wifi_level = 0x7f010013
+com.example.island:drawable/ic_wifi_3 = 0x7f010011
 com.example.island:drawable/ic_wifi_0 = 0x7f01000e
 com.example.island:xml/accessibility_service_config = 0x7f030000
 com.example.island:drawable/ic_vpn = 0x7f01000c
@@ -7,7 +8,7 @@ com.example.island:drawable/ic_vibrate = 0x7f01000b
 com.example.island:drawable/ic_alarm = 0x7f010001
 com.example.island:drawable/ic_silent = 0x7f01000a
 com.example.island:drawable/ic_saver = 0x7f010009
-com.example.island:drawable/ic_wifi_4 = 0x7f010011
+com.example.island:drawable/ic_wifi_4 = 0x7f010012
 com.example.island:drawable/ic_wifi_2 = 0x7f010010
 com.example.island:drawable/ic_location = 0x7f010008
 com.example.island:drawable/ic_wifi_1 = 0x7f01000f
