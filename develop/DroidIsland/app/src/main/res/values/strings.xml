@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="a11y_description">DroidIsland uses this service only to host the island window above the status bar. It does not read screen content or control other apps.</string>
+</resources>

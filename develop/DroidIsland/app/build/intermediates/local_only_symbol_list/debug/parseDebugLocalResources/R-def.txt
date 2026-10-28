@@ -1,0 +1,15 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_airplane
+drawable ic_alarm
+drawable ic_bt
+drawable ic_cell
+drawable ic_dnd
+drawable ic_location
+drawable ic_saver
+drawable ic_silent
+drawable ic_vibrate
+drawable ic_vpn
+drawable ic_wifi
+string a11y_description
+xml accessibility_service_config
