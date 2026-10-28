@@ -1055,20 +1055,19 @@ class IslandService : Service() {
                 val st = i.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
                 val now = st == BatteryManager.BATTERY_STATUS_CHARGING || st == BatteryManager.BATTERY_STATUS_FULL
                 if (batInit && newPct == pct && now == charging) return
-                val justPlugged = now && !charging && batInit
                 val wasInit = batInit
                 pct = newPct; charging = now; batInit = true
                 batTv.setIfChanged("$pct%")
                 batSub.setIfChanged(if (now) "⚡ Charging" else "On battery")
                 updateStatus()
                 if (!wasInit) return
-                if (justPlugged) { openPage(Page.BATTERY, 3000); return }
+                // Low-battery alert (20%). The full-charge popup is intentionally gone:
+                // plugging in used to trigger a popup at any percentage, which read as random.
                 if (!now && pct <= 20 && !lowAlerted && Prefs.flag(this@IslandService, "lowBatt")) {
                     lowAlerted = true; openPage(Page.BATTERY, popMs())
                 }
                 if (now || pct > 20) lowAlerted = false
-                // Battery-full popup removed: the island stays put when the battery hits 100%.
-                // fullAlerted still gets set so we don't retry, but no page is opened.
+                // Track full-charge state so it doesn't retry on every tick, but don't open a page.
                 if (now && pct >= 100 && !fullAlerted && Prefs.flag(this@IslandService, "fullBatt")) {
                     fullAlerted = true
                 }
@@ -1220,7 +1219,7 @@ class IslandService : Service() {
             if (showBevel) {
                 val bevel = BevelDrawable(
                     baseColor = Color.argb(a, Color.red(b), Color.green(b), Color.blue(b)),
-                    radius = collapsedR(),
+                    cornerRadius = collapsedR(),
                     thickness = dp(1).toFloat()
                 )
                 pill.background = LayerDrawable(arrayOf(bg, bevel))
@@ -1300,28 +1299,40 @@ class IslandService : Service() {
 
 /**
  * Draws a raised-button bevel: light band on top/left, dark band on bottom/right.
- * Bounds are converted to Float locals at the top of draw() so the rest of the
- * method never mixes Int and Float arithmetic.
+ *
+ * Construction: build the outer rounded-rect and the inner rounded-rect (offset by
+ * `thickness`), combine with EVEN_ODD fill type to get a 1-thickness ring, clip the
+ * canvas to that ring, then paint the whole ring with the light color and overdraw
+ * the bottom-right rectangle with the dark color. The diagonal seam happens at
+ * (cornerRadius, cornerRadius), which for a pill equals the center of the pill.
+ *
+ * The ring is exactly `thickness` px wide everywhere, so `thickness = dp(1)` produces
+ * a 1dp (1-3 physical px depending on density) border.
  */
 private class BevelDrawable(
     private val baseColor: Int,
-    private val radius: Float,
+    private val cornerRadius: Float,
     private val thickness: Float
 ) : Drawable() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
-    private val path = Path()
+    private val outerPath = Path()
 
     override fun draw(canvas: Canvas) {
         val b = bounds
         if (b.isEmpty) return
-
         val l = b.left.toFloat()
         val t = b.top.toFloat()
         val r = b.right.toFloat()
         val bt = b.bottom.toFloat()
-        val rad = radius.coerceAtMost(b.width() / 2f).coerceAtMost(b.height() / 2f)
-        val th = thickness
+        val radius = cornerRadius.coerceAtMost(b.width() / 2f).coerceAtMost(b.height() / 2f)
+        val th = thickness.coerceAtMost(radius * 0.9f).coerceAtLeast(0.5f)
+
+        outerPath.reset()
+        outerPath.fillType = Path.FillType.EVEN_ODD
+        outerPath.addRoundRect(l, t, r, bt, radius, radius, Path.Direction.CW)
+        val ir = (radius - th).coerceAtLeast(0f)
+        outerPath.addRoundRect(l + th, t + th, r - th, bt - th, ir, ir, Path.Direction.CCW)
 
         val lum = (0.299 * Color.red(baseColor) + 0.587 * Color.green(baseColor) + 0.114 * Color.blue(baseColor)) / 255.0
         val lightFactor = when {
@@ -1339,33 +1350,20 @@ private class BevelDrawable(
         val light = scale(baseColor, lightFactor)
         val dark = scale(baseColor, darkFactor)
 
-        // Top-left light band
-        path.reset()
-        path.moveTo(l + rad, t)
-        path.lineTo(r - rad, t)
-        path.quadTo(r, t, r, t + rad)
-        path.lineTo(r - th, t + th + rad * 0.3f)
-        path.lineTo(l + th + rad * 0.3f, t + th + rad * 0.3f)
-        path.quadTo(l + th, t + rad * 0.3f, l + th, t + rad)
-        path.lineTo(l, t + rad)
-        path.quadTo(l, t, l + rad, t)
-        path.close()
-        paint.color = light
-        canvas.drawPath(path, paint)
+        canvas.save()
+        canvas.clipPath(outerPath)
 
-        // Bottom-right dark band
-        path.reset()
-        path.moveTo(l, bt - rad)
-        path.lineTo(l, bt - rad * 0.3f)
-        path.lineTo(l + th + rad * 0.3f, bt - th - rad * 0.3f)
-        path.lineTo(r - th - rad * 0.3f, bt - th - rad * 0.3f)
-        path.quadTo(r - th, bt - rad * 0.3f, r - th, bt - rad)
-        path.lineTo(r - rad, bt)
-        path.lineTo(l + rad, bt)
-        path.quadTo(l, bt, l, bt - rad)
-        path.close()
+        // Whole ring gets the light color first.
+        paint.color = light
+        canvas.drawRect(l, t, r, bt, paint)
+
+        // Overdraw the bottom-right quadrant with the dark color. The clip keeps this
+        // inside the ring so it only replaces the light band on the bottom/right.
+        canvas.clipRect(l + radius, t + radius, r, bt)
         paint.color = dark
-        canvas.drawPath(path, paint)
+        canvas.drawRect(l, t, r, bt, paint)
+
+        canvas.restore()
     }
 
     private fun scale(argb: Int, factor: Double): Int {
