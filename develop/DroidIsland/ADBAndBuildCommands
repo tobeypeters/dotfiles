@@ -1,4 +1,0 @@
-./gradlew assembleDebug
-./gradlew installDebug
-
-adb shell pm grant com.example.island android.permission.WRITE_SECURE_SETTINGS
