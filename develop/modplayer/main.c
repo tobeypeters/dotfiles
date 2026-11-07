@@ -53,6 +53,14 @@
 #define LIST_TOP_PAD 24
 #define LIST_BOT_PAD 2
 
+/* Position indicator geometry inside the status panel */
+#define PROG_LEFT_PAD   10
+#define PROG_RIGHT_PAD  10
+#define PROG_Y_OFFSET   78
+#define PROG_TRACK_H    6
+#define PROG_GRIP_W     14
+#define PROG_GRIP_H     14
+
 static const SDL_Color COL_BG         = { 70,  85, 110, 255};
 static const SDL_Color COL_PANEL      = { 55,  70,  95, 255};
 static const SDL_Color COL_BORDER_LT  = {130, 145, 165, 255};
@@ -68,6 +76,8 @@ static const SDL_Color COL_MENU_HOVER = { 80, 100, 140, 255};
 static const SDL_Color COL_TITLE_BG   = { 30,  40,  60, 255};
 static const SDL_Color COL_SCROLL_TRACK = { 30,  40,  60, 255};
 static const SDL_Color COL_SCROLL_BAR   = { 110, 130, 170, 255};
+static const SDL_Color COL_GRIP          = {170, 190, 220, 255};
+static const SDL_Color COL_GRIP_LINE     = { 30,  40,  60, 255};
 
 static xmp_context ctx = NULL;
 static int16_t audio_buffer[BUFFER_SIZE * 2];
@@ -85,6 +95,8 @@ static int mouse_x = 0, mouse_y = 0;
 static int list_scroll_offset = 0;
 static int dragging_list = 0;
 static int drag_offset_y = 0;
+
+static int dragging_pos = 0;    /* dragging the position gripper */
 
 static char current_dir[PATH_MAX] = ".";
 static char file_list[256][512];
@@ -397,6 +409,50 @@ static ListGeom current_list_geom(struct xmp_module_info *mi) {
     return g;
 }
 
+/* --- Position indicator helpers --- */
+static void pos_track_bounds(int stat_x, int stat_w, int *out_track_x, int *out_track_w) {
+    *out_track_x = stat_x + PROG_LEFT_PAD;
+    *out_track_w = stat_w - PROG_LEFT_PAD - PROG_RIGHT_PAD;
+    if (*out_track_w < PROG_GRIP_W + 4) *out_track_w = PROG_GRIP_W + 4;
+}
+static int pos_origin_y(int stat_y) {
+    return stat_y + PROG_Y_OFFSET;
+}
+static int pos_grip_x(int track_x, int track_w, float progress) {
+    if (progress < 0) progress = 0;
+    if (progress > 1) progress = 1;
+    int usable = track_w - PROG_GRIP_W;
+    if (usable < 1) usable = 1;
+    return track_x + (int)(progress * usable + 0.5f);
+}
+static void draw_position_indicator(SDL_Renderer *r, int stat_x, int stat_w, float progress) {
+    int track_x, track_w;
+    pos_track_bounds(stat_x, stat_w, &track_x, &track_w);
+    int base_y = pos_origin_y(STAT_Y);
+
+    /* Thin sunken track */
+    int track_top = base_y + (PROG_GRIP_H - PROG_TRACK_H) / 2;
+    SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
+    SDL_Rect trk = {track_x, track_top, track_w, PROG_TRACK_H};
+    SDL_RenderFillRect(r, &trk);
+    draw_bevel(r, track_x, track_top, track_w, PROG_TRACK_H, 1);
+
+    /* Gripper box */
+    int gx = pos_grip_x(track_x, track_w, progress);
+    int gy = base_y;
+    SDL_SetRenderDrawColor(r, COL_GRIP.r, COL_GRIP.g, COL_GRIP.b, 255);
+    SDL_Rect grip = {gx, gy, PROG_GRIP_W, PROG_GRIP_H};
+    SDL_RenderFillRect(r, &grip);
+    draw_bevel(r, gx, gy, PROG_GRIP_W, PROG_GRIP_H, 0);
+
+    /* Three vertical grip lines */
+    SDL_SetRenderDrawColor(r, COL_GRIP_LINE.r, COL_GRIP_LINE.g, COL_GRIP_LINE.b, 255);
+    for (int i = 1; i <= 3; i++) {
+        int lx = gx + (PROG_GRIP_W * i) / 4;
+        SDL_RenderDrawLine(r, lx, gy + 3, lx, gy + PROG_GRIP_H - 4);
+    }
+}
+
 int main(int argc, char *argv[]) {
     signal(SIGSEGV, segv_handler);
     
@@ -437,12 +493,33 @@ int main(int argc, char *argv[]) {
 
         ListGeom lg = current_list_geom(&mi);
 
+        int stat_x = 340;
+        int stat_right = PANEL_X + PANEL_W;
+        int stat_w = stat_right - stat_x;
+        if (stat_w < 1) stat_w = 1;
+
+        int track_x, track_w;
+        pos_track_bounds(stat_x, stat_w, &track_x, &track_w);
+        int base_y = pos_origin_y(STAT_Y);
+
         while (SDL_PollEvent(&ev)) {
             if (ev.type == SDL_QUIT) running = 0;
             
             else if (ev.type == SDL_MOUSEMOTION) {
                 mouse_x = ev.motion.x;
                 mouse_y = ev.motion.y;
+
+                /* Position indicator drag */
+                if (dragging_pos && is_playing && fi.total_time > 0) {
+                    float usable = (float)(track_w - PROG_GRIP_W);
+                    if (usable < 1) usable = 1;
+                    float rel = (float)(mouse_x - track_x - PROG_GRIP_W / 2);
+                    if (rel < 0) rel = 0;
+                    if (rel > usable) rel = usable;
+                    float frac = rel / usable;
+                    int new_time_ms = (int)(frac * fi.total_time);
+                    xmp_seek_time(ctx, new_time_ms);
+                }
                 
                 if (dragging_list && lg.has_list && lg.max_scroll > 0 && lg.rows_visible > 0) {
                     int bar_h = (int)((float)lg.rows_visible / lg.total_items * lg.box_h);
@@ -481,6 +558,7 @@ int main(int argc, char *argv[]) {
             }
             else if (ev.type == SDL_MOUSEBUTTONUP && ev.button.button == SDL_BUTTON_LEFT) {
                 dragging_list = 0;
+                dragging_pos = 0;
             }
             else if (ev.type == SDL_MOUSEWHEEL) {
                 if (is_hover(mouse_x, mouse_y, PANEL_X, BOX_Y, PANEL_W, PANEL_H)) {
@@ -493,7 +571,25 @@ int main(int argc, char *argv[]) {
                 int mx = ev.button.x;
                 int my = ev.button.y;
 
-                if (lg.has_list && lg.max_scroll > 0 && lg.rows_visible > 0 &&
+                /* Position indicator: grab the gripper or click the track */
+                if (is_playing && fi.total_time > 0 &&
+                    my >= base_y && my <= base_y + PROG_GRIP_H) {
+                    float progress = fi.total_time > 0 ? (float)fi.time / fi.total_time : 0;
+                    int gx = pos_grip_x(track_x, track_w, progress);
+                    if (mx >= gx && mx <= gx + PROG_GRIP_W) {
+                        dragging_pos = 1;
+                    } else if (mx >= track_x && mx <= track_x + track_w) {
+                        float usable = (float)(track_w - PROG_GRIP_W);
+                        if (usable < 1) usable = 1;
+                        float rel = (float)(mx - track_x - PROG_GRIP_W / 2);
+                        if (rel < 0) rel = 0;
+                        if (rel > usable) rel = usable;
+                        float frac = rel / usable;
+                        xmp_seek_time(ctx, (int)(frac * fi.total_time));
+                        dragging_pos = 1;
+                    }
+                }
+                else if (lg.has_list && lg.max_scroll > 0 && lg.rows_visible > 0 &&
                     is_hover(mx, my, PANEL_X + PANEL_W - 12, lg.box_top, 12, lg.box_h)) {
                     int bar_h = (int)((float)lg.rows_visible / lg.total_items * lg.box_h);
                     if (bar_h < 8) bar_h = 8;
@@ -659,11 +755,7 @@ int main(int argc, char *argv[]) {
             draw_text(renderer, 20, INFO_Y + 30, "Use File > Load (L)", COL_TEXT_DIM);
         }
 
-        int stat_x = 340;
-        int stat_right = PANEL_X + PANEL_W;
-        int stat_w = stat_right - stat_x;
-        if (stat_w < 1) stat_w = 1;
-
+        /* --- Status panel with new position indicator --- */
         SDL_Rect stat_bg = {stat_x, STAT_Y, stat_w, STAT_H};
         SDL_SetRenderDrawColor(renderer, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
         SDL_RenderFillRect(renderer, &stat_bg);
@@ -679,18 +771,12 @@ int main(int argc, char *argv[]) {
             draw_text(renderer, stat_x + 10, STAT_Y + 30, status, COL_TEXT_WHITE);
             snprintf(status, sizeof(status), "Spd: %d    BPM: %d", fi.speed, fi.bpm);
             draw_text(renderer, stat_x + 10, STAT_Y + 50, status, COL_TEXT_WHITE);
-            
-            SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
-            SDL_Rect prog_bg = {stat_x + 10, STAT_Y + 80, stat_w - 20, 10};
-            SDL_RenderFillRect(renderer, &prog_bg);
-            if (fi.total_time > 0) {
-                float progress = (float)fi.time / fi.total_time;
-                SDL_SetRenderDrawColor(renderer, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
-                SDL_Rect prog_fg = {stat_x + 10, STAT_Y + 80, (int)((stat_w - 20) * progress), 10};
-                SDL_RenderFillRect(renderer, &prog_fg);
-            }
+
+            float progress = (fi.total_time > 0) ? (float)fi.time / fi.total_time : 0;
+            draw_position_indicator(renderer, stat_x, stat_w, progress);
         }
 
+        /* --- Scopes --- */
         SDL_LockMutex(vis_mutex);
         int16_t scope_buf[BUFFER_SIZE * 2];
         memcpy(scope_buf, vis_buffer, sizeof(scope_buf));
@@ -721,6 +807,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        /* --- VU meters --- */
         SDL_LockMutex(vis_mutex);
         float peaks[4];
         memcpy(peaks, channel_peak, sizeof(peaks));
@@ -745,6 +832,7 @@ int main(int argc, char *argv[]) {
             SDL_RenderFillRect(renderer, &bar);
         }
 
+        /* --- Pattern grid --- */
         int num_ch = GRID_COLS;
         if (is_playing && mi.mod && mi.mod->chn > 0 && mi.mod->chn < GRID_COLS) {
             num_ch = mi.mod->chn;
@@ -821,6 +909,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        /* --- Instrument / Sample panel --- */
         int combined = 0;
         if (is_playing && mi.mod && mi.mod->xxi && mi.mod->xxs &&
             mi.mod->ins == mi.mod->smp && mi.mod->smp > 0) {
