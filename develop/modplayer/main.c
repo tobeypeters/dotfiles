@@ -42,6 +42,7 @@ int mouse_x = 0, mouse_y = 0;
 
 static char playlist_config_dir[PATH_MAX - 16] = "";
 static char playlist_config_file[PATH_MAX] = "";
+static char last_played_file[PATH_MAX] = "";
 
 xmp_context ctx = NULL;
 static int16_t audio_buffer[BUFFER_SIZE * 2];
@@ -78,6 +79,9 @@ static void watch_resync_playlist(void);
 static void load_module(const char *filepath);
 static void stop_and_unload(void);
 static void playlist_editor_handle_click(int mx, int my, int clicks, int mod);
+static void playlist_editor_scroll_to_focus(void);
+static void playlist_resolve_config_paths(void);
+static int  playlist_index_of_path(const char *p);
 
 static void segv_handler(int sig) {
     void *bt[32];
@@ -90,21 +94,50 @@ static void segv_handler(int sig) {
 
 static void dialog_begin(void) {
     SDL_PauseAudioDevice(dev, 1);
-    /* Wait for any in-flight audio callback to finish. */
     SDL_LockAudioDevice(dev);
     SDL_UnlockAudioDevice(dev);
 }
 
 static void dialog_end(void) {
-    /* Discard any events accumulated while the dialog was on top. */
     SDL_Event discard;
     while (SDL_PollEvent(&discard)) { }
     SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
     if (!paused) SDL_PauseAudioDevice(dev, 0);
 }
 
-/* Full teardown. Uses SDL_LockAudioDevice so we synchronously wait for
-   any in-flight audio callback to finish before touching ctx. */
+/* ---- last-played file persistence ---- */
+
+static void last_played_path(char *out, size_t outsz) {
+    playlist_resolve_config_paths();
+    snprintf(out, outsz, "%s/last.txt", playlist_config_dir);
+}
+
+static void load_last_played(void) {
+    char path[PATH_MAX];
+    last_played_path(path, sizeof(path));
+    last_played_file[0] = '\0';
+    FILE *f = fopen(path, "r");
+    if (!f) return;
+    if (fgets(last_played_file, sizeof(last_played_file), f)) {
+        size_t n = strlen(last_played_file);
+        while (n > 0 && (last_played_file[n-1] == '\n' || last_played_file[n-1] == '\r'))
+            last_played_file[--n] = '\0';
+    }
+    fclose(f);
+}
+
+static void save_last_played(const char *path) {
+    if (!path || !path[0]) return;
+    char file[PATH_MAX];
+    last_played_path(file, sizeof(file));
+    FILE *f = fopen(file, "w");
+    if (!f) return;
+    fprintf(f, "%s\n", path);
+    fclose(f);
+}
+
+/* ---- stop/load ---- */
+
 static void stop_and_unload(void) {
     SDL_PauseAudioDevice(dev, 1);
     SDL_LockAudioDevice(dev);
@@ -117,9 +150,6 @@ static void stop_and_unload(void) {
     }
     is_playing = 0;
 
-    /* Clear visual state so the wave/mini-scope render flat lines when
-       nothing is playing (or when we're about to load a new module while
-       paused, so the previous module's last samples don't persist). */
     memset(vis_buffer, 0, sizeof(vis_buffer));
     memset(channel_peak, 0, sizeof(channel_peak));
 
@@ -128,8 +158,6 @@ static void stop_and_unload(void) {
     current_file[0] = '\0';
 }
 
-/* Load a module. Full stop → rebuild. Holds the audio device lock across
-   the whole sequence so no audio callback can start with a half-built ctx. */
 static void load_module(const char *filepath) {
     if (!filepath || !filepath[0]) return;
 
@@ -163,15 +191,45 @@ static void load_module(const char *filepath) {
     list_scroll_offset = 0;
     snprintf(current_file, sizeof(current_file), "%s", filepath);
 
-    /* Fresh module: reset visual state again in case a paused load leaves
-       stale samples from the previous module visible. */
     memset(vis_buffer, 0, sizeof(vis_buffer));
     memset(channel_peak, 0, sizeof(channel_peak));
 
     SDL_UnlockMutex(vis_mutex);
     SDL_UnlockAudioDevice(dev);
 
+    save_last_played(filepath);
+
     if (!paused) SDL_PauseAudioDevice(dev, 0);
+}
+
+static int load_first_playlist_item(void) {
+    for (int i = 0; i < playlist_view_count; i++) {
+        int p_idx = playlist_view[i];
+        struct stat st;
+        if (stat(playlist[p_idx].path, &st) == 0) {
+            load_module(playlist[p_idx].path);
+            playlist_focus = p_idx;
+            playlist_anchor = p_idx;
+            for (int k = 0; k < playlist_count; k++) playlist_selected[k] = 0;
+            playlist_selected[p_idx] = 1;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int load_last_played_if_in_playlist(void) {
+    if (!last_played_file[0]) return 0;
+    int idx = playlist_index_of_path(last_played_file);
+    if (idx < 0) return 0;
+    struct stat st;
+    if (stat(playlist[idx].path, &st) != 0) return 0;
+    load_module(playlist[idx].path);
+    playlist_focus = idx;
+    playlist_anchor = idx;
+    for (int k = 0; k < playlist_count; k++) playlist_selected[k] = 0;
+    playlist_selected[idx] = 1;
+    return 1;
 }
 
 void audio_callback(void *ud, Uint8 *stream, int len) {
@@ -531,6 +589,49 @@ static void pick_and_load_module(void) {
     dialog_in_progress = 0;
 }
 
+/* Ensure the currently-playing (or last-focused) item is scrolled into view
+   when the playlist editor opens. Called once on open. */
+static void playlist_editor_scroll_to_focus(void) {
+    if (playlist_view_count == 0) return;
+
+    int target = -1;
+    if (current_file[0])
+        target = playlist_index_of_path(current_file);
+    if (target < 0 && last_played_file[0])
+        target = playlist_index_of_path(last_played_file);
+    if (target < 0 && playlist_focus >= 0 && playlist_focus < playlist_count)
+        target = playlist_focus;
+    if (target < 0) target = playlist_view[0];
+
+    int any_selected = 0;
+    for (int i = 0; i < playlist_count; i++)
+        if (playlist_selected[i]) { any_selected = 1; break; }
+    if (!any_selected) {
+        for (int i = 0; i < playlist_count; i++) playlist_selected[i] = 0;
+        playlist_selected[target] = 1;
+        playlist_anchor = target;
+    }
+    playlist_focus = target;
+
+    int view_row = -1;
+    for (int i = 0; i < playlist_view_count; i++)
+        if (playlist_view[i] == target) { view_row = i; break; }
+    if (view_row < 0) return;
+
+    int bx, by, bw, bh;
+    gui_playlist_editor_geom(&bx, &by, &bw, &bh);
+    int list_y = by + PL_TITLE_H + PL_PAD + PL_BTN_H + PL_PAD;
+    int list_h = by + bh - list_y - PL_PAD;
+    int rows = list_h / PL_ROW_H;
+    if (rows < 1) rows = 1;
+
+    playlist_scroll = view_row - rows / 2;
+    if (playlist_scroll < 0) playlist_scroll = 0;
+    if (playlist_scroll > playlist_view_count - rows)
+        playlist_scroll = playlist_view_count - rows;
+    if (playlist_scroll < 0) playlist_scroll = 0;
+}
+
 static void playlist_editor_handle_click(int mx, int my, int clicks, int mod) {
     int bx, by, bwd, bht;
     gui_playlist_editor_geom(&bx, &by, &bwd, &bht);
@@ -628,8 +729,14 @@ int main(int argc, char *argv[]) {
 
     watch_init();
     playlist_load_from_disk();
+    load_last_played();
 
-    if (argc > 1) load_module(argv[1]);
+    if (argc > 1) {
+        load_module(argv[1]);
+    } else {
+        if (!load_last_played_if_in_playlist())
+            load_first_playlist_item();
+    }
     SDL_PauseAudioDevice(dev, 0);
 
     int running = 1;
@@ -743,7 +850,9 @@ int main(int argc, char *argv[]) {
                             menu_open = 0;
                             pick_and_load_module();
                         } else if (gui_mini_hit_playlist(mx, my)) {
-                            playlist_editor_open = 1; menu_open = 0;
+                            playlist_editor_open = 1;
+                            playlist_editor_scroll_to_focus();
+                            menu_open = 0;
                         } else if (gui_mini_hit_quit(mx, my)) running = 0;
                         else menu_open = 0;
                     } else if (gui_mini_hit_file_menu(mx, my)) {
@@ -813,7 +922,11 @@ int main(int argc, char *argv[]) {
                         menu_open = 0;
                         pick_and_load_module();
                     } else if (mx >= 10 && mx <= 160 && my >= 54 && my <= 84) running = 0;
-                    else if (mx >= 10 && mx <= 160 && my >= 84 && my <= 114) { playlist_editor_open = 1; menu_open = 0; }
+                    else if (mx >= 10 && mx <= 160 && my >= 84 && my <= 114) {
+                        playlist_editor_open = 1;
+                        playlist_editor_scroll_to_focus();
+                        menu_open = 0;
+                    }
                     else menu_open = 0;
                 }
                 else if (info_dialog_open) info_dialog_open = 0;
@@ -873,7 +986,9 @@ int main(int argc, char *argv[]) {
                         menu_open = 0;
                         pick_and_load_module();
                     } else if (menu_open == 1 && ev.key.keysym.sym == SDLK_p) {
-                        playlist_editor_open = 1; menu_open = 0;
+                        playlist_editor_open = 1;
+                        playlist_editor_scroll_to_focus();
+                        menu_open = 0;
                     } else if (menu_open == 1 && ev.key.keysym.sym == SDLK_q) running = 0;
                     continue;
                 }
@@ -887,7 +1002,10 @@ int main(int argc, char *argv[]) {
                 case SDLK_m: case SDLK_F10: menu_open = (menu_open == 0) ? 1 : 0; break;
                 case SDLK_l: pick_and_load_module(); break;
                 case SDLK_i: info_dialog_open = 1; break;
-                case SDLK_p: playlist_editor_open = 1; playlist_scroll = 0; break;
+                case SDLK_p:
+                    playlist_editor_open = 1;
+                    playlist_editor_scroll_to_focus();
+                    break;
                 case SDLK_SPACE:
                     if (!is_playing) break;
                     paused = !paused; SDL_PauseAudioDevice(dev, paused ? 1 : 0); break;
@@ -905,10 +1023,7 @@ int main(int argc, char *argv[]) {
         }
 
         nd_pump();
-        
-         /* Re-fetch module/frame info: the event loop may have replaced ctx
-           (e.g. via the L key), which invalidates the mi/fi pointers that
-           point into the old context's memory. */
+
         memset(&mi, 0, sizeof(mi));
         memset(&fi, 0, sizeof(fi));
         if (is_playing && ctx) {
