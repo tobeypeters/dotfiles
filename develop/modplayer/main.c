@@ -19,6 +19,7 @@
 
 #include "gui.h"
 #include "native_dialog.h"
+#include "ffmpeg_player.h"
 
 #define SAMPLE_RATE 44100
 #define BUFFER_SIZE 2048
@@ -42,6 +43,7 @@ int mouse_x = 0, mouse_y = 0;
 
 static char playlist_config_dir[PATH_MAX - 16] = "";
 static char playlist_config_file[PATH_MAX] = "";
+static char playlist_sort_file[PATH_MAX] = "";
 static char last_played_file[PATH_MAX] = "";
 
 xmp_context ctx = NULL;
@@ -51,6 +53,8 @@ float channel_peak[4] = {0,0,0,0};
 static SDL_mutex *vis_mutex = NULL;
 int is_playing = 0;
 SDL_AudioDeviceID dev = 0;
+
+static Backend current_backend = BACKEND_NONE;
 
 int dragging_list = 0;
 static int drag_offset_y = 0;
@@ -82,6 +86,15 @@ static void playlist_editor_handle_click(int mx, int my, int clicks, int mod);
 static void playlist_editor_scroll_to_focus(void);
 static void playlist_resolve_config_paths(void);
 static int  playlist_index_of_path(const char *p);
+static int  playlist_view_pos_of_current(void);
+static int  playlist_prev_index(void);
+static int  playlist_next_index(void);
+static void playlist_play_prev(void);
+static void playlist_play_next(void);
+static void transport_action(int btn);
+static void playlist_save_sort_mode(void);
+static void playlist_load_sort_mode(void);
+static void playlist_set_sort_mode(int mode);
 
 static void segv_handler(int sig) {
     void *bt[32];
@@ -105,8 +118,61 @@ static void dialog_end(void) {
     if (!paused) SDL_PauseAudioDevice(dev, 0);
 }
 
-/* ---- last-played file persistence ---- */
+/* ---- config file paths ---- */
+static void playlist_resolve_config_paths(void) {
+    if (playlist_config_file[0]) return;
+    const char *home = getenv("HOME");
+    if (!home || !home[0]) {
+        struct passwd *pw = getpwuid(getuid());
+        if (pw) home = pw->pw_dir;
+    }
+    if (!home || !home[0]) home = ".";
 
+    snprintf(playlist_config_dir, sizeof(playlist_config_dir),
+             "%s/.config/%s", home, CONFIG_DIR_NAME);
+    snprintf(playlist_config_file, sizeof(playlist_config_file),
+             "%s/playlist.txt", playlist_config_dir);
+    snprintf(playlist_sort_file, sizeof(playlist_sort_file),
+             "%s/sort.txt", playlist_config_dir);
+
+    struct stat st;
+    char cfg_root[PATH_MAX];
+    snprintf(cfg_root, sizeof(cfg_root), "%s/.config", home);
+    if (stat(cfg_root, &st) != 0) mkdir(cfg_root, 0755);
+    if (stat(playlist_config_dir, &st) != 0) mkdir(playlist_config_dir, 0755);
+}
+
+/* ---- sort mode persistence ---- */
+static void playlist_load_sort_mode(void) {
+    playlist_resolve_config_paths();
+    playlist_sort_mode = 0;
+    FILE *f = fopen(playlist_sort_file, "r");
+    if (!f) return;
+    int v = 0;
+    if (fscanf(f, "%d", &v) == 1) {
+        if (v < 0) v = 0;
+        if (v > 3) v = 3;
+        playlist_sort_mode = v;
+    }
+    fclose(f);
+}
+
+static void playlist_save_sort_mode(void) {
+    playlist_resolve_config_paths();
+    FILE *f = fopen(playlist_sort_file, "w");
+    if (!f) return;
+    fprintf(f, "%d\n", playlist_sort_mode);
+    fclose(f);
+}
+
+/* Change sort mode, rebuild view, and persist. */
+static void playlist_set_sort_mode(int mode) {
+    playlist_sort_mode = mode;
+    playlist_rebuild_view();
+    playlist_save_sort_mode();
+}
+
+/* ---- last-played file persistence ---- */
 static void last_played_path(char *out, size_t outsz) {
     playlist_resolve_config_paths();
     snprintf(out, outsz, "%s/last.txt", playlist_config_dir);
@@ -136,8 +202,22 @@ static void save_last_played(const char *path) {
     fclose(f);
 }
 
-/* ---- stop/load ---- */
+/* ---- backend selection ---- */
+static Backend backend_for_path(const char *path) {
+    const char *e = strrchr(path, '.');
+    if (!e) return BACKEND_FFMPEG;
+    if (strcasecmp(e, ".mod") == 0 || strcasecmp(e, ".xm") == 0 ||
+        strcasecmp(e, ".s3m") == 0 || strcasecmp(e, ".it") == 0 ||
+        strcasecmp(e, ".mptm") == 0 || strcasecmp(e, ".umx") == 0 ||
+        strcasecmp(e, ".mtm") == 0 || strcasecmp(e, ".669") == 0 ||
+        strcasecmp(e, ".med") == 0 || strcasecmp(e, ".stm") == 0 ||
+        strcasecmp(e, ".okt") == 0 || strcasecmp(e, ".far") == 0 ||
+        strcasecmp(e, ".mdl") == 0 || strcasecmp(e, ".ult") == 0)
+        return BACKEND_XMP;
+    return BACKEND_FFMPEG;
+}
 
+/* ---- stop/load ---- */
 static void stop_and_unload(void) {
     SDL_PauseAudioDevice(dev, 1);
     SDL_LockAudioDevice(dev);
@@ -148,6 +228,8 @@ static void stop_and_unload(void) {
         xmp_free_context(ctx);
         ctx = NULL;
     }
+    if (current_backend == BACKEND_FFMPEG) ffp_stop();
+    current_backend = BACKEND_NONE;
     is_playing = 0;
 
     memset(vis_buffer, 0, sizeof(vis_buffer));
@@ -163,43 +245,45 @@ static void load_module(const char *filepath) {
 
     stop_and_unload();
 
-    SDL_LockAudioDevice(dev);
-    SDL_LockMutex(vis_mutex);
+    Backend b = backend_for_path(filepath);
 
-    xmp_context new_ctx = xmp_create_context();
-    if (!new_ctx) {
+    if (b == BACKEND_FFMPEG) {
+        if (!ffp_load(filepath)) return;
+        current_backend = BACKEND_FFMPEG;
+        is_playing = 1;
+    } else {
+        SDL_LockAudioDevice(dev);
+        SDL_LockMutex(vis_mutex);
+
+        xmp_context new_ctx = xmp_create_context();
+        if (!new_ctx) { SDL_UnlockMutex(vis_mutex); SDL_UnlockAudioDevice(dev); return; }
+        if (xmp_load_module(new_ctx, filepath) != 0) {
+            xmp_free_context(new_ctx);
+            SDL_UnlockMutex(vis_mutex);
+            SDL_UnlockAudioDevice(dev);
+            return;
+        }
+        if (xmp_start_player(new_ctx, SAMPLE_RATE, 0) != 0) {
+            xmp_release_module(new_ctx);
+            xmp_free_context(new_ctx);
+            SDL_UnlockMutex(vis_mutex);
+            SDL_UnlockAudioDevice(dev);
+            return;
+        }
+        ctx = new_ctx;
+        current_backend = BACKEND_XMP;
+        is_playing = 1;
+
         SDL_UnlockMutex(vis_mutex);
         SDL_UnlockAudioDevice(dev);
-        return;
-    }
-    if (xmp_load_module(new_ctx, filepath) != 0) {
-        xmp_free_context(new_ctx);
-        SDL_UnlockMutex(vis_mutex);
-        SDL_UnlockAudioDevice(dev);
-        return;
-    }
-    if (xmp_start_player(new_ctx, SAMPLE_RATE, 0) != 0) {
-        xmp_release_module(new_ctx);
-        xmp_free_context(new_ctx);
-        SDL_UnlockMutex(vis_mutex);
-        SDL_UnlockAudioDevice(dev);
-        return;
     }
 
-    ctx = new_ctx;
-    is_playing = 1;
     list_scroll_offset = 0;
+    paused = 0;
     snprintf(current_file, sizeof(current_file), "%s", filepath);
-
-    memset(vis_buffer, 0, sizeof(vis_buffer));
-    memset(channel_peak, 0, sizeof(channel_peak));
-
-    SDL_UnlockMutex(vis_mutex);
-    SDL_UnlockAudioDevice(dev);
-
     save_last_played(filepath);
 
-    if (!paused) SDL_PauseAudioDevice(dev, 0);
+    SDL_PauseAudioDevice(dev, 0);
 }
 
 static int load_first_playlist_item(void) {
@@ -232,10 +316,118 @@ static int load_last_played_if_in_playlist(void) {
     return 1;
 }
 
+/* ---- playlist navigation ---- */
+static int playlist_view_pos_of_current(void) {
+    if (!current_file[0]) return -1;
+    int idx = playlist_index_of_path(current_file);
+    if (idx < 0) return -1;
+    for (int v = 0; v < playlist_view_count; v++)
+        if (playlist_view[v] == idx) return v;
+    return -1;
+}
+
+static int playlist_prev_index(void) {
+    int v = playlist_view_pos_of_current();
+    if (v <= 0) return -1;
+    return playlist_view[v - 1];
+}
+
+static int playlist_next_index(void) {
+    int v = playlist_view_pos_of_current();
+    if (v < 0 || v + 1 >= playlist_view_count) return -1;
+    return playlist_view[v + 1];
+}
+
+static void playlist_play_prev(void) {
+    int idx = playlist_prev_index();
+    if (idx < 0) return;
+    load_module(playlist[idx].path);
+    playlist_focus = idx;
+    playlist_anchor = idx;
+}
+
+static void playlist_play_next(void) {
+    int idx = playlist_next_index();
+    if (idx < 0) return;
+    load_module(playlist[idx].path);
+    playlist_focus = idx;
+    playlist_anchor = idx;
+}
+
+/* ---- transport dispatch ---- */
+static void transport_action(int btn) {
+    switch (btn) {
+    case 0: playlist_play_prev(); break;
+    case 1:
+        if (is_playing) { paused = 0; SDL_PauseAudioDevice(dev, 0); }
+        break;
+    case 2:
+        if (is_playing) { paused = 1; SDL_PauseAudioDevice(dev, 1); }
+        break;
+    case 3: playlist_play_next(); break;
+    }
+}
+
+/* ---- player state for gui ---- */
+static void build_player_state(PlayerState *ps,
+                               struct xmp_module_info *mi,
+                               struct xmp_frame_info *fi) {
+    memset(ps, 0, sizeof(*ps));
+    ps->backend = current_backend;
+    ps->is_playing = is_playing;
+    ps->paused = paused;
+
+    if (current_backend == BACKEND_FFMPEG) {
+        ps->time_sec = ffp_position();
+        ps->total_sec = ffp_duration();
+        ps->title = ffp_title();
+        ps->format = ffp_format();
+        ps->channels = 2;
+        ps->samplerate = SAMPLE_RATE;
+    } else if (current_backend == BACKEND_XMP) {
+        ps->mi = mi;
+        ps->fi = fi;
+        if (is_playing && fi->total_time > 0) {
+            ps->time_sec = fi->time / 1000.0;
+            ps->total_sec = fi->total_time / 1000.0;
+        }
+    }
+
+    ps->can_play  = is_playing;
+    ps->can_pause = is_playing;
+    ps->can_prev  = (playlist_prev_index() >= 0);
+    ps->can_next  = (playlist_next_index() >= 0);
+}
+
 void audio_callback(void *ud, Uint8 *stream, int len) {
     (void)ud;
     SDL_LockMutex(vis_mutex);
-    if (!is_playing || ctx == NULL) { memset(stream, 0, len); SDL_UnlockMutex(vis_mutex); return; }
+    if (!is_playing) { memset(stream, 0, len); SDL_UnlockMutex(vis_mutex); return; }
+
+    if (current_backend == BACKEND_FFMPEG) {
+        int frames = len / 4;
+        int got = ffp_read((int16_t *)stream, frames);
+        if (got < frames) memset((int16_t *)stream + got * 2, 0, (frames - got) * 4);
+        for (int i = 0; i < got * 2 && i < BUFFER_SIZE * 2; i++)
+            vis_buffer[i] = ((int16_t *)stream)[i];
+        float pl = 0, pr = 0;
+        for (int i = 0; i < got; i++) {
+            float l = fabsf(((int16_t *)stream)[i*2] / 32768.0f);
+            float r = fabsf(((int16_t *)stream)[i*2+1] / 32768.0f);
+            if (l > pl) pl = l;
+            if (r > pr) pr = r;
+        }
+        for (int c = 0; c < 4; c++) {
+            float t = (c % 2 == 0) ? pl : pr;
+            if (c >= 2) t *= 0.8f;
+            if (t > channel_peak[c]) channel_peak[c] = t;
+            else channel_peak[c] *= 0.92f;
+        }
+        SDL_UnlockMutex(vis_mutex);
+        return;
+    }
+
+    if (ctx == NULL) { memset(stream, 0, len); SDL_UnlockMutex(vis_mutex); return; }
     int16_t *out = (int16_t *)stream;
     int need = len / 4;
     while (need > 0) {
@@ -263,7 +455,8 @@ void audio_callback(void *ud, Uint8 *stream, int len) {
 
 ListGeom current_list_geom(struct xmp_module_info *mi) {
     ListGeom g = {0,0,0,0,0,0};
-    if (!is_playing || !mi || !mi->mod || !mi->mod->xxi || !mi->mod->xxs) return g;
+    if (!is_playing || current_backend != BACKEND_XMP ||
+        !mi || !mi->mod || !mi->mod->xxi || !mi->mod->xxs) return g;
     int combined = (mi->mod->ins == mi->mod->smp && mi->mod->smp > 0);
     if (combined) for (int i = 0; i < mi->mod->smp; i++)
         if (strcasecmp(mi->mod->xxi[i].name, mi->mod->xxs[i].name) != 0) { combined = 0; break; }
@@ -308,7 +501,12 @@ static int playlist_path_has_supported_ext(const char *p) {
             strcasecmp(e, ".mtm") == 0 || strcasecmp(e, ".669") == 0 ||
             strcasecmp(e, ".med") == 0 || strcasecmp(e, ".stm") == 0 ||
             strcasecmp(e, ".okt") == 0 || strcasecmp(e, ".far") == 0 ||
-            strcasecmp(e, ".mdl") == 0 || strcasecmp(e, ".ult") == 0);
+            strcasecmp(e, ".mdl") == 0 || strcasecmp(e, ".ult") == 0 ||
+            strcasecmp(e, ".mp3") == 0 || strcasecmp(e, ".flac") == 0 ||
+            strcasecmp(e, ".ogg") == 0 || strcasecmp(e, ".opus") == 0 ||
+            strcasecmp(e, ".wav") == 0 || strcasecmp(e, ".m4a") == 0 ||
+            strcasecmp(e, ".aac") == 0 || strcasecmp(e, ".wma") == 0 ||
+            strcasecmp(e, ".ape") == 0 || strcasecmp(e, ".wv") == 0);
 }
 
 static int playlist_index_of_path(const char *p) {
@@ -340,28 +538,6 @@ static void playlist_rebuild_view(void) {
         }
         playlist_view[j+1] = key;
     }
-}
-
-static void playlist_resolve_config_paths(void) {
-    if (playlist_config_file[0]) return;
-    const char *home = getenv("HOME");
-    if (!home || !home[0]) {
-        struct passwd *pw = getpwuid(getuid());
-        if (pw) home = pw->pw_dir;
-    }
-    if (!home || !home[0]) home = ".";
-
-    snprintf(playlist_config_dir, sizeof(playlist_config_dir),
-             "%s/.config/%s", home, CONFIG_DIR_NAME);
-
-    snprintf(playlist_config_file, sizeof(playlist_config_file),
-             "%s/playlist.txt", playlist_config_dir);
-
-    struct stat st;
-    char cfg_root[PATH_MAX];
-    snprintf(cfg_root, sizeof(cfg_root), "%s/.config", home);
-    if (stat(cfg_root, &st) != 0) mkdir(cfg_root, 0755);
-    if (stat(playlist_config_dir, &st) != 0) mkdir(playlist_config_dir, 0755);
 }
 
 static int watch_find(const char *path) {
@@ -589,8 +765,6 @@ static void pick_and_load_module(void) {
     dialog_in_progress = 0;
 }
 
-/* Ensure the currently-playing (or last-focused) item is scrolled into view
-   when the playlist editor opens. Called once on open. */
 static void playlist_editor_scroll_to_focus(void) {
     if (playlist_view_count == 0) return;
 
@@ -649,9 +823,9 @@ static void playlist_editor_handle_click(int mx, int my, int clicks, int mod) {
         switch (btn) {
         case PL_BTN_ADD_FOLDER: playlist_add_folder_via_dialog(); return;
         case PL_BTN_ADD_FILES:  playlist_add_files_via_dialog();  return;
-        case PL_BTN_SORT_AZ:    playlist_sort_mode = 1; playlist_rebuild_view(); return;
-        case PL_BTN_SORT_ZA:    playlist_sort_mode = 2; playlist_rebuild_view(); return;
-        case PL_BTN_SORT_TYPE:  playlist_sort_mode = 3; playlist_rebuild_view(); return;
+        case PL_BTN_SORT_AZ:    playlist_set_sort_mode(1); return;
+        case PL_BTN_SORT_ZA:    playlist_set_sort_mode(2); return;
+        case PL_BTN_SORT_TYPE:  playlist_set_sort_mode(3); return;
         case PL_BTN_DELETE:     playlist_remove_selected(); return;
         case PL_BTN_CLEAR: {
             int cur_deleted = 0;
@@ -708,6 +882,8 @@ int main(int argc, char *argv[]) {
     signal(SIGSEGV, segv_handler);
 
     vis_mutex = SDL_CreateMutex();
+    ffp_init(SAMPLE_RATE, 2);
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) return 1;
 
     nd_init();
@@ -728,6 +904,9 @@ int main(int argc, char *argv[]) {
     SDL_Renderer *renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED);
 
     watch_init();
+
+    /* Load sort mode BEFORE the playlist so rebuild_view uses it. */
+    playlist_load_sort_mode();
     playlist_load_from_disk();
     load_last_played();
 
@@ -746,7 +925,7 @@ int main(int argc, char *argv[]) {
     while (running) {
         struct xmp_module_info mi; memset(&mi, 0, sizeof(mi));
         struct xmp_frame_info fi;  memset(&fi, 0, sizeof(fi));
-        if (is_playing && ctx) {
+        if (current_backend == BACKEND_XMP && is_playing && ctx) {
             xmp_get_module_info(ctx, &mi);
             xmp_get_frame_info(ctx, &fi);
         }
@@ -782,13 +961,20 @@ int main(int argc, char *argv[]) {
                 mouse_x = ev.motion.x; mouse_y = ev.motion.y;
 
                 if (mini_mode) {
-                    if (dragging_mini_pos && is_playing && fi.total_time > 0) {
-                        float usable = (float)(MINI_TRACKBAR_W - PROG_GRIP_W);
-                        if (usable < 1) usable = 1;
-                        float rel = (float)(mouse_x - MINI_TRACKBAR_X - PROG_GRIP_W / 2);
-                        if (rel < 0) rel = 0;
-                        if (rel > usable) rel = usable;
-                        xmp_seek_time(ctx, (int)(rel / usable * fi.total_time));
+                    if (dragging_mini_pos && is_playing) {
+                        double total = (current_backend == BACKEND_FFMPEG)
+                            ? ffp_duration()
+                            : (fi.total_time > 0 ? fi.total_time / 1000.0 : 0);
+                        if (total > 0) {
+                            float usable = (float)(MINI_TRACKBAR_W - PROG_GRIP_W);
+                            if (usable < 1) usable = 1;
+                            float rel = (float)(mouse_x - MINI_TRACKBAR_X - PROG_GRIP_W / 2);
+                            if (rel < 0) rel = 0;
+                            if (rel > usable) rel = usable;
+                            double target = rel / usable * total;
+                            if (current_backend == BACKEND_FFMPEG) ffp_seek(target);
+                            else xmp_seek_time(ctx, (int)(target * 1000));
+                        }
                     }
                 } else {
                     if (dragging_list && lg.has_list && lg.max_scroll > 0 && lg.rows_visible > 0) {
@@ -802,13 +988,20 @@ int main(int argc, char *argv[]) {
                         if (rel > usable) rel = usable;
                         list_scroll_offset = (int)((float)rel / usable * lg.max_scroll + 0.5f);
                     }
-                    if (dragging_pos && is_playing && fi.total_time > 0) {
-                        float usable = (float)(track_w - PROG_GRIP_W);
-                        if (usable < 1) usable = 1;
-                        float rel = (float)(mouse_x - track_x - PROG_GRIP_W / 2);
-                        if (rel < 0) rel = 0;
-                        if (rel > usable) rel = usable;
-                        xmp_seek_time(ctx, (int)(rel / usable * fi.total_time));
+                    if (dragging_pos && is_playing) {
+                        double total = (current_backend == BACKEND_FFMPEG)
+                            ? ffp_duration()
+                            : (fi.total_time > 0 ? fi.total_time / 1000.0 : 0);
+                        if (total > 0) {
+                            float usable = (float)(track_w - PROG_GRIP_W);
+                            if (usable < 1) usable = 1;
+                            float rel = (float)(mouse_x - track_x - PROG_GRIP_W / 2);
+                            if (rel < 0) rel = 0;
+                            if (rel > usable) rel = usable;
+                            double target = rel / usable * total;
+                            if (current_backend == BACKEND_FFMPEG) ffp_seek(target);
+                            else xmp_seek_time(ctx, (int)(target * 1000));
+                        }
                     }
                 }
             }
@@ -857,37 +1050,75 @@ int main(int argc, char *argv[]) {
                         else menu_open = 0;
                     } else if (gui_mini_hit_file_menu(mx, my)) {
                         menu_open = (menu_open == 1) ? 0 : 1;
-                    } else if (gui_mini_hit_position_trackbar(mx, my) && is_playing && fi.total_time > 0) {
-                        float usable = (float)(MINI_TRACKBAR_W - PROG_GRIP_W);
-                        if (usable < 1) usable = 1;
-                        float rel = (float)(mx - MINI_TRACKBAR_X - PROG_GRIP_W / 2);
-                        if (rel < 0) rel = 0;
-                        if (rel > usable) rel = usable;
-                        xmp_seek_time(ctx, (int)(rel / usable * fi.total_time));
-                        dragging_mini_pos = 1;
+                    } else if (gui_mini_hit_position_trackbar(mx, my) && is_playing) {
+                        double total = (current_backend == BACKEND_FFMPEG)
+                            ? ffp_duration()
+                            : (fi.total_time > 0 ? fi.total_time / 1000.0 : 0);
+                        if (total > 0) {
+                            float usable = (float)(MINI_TRACKBAR_W - PROG_GRIP_W);
+                            if (usable < 1) usable = 1;
+                            float rel = (float)(mx - MINI_TRACKBAR_X - PROG_GRIP_W / 2);
+                            if (rel < 0) rel = 0;
+                            if (rel > usable) rel = usable;
+                            double target = rel / usable * total;
+                            if (current_backend == BACKEND_FFMPEG) ffp_seek(target);
+                            else xmp_seek_time(ctx, (int)(target * 1000));
+                            dragging_mini_pos = 1;
+                        }
                     } else {
                         int b = gui_mini_hit_btn_idx(mx, my);
-                        if (b == 0) { }
-                        else if (b == 1) { if (is_playing) { paused = 0; SDL_PauseAudioDevice(dev, 0); } }
-                        else if (b == 2) { if (is_playing) { paused = 1; SDL_PauseAudioDevice(dev, 1); } }
-                        else if (b == 3) { }
+                        if (b >= 0) {
+                            int ok = 0;
+                            switch (b) {
+                            case 0: ok = (playlist_prev_index() >= 0); break;
+                            case 1: ok = is_playing; break;
+                            case 2: ok = is_playing; break;
+                            case 3: ok = (playlist_next_index() >= 0); break;
+                            }
+                            if (ok) transport_action(b);
+                        }
                     }
                     continue;
                 }
 
-                if (is_playing && fi.total_time > 0 &&
+                {
+                    int b = gui_full_hit_btn_idx(mx, my);
+                    if (b >= 0) {
+                        int ok = 0;
+                        switch (b) {
+                        case 0: ok = (playlist_prev_index() >= 0); break;
+                        case 1: ok = is_playing; break;
+                        case 2: ok = is_playing; break;
+                        case 3: ok = (playlist_next_index() >= 0); break;
+                        }
+                        if (ok) transport_action(b);
+                        continue;
+                    }
+                }
+
+                if (is_playing &&
                     my >= base_y && my <= base_y + PROG_GRIP_H) {
-                    float progress = (float)fi.time / fi.total_time;
-                    int gx = gui_pos_grip_x_impl(track_x, track_w, progress);
-                    if (mx >= gx && mx <= gx + PROG_GRIP_W) dragging_pos = 1;
-                    else if (mx >= track_x && mx <= track_x + track_w) {
-                        float usable = (float)(track_w - PROG_GRIP_W);
-                        if (usable < 1) usable = 1;
-                        float rel = (float)(mx - track_x - PROG_GRIP_W / 2);
-                        if (rel < 0) rel = 0;
-                        if (rel > usable) rel = usable;
-                        xmp_seek_time(ctx, (int)(rel / usable * fi.total_time));
-                        dragging_pos = 1;
+                    double total = (current_backend == BACKEND_FFMPEG)
+                        ? ffp_duration()
+                        : (fi.total_time > 0 ? fi.total_time / 1000.0 : 0);
+                    if (total > 0) {
+                        double cur = (current_backend == BACKEND_FFMPEG)
+                            ? ffp_position()
+                            : fi.time / 1000.0;
+                        float progress = cur / total;
+                        int gx = gui_pos_grip_x_impl(track_x, track_w, progress);
+                        if (mx >= gx && mx <= gx + PROG_GRIP_W) dragging_pos = 1;
+                        else if (mx >= track_x && mx <= track_x + track_w) {
+                            float usable = (float)(track_w - PROG_GRIP_W);
+                            if (usable < 1) usable = 1;
+                            float rel = (float)(mx - track_x - PROG_GRIP_W / 2);
+                            if (rel < 0) rel = 0;
+                            if (rel > usable) rel = usable;
+                            double target = rel / usable * total;
+                            if (current_backend == BACKEND_FFMPEG) ffp_seek(target);
+                            else xmp_seek_time(ctx, (int)(target * 1000));
+                            dragging_pos = 1;
+                        }
                     }
                 }
                 else if (lg.has_list && lg.max_scroll > 0 && lg.rows_visible > 0 &&
@@ -1014,10 +1245,15 @@ int main(int argc, char *argv[]) {
                     paused = 0;
                     break;
                 case SDLK_r:
-                    if (is_playing) { xmp_restart_module(ctx); paused = 0; SDL_PauseAudioDevice(dev, 0); }
+                    if (is_playing && current_backend == BACKEND_FFMPEG) {
+                        ffp_seek(0);
+                        paused = 0;
+                        SDL_PauseAudioDevice(dev, 0);
+                    } else if (is_playing && current_backend == BACKEND_XMP) {
+                        xmp_restart_module(ctx); paused = 0; SDL_PauseAudioDevice(dev, 0);
+                    }
                     break;
                 case SDLK_q: running = 0; break;
-                /* SDLK_ESCAPE: intentionally ignored. */
                 }
             }
         }
@@ -1026,13 +1262,20 @@ int main(int argc, char *argv[]) {
 
         memset(&mi, 0, sizeof(mi));
         memset(&fi, 0, sizeof(fi));
-        if (is_playing && ctx) {
+        if (current_backend == BACKEND_XMP && is_playing && ctx) {
             xmp_get_module_info(ctx, &mi);
             xmp_get_frame_info(ctx, &fi);
         }
 
-        if (mini_mode) gui_draw_mini_player(renderer, &mi, &fi, paused);
-        else           gui_draw_full_tracker(renderer, &mi, &fi, paused);
+        if (current_backend == BACKEND_FFMPEG && is_playing && ffp_finished()) {
+            stop_and_unload();
+        }
+
+        PlayerState ps;
+        build_player_state(&ps, &mi, &fi);
+
+        if (mini_mode) gui_draw_mini_player(renderer, &ps);
+        else           gui_draw_full_tracker(renderer, &ps);
 
         if (playlist_editor_open) gui_draw_playlist_editor(renderer);
         if (info_dialog_open)     gui_draw_info_dialog(renderer);
@@ -1042,6 +1285,7 @@ int main(int argc, char *argv[]) {
     }
 
     stop_and_unload();
+    ffp_shutdown();
     watch_shutdown();
     SDL_CloseAudioDevice(dev);
     SDL_DestroyRenderer(renderer);

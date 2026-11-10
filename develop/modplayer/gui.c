@@ -5,6 +5,8 @@
 #include <strings.h>
 #include <math.h>
 
+#define BUFFER_SIZE_REF 2048
+
 static const SDL_Color COL_BG         = { 70,  85, 110, 255};
 static const SDL_Color COL_PANEL      = { 55,  70,  95, 255};
 static const SDL_Color COL_BORDER_LT  = {130, 145, 165, 255};
@@ -157,9 +159,14 @@ int gui_pos_grip_x_impl(int track_x, int track_w, float progress) {
     return track_x + (int)(progress * usable + 0.5f);
 }
 
+/* Track starts AFTER the transport buttons, which are 4 buttons wide plus
+   a small left margin and a small gap between the buttons and the track. */
 void gui_pos_track_bounds(int stat_x, int stat_w, int *out_track_x, int *out_track_w) {
-    *out_track_x = stat_x + PROG_LEFT_PAD;
-    *out_track_w = stat_w - PROG_LEFT_PAD - PROG_RIGHT_PAD;
+    int left_reserved = 8                                     /* left margin */
+                      + 4 * TRANSPORT_BTN + 3 * TRANSPORT_GAP /* button row */
+                      + 10;                                   /* gap to track */
+    *out_track_x = stat_x + left_reserved;
+    *out_track_w = stat_w - left_reserved - PROG_RIGHT_PAD;
     if (*out_track_w < PROG_GRIP_W + 4) *out_track_w = PROG_GRIP_W + 4;
 }
 
@@ -233,6 +240,48 @@ static void draw_icon_next(SDL_Renderer *r, int cx, int cy, int size, SDL_Color 
     SDL_RenderFillRect(r, &bar);
 }
 
+/* ==================== TEXT WRAP HELPERS ==================== */
+static int draw_text_clip(SDL_Renderer *r, int x, int y, const char *s,
+                          int max_chars, SDL_Color col) {
+    int n = 0;
+    while (*s && n < max_chars) {
+        draw_char(r, x, y, *s, col);
+        x += 8;
+        s++;
+        n++;
+    }
+    return n;
+}
+
+static int wrap_two(const char *s, int max_chars,
+                    char *line1, size_t n1, char *line2, size_t n2) {
+    line1[0] = '\0';
+    line2[0] = '\0';
+    if (!s || !s[0]) return 0;
+
+    size_t len = strlen(s);
+    if ((int)len <= max_chars) {
+        snprintf(line1, n1, "%s", s);
+        return 1;
+    }
+
+    int break_at = -1;
+    for (int i = max_chars; i >= 0; i--) {
+        if (s[i] == ' ') { break_at = i; break; }
+    }
+    if (break_at <= 0) {
+        snprintf(line1, n1, "%.*s", max_chars, s);
+        snprintf(line2, n2, "%.*s", max_chars, s + max_chars);
+        return 2;
+    }
+
+    snprintf(line1, n1, "%.*s", break_at, s);
+    const char *rest = s + break_at + 1;
+    while (*rest == ' ') rest++;
+    snprintf(line2, n2, "%.*s", max_chars, rest);
+    return 2;
+}
+
 /* ==================== PLAYLIST TOOLBAR ==================== */
 static const struct { const char *label; int w; } PL_TOOLBAR[] = {
     {"+ Folder ",  84},
@@ -267,7 +316,7 @@ int gui_playlist_button_enabled(int id) {
     case PL_BTN_SORT_AZ:
     case PL_BTN_SORT_ZA:
     case PL_BTN_SORT_TYPE:
-        return playlist_count > 1;   /* sorting one item is meaningless */
+        return playlist_count > 1;
     case PL_BTN_CLEAR:
         return playlist_count > 0;
     case PL_BTN_DELETE: {
@@ -291,6 +340,69 @@ int gui_playlist_button_hit(int mx, int my) {
     return -1;
 }
 
+/* ==================== FULL-MODE TRANSPORT ==================== */
+/* Four small buttons on the LEFT side of the status box, at the same Y
+   as the position slider. The track then begins to their right. */
+static void transport_button_rect(int idx, int *out_x, int *out_y) {
+    int stat_x = 340;
+    int base_y = gui_pos_origin_y(STAT_Y);
+    int row_y = base_y + (PROG_GRIP_H - TRANSPORT_BTN) / 2;
+
+    int start_x = stat_x + 8;
+    *out_x = start_x + idx * (TRANSPORT_BTN + TRANSPORT_GAP);
+    *out_y = row_y;
+}
+
+int gui_full_hit_btn_idx(int mx, int my) {
+    for (int i = 0; i < 4; i++) {
+        int bx, by;
+        transport_button_rect(i, &bx, &by);
+        if (is_hover(mx, my, bx, by, TRANSPORT_BTN, TRANSPORT_BTN)) return i;
+    }
+    return -1;
+}
+
+static void draw_full_transport(SDL_Renderer *r, const PlayerState *ps) {
+    int enabled[4] = { ps->can_prev, ps->can_play, ps->can_pause, ps->can_next };
+
+    for (int i = 0; i < 4; i++) {
+        int bx, by;
+        transport_button_rect(i, &bx, &by);
+
+        int hovered = enabled[i] && is_hover(mouse_x, mouse_y, bx, by,
+                                             TRANSPORT_BTN, TRANSPORT_BTN);
+        SDL_Color bg = COL_PANEL;
+        if (!enabled[i]) bg = (SDL_Color){40, 50, 70, 255};
+        else if (hovered) bg = COL_MENU_HOVER;
+        SDL_SetRenderDrawColor(r, bg.r, bg.g, bg.b, 255);
+        SDL_Rect b = {bx, by, TRANSPORT_BTN, TRANSPORT_BTN};
+        SDL_RenderFillRect(r, &b);
+        draw_bevel(r, bx, by, TRANSPORT_BTN, TRANSPORT_BTN, 0);
+
+        int cx = bx + TRANSPORT_BTN / 2;
+        int cy = by + TRANSPORT_BTN / 2;
+        SDL_Color icon = enabled[i] ? COL_TEXT_WHITE : COL_TEXT_DIM;
+        int sz = TRANSPORT_BTN / 3;
+
+        switch (i) {
+        case 0: draw_icon_prev(r, cx, cy, sz, icon); break;
+        case 1:
+            if (!ps->is_playing || ps->paused)
+                draw_icon_play(r, cx, cy, sz, ps->can_play ? COL_TEXT_GREEN : icon);
+            else
+                draw_icon_play(r, cx, cy, sz, icon);
+            break;
+        case 2:
+            if (ps->is_playing && !ps->paused)
+                draw_icon_pause(r, cx, cy, sz, COL_TEXT_GREEN);
+            else
+                draw_icon_pause(r, cx, cy, sz, icon);
+            break;
+        case 3: draw_icon_next(r, cx, cy, sz, icon); break;
+        }
+    }
+}
+
 /* ==================== MINI PLAYER ==================== */
 int gui_mini_hit_load(int x, int y)      { return is_hover(x, y, 10, 24, 150, 30); }
 int gui_mini_hit_quit(int x, int y)      { return is_hover(x, y, 10, 54, 150, 30); }
@@ -308,8 +420,7 @@ int gui_mini_hit_btn_idx(int x, int y) {
     return -1;
 }
 
-void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
-                          struct xmp_frame_info *fi, int paused) {
+void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
     SDL_SetRenderDrawColor(r, COL_BG.r, COL_BG.g, COL_BG.b, 255);
     SDL_RenderClear(r);
 
@@ -331,15 +442,15 @@ void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
     draw_bevel(r, sx, sy, MINI_STATUS_W, MINI_STATUS_H, 1);
 
     int ic = 28, ix = sx + MINI_INNER_PAD, iy = sy + MINI_INNER_PAD;
-    if (!is_playing)
+    if (!ps->is_playing)
         draw_icon_stop(r, ix + ic/2, iy + ic/2, ic/2, COL_TEXT_GREEN);
-    else if (paused)
+    else if (ps->paused)
         draw_icon_pause(r, ix + ic/2, iy + ic/2, ic/2, COL_TEXT_GREEN);
     else
         draw_icon_play(r, ix + ic/2, iy + ic/2, ic/2, COL_TEXT_GREEN);
 
     char tbuf[32];
-    gui_format_time(tbuf, sizeof(tbuf), fi->time);
+    gui_format_time(tbuf, sizeof(tbuf), (int)(ps->time_sec * 1000));
     int th = 8 * MINI_TIME_SCALE;
     int ty = iy + (ic - th) / 2;
     draw_text_scaled(r, ix + ic + MINI_INNER_PAD, ty, tbuf, COL_TEXT_WHITE, MINI_TIME_SCALE);
@@ -356,11 +467,11 @@ void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
     SDL_SetRenderDrawColor(r, 40, 80, 40, 255);
     SDL_RenderDrawLine(r, wx, wy + wh/2, wx + ww, wy + wh/2);
 
-    if (is_playing) {
+    if (ps->is_playing) {
         SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
         int mid_y = wy + wh / 2;
         for (int i = 0; i < ww - 2; i++) {
-            int buf_idx = (i * (2048 / ww)) * 2;
+            int buf_idx = (i * (BUFFER_SIZE_REF / ww)) * 2;
             float l = vis_buffer[buf_idx] / 32768.0f;
             float rr = vis_buffer[buf_idx + 1] / 32768.0f;
             float s = (l + rr) * 0.5f;
@@ -378,25 +489,33 @@ void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
     draw_bevel(r, tx, tyy, tw, thh, 1);
 
     char title[256];
-    if (is_playing && mi->mod && mi->mod->name && mi->mod->name[0])
-        snprintf(title, sizeof(title), "%.40s", mi->mod->name);
-    else if (current_file[0]) {
+    if (ps->backend == BACKEND_FFMPEG) {
+        snprintf(title, sizeof(title), "%.40s",
+                 (ps->title && ps->title[0]) ? ps->title : "No module loaded");
+    } else if (ps->is_playing && ps->mi && ps->mi->mod && ps->mi->mod->name && ps->mi->mod->name[0]) {
+        snprintf(title, sizeof(title), "%.40s", ps->mi->mod->name);
+    } else if (current_file[0]) {
         const char *base = strrchr(current_file, '/');
         snprintf(title, sizeof(title), "%.40s", base ? base + 1 : current_file);
-    } else snprintf(title, sizeof(title), "No module loaded");
+    } else {
+        snprintf(title, sizeof(title), "No module loaded");
+    }
 
     draw_text(r, tx + MINI_INNER_PAD,
               tyy + MINI_INNER_PAD + (MINI_TITLE_LINE_H - 8) / 2,
               title, COL_TEXT_GREEN);
 
-    float progress = (fi->total_time > 0) ? (float)fi->time / fi->total_time : 0;
+    float progress = (ps->total_sec > 0) ? (float)(ps->time_sec / ps->total_sec) : 0;
     gui_draw_position_trackbar(r, MINI_TRACKBAR_X, MINI_TRACKBAR_W, MINI_TRACKBAR_Y, progress);
 
+    int enabled[4] = { ps->can_prev, ps->can_play, ps->can_pause, ps->can_next };
     for (int i = 0; i < 4; i++) {
         int bx = MINI_PAD + i * (MINI_ICON_BTN + MINI_ICON_GAP);
         int byy = MINI_BTN_TOP;
-        int hovered = is_hover(mouse_x, mouse_y, bx, byy, MINI_ICON_BTN, MINI_ICON_BTN);
-        SDL_Color base = hovered ? COL_MENU_HOVER : COL_PANEL;
+        int hovered = enabled[i] && is_hover(mouse_x, mouse_y, bx, byy, MINI_ICON_BTN, MINI_ICON_BTN);
+        SDL_Color base = COL_PANEL;
+        if (!enabled[i]) base = (SDL_Color){40, 50, 70, 255};
+        else if (hovered) base = COL_MENU_HOVER;
         SDL_SetRenderDrawColor(r, base.r, base.g, base.b, 255);
         SDL_Rect b = {bx, byy, MINI_ICON_BTN, MINI_ICON_BTN};
         SDL_RenderFillRect(r, &b);
@@ -404,14 +523,24 @@ void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
 
         int cx = bx + MINI_ICON_BTN / 2;
         int cy = byy + MINI_ICON_BTN / 2;
-        SDL_Color icon = COL_TEXT_WHITE;
+        SDL_Color icon = enabled[i] ? COL_TEXT_WHITE : COL_TEXT_DIM;
+        int sz = MINI_ICON_BTN / 3;
+
         switch (i) {
-        case 0: draw_icon_prev(r, cx, cy, MINI_ICON_BTN/3, icon); break;
-        case 1: draw_icon_play(r, cx, cy, MINI_ICON_BTN/3,
-                    (!paused && is_playing) ? COL_TEXT_GREEN : icon); break;
-        case 2: draw_icon_pause(r, cx, cy, MINI_ICON_BTN/3,
-                    (paused && is_playing) ? COL_TEXT_GREEN : icon); break;
-        case 3: draw_icon_next(r, cx, cy, MINI_ICON_BTN/3, icon); break;
+        case 0: draw_icon_prev(r, cx, cy, sz, icon); break;
+        case 1:
+            if (!ps->is_playing || ps->paused)
+                draw_icon_play(r, cx, cy, sz, ps->can_play ? COL_TEXT_GREEN : icon);
+            else
+                draw_icon_play(r, cx, cy, sz, icon);
+            break;
+        case 2:
+            if (ps->is_playing && !ps->paused)
+                draw_icon_pause(r, cx, cy, sz, COL_TEXT_GREEN);
+            else
+                draw_icon_pause(r, cx, cy, sz, icon);
+            break;
+        case 3: draw_icon_next(r, cx, cy, sz, icon); break;
         }
     }
 
@@ -439,31 +568,71 @@ void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
 }
 
 /* ==================== FULL TRACKER ==================== */
-void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
-                           struct xmp_frame_info *fi, int paused) {
+void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
     SDL_SetRenderDrawColor(r, COL_BG.r, COL_BG.g, COL_BG.b, 255);
     SDL_RenderClear(r);
 
+    struct xmp_module_info *mi = ps->mi;
+    struct xmp_frame_info  *fi = ps->fi;
+    int is_ffmpeg = (ps->backend == BACKEND_FFMPEG);
+
+    /* --- Info box (top left) --- */
     SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
     SDL_Rect info_bg = {GRID_LEFT, INFO_Y, 320, INFO_H};
     SDL_RenderFillRect(r, &info_bg);
     draw_bevel(r, GRID_LEFT, INFO_Y, 320, INFO_H, 0);
 
-    if (is_playing && mi->mod) {
+    int text_x = GRID_LEFT + 10;
+    int line_chars = (320 - 20) / 8;
+    int title_chars = line_chars - 7;
+
+    if (is_ffmpeg) {
+        if (ps->title && ps->title[0]) {
+            char l1[256], l2[256];
+            int lines = wrap_two(ps->title, title_chars, l1, sizeof(l1), l2, sizeof(l2));
+
+            char buf[300];
+            snprintf(buf, sizeof(buf), "Title: %s", l1);
+            draw_text_clip(r, text_x, INFO_Y + 10, buf, line_chars, COL_TEXT_GREEN);
+
+            int y = INFO_Y + 30;
+            if (lines == 2) {
+                snprintf(buf, sizeof(buf), "       %s", l2);
+                draw_text_clip(r, text_x, y, buf, line_chars, COL_TEXT_GREEN);
+                y += 20;
+            }
+
+            snprintf(buf, sizeof(buf), "Type: %.30s", ps->format ? ps->format : "");
+            draw_text_clip(r, text_x, y, buf, line_chars, COL_TEXT_WHITE);
+            y += 20;
+
+            snprintf(buf, sizeof(buf), "Channels: %d  Rate: %d Hz", ps->channels, ps->samplerate);
+            draw_text_clip(r, text_x, y, buf, line_chars, COL_TEXT_WHITE);
+            y += 20;
+
+            if (y <= INFO_Y + 70) {
+                snprintf(buf, sizeof(buf), "Duration: %.0f s", ps->total_sec);
+                draw_text_clip(r, text_x, y, buf, line_chars, COL_TEXT_WHITE);
+            }
+        } else {
+            draw_text_clip(r, text_x, INFO_Y + 10, "No file loaded.", line_chars, COL_TEXT_RED);
+        }
+    } else if (ps->is_playing && mi && mi->mod) {
         char buf[128];
         snprintf(buf, sizeof(buf), "Title: %.30s", mi->mod->name ? mi->mod->name : "");
-        draw_text(r, 20, INFO_Y + 10, buf, COL_TEXT_GREEN);
+        draw_text_clip(r, text_x, INFO_Y + 10, buf, line_chars, COL_TEXT_GREEN);
         snprintf(buf, sizeof(buf), "Type: %s", mi->mod->type ? mi->mod->type : "");
-        draw_text(r, 20, INFO_Y + 30, buf, COL_TEXT_WHITE);
+        draw_text_clip(r, text_x, INFO_Y + 30, buf, line_chars, COL_TEXT_WHITE);
         snprintf(buf, sizeof(buf), "Ins: %d  Pat: %d  Chn: %d", mi->mod->ins, mi->mod->pat, mi->mod->chn);
-        draw_text(r, 20, INFO_Y + 50, buf, COL_TEXT_WHITE);
+        draw_text_clip(r, text_x, INFO_Y + 50, buf, line_chars, COL_TEXT_WHITE);
         snprintf(buf, sizeof(buf), "Spd: %d  BPM: %d  Rst: %d",
                  mi->mod->spd, mi->mod->bpm, mi->mod->rst);
-        draw_text(r, 20, INFO_Y + 70, buf, COL_TEXT_WHITE);
+        draw_text_clip(r, text_x, INFO_Y + 70, buf, line_chars, COL_TEXT_WHITE);
     } else {
-        draw_text(r, 20, INFO_Y + 10, "No module loaded.", COL_TEXT_RED);
+        draw_text_clip(r, text_x, INFO_Y + 10, "No module loaded.", line_chars, COL_TEXT_RED);
     }
 
+    /* --- Status box (top right) --- */
     int stat_x = 340;
     int stat_w = PANEL_X + PANEL_W - stat_x;
     if (stat_w < 1) stat_w = 1;
@@ -473,21 +642,40 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
     SDL_RenderFillRect(r, &stat_bg);
     draw_bevel(r, stat_x, STAT_Y, stat_w, STAT_H, 1);
 
-    const char *state_str = is_playing ? (paused ? "PAUSE" : "PLAY") : "STOP";
+    const char *state_str = ps->is_playing ? (ps->paused ? "PAUSE" : "PLAY") : "STOP";
     char status[160];
     snprintf(status, sizeof(status), "Status: %s", state_str);
     draw_text(r, stat_x + 10, STAT_Y + 10, status, COL_TEXT_GREEN);
 
-    if (is_playing) {
-        snprintf(status, sizeof(status), "Pos: %02X   Pat: %02X   Row: %02X",
-                 fi->pos, fi->pattern, fi->row);
-        draw_text(r, stat_x + 10, STAT_Y + 30, status, COL_TEXT_WHITE);
-        snprintf(status, sizeof(status), "Spd: %d    BPM: %d", fi->speed, fi->bpm);
-        draw_text(r, stat_x + 10, STAT_Y + 50, status, COL_TEXT_WHITE);
-        float progress = (fi->total_time > 0) ? (float)fi->time / fi->total_time : 0;
-        gui_draw_full_position_indicator(r, stat_x, stat_w, progress);
+    if (is_ffmpeg) {
+        if (ps->is_playing) {
+            char tbuf[32], dbuf[32];
+            gui_format_time(tbuf, sizeof(tbuf), (int)(ps->time_sec * 1000));
+            gui_format_time(dbuf, sizeof(dbuf), (int)(ps->total_sec * 1000));
+            snprintf(status, sizeof(status), "Pos: %s / %s", tbuf, dbuf);
+            draw_text(r, stat_x + 10, STAT_Y + 30, status, COL_TEXT_WHITE);
+            snprintf(status, sizeof(status), "Rate: %d Hz   Ch: %d",
+                     ps->samplerate, ps->channels);
+            draw_text(r, stat_x + 10, STAT_Y + 50, status, COL_TEXT_WHITE);
+            float progress = (ps->total_sec > 0) ? (float)(ps->time_sec / ps->total_sec) : 0;
+            gui_draw_full_position_indicator(r, stat_x, stat_w, progress);
+        }
+    } else {
+        if (ps->is_playing && fi) {
+            snprintf(status, sizeof(status), "Pos: %02X   Pat: %02X   Row: %02X",
+                     fi->pos, fi->pattern, fi->row);
+            draw_text(r, stat_x + 10, STAT_Y + 30, status, COL_TEXT_WHITE);
+            snprintf(status, sizeof(status), "Spd: %d    BPM: %d", fi->speed, fi->bpm);
+            draw_text(r, stat_x + 10, STAT_Y + 50, status, COL_TEXT_WHITE);
+            float progress = (fi->total_time > 0) ? (float)fi->time / fi->total_time : 0;
+            gui_draw_full_position_indicator(r, stat_x, stat_w, progress);
+        }
     }
 
+    /* Transport buttons (left of the slider) */
+    draw_full_transport(r, ps);
+
+    /* --- Scope boxes --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int sx = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 30, 20, 255);
@@ -496,20 +684,40 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
         draw_bevel(r, sx, SCOPE_Y, SCOPE_W, SCOPE_H, 1);
         SDL_SetRenderDrawColor(r, 40, 80, 40, 255);
         SDL_RenderDrawLine(r, sx, SCOPE_Y + SCOPE_H/2, sx + SCOPE_W, SCOPE_Y + SCOPE_H/2);
-        if (is_playing) {
-            SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
-            int mid_y = SCOPE_Y + SCOPE_H / 2;
-            for (int i = 0; i < SCOPE_W - 2; i++) {
-                int buf_idx = (i * (2048 / SCOPE_W)) * 2 + (ch % 2);
-                float sample = vis_buffer[buf_idx] / 32768.0f;
-                int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
-                if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
-                if (y > SCOPE_Y + SCOPE_H - 1) y = SCOPE_Y + SCOPE_H - 1;
-                SDL_RenderDrawPoint(r, sx + 1 + i, y);
+
+        if (is_ffmpeg) {
+            if (ch < 2) {
+                draw_text(r, sx + 6, SCOPE_Y + 4, ch == 0 ? "L" : "R", COL_TEXT_DIM);
+                if (ps->is_playing) {
+                    SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
+                    int mid_y = SCOPE_Y + SCOPE_H / 2;
+                    for (int i = 0; i < SCOPE_W - 2; i++) {
+                        int buf_idx = (i * (BUFFER_SIZE_REF / SCOPE_W)) * 2 + ch;
+                        float sample = vis_buffer[buf_idx] / 32768.0f;
+                        int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
+                        if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
+                        if (y > SCOPE_Y + SCOPE_H - 1) y = SCOPE_Y + SCOPE_H - 1;
+                        SDL_RenderDrawPoint(r, sx + 1 + i, y);
+                    }
+                }
+            }
+        } else {
+            if (ps->is_playing) {
+                SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
+                int mid_y = SCOPE_Y + SCOPE_H / 2;
+                for (int i = 0; i < SCOPE_W - 2; i++) {
+                    int buf_idx = (i * (BUFFER_SIZE_REF / SCOPE_W)) * 2 + (ch % 2);
+                    float sample = vis_buffer[buf_idx] / 32768.0f;
+                    int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
+                    if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
+                    if (y > SCOPE_Y + SCOPE_H - 1) y = SCOPE_Y + SCOPE_H - 1;
+                    SDL_RenderDrawPoint(r, sx + 1 + i, y);
+                }
             }
         }
     }
 
+    /* --- VU meters --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int x = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
@@ -525,19 +733,19 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
         SDL_RenderFillRect(r, &bar);
     }
 
-    int num_ch = GRID_COLS;
-    if (is_playing && mi->mod && mi->mod->chn > 0 && mi->mod->chn < GRID_COLS) num_ch = mi->mod->chn;
+    /* --- Channel pattern panes --- */
     int start_row = 0;
-    if (is_playing) {
+    if (!is_ffmpeg && ps->is_playing && fi) {
         start_row = fi->row - 5;
         if (start_row < 0) start_row = 0;
         if (start_row > 64 - VISIBLE_ROWS) start_row = 64 - VISIBLE_ROWS;
     }
     struct xmp_pattern *pat = NULL;
-    if (is_playing && mi->mod && fi->pattern >= 0 && fi->pattern < mi->mod->pat)
+    if (!is_ffmpeg && ps->is_playing && mi && mi->mod && fi &&
+        fi->pattern >= 0 && fi->pattern < mi->mod->pat)
         pat = mi->mod->xxp[fi->pattern];
 
-    for (int ch = 0; ch < num_ch; ch++) {
+    for (int ch = 0; ch < GRID_COLS; ch++) {
         int px = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
         SDL_Rect ch_bg = {px, BOX_Y, SCOPE_W, GRID_H};
@@ -545,7 +753,9 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
         draw_bevel(r, px, BOX_Y, SCOPE_W, GRID_H, 1);
         char hdr[32]; snprintf(hdr, sizeof(hdr), "CH%d   N  I  FX", ch + 1);
         draw_text(r, px + 8, BOX_Y + 6, hdr, COL_TEXT_WHITE);
-        if (!is_playing || !pat) continue;
+
+        if (is_ffmpeg || !ps->is_playing || !pat || !fi) continue;
+
         for (int i = 0; i < VISIBLE_ROWS; i++) {
             int row = start_row + i;
             if (row >= 64) break;
@@ -584,115 +794,14 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
         }
     }
 
-    int combined = 0;
-    if (is_playing && mi->mod && mi->mod->xxi && mi->mod->xxs &&
-        mi->mod->ins == mi->mod->smp && mi->mod->smp > 0) {
-        combined = 1;
-        for (int i = 0; i < mi->mod->smp; i++)
-            if (strcasecmp(mi->mod->xxi[i].name, mi->mod->xxs[i].name) != 0) { combined = 0; break; }
-    }
-    int active_ins = 0;
-    if (is_playing && mi->mod && fi->pattern >= 0 && fi->pattern < mi->mod->pat) {
-        struct xmp_pattern *p = mi->mod->xxp[fi->pattern];
-        if (p && p->index)
-            for (int ch = 0; ch < 4 && ch < mi->mod->chn; ch++)
-                if (p->index[ch]) {
-                    struct xmp_track *trk = mi->mod->xxt[p->index[ch]];
-                    if (trk && trk->event && fi->row >= 0 && fi->row < 64 && trk->event[fi->row].ins > 0)
-                        active_ins = trk->event[fi->row].ins;
-                }
-    }
-
-    if (combined) {
-        SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
-        SDL_Rect bg = {PANEL_X, BOX_Y, PANEL_W, PANEL_H};
-        SDL_RenderFillRect(r, &bg);
-        draw_bevel(r, PANEL_X, BOX_Y, PANEL_W, PANEL_H, 1);
-        draw_text(r, PANEL_X + 8, BOX_Y + 6, "SAMPLES / INSTRUMENTS", COL_TEXT_WHITE);
-
-        int rows = (PANEL_H - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
-        int total = mi->mod->smp;
-        int max_scroll = total - rows;
-        if (max_scroll < 0) max_scroll = 0;
-        if (list_scroll_offset > max_scroll) list_scroll_offset = max_scroll;
-        if (list_scroll_offset < 0) list_scroll_offset = 0;
-
-        for (int i = 0; i < rows; i++) {
-            int item_idx = i + list_scroll_offset;
-            if (item_idx >= total) break;
-            int y = BOX_Y + LIST_TOP_PAD + i * LIST_ITEM_H;
-            char buf[64];
-            snprintf(buf, sizeof(buf), "%02X: %.20s", item_idx + 1, mi->mod->xxs[item_idx].name);
-            if (item_idx + 1 == active_ins) {
-                SDL_SetRenderDrawColor(r, COL_HIGHLIGHT.r, COL_HIGHLIGHT.g, COL_HIGHLIGHT.b, 255);
-                SDL_Rect hlr = {PANEL_X + 2, y - 2, PANEL_W - 4 - (max_scroll > 0 ? 12 : 0), LIST_ITEM_H};
-                SDL_RenderFillRect(r, &hlr);
-                draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_GREEN);
-            } else draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_WHITE);
-        }
-
-        if (max_scroll > 0) {
-            int track_y = BOX_Y + LIST_TOP_PAD;
-            int track_h = rows * LIST_ITEM_H;
-            int bar_h = (int)((float)rows / total * track_h);
-            if (bar_h < 8) bar_h = 8;
-            int usable = track_h - bar_h;
-            if (usable < 1) usable = 1;
-            int bar_y = track_y + (int)((float)list_scroll_offset / max_scroll * usable + 0.5f);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_TRACK.r, COL_SCROLL_TRACK.g, COL_SCROLL_TRACK.b, 255);
-            SDL_Rect track = {PANEL_X + PANEL_W - 10, track_y, 8, track_h};
-            SDL_RenderFillRect(r, &track);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_BAR.r, COL_SCROLL_BAR.g, COL_SCROLL_BAR.b, 255);
-            SDL_Rect bar = {PANEL_X + PANEL_W - 10, bar_y, 8, bar_h};
-            SDL_RenderFillRect(r, &bar);
-        }
-    } else {
+    /* --- Right panel: INSTRUMENTS / SAMPLES --- */
+    if (is_ffmpeg) {
         int ins_h = (PANEL_H - GAP) / 2;
         SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
         SDL_Rect ins_bg = {PANEL_X, BOX_Y, PANEL_W, ins_h};
         SDL_RenderFillRect(r, &ins_bg);
         draw_bevel(r, PANEL_X, BOX_Y, PANEL_W, ins_h, 1);
         draw_text(r, PANEL_X + 8, BOX_Y + 6, "INSTRUMENTS", COL_TEXT_WHITE);
-
-        int ins_rows = (ins_h - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
-        int ins_total = (is_playing && mi->mod) ? mi->mod->ins : 0;
-        int ins_max = ins_total - ins_rows;
-        if (ins_max < 0) ins_max = 0;
-        int ins_offset = list_scroll_offset;
-        if (ins_offset > ins_max) ins_offset = ins_max;
-        if (ins_offset < 0) ins_offset = 0;
-
-        if (is_playing && mi->mod && mi->mod->xxi) {
-            for (int i = 0; i < ins_rows; i++) {
-                int item_idx = i + ins_offset;
-                if (item_idx >= ins_total) break;
-                int y = BOX_Y + LIST_TOP_PAD + i * LIST_ITEM_H;
-                char buf[64];
-                snprintf(buf, sizeof(buf), "%02X: %.20s", item_idx + 1, mi->mod->xxi[item_idx].name);
-                if (item_idx + 1 == active_ins) {
-                    SDL_SetRenderDrawColor(r, COL_HIGHLIGHT.r, COL_HIGHLIGHT.g, COL_HIGHLIGHT.b, 255);
-                    SDL_Rect hlr = {PANEL_X + 2, y - 2, PANEL_W - 4 - (ins_max > 0 ? 12 : 0), LIST_ITEM_H};
-                    SDL_RenderFillRect(r, &hlr);
-                    draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_GREEN);
-                } else draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_WHITE);
-            }
-        }
-
-        if (ins_max > 0) {
-            int track_y = BOX_Y + LIST_TOP_PAD;
-            int track_h = ins_rows * LIST_ITEM_H;
-            int bar_h = (int)((float)ins_rows / ins_total * track_h);
-            if (bar_h < 8) bar_h = 8;
-            int usable = track_h - bar_h;
-            if (usable < 1) usable = 1;
-            int bar_y = track_y + (int)((float)ins_offset / ins_max * usable + 0.5f);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_TRACK.r, COL_SCROLL_TRACK.g, COL_SCROLL_TRACK.b, 255);
-            SDL_Rect track = {PANEL_X + PANEL_W - 10, track_y, 8, track_h};
-            SDL_RenderFillRect(r, &track);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_BAR.r, COL_SCROLL_BAR.g, COL_SCROLL_BAR.b, 255);
-            SDL_Rect bar = {PANEL_X + PANEL_W - 10, bar_y, 8, bar_h};
-            SDL_RenderFillRect(r, &bar);
-        }
 
         int smp_y = BOX_Y + ins_h + GAP;
         int smp_h = (PANEL_H - GAP) / 2;
@@ -701,49 +810,102 @@ void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
         SDL_RenderFillRect(r, &smp_bg);
         draw_bevel(r, PANEL_X, smp_y, PANEL_W, smp_h, 1);
         draw_text(r, PANEL_X + 8, smp_y + 6, "SAMPLES", COL_TEXT_WHITE);
+    } else {
+        /* XMP branch — same as before, no changes */
+        int combined = 0;
+        if (ps->is_playing && mi && mi->mod && mi->mod->xxi && mi->mod->xxs &&
+            mi->mod->ins == mi->mod->smp && mi->mod->smp > 0) {
+            combined = 1;
+            for (int i = 0; i < mi->mod->smp; i++)
+                if (strcasecmp(mi->mod->xxi[i].name, mi->mod->xxs[i].name) != 0) { combined = 0; break; }
+        }
+        int active_ins = 0;
+        if (ps->is_playing && mi && mi->mod && fi &&
+            fi->pattern >= 0 && fi->pattern < mi->mod->pat) {
+            struct xmp_pattern *p = mi->mod->xxp[fi->pattern];
+            if (p && p->index)
+                for (int ch = 0; ch < 4 && ch < mi->mod->chn; ch++)
+                    if (p->index[ch]) {
+                        struct xmp_track *trk = mi->mod->xxt[p->index[ch]];
+                        if (trk && trk->event && fi->row >= 0 && fi->row < 64 && trk->event[fi->row].ins > 0)
+                            active_ins = trk->event[fi->row].ins;
+                    }
+        }
 
-        int smp_rows = (smp_h - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
-        int smp_total = (is_playing && mi->mod) ? mi->mod->smp : 0;
-        int smp_max = smp_total - smp_rows;
-        if (smp_max < 0) smp_max = 0;
-        int smp_offset = list_scroll_offset;
-        if (smp_offset > smp_max) smp_offset = smp_max;
-        if (smp_offset < 0) smp_offset = 0;
+        if (combined) {
+            SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
+            SDL_Rect bg = {PANEL_X, BOX_Y, PANEL_W, PANEL_H};
+            SDL_RenderFillRect(r, &bg);
+            draw_bevel(r, PANEL_X, BOX_Y, PANEL_W, PANEL_H, 1);
+            draw_text(r, PANEL_X + 8, BOX_Y + 6, "SAMPLES / INSTRUMENTS", COL_TEXT_WHITE);
 
-        if (is_playing && mi->mod && mi->mod->xxs) {
-            for (int i = 0; i < smp_rows; i++) {
-                int item_idx = i + smp_offset;
-                if (item_idx >= smp_total) break;
-                int y = smp_y + LIST_TOP_PAD + i * LIST_ITEM_H;
+            int rows = (PANEL_H - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
+            int total = mi->mod->smp;
+            int max_scroll = total - rows;
+            if (max_scroll < 0) max_scroll = 0;
+            if (list_scroll_offset > max_scroll) list_scroll_offset = max_scroll;
+            if (list_scroll_offset < 0) list_scroll_offset = 0;
+
+            for (int i = 0; i < rows; i++) {
+                int item_idx = i + list_scroll_offset;
+                if (item_idx >= total) break;
+                int y = BOX_Y + LIST_TOP_PAD + i * LIST_ITEM_H;
                 char buf[64];
                 snprintf(buf, sizeof(buf), "%02X: %.20s", item_idx + 1, mi->mod->xxs[item_idx].name);
                 if (item_idx + 1 == active_ins) {
                     SDL_SetRenderDrawColor(r, COL_HIGHLIGHT.r, COL_HIGHLIGHT.g, COL_HIGHLIGHT.b, 255);
-                    SDL_Rect hlr = {PANEL_X + 2, y - 2, PANEL_W - 4 - (smp_max > 0 ? 12 : 0), LIST_ITEM_H};
+                    SDL_Rect hlr = {PANEL_X + 2, y - 2, PANEL_W - 4 - (max_scroll > 0 ? 12 : 0), LIST_ITEM_H};
                     SDL_RenderFillRect(r, &hlr);
                     draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_GREEN);
                 } else draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_WHITE);
             }
-        }
+        } else {
+            int ins_h = (PANEL_H - GAP) / 2;
+            SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
+            SDL_Rect ins_bg = {PANEL_X, BOX_Y, PANEL_W, ins_h};
+            SDL_RenderFillRect(r, &ins_bg);
+            draw_bevel(r, PANEL_X, BOX_Y, PANEL_W, ins_h, 1);
+            draw_text(r, PANEL_X + 8, BOX_Y + 6, "INSTRUMENTS", COL_TEXT_WHITE);
 
-        if (smp_max > 0) {
-            int track_y = smp_y + LIST_TOP_PAD;
-            int track_h = smp_rows * LIST_ITEM_H;
-            int bar_h = (int)((float)smp_rows / smp_total * track_h);
-            if (bar_h < 8) bar_h = 8;
-            int usable = track_h - bar_h;
-            if (usable < 1) usable = 1;
-            int bar_y = track_y + (int)((float)smp_offset / smp_max * usable + 0.5f);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_TRACK.r, COL_SCROLL_TRACK.g, COL_SCROLL_TRACK.b, 255);
-            SDL_Rect track = {PANEL_X + PANEL_W - 10, track_y, 8, track_h};
-            SDL_RenderFillRect(r, &track);
-            SDL_SetRenderDrawColor(r, COL_SCROLL_BAR.r, COL_SCROLL_BAR.g, COL_SCROLL_BAR.b, 255);
-            SDL_Rect bar = {PANEL_X + PANEL_W - 10, bar_y, 8, bar_h};
-            SDL_RenderFillRect(r, &bar);
+            int ins_rows = (ins_h - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
+            int ins_total = (ps->is_playing && mi && mi->mod) ? mi->mod->ins : 0;
+
+            if (ps->is_playing && mi && mi->mod && mi->mod->xxi) {
+                for (int i = 0; i < ins_rows; i++) {
+                    int item_idx = i;
+                    if (item_idx >= ins_total) break;
+                    int y = BOX_Y + LIST_TOP_PAD + i * LIST_ITEM_H;
+                    char buf[64];
+                    snprintf(buf, sizeof(buf), "%02X: %.20s", item_idx + 1, mi->mod->xxi[item_idx].name);
+                    draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_WHITE);
+                }
+            }
+
+            int smp_y = BOX_Y + ins_h + GAP;
+            int smp_h = (PANEL_H - GAP) / 2;
+            SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
+            SDL_Rect smp_bg = {PANEL_X, smp_y, PANEL_W, smp_h};
+            SDL_RenderFillRect(r, &smp_bg);
+            draw_bevel(r, PANEL_X, smp_y, PANEL_W, smp_h, 1);
+            draw_text(r, PANEL_X + 8, smp_y + 6, "SAMPLES", COL_TEXT_WHITE);
+
+            int smp_rows = (smp_h - LIST_TOP_PAD - LIST_BOT_PAD) / LIST_ITEM_H;
+            int smp_total = (ps->is_playing && mi && mi->mod) ? mi->mod->smp : 0;
+
+            if (ps->is_playing && mi && mi->mod && mi->mod->xxs) {
+                for (int i = 0; i < smp_rows; i++) {
+                    int item_idx = i;
+                    if (item_idx >= smp_total) break;
+                    int y = smp_y + LIST_TOP_PAD + i * LIST_ITEM_H;
+                    char buf[64];
+                    snprintf(buf, sizeof(buf), "%02X: %.20s", item_idx + 1, mi->mod->xxs[item_idx].name);
+                    draw_text(r, PANEL_X + 8, y, buf, COL_TEXT_WHITE);
+                }
+            }
         }
     }
 
-    /* Menu bar */
+    /* --- Menu bar --- */
     SDL_SetRenderDrawColor(r, COL_MENU_BG.r, COL_MENU_BG.g, COL_MENU_BG.b, 255);
     SDL_Rect mbar = {0, 0, WIN_W, MENU_H};
     SDL_RenderFillRect(r, &mbar);

@@ -63,6 +63,10 @@
 #define PROG_GRIP_W     14
 #define PROG_GRIP_H     14
 
+/* Full-mode transport controls (small buttons next to the slider) */
+#define TRANSPORT_BTN     20
+#define TRANSPORT_GAP      4
+
 #define PL_ROW_H     16
 #define PL_BTN_H     24
 #define PL_BTN_GAP   6
@@ -97,6 +101,12 @@ enum {
     PL_BTN_COUNT
 };
 
+typedef enum {
+    BACKEND_NONE   = 0,
+    BACKEND_XMP    = 1,
+    BACKEND_FFMPEG = 2
+} Backend;
+
 extern PlaylistItem playlist[PLAYLIST_MAX];
 extern int playlist_count;
 extern int playlist_view[PLAYLIST_MAX];
@@ -116,7 +126,7 @@ extern int is_playing;
 extern int mini_mode;
 extern char current_file[PATH_MAX];
 
-extern int list_scroll_offset;      /* <-- new */
+extern int list_scroll_offset;
 
 extern int16_t vis_buffer[];
 extern float channel_peak[4];
@@ -131,10 +141,30 @@ int  gui_pos_origin_y(int stat_y);
 void gui_draw_full_position_indicator(SDL_Renderer *r, int stat_x, int stat_w, float progress);
 void gui_draw_position_trackbar(SDL_Renderer *r, int track_x, int track_w, int base_y, float progress);
 
-void gui_draw_mini_player(SDL_Renderer *r, struct xmp_module_info *mi,
-                          struct xmp_frame_info *fi, int paused);
-void gui_draw_full_tracker(SDL_Renderer *r, struct xmp_module_info *mi,
-                           struct xmp_frame_info *fi, int paused);
+/* Which transport buttons are usable, based on playlist state.
+   Filled in by main.c via build_player_state. */
+typedef struct {
+    Backend backend;
+    int     is_playing;
+    int     paused;
+    double  time_sec;
+    double  total_sec;
+    struct xmp_module_info *mi;
+    struct xmp_frame_info  *fi;
+    const char *title;
+    const char *format;
+    int     channels;
+    int     samplerate;
+
+    /* Transport-button availability */
+    int can_play;    /* any file loaded */
+    int can_pause;   /* any file loaded */
+    int can_prev;    /* earlier item exists in the view */
+    int can_next;    /* later item exists in the view */
+} PlayerState;
+
+void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps);
+void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps);
 void gui_draw_playlist_editor(SDL_Renderer *r);
 void gui_draw_info_dialog(SDL_Renderer *r);
 
@@ -144,6 +174,10 @@ int  gui_mini_hit_playlist(int x, int y);
 int  gui_mini_hit_file_menu(int x, int y);
 int  gui_mini_hit_position_trackbar(int x, int y);
 int  gui_mini_hit_btn_idx(int x, int y);
+
+/* Full-mode transport hit-tests: returns 0..3 for Prev/Play/Pause/Next,
+   or -1 if none. Caller must still check ps->can_prev/can_play/etc. */
+int  gui_full_hit_btn_idx(int mx, int my);
 
 void gui_playlist_editor_geom(int *out_x, int *out_y, int *out_w, int *out_h);
 
