@@ -159,12 +159,10 @@ int gui_pos_grip_x_impl(int track_x, int track_w, float progress) {
     return track_x + (int)(progress * usable + 0.5f);
 }
 
-/* Track starts AFTER the transport buttons, which are 4 buttons wide plus
-   a small left margin and a small gap between the buttons and the track. */
 void gui_pos_track_bounds(int stat_x, int stat_w, int *out_track_x, int *out_track_w) {
-    int left_reserved = 8                                     /* left margin */
-                      + 4 * TRANSPORT_BTN + 3 * TRANSPORT_GAP /* button row */
-                      + 10;                                   /* gap to track */
+    int left_reserved = 8
+                      + 4 * TRANSPORT_BTN + 3 * TRANSPORT_GAP
+                      + 10;
     *out_track_x = stat_x + left_reserved;
     *out_track_w = stat_w - left_reserved - PROG_RIGHT_PAD;
     if (*out_track_w < PROG_GRIP_W + 4) *out_track_w = PROG_GRIP_W + 4;
@@ -297,7 +295,7 @@ static const struct { const char *label; int w; } PL_TOOLBAR[] = {
 int gui_playlist_toolbar_layout(int *out_x, int *out_w) {
     int bx, by, bw, bh;
     gui_playlist_editor_geom(&bx, &by, &bw, &bh);
-    (void)bx; (void)by; (void)bw; (void)bh;
+    (void)bw; (void)bh;
     int x = bx + PL_PAD;
     int y = by + PL_TITLE_H + PL_PAD;
     for (int i = 0; i < PL_TOOLBAR_N; i++) {
@@ -341,8 +339,6 @@ int gui_playlist_button_hit(int mx, int my) {
 }
 
 /* ==================== FULL-MODE TRANSPORT ==================== */
-/* Four small buttons on the LEFT side of the status box, at the same Y
-   as the position slider. The track then begins to their right. */
 static void transport_button_rect(int idx, int *out_x, int *out_y) {
     int stat_x = 340;
     int base_y = gui_pos_origin_y(STAT_Y);
@@ -420,6 +416,19 @@ int gui_mini_hit_btn_idx(int x, int y) {
     return -1;
 }
 
+/* Compute a safe buffer index for the wave visualizations.
+   When the destination width exceeds the number of samples we have,
+   we clamp to 0 to avoid reading past the end and to keep rendering sane. */
+static int wave_index(int i, int width, int channels, int ch) {
+    if (width <= 0) return 0;
+    int step = BUFFER_SIZE_REF / width;
+    if (step < 1) step = 1;
+    int idx = (i * step) * 2 + ch;
+    if (idx >= BUFFER_SIZE_REF * 2) idx = (BUFFER_SIZE_REF * 2) - 2 + ch;
+    if (idx < 0) idx = 0;
+    return idx;
+}
+
 void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
     SDL_SetRenderDrawColor(r, COL_BG.r, COL_BG.g, COL_BG.b, 255);
     SDL_RenderClear(r);
@@ -471,7 +480,7 @@ void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
         SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
         int mid_y = wy + wh / 2;
         for (int i = 0; i < ww - 2; i++) {
-            int buf_idx = (i * (BUFFER_SIZE_REF / ww)) * 2;
+            int buf_idx = wave_index(i, ww - 2, 2, 0);
             float l = vis_buffer[buf_idx] / 32768.0f;
             float rr = vis_buffer[buf_idx + 1] / 32768.0f;
             float s = (l + rr) * 0.5f;
@@ -492,7 +501,7 @@ void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
     if (ps->backend == BACKEND_FFMPEG) {
         snprintf(title, sizeof(title), "%.40s",
                  (ps->title && ps->title[0]) ? ps->title : "No module loaded");
-    } else if (ps->is_playing && ps->mi && ps->mi->mod && ps->mi->mod->name && ps->mi->mod->name[0]) {
+    } else if (ps->is_playing && ps->mi && ps->mi->mod && ps->mi->mod->name[0]) {
         snprintf(title, sizeof(title), "%.40s", ps->mi->mod->name);
     } else if (current_file[0]) {
         const char *base = strrchr(current_file, '/');
@@ -619,9 +628,9 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     } else if (ps->is_playing && mi && mi->mod) {
         char buf[128];
-        snprintf(buf, sizeof(buf), "Title: %.30s", mi->mod->name ? mi->mod->name : "");
+        snprintf(buf, sizeof(buf), "Title: %.30s", mi->mod->name);
         draw_text_clip(r, text_x, INFO_Y + 10, buf, line_chars, COL_TEXT_GREEN);
-        snprintf(buf, sizeof(buf), "Type: %s", mi->mod->type ? mi->mod->type : "");
+        snprintf(buf, sizeof(buf), "Type: %s", mi->mod->type);
         draw_text_clip(r, text_x, INFO_Y + 30, buf, line_chars, COL_TEXT_WHITE);
         snprintf(buf, sizeof(buf), "Ins: %d  Pat: %d  Chn: %d", mi->mod->ins, mi->mod->pat, mi->mod->chn);
         draw_text_clip(r, text_x, INFO_Y + 50, buf, line_chars, COL_TEXT_WHITE);
@@ -672,10 +681,9 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    /* Transport buttons (left of the slider) */
     draw_full_transport(r, ps);
 
-    /* --- Scope boxes --- */
+    /* --- Scope boxes (waveform) --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int sx = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 30, 20, 255);
@@ -692,7 +700,7 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
                     SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
                     int mid_y = SCOPE_Y + SCOPE_H / 2;
                     for (int i = 0; i < SCOPE_W - 2; i++) {
-                        int buf_idx = (i * (BUFFER_SIZE_REF / SCOPE_W)) * 2 + ch;
+                        int buf_idx = wave_index(i, SCOPE_W - 2, 2, ch);
                         float sample = vis_buffer[buf_idx] / 32768.0f;
                         int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
                         if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
@@ -706,7 +714,7 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
                 SDL_SetRenderDrawColor(r, COL_TEXT_GREEN.r, COL_TEXT_GREEN.g, COL_TEXT_GREEN.b, 255);
                 int mid_y = SCOPE_Y + SCOPE_H / 2;
                 for (int i = 0; i < SCOPE_W - 2; i++) {
-                    int buf_idx = (i * (BUFFER_SIZE_REF / SCOPE_W)) * 2 + (ch % 2);
+                    int buf_idx = wave_index(i, SCOPE_W - 2, 2, ch % 2);
                     float sample = vis_buffer[buf_idx] / 32768.0f;
                     int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
                     if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
@@ -717,19 +725,21 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    /* --- VU meters --- */
+    /* --- VU meters: thin 8px strip directly under each scope --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int x = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
         SDL_Rect bg = {x, VU_Y, SCOPE_W, VU_H};
         SDL_RenderFillRect(r, &bg);
-        int bar_w = (int)(channel_peak[ch] * SCOPE_W);
-        if (bar_w > SCOPE_W) bar_w = SCOPE_W;
+        draw_bevel(r, x, VU_Y, SCOPE_W, VU_H, 1);
+        int bar_w = (int)(channel_peak[ch] * (SCOPE_W - 2));
+        if (bar_w > SCOPE_W - 2) bar_w = SCOPE_W - 2;
+        if (bar_w < 0) bar_w = 0;
         Uint8 cr = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.r : (channel_peak[ch] > 0.5f) ? 255 : COL_TEXT_GREEN.r;
         Uint8 cg = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.g : 255;
         Uint8 cb = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.b : COL_TEXT_GREEN.b;
         SDL_SetRenderDrawColor(r, cr, cg, cb, 255);
-        SDL_Rect bar = {x, VU_Y, bar_w, VU_H};
+        SDL_Rect bar = {x + 1, VU_Y + 1, bar_w, VU_H - 2};
         SDL_RenderFillRect(r, &bar);
     }
 
@@ -759,7 +769,7 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         for (int i = 0; i < VISIBLE_ROWS; i++) {
             int row = start_row + i;
             if (row >= 64) break;
-            int y = GRID_Y + i * ROW_H + 4;
+            int y = GRID_Y + 6 + i * ROW_H;
             if (row == fi->row) {
                 SDL_SetRenderDrawColor(r, COL_HIGHLIGHT.r, COL_HIGHLIGHT.g, COL_HIGHLIGHT.b, 255);
                 SDL_Rect hlr = {px + 2, y - 2, SCOPE_W - 4, ROW_H};
@@ -767,9 +777,9 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
             }
             char rownum[8]; snprintf(rownum, sizeof(rownum), "%02X", row);
             draw_text(r, px + 6, y, rownum, COL_TEXT_DIM);
-            if (pat->index && pat->index[ch]) {
+            if (pat->index[ch]) {
                 struct xmp_track *trk = mi->mod->xxt[pat->index[ch]];
-                if (trk && trk->event) {
+                if (trk) {
                     struct xmp_event *ev = &trk->event[row];
                     if (ev->note > 0 && ev->note < 97) {
                         static const char *names[] = {"C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-"};
@@ -811,7 +821,6 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         draw_bevel(r, PANEL_X, smp_y, PANEL_W, smp_h, 1);
         draw_text(r, PANEL_X + 8, smp_y + 6, "SAMPLES", COL_TEXT_WHITE);
     } else {
-        /* XMP branch — same as before, no changes */
         int combined = 0;
         if (ps->is_playing && mi && mi->mod && mi->mod->xxi && mi->mod->xxs &&
             mi->mod->ins == mi->mod->smp && mi->mod->smp > 0) {
@@ -823,11 +832,11 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         if (ps->is_playing && mi && mi->mod && fi &&
             fi->pattern >= 0 && fi->pattern < mi->mod->pat) {
             struct xmp_pattern *p = mi->mod->xxp[fi->pattern];
-            if (p && p->index)
+            if (p)
                 for (int ch = 0; ch < 4 && ch < mi->mod->chn; ch++)
                     if (p->index[ch]) {
                         struct xmp_track *trk = mi->mod->xxt[p->index[ch]];
-                        if (trk && trk->event && fi->row >= 0 && fi->row < 64 && trk->event[fi->row].ins > 0)
+                        if (trk && fi->row >= 0 && fi->row < 64 && trk->event[fi->row].ins > 0)
                             active_ins = trk->event[fi->row].ins;
                     }
         }

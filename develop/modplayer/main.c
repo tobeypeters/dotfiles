@@ -408,8 +408,13 @@ void audio_callback(void *ud, Uint8 *stream, int len) {
         int frames = len / 4;
         int got = ffp_read((int16_t *)stream, frames);
         if (got < frames) memset((int16_t *)stream + got * 2, 0, (frames - got) * 4);
-        for (int i = 0; i < got * 2 && i < BUFFER_SIZE * 2; i++)
+        int total_samples = got * 2;
+        if (total_samples > BUFFER_SIZE * 2) total_samples = BUFFER_SIZE * 2;
+        for (int i = 0; i < total_samples; i++)
             vis_buffer[i] = ((int16_t *)stream)[i];
+        /* Clear the unused tail so the scope doesn't show stale data. */
+        for (int i = total_samples; i < BUFFER_SIZE * 2; i++)
+            vis_buffer[i] = 0;
         float pl = 0, pr = 0;
         for (int i = 0; i < got; i++) {
             float l = fabsf(((int16_t *)stream)[i*2] / 32768.0f);
@@ -430,11 +435,15 @@ void audio_callback(void *ud, Uint8 *stream, int len) {
     if (ctx == NULL) { memset(stream, 0, len); SDL_UnlockMutex(vis_mutex); return; }
     int16_t *out = (int16_t *)stream;
     int need = len / 4;
+    int samples_written = 0;
     while (need > 0) {
         int to = (need > BUFFER_SIZE) ? BUFFER_SIZE : need;
         xmp_play_buffer(ctx, audio_buffer, to * 4, 0);
         memcpy(out, audio_buffer, to * 4);
-        for (int i = 0; i < to * 2 && i < BUFFER_SIZE * 2; i++) vis_buffer[i] = audio_buffer[i];
+        int tail = samples_written;
+        for (int i = 0; i < to * 2 && (tail + i) < BUFFER_SIZE * 2; i++)
+            vis_buffer[tail + i] = audio_buffer[i];
+        samples_written += to * 2;
         float pl = 0, pr = 0;
         for (int i = 0; i < to; i++) {
             float l = fabsf(audio_buffer[i*2] / 32768.0f);
@@ -450,6 +459,9 @@ void audio_callback(void *ud, Uint8 *stream, int len) {
         }
         out += to * 2; need -= to;
     }
+    if (samples_written < BUFFER_SIZE * 2)
+        memset(vis_buffer + samples_written, 0,
+               (BUFFER_SIZE * 2 - samples_written) * sizeof(int16_t));
     SDL_UnlockMutex(vis_mutex);
 }
 

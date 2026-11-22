@@ -10,7 +10,7 @@
 #define STAT_H     100
 #define SCOPE_W    224
 #define SCOPE_H    64
-#define VU_H       10
+#define VU_H       8                 /* thin VU strip under each scope */
 #define COL_W      232
 #define ROW_H      16
 #define VISIBLE_ROWS 18
@@ -27,10 +27,12 @@
 #define INFO_Y     (MENU_H + GAP)
 #define STAT_Y     INFO_Y
 #define SCOPE_Y    (INFO_Y + INFO_H + GAP)
-#define VU_Y       (SCOPE_Y + SCOPE_H + GAP)
-#define GRID_Y     (VU_Y + VU_H + GAP)
+/* VU sits immediately under the scope, then GRID_Y (channel boxes) follows. */
+#define VU_Y       (SCOPE_Y + SCOPE_H + 2)
+#define GRID_Y     (VU_Y + VU_H + 6)
 #define GRID_H     (VISIBLE_ROWS * ROW_H + 20)
-#define BOX_Y      (GRID_Y - 20)
+/* BOX_Y is the top of the channel-info boxes; aligned with GRID_Y. */
+#define BOX_Y      GRID_Y
 #define WIN_H      (BOX_Y + GRID_H + GAP)
 #define PANEL_H    GRID_H
 
@@ -141,8 +143,6 @@ int  gui_pos_origin_y(int stat_y);
 void gui_draw_full_position_indicator(SDL_Renderer *r, int stat_x, int stat_w, float progress);
 void gui_draw_position_trackbar(SDL_Renderer *r, int track_x, int track_w, int base_y, float progress);
 
-/* Which transport buttons are usable, based on playlist state.
-   Filled in by main.c via build_player_state. */
 typedef struct {
     Backend backend;
     int     is_playing;
@@ -156,11 +156,10 @@ typedef struct {
     int     channels;
     int     samplerate;
 
-    /* Transport-button availability */
-    int can_play;    /* any file loaded */
-    int can_pause;   /* any file loaded */
-    int can_prev;    /* earlier item exists in the view */
-    int can_next;    /* later item exists in the view */
+    int can_play;
+    int can_pause;
+    int can_prev;
+    int can_next;
 } PlayerState;
 
 void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps);
@@ -175,8 +174,6 @@ int  gui_mini_hit_file_menu(int x, int y);
 int  gui_mini_hit_position_trackbar(int x, int y);
 int  gui_mini_hit_btn_idx(int x, int y);
 
-/* Full-mode transport hit-tests: returns 0..3 for Prev/Play/Pause/Next,
-   or -1 if none. Caller must still check ps->can_prev/can_play/etc. */
 int  gui_full_hit_btn_idx(int mx, int my);
 
 void gui_playlist_editor_geom(int *out_x, int *out_y, int *out_w, int *out_h);

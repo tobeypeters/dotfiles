@@ -5,6 +5,7 @@
 #include <libavutil/opt.h>
 #include <libavutil/channel_layout.h>
 #include <pthread.h>
+#include <stdatomic.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,7 @@ static int ring_head = 0;
 static int ring_tail = 0;
 static int ring_count = 0;
 static pthread_mutex_t ring_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t  ring_has_space = PTHREAD_COND_INITIALIZER;
 
 /* Serializes decode-thread work against seek. */
 static pthread_mutex_t decode_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -32,15 +34,18 @@ static int              stream_idx = -1;
 static AVPacket        *pkt = NULL;
 static AVFrame         *frame = NULL;
 
-static int      eof = 0;
-static int      stop_req = 0;
-static pthread_t decode_thread;
-static int      thread_running = 0;
-static double   duration_sec = 0;
-static int64_t  frames_consumed = 0;
+static atomic_int  eof = 0;
+static atomic_int  stop_req = 0;
+static atomic_int  thread_running = 0;
+static pthread_t   decode_thread;
+static double      duration_sec = 0;
+static atomic_llong frames_consumed = 0;
 
-static char     title_buf[256] = "";
-static char     format_buf[64] = "";
+/* Incremented on every seek; the decode loop aborts stale pushes. */
+static atomic_int seek_gen = 0;
+
+static char title_buf[256] = "";
+static char format_buf[64] = "";
 
 int ffp_init(int sample_rate, int channels) {
     out_rate = sample_rate;
@@ -50,11 +55,19 @@ int ffp_init(int sample_rate, int channels) {
     return 1;
 }
 
-static int ring_push(const int16_t *data, int frames) {
+static int ring_push(const int16_t *data, int frames, int my_gen) {
     pthread_mutex_lock(&ring_lock);
     int pushed = 0;
     for (int i = 0; i < frames; i++) {
-        if (ring_count >= RING_FRAMES) break;
+        while (ring_count >= RING_FRAMES) {
+            /* Abort if seek happened while we were waiting. */
+            if (atomic_load(&seek_gen) != my_gen ||
+                atomic_load(&stop_req)) {
+                pthread_mutex_unlock(&ring_lock);
+                return pushed;
+            }
+            pthread_cond_wait(&ring_has_space, &ring_lock);
+        }
         int idx = ring_head & RING_MASK;
         ring[idx * 2 + 0] = data[i * 2 + 0];
         ring[idx * 2 + 1] = data[i * 2 + 1];
@@ -77,14 +90,16 @@ static int ring_pop(int16_t *out, int frames) {
         ring_count--;
         n++;
     }
+    if (n > 0) pthread_cond_signal(&ring_has_space);
     pthread_mutex_unlock(&ring_lock);
-    frames_consumed += n;
+    atomic_fetch_add(&frames_consumed, n);
     return n;
 }
 
 static void ring_clear(void) {
     pthread_mutex_lock(&ring_lock);
     ring_head = ring_tail = ring_count = 0;
+    pthread_cond_broadcast(&ring_has_space);
     pthread_mutex_unlock(&ring_lock);
 }
 
@@ -106,15 +121,18 @@ static int init_swr_from_frame(AVFrame *f) {
 
 static void *decode_loop(void *arg) {
     (void)arg;
-    while (!stop_req) {
-        if (eof) break;
+    while (!atomic_load(&stop_req)) {
+        if (atomic_load(&eof)) break;
 
         pthread_mutex_lock(&decode_lock);
+
+        int my_gen = atomic_load(&seek_gen);
 
         int ret = av_read_frame(fmt, pkt);
         if (ret < 0) {
             pthread_mutex_unlock(&decode_lock);
-            eof = 1; break;
+            atomic_store(&eof, 1);
+            break;
         }
         if (pkt->stream_index != stream_idx) {
             av_packet_unref(pkt);
@@ -147,17 +165,19 @@ static void *decode_loop(void *arg) {
             int converted = swr_convert(swr, outp, out_samples,
                                         (const uint8_t **)frame->extended_data,
                                         frame->nb_samples);
+            if (converted > out_samples) converted = out_samples; /* safety */
             if (converted > 0) {
                 int produced = converted;
-                while (!stop_req && produced > 0) {
-                    int pushed = ring_push(outbuf + (converted - produced) * 2, produced);
+                while (produced > 0 && !atomic_load(&stop_req)) {
+                    int pushed = ring_push(outbuf + (converted - produced) * 2,
+                                           produced, my_gen);
                     produced -= pushed;
                     if (produced > 0) {
-                        /* Drop the lock while waiting for the consumer. */
-                        pthread_mutex_unlock(&decode_lock);
-                        struct timespec ts = {0, 5000000};
-                        nanosleep(&ts, NULL);
-                        pthread_mutex_lock(&decode_lock);
+                        /* Either seek happened or stop requested — bail. */
+                        if (atomic_load(&seek_gen) != my_gen ||
+                            atomic_load(&stop_req)) {
+                            produced = 0;
+                        }
                     }
                 }
             }
@@ -215,25 +235,36 @@ int ffp_load(const char *path) {
     if (!format_buf[0] && fmt->iformat && fmt->iformat->name)
         snprintf(format_buf, sizeof(format_buf), "%s", fmt->iformat->name);
 
-    frames_consumed = 0;
-    eof = 0;
-    stop_req = 0;
+    atomic_store(&frames_consumed, 0);
+    atomic_store(&eof, 0);
+    atomic_store(&stop_req, 0);
+    atomic_store(&seek_gen, 0);
     ring_clear();
 
     pkt = av_packet_alloc();
     frame = av_frame_alloc();
     if (!pkt || !frame) { ffp_stop(); return 0; }
 
-    pthread_create(&decode_thread, NULL, decode_loop, NULL);
-    thread_running = 1;
+    /* Set the flag *before* the thread starts so ffp_is_active/ffp_finished
+       see a consistent value even if the thread finishes immediately. */
+    atomic_store(&thread_running, 1);
+    if (pthread_create(&decode_thread, NULL, decode_loop, NULL) != 0) {
+        atomic_store(&thread_running, 0);
+        ffp_stop();
+        return 0;
+    }
     return 1;
 }
 
 void ffp_stop(void) {
-    if (thread_running) {
-        stop_req = 1;
+    if (atomic_load(&thread_running)) {
+        atomic_store(&stop_req, 1);
+        /* Wake any producer blocked in ring_push. */
+        pthread_mutex_lock(&ring_lock);
+        pthread_cond_broadcast(&ring_has_space);
+        pthread_mutex_unlock(&ring_lock);
         pthread_join(decode_thread, NULL);
-        thread_running = 0;
+        atomic_store(&thread_running, 0);
     }
     pthread_mutex_lock(&decode_lock);
     if (frame) { av_frame_free(&frame); frame = NULL; }
@@ -243,7 +274,8 @@ void ffp_stop(void) {
     if (fmt)   { avformat_close_input(&fmt); fmt = NULL; }
     stream_idx = -1;
     duration_sec = 0;
-    frames_consumed = 0;
+    atomic_store(&frames_consumed, 0);
+    atomic_store(&eof, 0);
     title_buf[0] = '\0';
     format_buf[0] = '\0';
     ring_clear();
@@ -253,6 +285,10 @@ void ffp_stop(void) {
 void ffp_seek(double seconds) {
     pthread_mutex_lock(&decode_lock);
     if (!fmt || stream_idx < 0) { pthread_mutex_unlock(&decode_lock); return; }
+
+    /* Bump generation first so any in-flight push aborts. */
+    atomic_fetch_add(&seek_gen, 1);
+
     int64_t ts = (int64_t)(seconds / av_q2d(fmt->streams[stream_idx]->time_base));
     if (av_seek_frame(fmt, stream_idx, ts, AVSEEK_FLAG_BACKWARD) < 0) {
         pthread_mutex_unlock(&decode_lock);
@@ -261,8 +297,8 @@ void ffp_seek(double seconds) {
     if (dec) avcodec_flush_buffers(dec);
     if (swr) { swr_free(&swr); swr = NULL; }
     ring_clear();
-    frames_consumed = (int64_t)(seconds * out_rate);
-    eof = 0;
+    atomic_store(&frames_consumed, (long long)(seconds * out_rate));
+    atomic_store(&eof, 0);
     pthread_mutex_unlock(&decode_lock);
 }
 
@@ -271,19 +307,22 @@ int ffp_read(int16_t *out, int frames) {
 }
 
 double ffp_duration(void) { return duration_sec; }
-double ffp_position(void) { return (double)frames_consumed / (double)out_rate; }
+
+double ffp_position(void) {
+    return (double)atomic_load(&frames_consumed) / (double)out_rate;
+}
 
 const char *ffp_title(void)  { return title_buf; }
 const char *ffp_format(void) { return format_buf; }
 
-int ffp_is_active(void) { return thread_running; }
+int ffp_is_active(void) { return atomic_load(&thread_running); }
 
 int ffp_finished(void) {
-    if (!thread_running) return 0;
+    if (!atomic_load(&thread_running)) return 0;
     pthread_mutex_lock(&ring_lock);
     int empty = (ring_count == 0);
     pthread_mutex_unlock(&ring_lock);
-    return eof && empty;
+    return atomic_load(&eof) && empty;
 }
 
 void ffp_shutdown(void) {
