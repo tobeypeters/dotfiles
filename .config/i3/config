@@ -43,6 +43,7 @@ for_window [class="ChromePrivate"] floating enable
 for_window [class="code"] floating enable
 for_window [class="Cubic_wizard.py"] floating enable
 for_window [class="Cycle_switcher"] floating enable
+for_window [class="deez"] floating enable
 for_window [class="discord"] floating enable
 for_window [class="discover"] floating enable
 for_window [class="feh"] floating enable
