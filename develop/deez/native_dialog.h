@@ -4,8 +4,7 @@
 #include <limits.h>
 #include <stddef.h>
 
-/* Initialize GTK on the main thread. MUST be called before SDL_Init
-   so GTK owns the X11 event queue, not SDL. Returns 1 on success,
+/* Initialize GTK on the main thread before SDL_Init. Returns 1 on success,
    0 if no display is available (dialogs will then no-op). */
 int nd_init(void);
 

@@ -18,7 +18,7 @@ static const SDL_Color COL_TEXT_BLUE  = {180, 180, 220, 255};
 static const SDL_Color COL_TEXT_DIM   = {120, 130, 150, 255};
 static const SDL_Color COL_HIGHLIGHT  = { 40,  60, 100, 255};
 static const SDL_Color COL_MENU_BG    = { 45,  55,  75, 255};
-static const SDL_Color COL_MENU_HOVER = { 80, 100, 140, 255};
+static const SDL_Color COL_MENU_HOVER = { 90, 120, 170, 255};
 static const SDL_Color COL_TITLE_BG   = { 30,  40,  60, 255};
 static const SDL_Color COL_SCROLL_TRACK = { 30,  40,  60, 255};
 static const SDL_Color COL_SCROLL_BAR   = { 110, 130, 170, 255};
@@ -293,11 +293,8 @@ static const struct { const char *label; int w; } PL_TOOLBAR[] = {
 #define PL_TOOLBAR_N ((int)(sizeof(PL_TOOLBAR)/sizeof(PL_TOOLBAR[0])))
 
 int gui_playlist_toolbar_layout(int *out_x, int *out_w) {
-    int bx, by, bw, bh;
-    gui_playlist_editor_geom(&bx, &by, &bw, &bh);
-    (void)bw; (void)bh;
-    int x = bx + PL_PAD;
-    int y = by + PL_TITLE_H + PL_PAD;
+    int x = PL_PAD;
+    int y = PL_TITLE_H + PL_PAD;
     for (int i = 0; i < PL_TOOLBAR_N; i++) {
         out_x[i] = x;
         out_w[i] = PL_TOOLBAR[i].w;
@@ -401,9 +398,9 @@ static void draw_full_transport(SDL_Renderer *r, const PlayerState *ps) {
 
 /* ==================== MINI PLAYER ==================== */
 int gui_mini_hit_load(int x, int y)      { return is_hover(x, y, 10, 24, 150, 30); }
-int gui_mini_hit_quit(int x, int y)      { return is_hover(x, y, 10, 54, 150, 30); }
-int gui_mini_hit_playlist(int x, int y)  { return is_hover(x, y, 10, 84, 150, 30); }
-int gui_mini_hit_file_menu(int x, int y) { return is_hover(x, y, 10, 0, 80, 24); }
+int gui_mini_hit_playlist(int x, int y)  { return is_hover(x, y, 10, 54, 150, 30); }
+int gui_mini_hit_quit(int x, int y)      { return is_hover(x, y, 10, 84, 150, 30); }
+int gui_mini_hit_file_menu(int x, int y) { return is_hover(x, y, MENU_FILE_X, 0, MENU_FILE_W, MENU_H); }
 int gui_mini_hit_position_trackbar(int x, int y) {
     return is_hover(x, y, MINI_TRACKBAR_X, MINI_TRACKBAR_Y, MINI_TRACKBAR_W, PROG_GRIP_H);
 }
@@ -416,10 +413,8 @@ int gui_mini_hit_btn_idx(int x, int y) {
     return -1;
 }
 
-/* Compute a safe buffer index for the wave visualizations.
-   When the destination width exceeds the number of samples we have,
-   we clamp to 0 to avoid reading past the end and to keep rendering sane. */
 static int wave_index(int i, int width, int channels, int ch) {
+    (void)channels;
     if (width <= 0) return 0;
     int step = BUFFER_SIZE_REF / width;
     if (step < 1) step = 1;
@@ -429,20 +424,79 @@ static int wave_index(int i, int width, int channels, int ch) {
     return idx;
 }
 
+static void draw_menu_icon(SDL_Renderer *r, const PlayerState *ps) {
+    if (!ps->icon_tex) return;
+    SDL_Rect dst = {ICON_X, ICON_Y, ICON_SIZE, ICON_SIZE};
+    SDL_RenderCopy(r, ps->icon_tex, NULL, &dst);
+}
+
+/* Menu bar with hover highlight that does not cover the icon. */
+static void draw_menu_bar(SDL_Renderer *r, const PlayerState *ps, int bar_w) {
+    SDL_SetRenderDrawColor(r, COL_MENU_BG.r, COL_MENU_BG.g, COL_MENU_BG.b, 255);
+    SDL_Rect mbar = {0, 0, bar_w, MENU_H};
+    SDL_RenderFillRect(r, &mbar);
+
+    draw_menu_icon(r, ps);
+
+    if (is_hover(mouse_x, mouse_y, MENU_FILE_X, 0, MENU_FILE_W, MENU_H) || menu_open == 1) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {MENU_FILE_X, 0, MENU_FILE_W, MENU_H};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, MENU_FILE_X + 4, 8, "File (M)", COL_TEXT_WHITE);
+
+    if (is_hover(mouse_x, mouse_y, MENU_INFO_X, 0, MENU_INFO_W, MENU_H) || menu_open == 2) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {MENU_INFO_X, 0, MENU_INFO_W, MENU_H};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, MENU_INFO_X + 4, 8, "Info (I)", COL_TEXT_WHITE);
+
+    if (is_hover(mouse_x, mouse_y, MENU_MINI_X, 0, MENU_MINI_W, MENU_H)) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {MENU_MINI_X, 0, MENU_MINI_W, MENU_H};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, MENU_MINI_X + 4, 8, "Mini (Tab)", COL_TEXT_WHITE);
+}
+
+static void draw_file_menu_popup(SDL_Renderer *r) {
+    SDL_Rect drop = {MENU_FILE_X, MENU_H, 150, 90};
+    SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
+    SDL_RenderFillRect(r, &drop);
+    draw_bevel(r, drop.x, drop.y, drop.w, drop.h, 0);
+
+    int y0 = MENU_H + 4;
+    if (is_hover(mouse_x, mouse_y, drop.x + 1, y0 + 1, drop.w - 2, 28)) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {drop.x + 1, y0 + 1, drop.w - 2, 28};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, drop.x + 10, y0 + 11, "Load (L)", COL_TEXT_WHITE);
+
+    int y1 = y0 + 30;
+    if (is_hover(mouse_x, mouse_y, drop.x + 1, y1 + 1, drop.w - 2, 28)) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {drop.x + 1, y1 + 1, drop.w - 2, 28};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, drop.x + 10, y1 + 11, "Playlist (P)", COL_TEXT_WHITE);
+
+    int y2 = y1 + 30;
+    if (is_hover(mouse_x, mouse_y, drop.x + 1, y2 + 1, drop.w - 2, 28)) {
+        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
+        SDL_Rect h = {drop.x + 1, y2 + 1, drop.w - 2, 28};
+        SDL_RenderFillRect(r, &h);
+    }
+    draw_text(r, drop.x + 10, y2 + 11, "Quit (Q)", COL_TEXT_WHITE);
+}
+
 void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
     SDL_SetRenderDrawColor(r, COL_BG.r, COL_BG.g, COL_BG.b, 255);
     SDL_RenderClear(r);
 
-    SDL_SetRenderDrawColor(r, COL_MENU_BG.r, COL_MENU_BG.g, COL_MENU_BG.b, 255);
-    SDL_Rect mb = {0, 0, MINI_W, MENU_H};
-    SDL_RenderFillRect(r, &mb);
-    if (is_hover(mouse_x, mouse_y, 10, 0, 80, 24) || menu_open == 1) {
-        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-        SDL_Rect h = {10, 0, 80, 24};
-        SDL_RenderFillRect(r, &h);
-    }
-    draw_text(r, 18, 8, "File (M)", COL_TEXT_WHITE);
-    draw_text(r, 98, 8, "Mini (Tab)", COL_TEXT_WHITE);
+    draw_menu_bar(r, ps, MINI_W);
+    draw_text(r, MENU_MINI_X + 4, 8, "Mini (Tab)", COL_TEXT_DIM);
 
     int sx = MINI_PAD, sy = MENU_H + MINI_PAD;
     SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
@@ -481,8 +535,8 @@ void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
         int mid_y = wy + wh / 2;
         for (int i = 0; i < ww - 2; i++) {
             int buf_idx = wave_index(i, ww - 2, 2, 0);
-            float l = vis_buffer[buf_idx] / 32768.0f;
-            float rr = vis_buffer[buf_idx + 1] / 32768.0f;
+            float l = vis_render_buffer[buf_idx] / 32768.0f;
+            float rr = vis_render_buffer[buf_idx + 1] / 32768.0f;
             float s = (l + rr) * 0.5f;
             int y = mid_y - (int)(s * (wh / 2 - 2));
             if (y < wy + 1) y = wy + 1;
@@ -553,27 +607,7 @@ void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    if (menu_open == 1) {
-        SDL_Rect drop = {10, 24, 150, 90};
-        SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
-        SDL_RenderFillRect(r, &drop);
-        draw_bevel(r, drop.x, drop.y, drop.w, drop.h, 0);
-        if (is_hover(mouse_x, mouse_y, 10, 24, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 25, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 35, "Load (L)", COL_TEXT_WHITE);
-        if (is_hover(mouse_x, mouse_y, 10, 54, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 55, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 65, "Quit (Q)", COL_TEXT_WHITE);
-        if (is_hover(mouse_x, mouse_y, 10, 84, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 85, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 95, "Playlist (P)", COL_TEXT_WHITE);
-    }
+    if (menu_open == 1) draw_file_menu_popup(r);
 }
 
 /* ==================== FULL TRACKER ==================== */
@@ -585,7 +619,6 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
     struct xmp_frame_info  *fi = ps->fi;
     int is_ffmpeg = (ps->backend == BACKEND_FFMPEG);
 
-    /* --- Info box (top left) --- */
     SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
     SDL_Rect info_bg = {GRID_LEFT, INFO_Y, 320, INFO_H};
     SDL_RenderFillRect(r, &info_bg);
@@ -641,7 +674,6 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         draw_text_clip(r, text_x, INFO_Y + 10, "No module loaded.", line_chars, COL_TEXT_RED);
     }
 
-    /* --- Status box (top right) --- */
     int stat_x = 340;
     int stat_w = PANEL_X + PANEL_W - stat_x;
     if (stat_w < 1) stat_w = 1;
@@ -683,7 +715,6 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
 
     draw_full_transport(r, ps);
 
-    /* --- Scope boxes (waveform) --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int sx = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 30, 20, 255);
@@ -701,7 +732,7 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
                     int mid_y = SCOPE_Y + SCOPE_H / 2;
                     for (int i = 0; i < SCOPE_W - 2; i++) {
                         int buf_idx = wave_index(i, SCOPE_W - 2, 2, ch);
-                        float sample = vis_buffer[buf_idx] / 32768.0f;
+                        float sample = vis_render_buffer[buf_idx] / 32768.0f;
                         int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
                         if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
                         if (y > SCOPE_Y + SCOPE_H - 1) y = SCOPE_Y + SCOPE_H - 1;
@@ -715,7 +746,7 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
                 int mid_y = SCOPE_Y + SCOPE_H / 2;
                 for (int i = 0; i < SCOPE_W - 2; i++) {
                     int buf_idx = wave_index(i, SCOPE_W - 2, 2, ch % 2);
-                    float sample = vis_buffer[buf_idx] / 32768.0f;
+                    float sample = vis_render_buffer[buf_idx] / 32768.0f;
                     int y = mid_y - (int)(sample * (SCOPE_H / 2 - 2));
                     if (y < SCOPE_Y + 1) y = SCOPE_Y + 1;
                     if (y > SCOPE_Y + SCOPE_H - 1) y = SCOPE_Y + SCOPE_H - 1;
@@ -725,25 +756,27 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    /* --- VU meters: thin 8px strip directly under each scope --- */
     for (int ch = 0; ch < GRID_COLS; ch++) {
         int x = GRID_LEFT + ch * COL_W;
         SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
         SDL_Rect bg = {x, VU_Y, SCOPE_W, VU_H};
         SDL_RenderFillRect(r, &bg);
         draw_bevel(r, x, VU_Y, SCOPE_W, VU_H, 1);
-        int bar_w = (int)(channel_peak[ch] * (SCOPE_W - 2));
+
+        float peak = channel_peak_render[ch];
+        if (is_ffmpeg && ch >= 2) peak = 0.0f;
+
+        int bar_w = (int)(peak * (SCOPE_W - 2));
         if (bar_w > SCOPE_W - 2) bar_w = SCOPE_W - 2;
         if (bar_w < 0) bar_w = 0;
-        Uint8 cr = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.r : (channel_peak[ch] > 0.5f) ? 255 : COL_TEXT_GREEN.r;
-        Uint8 cg = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.g : 255;
-        Uint8 cb = (channel_peak[ch] > 0.8f) ? COL_TEXT_RED.b : COL_TEXT_GREEN.b;
+        Uint8 cr = (peak > 0.8f) ? COL_TEXT_RED.r : (peak > 0.5f) ? 255 : COL_TEXT_GREEN.r;
+        Uint8 cg = (peak > 0.8f) ? COL_TEXT_RED.g : 255;
+        Uint8 cb = (peak > 0.8f) ? COL_TEXT_RED.b : COL_TEXT_GREEN.b;
         SDL_SetRenderDrawColor(r, cr, cg, cb, 255);
         SDL_Rect bar = {x + 1, VU_Y + 1, bar_w, VU_H - 2};
         SDL_RenderFillRect(r, &bar);
     }
 
-    /* --- Channel pattern panes --- */
     int start_row = 0;
     if (!is_ffmpeg && ps->is_playing && fi) {
         start_row = fi->row - 5;
@@ -804,7 +837,6 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    /* --- Right panel: INSTRUMENTS / SAMPLES --- */
     if (is_ffmpeg) {
         int ins_h = (PANEL_H - GAP) / 2;
         SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
@@ -914,84 +946,24 @@ void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps) {
         }
     }
 
-    /* --- Menu bar --- */
-    SDL_SetRenderDrawColor(r, COL_MENU_BG.r, COL_MENU_BG.g, COL_MENU_BG.b, 255);
-    SDL_Rect mbar = {0, 0, WIN_W, MENU_H};
-    SDL_RenderFillRect(r, &mbar);
+    draw_menu_bar(r, ps, WIN_W);
+    draw_text(r, MENU_MINI_X + 4, 8, "Mini (Tab)", COL_TEXT_WHITE);
 
-    if (is_hover(mouse_x, mouse_y, 10, 0, 80, 24) || menu_open == 1) {
-        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-        SDL_Rect h = {10, 0, 80, 24}; SDL_RenderFillRect(r, &h);
-    }
-    draw_text(r, 18, 8, "File (M)", COL_TEXT_WHITE);
-
-    if (is_hover(mouse_x, mouse_y, 90, 0, 72, 24) || menu_open == 2) {
-        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-        SDL_Rect h = {90, 0, 72, 24}; SDL_RenderFillRect(r, &h);
-    }
-    draw_text(r, 98, 8, "Info (I)", COL_TEXT_WHITE);
-
-    if (is_hover(mouse_x, mouse_y, 172, 0, 80, 24)) {
-        SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-        SDL_Rect h = {172, 0, 80, 24}; SDL_RenderFillRect(r, &h);
-    }
-    draw_text(r, 180, 8, "Mini (Tab)", COL_TEXT_WHITE);
-
-    if (menu_open == 1) {
-        SDL_Rect drop = {10, 24, 150, 90};
-        SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
-        SDL_RenderFillRect(r, &drop);
-        draw_bevel(r, drop.x, drop.y, drop.w, drop.h, 0);
-        if (is_hover(mouse_x, mouse_y, 10, 24, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 25, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 35, "Load (L)", COL_TEXT_WHITE);
-        if (is_hover(mouse_x, mouse_y, 10, 54, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 55, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 65, "Quit (Q)", COL_TEXT_WHITE);
-        if (is_hover(mouse_x, mouse_y, 10, 84, 150, 30)) {
-            SDL_SetRenderDrawColor(r, COL_MENU_HOVER.r, COL_MENU_HOVER.g, COL_MENU_HOVER.b, 255);
-            SDL_Rect h = {11, 85, 148, 28}; SDL_RenderFillRect(r, &h);
-        }
-        draw_text(r, 20, 95, "Playlist (P)", COL_TEXT_WHITE);
-    }
+    if (menu_open == 1) draw_file_menu_popup(r);
 }
 
-/* ==================== PLAYLIST EDITOR ==================== */
-void gui_playlist_editor_geom(int *ox, int *oy, int *ow, int *oh) {
-    int bw = mini_mode ? MINI_W : WIN_W;
-    int bh = mini_mode ? MINI_H : WIN_H;
-    *ox = 60; *oy = 50;
-    *ow = bw - 120; *oh = bh - 100;
-    if (*ow < 300) *ow = 300;
-    if (*oh < 200) *oh = 200;
-}
-
-void gui_draw_playlist_editor(SDL_Renderer *r) {
-    int bw = mini_mode ? MINI_W : WIN_W;
-    int bh = mini_mode ? MINI_H : WIN_H;
-
-    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(r, 0, 0, 0, 200);
-    SDL_Rect full = {0, 0, bw, bh};
+/* ==================== PLAYLIST EDITOR WINDOW ==================== */
+void gui_draw_playlist_editor_window(SDL_Renderer *r) {
+    SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
+    SDL_Rect full = {0, 0, EDITOR_W, EDITOR_H};
     SDL_RenderFillRect(r, &full);
 
-    int bx, by, bwd, bht;
-    gui_playlist_editor_geom(&bx, &by, &bwd, &bht);
-    SDL_Rect box = {bx, by, bwd, bht};
-    SDL_SetRenderDrawColor(r, COL_PANEL.r, COL_PANEL.g, COL_PANEL.b, 255);
-    SDL_RenderFillRect(r, &box);
-    draw_bevel(r, box.x, box.y, box.w, box.h, 0);
-
     SDL_SetRenderDrawColor(r, COL_TITLE_BG.r, COL_TITLE_BG.g, COL_TITLE_BG.b, 255);
-    SDL_Rect tbar = {box.x, box.y, box.w, PL_TITLE_H};
+    SDL_Rect tbar = {0, 0, EDITOR_W, PL_TITLE_H};
     SDL_RenderFillRect(r, &tbar);
-    draw_text(r, box.x + 10, box.y + 11, "Playlist", COL_TEXT_WHITE);
+    draw_text(r, 10, 11, "Playlist", COL_TEXT_WHITE);
 
-    int cbx = box.x + box.w - 30, cby = box.y + 5;
+    int cbx = EDITOR_W - 30, cby = 5;
     if (is_hover(mouse_x, mouse_y, cbx, cby, 20, 20))
         SDL_SetRenderDrawColor(r, COL_TEXT_RED.r, COL_TEXT_RED.g, COL_TEXT_RED.b, 255);
     else
@@ -1020,9 +992,9 @@ void gui_draw_playlist_editor(SDL_Renderer *r) {
     }
 
     int list_y = tb_y + PL_BTN_H + PL_PAD;
-    int list_h = box.y + box.h - list_y - PL_PAD;
+    int list_h = EDITOR_H - list_y - PL_PAD;
     SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
-    SDL_Rect lbg = {box.x + PL_PAD, list_y, box.w - 2 * PL_PAD, list_h};
+    SDL_Rect lbg = {PL_PAD, list_y, EDITOR_W - 2 * PL_PAD, list_h};
     SDL_RenderFillRect(r, &lbg);
     draw_bevel(r, lbg.x, lbg.y, lbg.w, lbg.h, 1);
 
@@ -1094,8 +1066,8 @@ void gui_draw_info_dialog(SDL_Renderer *r) {
     SDL_RenderFillRect(r, &box);
     draw_bevel(r, box.x, box.y, box.w, box.h, 1);
 
-    draw_text(r, box.x + 20, box.y + 20, "ABOUT MOD TRACKER PLAYER", COL_TEXT_GREEN);
-    draw_text(r, box.x + 20, box.y + 50, "A simple SDL2 + libxmp player.", COL_TEXT_WHITE);
+    draw_text(r, box.x + 20, box.y + 20, "ABOUT DEEZ AUDIO PLAYER", COL_TEXT_GREEN);
+    draw_text(r, box.x + 20, box.y + 50, "A simple SDL2 + libxmp + FFmpeg player.", COL_TEXT_WHITE);
     draw_text(r, box.x + 20, box.y + 70, "Controls:", COL_TEXT_WHITE);
     draw_text(r, box.x + 20, box.y + 90, "Space - Play / Pause", COL_TEXT_WHITE);
     draw_text(r, box.x + 20, box.y + 110, "R - Restart", COL_TEXT_WHITE);

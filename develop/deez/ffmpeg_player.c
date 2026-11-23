@@ -4,6 +4,7 @@
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
 #include <libavutil/channel_layout.h>
+#include <libavutil/log.h>
 #include <pthread.h>
 #include <stdatomic.h>
 #include <string.h>
@@ -11,8 +12,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define RING_FRAMES (524288)          /* 2^19 frames ≈ 11.9 sec at 44.1 kHz */
-#define RING_MASK   (RING_FRAMES - 1) /* must be 2^n - 1 */
+#define RING_FRAMES (524288)
+#define RING_MASK   (RING_FRAMES - 1)
 
 static int out_rate = 44100;
 static int out_channels = 2;
@@ -24,7 +25,6 @@ static int ring_count = 0;
 static pthread_mutex_t ring_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  ring_has_space = PTHREAD_COND_INITIALIZER;
 
-/* Serializes decode-thread work against seek. */
 static pthread_mutex_t decode_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static AVFormatContext *fmt = NULL;
@@ -41,7 +41,6 @@ static pthread_t   decode_thread;
 static double      duration_sec = 0;
 static atomic_llong frames_consumed = 0;
 
-/* Incremented on every seek; the decode loop aborts stale pushes. */
 static atomic_int seek_gen = 0;
 
 static char title_buf[256] = "";
@@ -50,9 +49,17 @@ static char format_buf[64] = "";
 int ffp_init(int sample_rate, int channels) {
     out_rate = sample_rate;
     out_channels = channels;
-    av_log_set_level(AV_LOG_ERROR);
     avformat_network_init();
     return 1;
+}
+
+/* 0 = quiet, 1 = errors only, 2 = full debug. */
+void ffp_set_log_level(int level) {
+    switch (level) {
+    case 0:  av_log_set_level(AV_LOG_QUIET); break;
+    case 1:  av_log_set_level(AV_LOG_ERROR); break;
+    default: av_log_set_level(AV_LOG_DEBUG); break;
+    }
 }
 
 static int ring_push(const int16_t *data, int frames, int my_gen) {
@@ -60,7 +67,6 @@ static int ring_push(const int16_t *data, int frames, int my_gen) {
     int pushed = 0;
     for (int i = 0; i < frames; i++) {
         while (ring_count >= RING_FRAMES) {
-            /* Abort if seek happened while we were waiting. */
             if (atomic_load(&seek_gen) != my_gen ||
                 atomic_load(&stop_req)) {
                 pthread_mutex_unlock(&ring_lock);
@@ -106,15 +112,26 @@ static void ring_clear(void) {
 static int init_swr_from_frame(AVFrame *f) {
     if (swr) { swr_free(&swr); swr = NULL; }
 
-    int64_t in_layout = f->channel_layout;
-    if (in_layout == 0)
-        in_layout = av_get_default_channel_layout(f->channels);
+    AVChannelLayout in_layout;
+    if (f->ch_layout.nb_channels > 0 &&
+        f->ch_layout.order != AV_CHANNEL_ORDER_UNSPEC) {
+        av_channel_layout_copy(&in_layout, &f->ch_layout);
+    } else {
+        int nb = f->ch_layout.nb_channels > 0 ? f->ch_layout.nb_channels : 2;
+        av_channel_layout_default(&in_layout, nb);
+    }
 
-    swr = swr_alloc_set_opts(NULL,
-                             AV_CH_LAYOUT_STEREO, AV_SAMPLE_FMT_S16, out_rate,
-                             in_layout,            (enum AVSampleFormat)f->format, f->sample_rate,
-                             0, NULL);
-    if (!swr) return 0;
+    AVChannelLayout out_layout;
+    av_channel_layout_default(&out_layout, out_channels);
+
+    swr = NULL;
+    int ret = swr_alloc_set_opts2(&swr,
+                                  &out_layout, AV_SAMPLE_FMT_S16, out_rate,
+                                  &in_layout,  (enum AVSampleFormat)f->format, f->sample_rate,
+                                  0, NULL);
+    av_channel_layout_uninit(&in_layout);
+    av_channel_layout_uninit(&out_layout);
+    if (ret < 0 || !swr) { swr_free(&swr); return 0; }
     if (swr_init(swr) < 0) { swr_free(&swr); return 0; }
     return 1;
 }
@@ -165,7 +182,7 @@ static void *decode_loop(void *arg) {
             int converted = swr_convert(swr, outp, out_samples,
                                         (const uint8_t **)frame->extended_data,
                                         frame->nb_samples);
-            if (converted > out_samples) converted = out_samples; /* safety */
+            if (converted > out_samples) converted = out_samples;
             if (converted > 0) {
                 int produced = converted;
                 while (produced > 0 && !atomic_load(&stop_req)) {
@@ -173,7 +190,6 @@ static void *decode_loop(void *arg) {
                                            produced, my_gen);
                     produced -= pushed;
                     if (produced > 0) {
-                        /* Either seek happened or stop requested — bail. */
                         if (atomic_load(&seek_gen) != my_gen ||
                             atomic_load(&stop_req)) {
                             produced = 0;
@@ -245,8 +261,6 @@ int ffp_load(const char *path) {
     frame = av_frame_alloc();
     if (!pkt || !frame) { ffp_stop(); return 0; }
 
-    /* Set the flag *before* the thread starts so ffp_is_active/ffp_finished
-       see a consistent value even if the thread finishes immediately. */
     atomic_store(&thread_running, 1);
     if (pthread_create(&decode_thread, NULL, decode_loop, NULL) != 0) {
         atomic_store(&thread_running, 0);
@@ -259,7 +273,6 @@ int ffp_load(const char *path) {
 void ffp_stop(void) {
     if (atomic_load(&thread_running)) {
         atomic_store(&stop_req, 1);
-        /* Wake any producer blocked in ring_push. */
         pthread_mutex_lock(&ring_lock);
         pthread_cond_broadcast(&ring_has_space);
         pthread_mutex_unlock(&ring_lock);
@@ -286,7 +299,6 @@ void ffp_seek(double seconds) {
     pthread_mutex_lock(&decode_lock);
     if (!fmt || stream_idx < 0) { pthread_mutex_unlock(&decode_lock); return; }
 
-    /* Bump generation first so any in-flight push aborts. */
     atomic_fetch_add(&seek_gen, 1);
 
     int64_t ts = (int64_t)(seconds / av_q2d(fmt->streams[stream_idx]->time_base));

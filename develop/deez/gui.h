@@ -10,7 +10,7 @@
 #define STAT_H     100
 #define SCOPE_W    224
 #define SCOPE_H    64
-#define VU_H       8                 /* thin VU strip under each scope */
+#define VU_H       8
 #define COL_W      232
 #define ROW_H      16
 #define VISIBLE_ROWS 18
@@ -27,11 +27,10 @@
 #define INFO_Y     (MENU_H + GAP)
 #define STAT_Y     INFO_Y
 #define SCOPE_Y    (INFO_Y + INFO_H + GAP)
-/* VU sits immediately under the scope, then GRID_Y (channel boxes) follows. */
-#define VU_Y       (SCOPE_Y + SCOPE_H + 2)
-#define GRID_Y     (VU_Y + VU_H + 6)
+#define VU_GAP     8
+#define VU_Y       (SCOPE_Y + SCOPE_H + VU_GAP)
+#define GRID_Y     (VU_Y + VU_H + VU_GAP)
 #define GRID_H     (VISIBLE_ROWS * ROW_H + 20)
-/* BOX_Y is the top of the channel-info boxes; aligned with GRID_Y. */
 #define BOX_Y      GRID_Y
 #define WIN_H      (BOX_Y + GRID_H + GAP)
 #define PANEL_H    GRID_H
@@ -65,7 +64,6 @@
 #define PROG_GRIP_W     14
 #define PROG_GRIP_H     14
 
-/* Full-mode transport controls (small buttons next to the slider) */
 #define TRANSPORT_BTN     20
 #define TRANSPORT_GAP      4
 
@@ -76,7 +74,25 @@
 #define PL_TITLE_H   30
 
 #define PLAYLIST_MAX       4096
-#define PLAYLIST_PATH_MAX  1024
+#define PLAYLIST_PATH_MAX  PATH_MAX
+
+/* Playlist editor window (its own SDL_Window). */
+#define EDITOR_W     640
+#define EDITOR_H     520
+
+/* App icon in the menu bar. */
+#define ICON_SIZE     16
+#define ICON_X        10
+#define ICON_Y        4
+#define ICON_GAP      8
+
+/* Menu item hit rectangles (in window coords). */
+#define MENU_FILE_X   (ICON_X + ICON_SIZE + ICON_GAP)
+#define MENU_FILE_W   80
+#define MENU_INFO_X   (MENU_FILE_X + MENU_FILE_W + 4)
+#define MENU_INFO_W   72
+#define MENU_MINI_X   (MENU_INFO_X + MENU_INFO_W + 4)
+#define MENU_MINI_W   80
 
 typedef struct {
     char path[PLAYLIST_PATH_MAX];
@@ -130,8 +146,8 @@ extern char current_file[PATH_MAX];
 
 extern int list_scroll_offset;
 
-extern int16_t vis_buffer[];
-extern float channel_peak[4];
+extern int16_t vis_render_buffer[];
+extern float channel_peak_render[4];
 
 ListGeom current_list_geom(struct xmp_module_info *mi);
 
@@ -160,12 +176,19 @@ typedef struct {
     int can_pause;
     int can_prev;
     int can_next;
+
+    SDL_Texture *icon_tex;
+    int          icon_w;
+    int          icon_h;
 } PlayerState;
 
 void gui_draw_mini_player(SDL_Renderer *r, const PlayerState *ps);
 void gui_draw_full_tracker(SDL_Renderer *r, const PlayerState *ps);
-void gui_draw_playlist_editor(SDL_Renderer *r);
 void gui_draw_info_dialog(SDL_Renderer *r);
+
+/* Draw the playlist editor into its own renderer. Coordinates are local
+   to the editor window; the window is EDITOR_W × EDITOR_H. */
+void gui_draw_playlist_editor_window(SDL_Renderer *r);
 
 int  gui_mini_hit_load(int x, int y);
 int  gui_mini_hit_quit(int x, int y);
@@ -175,8 +198,6 @@ int  gui_mini_hit_position_trackbar(int x, int y);
 int  gui_mini_hit_btn_idx(int x, int y);
 
 int  gui_full_hit_btn_idx(int mx, int my);
-
-void gui_playlist_editor_geom(int *out_x, int *out_y, int *out_w, int *out_h);
 
 int  gui_playlist_toolbar_layout(int *out_x, int *out_w);
 int  gui_playlist_button_enabled(int id);

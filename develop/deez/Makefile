@@ -11,10 +11,11 @@ AVLIBS    := $(shell pkg-config --libs   libavformat libavcodec libavutil libswr
 
 OBJS = main.o gui.o native_dialog.o ffmpeg_player.o
 
-modplayer: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(SDLLIBS) $(XMPLIBS) $(GTKLIBS) $(AVLIBS) -lpthread
+TARGET = deez
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(SDLLIBS) $(XMPLIBS) $(GTKLIBS) $(AVLIBS) -lpthread -lm -lX11
 
-main.o: main.c gui.h native_dialog.h ffmpeg_player.h
+main.o: main.c gui.h native_dialog.h ffmpeg_player.h stb_image.h
 	$(CC) $(CFLAGS) $(SDLCFLAGS) $(XMPCFLAGS) $(AVCFLAGS) -c -o $@ main.c
 
 gui.o: gui.c gui.h
@@ -27,6 +28,6 @@ ffmpeg_player.o: ffmpeg_player.c ffmpeg_player.h
 	$(CC) $(CFLAGS) $(AVCFLAGS) -c -o $@ ffmpeg_player.c
 
 clean:
-	rm -f $(OBJS) modplayer
+	rm -f $(OBJS) $(TARGET)
 
 .PHONY: clean

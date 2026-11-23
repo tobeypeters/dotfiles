@@ -6,9 +6,6 @@
 #include <limits.h>
 
 static int gtk_ready = 0;
-/* Set to 1 while a dialog is running. nd_pump() is a no-op during that,
-   so the caller's SDL loop can't re-enter GTK's event pump from inside
-   gtk_dialog_run's own loop (which corrupts the file chooser). */
 static int dialog_running = 0;
 
 int nd_init(void) {
@@ -23,7 +20,7 @@ int nd_init(void) {
 
 void nd_pump(void) {
     if (!gtk_ready) return;
-    if (dialog_running) return;      /* don't re-enter while a dialog is open */
+    if (dialog_running) return;
     while (gtk_events_pending())
         gtk_main_iteration_do(FALSE);
 }
@@ -50,9 +47,6 @@ static void remember_from_path(const char *path, int is_dir) {
     last_dir[n] = '\0';
 }
 
-/* Local event pump used only by the dialog helpers below. Runs a full
-   gtk_main_iteration loop to completion, but only from the dialog's own
-   call stack — never from main's per-frame nd_pump(). */
 static void drain_gtk_events(void) {
     while (gtk_events_pending())
         gtk_main_iteration_do(FALSE);
@@ -87,6 +81,18 @@ static void apply_initial_folder(GtkFileChooser *fc) {
     if (last_dir[0]) gtk_file_chooser_set_current_folder(fc, last_dir);
 }
 
+static int copy_selected_path(char *out_path, size_t out_sz, const char *picked) {
+    if (!out_path || out_sz == 0 || !picked) return 0;
+    size_t n = strlen(picked);
+    if (n >= out_sz) {
+        fprintf(stderr, "native_dialog: selected path exceeds output buffer\n");
+        out_path[0] = '\0';
+        return 0;
+    }
+    memcpy(out_path, picked, n + 1);
+    return 1;
+}
+
 int nd_pick_module_file(char *out_path, size_t out_sz) {
     if (!out_path || out_sz == 0) return 0;
     out_path[0] = '\0';
@@ -105,19 +111,18 @@ int nd_pick_module_file(char *out_path, size_t out_sz) {
     gtk_window_set_modal(GTK_WINDOW(d), TRUE);
     gtk_window_set_keep_above(GTK_WINDOW(d), TRUE);
     gtk_widget_show_all(d);
+    gtk_window_present(GTK_WINDOW(d));
 
     dialog_running = 1;
     char *picked = NULL;
     if (gtk_dialog_run(GTK_DIALOG(d)) == GTK_RESPONSE_ACCEPT)
         picked = gtk_file_chooser_get_filename(fc);
 
-    /* Grab the string BEFORE destroying the dialog. */
     int ok = 0;
     if (picked) {
-        snprintf(out_path, out_sz, "%s", picked);
-        remember_from_path(picked, 0);
+        ok = copy_selected_path(out_path, out_sz, picked);
+        if (ok) remember_from_path(picked, 0);
         g_free(picked);
-        ok = 1;
     }
 
     gtk_widget_destroy(d);
@@ -144,6 +149,7 @@ int nd_pick_folder(char *out_path, size_t out_sz) {
     gtk_window_set_modal(GTK_WINDOW(d), TRUE);
     gtk_window_set_keep_above(GTK_WINDOW(d), TRUE);
     gtk_widget_show_all(d);
+    gtk_window_present(GTK_WINDOW(d));
 
     dialog_running = 1;
     char *picked = NULL;
@@ -152,10 +158,9 @@ int nd_pick_folder(char *out_path, size_t out_sz) {
 
     int ok = 0;
     if (picked) {
-        snprintf(out_path, out_sz, "%s", picked);
-        remember_from_path(picked, 1);
+        ok = copy_selected_path(out_path, out_sz, picked);
+        if (ok) remember_from_path(picked, 1);
         g_free(picked);
-        ok = 1;
     }
 
     gtk_widget_destroy(d);
@@ -185,6 +190,7 @@ int nd_pick_module_files(char *out_paths, size_t out_sz,
     gtk_window_set_modal(GTK_WINDOW(d), TRUE);
     gtk_window_set_keep_above(GTK_WINDOW(d), TRUE);
     gtk_widget_show_all(d);
+    gtk_window_present(GTK_WINDOW(d));
 
     dialog_running = 1;
     GSList *files = NULL;
@@ -197,15 +203,23 @@ int nd_pick_module_files(char *out_paths, size_t out_sz,
 
     int count = 0;
     char first[PATH_MAX] = "";
-    for (GSList *l = files; l && count < max_files; l = l->next) {
-        size_t used = strlen(out_paths);
-        size_t need = strlen((char *)l->data) + 2;
-        if (used + need >= out_sz) { g_free(l->data); continue; }
-        if (count) strcat(out_paths, "\n");
-        strcat(out_paths, (char *)l->data);
-        if (count == 0) snprintf(first, sizeof(first), "%s", (char *)l->data);
-        g_free(l->data);
-        count++;
+    if (max_files < 0) max_files = 0;
+    for (GSList *l = files; l; l = l->next) {
+        char *name = (char *)l->data;
+        if (name && count < max_files) {
+            size_t used = strlen(out_paths);
+            size_t name_len = strlen(name);
+            size_t need = name_len + (count ? 1u : 0u) + 1u;
+            if (need <= out_sz - used) {
+                if (count) out_paths[used++] = '\n';
+                memcpy(out_paths + used, name, name_len + 1);
+                if (count == 0) snprintf(first, sizeof(first), "%s", name);
+                count++;
+            } else {
+                fprintf(stderr, "native_dialog: selected file list exceeds output buffer\n");
+            }
+        }
+        g_free(name);
     }
     if (files) g_slist_free(files);
 
